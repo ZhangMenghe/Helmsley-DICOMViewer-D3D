@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>adf15f30-0cf3-421d-b102-bf833e3f6cc0</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Filter Include="Source">
+      <UniqueIdentifier>{96008757-c4e8-4538-9995-f0f82998f1c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common">
+      <UniqueIdentifier>{50dcc535-3873-4390-8799-ffd8251bd7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Contents">
+      <UniqueIdentifier>{180b36ba-0cbf-43b3-ae5a-672abd927dd6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="OpenXRMain.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="..\..\Source\Common\DeviceResources.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Content\Sample3DSceneRenderer.cpp">
+      <Filter>Source\Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp">
+      <Filter>Source\Contents</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.h" />
+    <ClInclude Include="OpenXRMain.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\..\Source\Common\DeviceResources.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Common\DirectXHelper.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Common\StepTimer.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Content\Sample3DSceneRenderer.h">
+      <Filter>Source\Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Content\SampleFpsTextRenderer.h">
+      <Filter>Source\Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Content\ShaderStructures.h">
+      <Filter>Source\Contents</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Source\Content\SamplePixelShader.hlsl">
+      <Filter>Source\Contents</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Content\SampleVertexShader.hlsl">
+      <Filter>Source\Contents</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
