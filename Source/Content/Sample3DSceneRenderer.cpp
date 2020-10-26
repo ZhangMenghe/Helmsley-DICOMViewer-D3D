@@ -46,8 +46,15 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 		0.01f,
 		100.0f
 		);
+	
+	const XMFLOAT4X4 orientation(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
 
-	XMFLOAT4X4 orientation = m_deviceResources->GetOrientationTransform3D();
+	//XMFLOAT4X4 orientation = m_deviceResources->GetOrientationTransform3D();
 
 	XMMATRIX orientationMatrix = XMLoadFloat4x4(&orientation);
 
