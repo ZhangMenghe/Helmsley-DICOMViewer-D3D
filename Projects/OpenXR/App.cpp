@@ -2,48 +2,22 @@
 #pragma comment(lib,"D3dcompiler.lib") // for shader compile
 #pragma comment(lib,"Dxgi.lib") // for CreateDXGIFactory1
 
-// Tell OpenXR what platform code we'll be using
-#define XR_USE_PLATFORM_WIN32
-#define XR_USE_GRAPHICS_API_D3D11
+
 #include "pch.h"
 #include <d3d11.h>
 #include <directxmath.h> // Matrix math functions and objects
 #include <d3dcompiler.h> // For compiling shaders! D3DCompile
-#include <openxr/openxr.h>
-#include <openxr/openxr_platform.h>
 
 #include <thread> // sleep_for
 #include <vector>
 #include <algorithm> // any_of
 
+#include "OXRs/OXRManager.h"
+
 using namespace std;
 using namespace DirectX; // Matrix math
+using namespace DX;
 
-///////////////////////////////////////////
-
-struct swapchain_surfdata_t {
-	ID3D11DepthStencilView* depth_view;
-	ID3D11RenderTargetView* target_view;
-};
-
-struct swapchain_t {
-	XrSwapchain handle;
-	int32_t     width;
-	int32_t     height;
-	vector<XrSwapchainImageD3D11KHR> surface_images;
-	vector<swapchain_surfdata_t>     surface_data;
-};
-
-struct input_state_t {
-	XrActionSet actionSet;
-	XrAction    poseAction;
-	XrAction    selectAction;
-	XrPath   handSubactionPath[2];
-	XrSpace  handSpace[2];
-	XrPosef  handPose[2];
-	XrBool32 renderHand[2];
-	XrBool32 handSelect[2];
-};
 
 ///////////////////////////////////////////
 
@@ -91,7 +65,7 @@ XrDebugUtilsMessengerEXT xr_debug = {};
 
 vector<XrView>                  xr_views;
 vector<XrViewConfigurationView> xr_config_views;
-vector<swapchain_t>             xr_swapchains;
+vector<DX::swapchain_t>             xr_swapchains;
 
 bool openxr_init(const char* app_name, int64_t swapchain_format);
 void openxr_make_actions();
@@ -103,6 +77,7 @@ void openxr_render_frame();
 bool openxr_render_layer(XrTime predictedTime, vector<XrCompositionLayerProjectionView>& projectionViews, XrCompositionLayerProjection& layer);
 
 ///////////////////////////////////////////
+//OXRManager* oxr_manager = nullptr;
 
 ID3D11Device* d3d_device = nullptr;
 ID3D11DeviceContext* d3d_context = nullptr;
@@ -111,9 +86,9 @@ int64_t              d3d_swapchain_fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
 bool                 d3d_init(LUID& adapter_luid);
 void                 d3d_shutdown();
 IDXGIAdapter1* d3d_get_adapter(LUID& adapter_luid);
-swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchainImage);
-void                 d3d_render_layer(XrCompositionLayerProjectionView& layerView, swapchain_surfdata_t& surface);
-void                 d3d_swapchain_destroy(swapchain_t& swapchain);
+DX::swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchainImage);
+void                 d3d_render_layer(XrCompositionLayerProjectionView& layerView, DX::swapchain_surfdata_t& surface);
+void                 d3d_swapchain_destroy(DX::swapchain_t& swapchain);
 XMMATRIX             d3d_xr_projection(XrFovf fov, float clip_near, float clip_far);
 ID3DBlob* d3d_compile_shader(const char* hlsl, const char* entrypoint, const char* target);
 
@@ -373,7 +348,7 @@ bool openxr_init(const char* app_name, int64_t swapchain_format) {
 
 		// We'll want to track our own information about the swapchain, so we can draw stuff onto it! We'll also create
 		// a depth buffer for each generated texture here as well with make_surfacedata.
-		swapchain_t swapchain = {};
+		DX::swapchain_t swapchain = {};
 		swapchain.width = swapchain_info.width;
 		swapchain.height = swapchain_info.height;
 		swapchain.handle = handle;
@@ -720,8 +695,8 @@ void d3d_shutdown() {
 
 ///////////////////////////////////////////
 
-swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchain_img) {
-	swapchain_surfdata_t result = {};
+DX::swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchain_img) {
+	DX::swapchain_surfdata_t result = {};
 
 	// Get information about the swapchain image that OpenXR made for us!
 	XrSwapchainImageD3D11KHR& d3d_swapchain_img = (XrSwapchainImageD3D11KHR&)swapchain_img;
@@ -763,7 +738,7 @@ swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchain_img) {
 
 ///////////////////////////////////////////
 
-void d3d_render_layer(XrCompositionLayerProjectionView& view, swapchain_surfdata_t& surface) {
+void d3d_render_layer(XrCompositionLayerProjectionView& view, DX::swapchain_surfdata_t& surface) {
 	// Set up where on the render target we want to draw, the view has a 
 	XrRect2Di& rect = view.subImage.imageRect;
 	D3D11_VIEWPORT viewport = CD3D11_VIEWPORT((float)rect.offset.x, (float)rect.offset.y, (float)rect.extent.width, (float)rect.extent.height);
@@ -781,7 +756,7 @@ void d3d_render_layer(XrCompositionLayerProjectionView& view, swapchain_surfdata
 
 ///////////////////////////////////////////
 
-void d3d_swapchain_destroy(swapchain_t& swapchain) {
+void d3d_swapchain_destroy(DX::swapchain_t& swapchain) {
 	for (uint32_t i = 0; i < swapchain.surface_data.size(); i++) {
 		swapchain.surface_data[i].depth_view->Release();
 		swapchain.surface_data[i].target_view->Release();

@@ -32,6 +32,9 @@
     <Filter Include="Source\Contents">
       <UniqueIdentifier>{180b36ba-0cbf-43b3-ae5a-672abd927dd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\OXRs">
+      <UniqueIdentifier>{6f0a2af9-cf4d-4de6-981d-59c0fb9412c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -45,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp">
       <Filter>Source\Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp">
+      <Filter>Source\OXRs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Content\ShaderStructures.h">
       <Filter>Source\Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRManager.h">
+      <Filter>Source\OXRs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

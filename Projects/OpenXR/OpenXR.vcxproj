@@ -258,6 +258,7 @@
     <ClInclude Include="..\..\Source\Content\Sample3DSceneRenderer.h" />
     <ClInclude Include="..\..\Source\Content\SampleFpsTextRenderer.h" />
     <ClInclude Include="..\..\Source\Content\ShaderStructures.h" />
+    <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="OpenXRMain.h" />
     <ClInclude Include="pch.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp" />
     <ClCompile Include="..\..\Source\Content\Sample3DSceneRenderer.cpp" />
     <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="OpenXRMain.cpp" />
     <ClCompile Include="pch.cpp">
