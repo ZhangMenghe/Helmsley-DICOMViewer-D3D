@@ -3,6 +3,7 @@
 #include "pch.h"
 #include <vector>
 #include <Common/DeviceResources.h>
+#include <Content/Sample3DSceneRenderer.h>
 namespace DX {
 	struct swapchain_surfdata_t {
 		ID3D11DepthStencilView* depth_view;
@@ -31,10 +32,52 @@ namespace DX {
 	class OXRManager : public DeviceResources {
 	public:
 		OXRManager();
+		int64_t GetSwapchainFmt()const { return d3d_swapchain_fmt; }
+		bool InitOxrSession(const char* app_name);
+		void InitOxrActions();
+		bool Update();
+		void Render(Sample3DSceneRenderer* scene);
+		void ShutDown();
+
 	private:
+		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
+		const XrFormFactor app_config_form = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
+		const XrViewConfigurationType app_config_view = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+
+		const XrPosef  xr_pose_identity = { {0,0,0,1}, {0,0,0} };
+
+		XrInstance     xr_instance = {};
+		XrSession      xr_session = {};
+		XrSessionState xr_session_state = XR_SESSION_STATE_UNKNOWN;
+		bool           xr_running = false;
+		bool		   xr_quit = false;
+		XrSpace        xr_app_space = {};
+		XrSystemId     xr_system_id = XR_NULL_SYSTEM_ID;
+		input_state_t  xr_input = { };
+		XrEnvironmentBlendMode   xr_blend = {};
+		XrDebugUtilsMessengerEXT xr_debug = {};
+
+		std::vector<XrView>                  xr_views;
+		std::vector<XrViewConfigurationView> xr_config_views;
+		std::vector<swapchain_t>             xr_swapchains;
+
 		// Function pointers for some OpenXR extension methods we'll use.
 		PFN_xrGetD3D11GraphicsRequirementsKHR ext_xrGetD3D11GraphicsRequirementsKHR = nullptr;
 		PFN_xrCreateDebugUtilsMessengerEXT    ext_xrCreateDebugUtilsMessengerEXT = nullptr;
 		PFN_xrDestroyDebugUtilsMessengerEXT   ext_xrDestroyDebugUtilsMessengerEXT = nullptr;
+
+		void openxr_poll_events();
+		void openxr_poll_actions();
+		void openxr_poll_predicted(XrTime predicted_time);
+
+		DirectX::XMMATRIX d3d_xr_projection(XrFovf fov, float clip_near, float clip_far);
+		IDXGIAdapter1* d3d_get_adapter(LUID& adapter_luid);
+		swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchainImage);
+		bool openxr_render_layer(XrTime predictedTime, 
+			std::vector<XrCompositionLayerProjectionView>& projectionViews,
+			XrCompositionLayerProjection& layer,
+			Sample3DSceneRenderer* scene);
+		void d3d_render_layer(XrCompositionLayerProjectionView& layerView, swapchain_surfdata_t& surface);
+
 	};
 }

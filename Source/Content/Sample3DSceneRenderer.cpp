@@ -8,20 +8,22 @@ using namespace DirectX;
 using namespace Windows::Foundation;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
+Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, bool is_holographic) :
+	m_isholographic(is_holographic),
 	m_loadingComplete(false),
 	m_degreesPerSecond(45),
 	m_indexCount(0),
 	m_tracking(false),
-	m_deviceResources(deviceResources)
-{
+	m_deviceResources(deviceResources){
+	
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }
 
 // Initializes view parameters when the window size changes.
-void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
-{
+void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
+	//if (m_isholographic) return;
+
 	Size outputSize = m_deviceResources->GetOutputSize();
 	float aspectRatio = outputSize.Width / outputSize.Height;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -72,8 +74,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
-void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
-{
+void Sample3DSceneRenderer::Update(DX::StepTimer const& timer) {
 	if (!m_tracking)
 	{
 		// Convert degrees to radians, then convert seconds to rotation angle

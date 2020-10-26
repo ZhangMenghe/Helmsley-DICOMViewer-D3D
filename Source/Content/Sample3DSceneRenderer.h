@@ -8,7 +8,7 @@
 	class Sample3DSceneRenderer
 	{
 	public:
-		Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+		Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, bool is_holographic = false);
 		void CreateDeviceDependentResources();
 		void CreateWindowSizeDependentResources();
 		void ReleaseDeviceDependentResources();
@@ -18,10 +18,6 @@
 		void TrackingUpdate(float positionX);
 		void StopTracking();
 		bool IsTracking() { return m_tracking; }
-
-
-	private:
-		void Rotate(float radians);
 
 	private:
 		// Cached pointer to device resources.
@@ -43,5 +39,8 @@
 		bool	m_loadingComplete;
 		float	m_degreesPerSecond;
 		bool	m_tracking;
+		bool	m_isholographic;
+
+		void Rotate(float radians);
 	};
 
