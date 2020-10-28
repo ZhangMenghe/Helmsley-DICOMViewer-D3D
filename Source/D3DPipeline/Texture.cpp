@@ -44,15 +44,18 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc) {
 bool Texture::Initialize(
 	ID3D11Device* device, ID3D11DeviceContext* context, 
 	D3D11_TEXTURE2D_DESC texDesc, 
-	const void* data, UINT row_pitch, UINT depth_pitch) {
+	const void* data) {
 	if (!Initialize(device, texDesc)) return false;
-	setTexData(context, data, row_pitch, depth_pitch);
+	auto row_pitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	setTexData(context, data, row_pitch, 0);
 	return true;
 }
 bool Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context,
 	D3D11_TEXTURE3D_DESC texDesc,
-	const void* data, UINT row_pitch, UINT depth_pitch) {
+	const void* data) {
 	if (!Initialize(device, texDesc)) return false;
+	auto row_pitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	auto depth_pitch = row_pitch * texDesc.Height;
 	setTexData(context, data, row_pitch, depth_pitch);
 	return true;
 }

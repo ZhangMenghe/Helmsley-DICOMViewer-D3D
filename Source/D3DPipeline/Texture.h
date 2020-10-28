@@ -7,8 +7,8 @@ public:
 	bool Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc);
 	bool Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc);
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE2D_DESC texDesc, const void* data, UINT row_pitch, UINT depth_pitch);
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE3D_DESC texDesc, const void* data, UINT row_pitch, UINT depth_pitch);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE2D_DESC texDesc, const void* data);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE3D_DESC texDesc, const void* data);
 
 	void setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch);
 
