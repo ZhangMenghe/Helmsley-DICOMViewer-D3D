@@ -5,7 +5,6 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc) {
 	HRESULT hr = device->CreateTexture2D(&texDesc, nullptr, &mTex2D);
 	if (FAILED(hr)) {
 		mTex2D = nullptr;
-		throw std::exception("fail to create ");
 		return false;
 	}
 	mDim = TWO_DIMS;
@@ -22,8 +21,24 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc) {
 	return true;
 }
 bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc) {
+	HRESULT hr = device->CreateTexture3D(&texDesc, nullptr, &mTex3D);
+	if (FAILED(hr)) {
+		mTex3D = nullptr;
+		throw std::exception("fail to create 3d tex");
+		return false;
+	}
 	mDim = THREE_DIMS;
-	return false;
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = texDesc.Format;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+	shaderResourceViewDesc.Texture3D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture3D.MipLevels = 1;
+	hr = device->CreateShaderResourceView(mTex3D, &shaderResourceViewDesc, &mTexView);
+	if (FAILED(hr)) {
+		mTex3D = nullptr; mTexView = nullptr;
+		return false;
+	}
+	return true;
 }
 
 bool Texture::Initialize(

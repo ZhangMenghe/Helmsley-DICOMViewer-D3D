@@ -20,7 +20,7 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 	CreateWindowSizeDependentResources();
 
 	//init texture
-	texture = new Texture;
+	/*texture = new Texture;
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = 400;
 	texDesc.Height = 400;
@@ -45,6 +45,32 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 
 	}
 	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData, rowpitch, 0)) { delete texture; texture = nullptr;}
+	*/
+	//init 3d texture
+	texture = new Texture;
+	D3D11_TEXTURE3D_DESC texDesc;
+	texDesc.Width = 400;
+	texDesc.Height = 400;
+	texDesc.Depth = 400;
+	texDesc.MipLevels = 1;
+	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+	auto rowpitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	auto depthpitch = rowpitch * texDesc.Height;
+
+	auto imageSize = texDesc.Width * texDesc.Height * texDesc.Depth * 4;
+	unsigned char* m_targaData = new unsigned char[imageSize];
+	for (int i = 0; i < imageSize; i += 4) {
+		m_targaData[i] = (unsigned char)255;
+		m_targaData[i + 1] = 0;
+		m_targaData[i + 2] = 0;
+		m_targaData[i + 3] = (unsigned char)255;
+	}
+	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData, rowpitch, depthpitch)) { delete texture; texture = nullptr; }
+
 }
 
 // Initializes view parameters when the window size changes.
@@ -153,8 +179,10 @@ void Sample3DSceneRenderer::Render()
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	// Set shader texture resource in the pixel shader.
-	ID3D11ShaderResourceView* texview = texture->GetTextureView();
-	context->PSSetShaderResources(0, 1, &texview);
+	if (texture != nullptr) {
+		ID3D11ShaderResourceView* texview = texture->GetTextureView();
+		context->PSSetShaderResources(0, 1, &texview);
+	}
 
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource1(

@@ -1,4 +1,4 @@
-Texture2D shaderTexture;
+Texture3D shaderTexture;
 SamplerState SampleType;
 
 // Per-pixel color data passed through the pixel shader.
@@ -13,5 +13,5 @@ float4 main(PixelShaderInput input) : SV_TARGET
 {
 	//return float4(input.color, 1.0f);
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	return shaderTexture.Sample(SampleType, input.tex.xy);
+	return shaderTexture.Sample(SampleType, input.tex);
 }
