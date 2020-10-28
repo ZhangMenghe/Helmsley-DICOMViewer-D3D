@@ -32,6 +32,9 @@
     <Filter Include="Source\Contents">
       <UniqueIdentifier>{39ff42aa-e37f-4d6f-9cd7-f85e9515aade}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\D3DPipeline">
+      <UniqueIdentifier>{f395c6dc-f019-412e-b67e-8e627b3ed861}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -45,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp">
       <Filter>Source\Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp">
+      <Filter>Source\D3DPipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +74,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Content\ShaderStructures.h">
       <Filter>Source\Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\D3DPipeline\Texture.h">
+      <Filter>Source\D3DPipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

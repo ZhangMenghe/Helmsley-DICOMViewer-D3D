@@ -3,6 +3,7 @@
 #include "..\Common\DeviceResources.h"
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
+#include <D3DPipeline/Texture.h>
 
 	// This sample renderer instantiates a basic rendering pipeline.
 	class Sample3DSceneRenderer
@@ -34,6 +35,10 @@
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;
 		uint32	m_indexCount;
+
+		//texture
+		ID3D11SamplerState* m_sampleState;
+		Texture* texture;
 
 		// Variables used with the rendering loop.
 		bool	m_loadingComplete;

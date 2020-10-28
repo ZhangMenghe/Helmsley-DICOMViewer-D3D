@@ -256,6 +256,8 @@
     <ClInclude Include="..\..\Source\Content\Sample3DSceneRenderer.h" />
     <ClInclude Include="..\..\Source\Content\SampleFpsTextRenderer.h" />
     <ClInclude Include="..\..\Source\Content\ShaderStructures.h" />
+    <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
+    <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="CoreWinMain.h" />
     <ClInclude Include="pch.h" />
@@ -264,6 +266,7 @@
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp" />
     <ClCompile Include="..\..\Source\Content\Sample3DSceneRenderer.cpp" />
     <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp" />
+    <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="CoreWinMain.cpp" />
     <ClCompile Include="pch.cpp">
@@ -288,12 +291,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Content\SampleVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

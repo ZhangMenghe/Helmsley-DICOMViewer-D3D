@@ -2,7 +2,7 @@
 #include "Sample3DSceneRenderer.h"
 
 #include "..\Common\DirectXHelper.h"
-
+#include <D3DPipeline/Primitive.h>
 
 using namespace DirectX;
 using namespace Windows::Foundation;
@@ -18,6 +18,33 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 	
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
+
+	//init texture
+	texture = new Texture;
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = 400;
+	texDesc.Height = 400;
+	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+	auto rowpitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	auto imageSize = texDesc.Width * texDesc.Height * 4;
+	unsigned char* m_targaData = new unsigned char[imageSize];
+	for (int i = 0; i < imageSize; i += 4) {
+		m_targaData[i] = (unsigned char)255;
+		m_targaData[i + 1] = 0;
+		m_targaData[i + 2] = 0;
+		m_targaData[i + 3] = (unsigned char)255;
+
+	}
+	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData, rowpitch, 0)) { delete texture; texture = nullptr;}
 }
 
 // Initializes view parameters when the window size changes.
@@ -116,6 +143,7 @@ void Sample3DSceneRenderer::StopTracking()
 // Renders one frame using the vertex and pixel shaders.
 void Sample3DSceneRenderer::Render()
 {
+
 	// Loading is asynchronous. Only draw geometry after it's loaded.
 	if (!m_loadingComplete)
 	{
@@ -123,6 +151,10 @@ void Sample3DSceneRenderer::Render()
 	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
+
+	// Set shader texture resource in the pixel shader.
+	ID3D11ShaderResourceView* texview = texture->GetTextureView();
+	context->PSSetShaderResources(0, 1, &texview);
 
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource1(
@@ -170,7 +202,7 @@ void Sample3DSceneRenderer::Render()
 		m_constantBuffer.GetAddressOf(),
 		nullptr,
 		nullptr
-		);
+	);
 
 	// Attach our pixel shader.
 	context->PSSetShader(
@@ -178,10 +210,12 @@ void Sample3DSceneRenderer::Render()
 		nullptr,
 		0
 		);
+	//texture sampler
+	context->PSSetSamplers(0, 1, &m_sampleState);
 
 	// Draw the objects.
 	context->DrawIndexed(
-		m_indexCount,
+		36,
 		0,
 		0
 		);
@@ -207,7 +241,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		static const D3D11_INPUT_ELEMENT_DESC vertexDesc [] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		DX::ThrowIfFailed(
@@ -231,6 +265,26 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 				&m_pixelShader
 				)
 			);
+		//texture
+		D3D11_SAMPLER_DESC samplerDesc;
+
+		// Create a texture sampler state description.
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.MipLODBias = 0.0f;
+		samplerDesc.MaxAnisotropy = 1;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		samplerDesc.BorderColor[0] = 0;
+		samplerDesc.BorderColor[1] = 0;
+		samplerDesc.BorderColor[2] = 0;
+		samplerDesc.BorderColor[3] = 0;
+		samplerDesc.MinLOD = 0;
+		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		// Create the texture sampler state.
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&samplerDesc, &m_sampleState));
 
 		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer) , D3D11_BIND_CONSTANT_BUFFER);
 		DX::ThrowIfFailed(
@@ -242,27 +296,16 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 			);
 	});
 
+
 	// Once both shaders are loaded, create the mesh.
 	auto createCubeTask = (createPSTask && createVSTask).then([this] () {
 
-		// Load mesh vertices. Each vertex has a position and a color.
-		static const VertexPositionColor cubeVertices[] = 
-		{
-			{XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
-			{XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f)},
-			{XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 1.0f, 1.0f)},
-			{XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-			{XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(1.0f, 0.0f, 1.0f)},
-			{XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
-			{XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f)},
-		};
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = {0};
-		vertexBufferData.pSysMem = cubeVertices;
+		vertexBufferData.pSysMem = cube_vertices_pos_w_tex;
 		vertexBufferData.SysMemPitch = 0;
 		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cubeVertices), D3D11_BIND_VERTEX_BUFFER);
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cube_vertices_pos_w_tex), D3D11_BIND_VERTEX_BUFFER);
 		DX::ThrowIfFailed(
 			m_deviceResources->GetD3DDevice()->CreateBuffer(
 				&vertexBufferDesc,
@@ -271,39 +314,12 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 				)
 			);
 
-		// Load mesh indices. Each trio of indices represents
-		// a triangle to be rendered on the screen.
-		// For example: 0,2,1 means that the vertices with indexes
-		// 0, 2 and 1 from the vertex buffer compose the 
-		// first triangle of this mesh.
-		static const unsigned short cubeIndices [] =
-		{
-			0,2,1, // -x
-			1,2,3,
-
-			4,5,6, // +x
-			5,7,6,
-
-			0,1,5, // -y
-			0,5,4,
-
-			2,6,7, // +y
-			2,7,3,
-
-			0,4,6, // -z
-			0,6,2,
-
-			1,3,7, // +z
-			1,7,5,
-		};
-
-		m_indexCount = ARRAYSIZE(cubeIndices);
 
 		D3D11_SUBRESOURCE_DATA indexBufferData = {0};
-		indexBufferData.pSysMem = cubeIndices;
+		indexBufferData.pSysMem = cube_indices;
 		indexBufferData.SysMemPitch = 0;
 		indexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
+		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cube_indices), D3D11_BIND_INDEX_BUFFER);
 		DX::ThrowIfFailed(
 			m_deviceResources->GetD3DDevice()->CreateBuffer(
 				&indexBufferDesc,
@@ -319,8 +335,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 	});
 }
 
-void Sample3DSceneRenderer::ReleaseDeviceDependentResources()
-{
+void Sample3DSceneRenderer::ReleaseDeviceDependentResources(){
 	m_loadingComplete = false;
 	m_vertexShader.Reset();
 	m_inputLayout.Reset();
