@@ -20,33 +20,6 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 
-	//init texture
-	/*texture = new Texture;
-	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = 400;
-	texDesc.Height = 400;
-	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-
-	auto imageSize = texDesc.Width * texDesc.Height * 4;
-	unsigned char* m_targaData = new unsigned char[imageSize];
-	for (int i = 0; i < imageSize; i += 4) {
-		m_targaData[i] = (unsigned char)255;
-		m_targaData[i + 1] = 0;
-		m_targaData[i + 2] = 0;
-		m_targaData[i + 3] = (unsigned char)255;
-
-	}
-	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete texture; texture = nullptr;}
-	*/
-	//init 3d texture
 	texture = new Texture;
 	D3D11_TEXTURE3D_DESC texDesc{
 		400,400,400,
@@ -73,7 +46,6 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	//if (m_isholographic) return;
 	Size outputSize = m_deviceResources->GetOutputSize();
-	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
 
 	float aspectRatio = outputSize.Width / outputSize.Height;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -121,6 +93,9 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
+
+	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
+	screen_quad->updateMatrix(m_constantBufferData);
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -169,10 +144,12 @@ void Sample3DSceneRenderer::Render() {
 	{
 		return;
 	}
+
 	if (!m_render_to_texture) { render_scene(); return; }
 	
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	auto tview = screen_quad->GetRenderTargetView();
+	
 	context->OMSetRenderTargets(1, &tview, m_deviceResources->GetDepthStencilView());
 	// Clear the render to texture.
 	context->ClearRenderTargetView(tview, m_clear_color);
@@ -180,7 +157,7 @@ void Sample3DSceneRenderer::Render() {
 	render_scene();
 	m_deviceResources->SetBackBufferRenderTarget();
 	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), m_clear_color);
-
+	
 	//draw to screen
 	screen_quad->Draw(context);
 }

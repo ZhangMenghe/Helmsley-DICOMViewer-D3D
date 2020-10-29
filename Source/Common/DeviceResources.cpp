@@ -647,12 +647,9 @@ void DX::DeviceResources::Present()
 }
 void DX::DeviceResources::SetBackBufferRenderTarget() {
 	// Reset render targets to the screen.
-	ID3D11RenderTargetView* const targets[1] = { m_d3dRenderTargetView.Get() };
-	m_d3dContext.Get()->OMSetRenderTargets(1, targets, m_d3dDepthStencilView.Get());
+	ID3D11RenderTargetView* const targets[1] = { restoreRenderTargetView() };
+	m_d3dContext.Get()->OMSetRenderTargets(1, targets, restoreDepthStencilView());
 }
-
-
-
 
 // This method determines the rotation between the display device's native orientation and the
 // current display orientation.
@@ -707,4 +704,22 @@ DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
 		break;
 	}
 	return rotation;
+}
+
+void DX::DeviceResources::saveCurrentTargetViews(ID3D11RenderTargetView* render_target, ID3D11DepthStencilView* depth_target){
+	m_renderTargetViewStack.push(render_target);
+	m_depthStencilViewStack.push(depth_target);
+}
+
+ID3D11RenderTargetView* DX::DeviceResources::restoreRenderTargetView() {
+	if (m_renderTargetViewStack.empty())return m_d3dRenderTargetView.Get();
+	auto v = m_renderTargetViewStack.top();
+	m_renderTargetViewStack.pop();
+	return v;
+}
+ID3D11DepthStencilView* DX::DeviceResources::restoreDepthStencilView() {
+	if (m_depthStencilViewStack.empty())return m_d3dDepthStencilView.Get();
+	auto v = m_depthStencilViewStack.top();
+	m_depthStencilViewStack.pop();
+	return v;
 }

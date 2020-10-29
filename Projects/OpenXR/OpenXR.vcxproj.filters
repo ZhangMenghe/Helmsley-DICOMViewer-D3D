@@ -35,6 +35,9 @@
     <Filter Include="Source\OXRs">
       <UniqueIdentifier>{6f0a2af9-cf4d-4de6-981d-59c0fb9412c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\D3DPipeline">
+      <UniqueIdentifier>{978993e8-acf6-4afd-b20b-7c50237b595d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -51,6 +54,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp">
       <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\D3DPipeline\RenderTexture.cpp">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Content\quadRenderer.cpp">
+      <Filter>Source\Contents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +90,18 @@
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h">
       <Filter>Source\OXRs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\D3DPipeline\RenderTexture.h">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\D3DPipeline\Texture.h">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Content\quadRenderer.h">
+      <Filter>Source\Contents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -89,12 +113,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Source\Content\SamplePixelShader.hlsl">
       <Filter>Source\Contents</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Content\SampleVertexShader.hlsl">
+      <Filter>Source\Contents</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Content\QuadPixelShader.hlsl">
+      <Filter>Source\Contents</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Content\QuadVertexShader.hlsl">
       <Filter>Source\Contents</Filter>
     </FxCompile>
   </ItemGroup>

@@ -566,6 +566,7 @@ void OXRManager::d3d_render_layer(XrCompositionLayerProjectionView& view, swapch
 	m_d3dContext.Get()->ClearRenderTargetView(surface.target_view, clear);
 	m_d3dContext.Get()->ClearDepthStencilView(surface.depth_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_d3dContext.Get()->OMSetRenderTargets(1, &surface.target_view, surface.depth_view);
+	saveCurrentTargetViews(surface.target_view, surface.depth_view);
 }
 void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
 	if (xr_session_state != XR_SESSION_STATE_FOCUSED)

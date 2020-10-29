@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include <stack>
 namespace DX
 {
 	// Provides an interface for an application that owns DeviceResources to be notified of the device being lost or created.
@@ -26,6 +26,12 @@ namespace DX
 		void Present();
 		void SetBackBufferRenderTarget();
 
+		void saveCurrentTargetViews(ID3D11RenderTargetView* render_target, ID3D11DepthStencilView* depth_target);
+		ID3D11DepthStencilView*		GetDepthStencilView() const {
+			if (m_depthStencilViewStack.empty())	return m_d3dDepthStencilView.Get();
+			return m_depthStencilViewStack.top();
+		}
+
 		// The size of the render target, in pixels.
 		Windows::Foundation::Size	GetOutputSize() const					{ return m_outputSize; }
 
@@ -39,7 +45,7 @@ namespace DX
 		IDXGISwapChain3*			GetSwapChain() const					{ return m_swapChain.Get(); }
 		D3D_FEATURE_LEVEL			GetDeviceFeatureLevel() const			{ return m_d3dFeatureLevel; }
 		ID3D11RenderTargetView1*	GetBackBufferRenderTargetView() const	{ return m_d3dRenderTargetView.Get(); }
-		ID3D11DepthStencilView*		GetDepthStencilView() const				{ return m_d3dDepthStencilView.Get(); }
+		//ID3D11DepthStencilView*		GetDepthStencilView() const				{ return m_d3dDepthStencilView.Get(); }
 		D3D11_VIEWPORT				GetScreenViewport() const				{ return m_screenViewport; }
 		DirectX::XMFLOAT4X4			GetOrientationTransform3D() const		{ return m_orientationTransform3D; }
 
@@ -100,5 +106,11 @@ namespace DX
 
 		// The IDeviceNotify can be held directly as it owns the DeviceResources.
 		IDeviceNotify* m_deviceNotify;
+
+		std::stack<ID3D11RenderTargetView*> m_renderTargetViewStack;
+		std::stack<ID3D11DepthStencilView*> m_depthStencilViewStack;
+
+		ID3D11RenderTargetView* restoreRenderTargetView();
+		ID3D11DepthStencilView* restoreDepthStencilView();
 	};
 }

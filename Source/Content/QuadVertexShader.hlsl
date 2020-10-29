@@ -23,8 +23,13 @@ struct PixelShaderInput
 // Simple shader to do vertex processing on the GPU.
 PixelShaderInput main(VertexShaderInput input){
 	PixelShaderInput output;
-	float4 pos = float4(input.pos, 0.5f, 1.0f);
+	float4 pos = float4(input.pos,0.5f, 1.0f);
+	//output.pos = pos;
+
+	//pos = mul(pos, view);
+	//pos = mul(pos, projection);
 	output.pos = pos;
+
 	output.tex = input.tex;
 
 	return output;
