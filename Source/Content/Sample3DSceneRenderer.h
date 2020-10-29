@@ -50,7 +50,7 @@
 		bool	m_render_to_texture = true;
 
 		const float m_clear_color[4] = {
-			1.f,1.f,1.f,1.f
+			0.f,0.f,0.f,0.f
 		};
 
 		void Rotate(float radians);
