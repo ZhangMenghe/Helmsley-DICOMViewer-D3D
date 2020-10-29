@@ -24,6 +24,7 @@ namespace DX
 		void RegisterDeviceNotify(IDeviceNotify* deviceNotify);
 		void Trim();
 		void Present();
+		void SetBackBufferRenderTarget();
 
 		// The size of the render target, in pixels.
 		Windows::Foundation::Size	GetOutputSize() const					{ return m_outputSize; }

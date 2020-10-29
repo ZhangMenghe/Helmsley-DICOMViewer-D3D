@@ -20,6 +20,7 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc) {
 	}
 	return true;
 }
+
 bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc) {
 	HRESULT hr = device->CreateTexture3D(&texDesc, nullptr, &mTex3D);
 	if (FAILED(hr)) {
@@ -59,6 +60,12 @@ bool Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context,
 	setTexData(context, data, row_pitch, depth_pitch);
 	return true;
 }
+bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc, D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc) {
+	if (!Initialize(device, texDesc)) return false;
+	auto result = device->CreateRenderTargetView(mTex2D, &renderTargetViewDesc, &m_renderTargetView);
+	return !FAILED(result);
+}
+
 void Texture::setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch){
 	switch (mDim) {
 	case Texture::ONE_DIM:

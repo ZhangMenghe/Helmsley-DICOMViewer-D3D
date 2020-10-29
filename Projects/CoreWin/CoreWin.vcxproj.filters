@@ -52,6 +52,9 @@
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp">
       <Filter>Source\D3DPipeline</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Content\quadRenderer.cpp">
+      <Filter>Source\Contents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -81,6 +84,9 @@
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h">
       <Filter>Source\D3DPipeline</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Content\quadRenderer.h">
+      <Filter>Source\Contents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -95,6 +101,12 @@
       <Filter>Source\Contents</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Content\SampleVertexShader.hlsl">
+      <Filter>Source\Contents</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Content\QuadPixelShader.hlsl">
+      <Filter>Source\Contents</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Content\QuadVertexShader.hlsl">
       <Filter>Source\Contents</Filter>
     </FxCompile>
   </ItemGroup>

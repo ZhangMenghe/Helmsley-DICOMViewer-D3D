@@ -15,7 +15,8 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 	m_indexCount(0),
 	m_tracking(false),
 	m_deviceResources(deviceResources){
-	
+	screen_quad = new quadRenderer(m_deviceResources->GetD3DDevice());
+
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 
@@ -71,8 +72,9 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 // Initializes view parameters when the window size changes.
 void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	//if (m_isholographic) return;
-
 	Size outputSize = m_deviceResources->GetOutputSize();
+	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
+
 	float aspectRatio = outputSize.Width / outputSize.Height;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
@@ -162,15 +164,27 @@ void Sample3DSceneRenderer::StopTracking()
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void Sample3DSceneRenderer::Render()
-{
-
+void Sample3DSceneRenderer::Render() {
 	// Loading is asynchronous. Only draw geometry after it's loaded.
 	if (!m_loadingComplete)
 	{
 		return;
 	}
+	if (!m_render_to_texture) { render_scene(); return; }
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	auto tview = screen_quad->GetRenderTargetView();
+	context->OMSetRenderTargets(1, &tview, m_deviceResources->GetDepthStencilView());
+	// Clear the render to texture.
+	context->ClearRenderTargetView(tview, m_clear_color);
+	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	render_scene();
+	m_deviceResources->SetBackBufferRenderTarget();
+	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), m_clear_color);
 
+	//draw to screen
+	screen_quad->Draw(context);
+}
+void Sample3DSceneRenderer::render_scene(){
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	// Set shader texture resource in the pixel shader.

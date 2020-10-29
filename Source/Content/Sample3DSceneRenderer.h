@@ -4,7 +4,7 @@
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
 #include <D3DPipeline/Texture.h>
-
+#include "quadRenderer.h"
 	// This sample renderer instantiates a basic rendering pipeline.
 	class Sample3DSceneRenderer
 	{
@@ -21,6 +21,8 @@
 		bool IsTracking() { return m_tracking; }
 
 	private:
+		quadRenderer* screen_quad;
+
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
@@ -45,7 +47,14 @@
 		float	m_degreesPerSecond;
 		bool	m_tracking;
 		bool	m_isholographic;
+		bool	m_render_to_texture = true;
+
+		const float m_clear_color[4] = {
+			1.f,1.f,1.f,1.f
+		};
 
 		void Rotate(float radians);
+		void render_scene();
+
 	};
 

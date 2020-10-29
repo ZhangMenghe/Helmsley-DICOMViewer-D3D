@@ -645,6 +645,14 @@ void DX::DeviceResources::Present()
 		DX::ThrowIfFailed(hr);
 	}
 }
+void DX::DeviceResources::SetBackBufferRenderTarget() {
+	// Reset render targets to the screen.
+	ID3D11RenderTargetView* const targets[1] = { m_d3dRenderTargetView.Get() };
+	m_d3dContext.Get()->OMSetRenderTargets(1, targets, m_d3dDepthStencilView.Get());
+}
+
+
+
 
 // This method determines the rotation between the display device's native orientation and the
 // current display orientation.

@@ -14,3 +14,9 @@
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 color;
 	};
+	// Used to send per-vertex data to the vertex shader.
+	struct VertexPosTex2d
+	{
+		DirectX::XMFLOAT2 pos;
+		DirectX::XMFLOAT2 tex;
+	};
