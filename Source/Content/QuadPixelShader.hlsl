@@ -10,7 +10,7 @@ struct PixelShaderInput
 // A pass-through function for the (interpolated) color data.
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	//return float4(1.0, .0,.0f, 1.0f);
+	//return float4(input.tex.x,.0,.0f, 1.0f);
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	return shaderTexture.Sample(SampleType, input.tex);
 }

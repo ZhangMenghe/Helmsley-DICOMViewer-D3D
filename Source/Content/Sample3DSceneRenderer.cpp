@@ -125,8 +125,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
 void Sample3DSceneRenderer::Update(DX::StepTimer const& timer) {
-	if (!m_tracking)
-	{
+	if (!m_tracking){
 		// Convert degrees to radians, then convert seconds to rotation angle
 		float radiansPerSecond = XMConvertToRadians(m_degreesPerSecond);
 		double totalRotation = timer.GetTotalSeconds() * radiansPerSecond;
@@ -171,6 +170,7 @@ void Sample3DSceneRenderer::Render() {
 		return;
 	}
 	if (!m_render_to_texture) { render_scene(); return; }
+	
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	auto tview = screen_quad->GetRenderTargetView();
 	context->OMSetRenderTargets(1, &tview, m_deviceResources->GetDepthStencilView());
