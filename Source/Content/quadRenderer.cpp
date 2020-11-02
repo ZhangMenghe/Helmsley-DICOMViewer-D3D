@@ -120,7 +120,7 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = width;
 	texDesc.Height = height;
-	texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;

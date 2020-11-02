@@ -20,11 +20,15 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 
+}
+void Sample3DSceneRenderer::init_texture() {
+
+	/*uncomment this to use 3d texture
 	texture = new Texture;
 	D3D11_TEXTURE3D_DESC texDesc{
 		400,400,400,
 		1,
-		DXGI_FORMAT_B8G8R8A8_UNORM,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
 		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 		0,
@@ -40,13 +44,75 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 		m_targaData[i + 3] = (unsigned char)255;
 	}
 	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete texture; texture = nullptr; }
+	*/
+	if (tex2d_srv_from_uav != nullptr) { delete tex2d_srv_from_uav; tex2d_srv_from_uav = nullptr; }
+	tex2d_srv_from_uav = new Texture;
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = screen_width;
+	texDesc.Height = screen_height;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+	auto imageSize = texDesc.Width * texDesc.Height * 4;
+	unsigned char* m_targaData = new unsigned char[imageSize];
+	for (int i = 0; i < imageSize; i += 4) {
+		m_targaData[i] = (unsigned char)255;
+		m_targaData[i + 1] = 0;
+		m_targaData[i + 2] = 0;
+		m_targaData[i + 3] = (unsigned char)255;
+	}
+	if (!tex2d_srv_from_uav->Initialize(m_deviceResources->GetD3DDevice(),
+		m_deviceResources->GetD3DDeviceContext(),
+		texDesc, m_targaData)) {
+		delete tex2d_srv_from_uav;
+		tex2d_srv_from_uav = nullptr;
+	}
+
+
+	if (m_comp_tex_d3d != nullptr) { delete m_comp_tex_d3d; m_comp_tex_d3d = nullptr; }
+	if (m_textureUAV != nullptr) { delete m_textureUAV; m_textureUAV = nullptr; }
+
+	//Basic random texture which is shader resource and UAV
+	D3D11_TEXTURE2D_DESC texDesc2 = {};
+	texDesc2.Width = screen_width;
+	texDesc2.Height = screen_height;
+	texDesc2.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texDesc2.Usage = D3D11_USAGE_DEFAULT;
+	texDesc2.MipLevels = 1;
+	texDesc2.ArraySize = 1;
+	texDesc2.SampleDesc.Count = 1;
+	texDesc2.SampleDesc.Quality = 0;
+	texDesc2.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+	texDesc2.CPUAccessFlags = 0;
+	texDesc2.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+	DX::ThrowIfFailed(
+		m_deviceResources->GetD3DDevice()->CreateTexture2D(&texDesc2, nullptr, &m_comp_tex_d3d)
+	);
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	uavDesc.Format = texDesc2.Format;
+	uavDesc.Texture2D.MipSlice = 0;
+	DX::ThrowIfFailed(
+		m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV)
+	);
 }
 
 // Initializes view parameters when the window size changes.
 void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	//if (m_isholographic) return;
 	Size outputSize = m_deviceResources->GetOutputSize();
-
+	if (outputSize.Width == .0) return;
+	screen_width = outputSize.Width; screen_height = outputSize.Height;
+	init_texture();
 	float aspectRatio = outputSize.Width / outputSize.Height;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
@@ -170,6 +236,23 @@ void Sample3DSceneRenderer::render_scene(){
 		context->PSSetShaderResources(0, 1, &texview);
 	}
 
+	//compute shader stuff
+	context->CSSetShader(m_computeShader, nullptr, 0);
+	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
+	context->Dispatch(screen_width / 8, screen_height / 8, 1);
+	context->CopyResource(tex2d_srv_from_uav->GetTexture2D(), m_comp_tex_d3d);
+	//unbind UAV
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+	// Disable Compute Shader
+	context->CSSetShader(nullptr, nullptr, 0);
+
+	if (tex2d_srv_from_uav != nullptr) {
+		ID3D11ShaderResourceView* texview = tex2d_srv_from_uav->GetTextureView();
+		context->PSSetShaderResources(0, 1, &texview);
+	}
+
+
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource1(
 		m_constantBuffer.Get(),
@@ -240,6 +323,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(L"SampleVertexShader.cso");
 	auto loadPSTask = DX::ReadDataAsync(L"SamplePixelShader.cso");
+	auto loadCSTask = DX::ReadDataAsync(L"NaiveComputeShader.cso");
 
 	// After the vertex shader file is loaded, create the shader and input layout.
 	auto createVSTask = loadVSTask.then([this](const std::vector<byte>& fileData) {
@@ -310,11 +394,21 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 			);
 	});
 
+	// After the vertex shader file is loaded, create the shader and input layout.
+	auto createCSTask = loadCSTask.then([this](const std::vector<byte>& fileData) {
+		DX::ThrowIfFailed(
+			m_deviceResources->GetD3DDevice()->CreateComputeShader(
+				&fileData[0],
+				fileData.size(),
+				nullptr,
+				&m_computeShader
+			)
+		);
+
+	});
 
 	// Once both shaders are loaded, create the mesh.
-	auto createCubeTask = (createPSTask && createVSTask).then([this] () {
-
-
+	auto createCubeTask = (createPSTask && createVSTask && createCSTask).then([this] () {
 		D3D11_SUBRESOURCE_DATA vertexBufferData = {0};
 		vertexBufferData.pSysMem = cube_vertices_pos_w_tex;
 		vertexBufferData.SysMemPitch = 0;
@@ -327,7 +421,6 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 				&m_vertexBuffer
 				)
 			);
-
 
 		D3D11_SUBRESOURCE_DATA indexBufferData = {0};
 		indexBufferData.pSysMem = cube_indices;

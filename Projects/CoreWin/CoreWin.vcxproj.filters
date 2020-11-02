@@ -35,6 +35,9 @@
     <Filter Include="Source\D3DPipeline">
       <UniqueIdentifier>{f395c6dc-f019-412e-b67e-8e627b3ed861}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Shaders">
+      <UniqueIdentifier>{3c0abe22-a062-4e9e-8f54-0a47d4712508}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -108,6 +111,9 @@
     </FxCompile>
     <FxCompile Include="..\..\Source\Content\QuadVertexShader.hlsl">
       <Filter>Source\Contents</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
+      <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
