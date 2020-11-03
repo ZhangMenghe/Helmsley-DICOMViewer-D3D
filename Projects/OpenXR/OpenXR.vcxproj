@@ -226,6 +226,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -263,6 +264,7 @@
     <ClInclude Include="..\..\Source\D3DPipeline\RenderTexture.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
+    <ClInclude Include="..\..\Source\Renderers\baseRenderer.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="OpenXRMain.h" />
     <ClInclude Include="pch.h" />
@@ -275,6 +277,7 @@
     <ClCompile Include="..\..\Source\D3DPipeline\RenderTexture.cpp" />
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
+    <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="OpenXRMain.cpp" />
     <ClCompile Include="pch.cpp">

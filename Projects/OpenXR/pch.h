@@ -19,3 +19,6 @@
 #define XR_USE_GRAPHICS_API_D3D11
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
+
+//winrt stuff
+#include <winrt/base.h>

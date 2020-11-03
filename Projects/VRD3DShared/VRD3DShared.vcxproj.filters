@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="..\..\SharedSrc\Common\DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SharedSrc\Content\quadRenderer.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SharedSrc\Content\Sample3DSceneRenderer.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SharedSrc\Content\SampleFpsTextRenderer.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SharedSrc\D3DPipeline\RenderTexture.cpp">
+      <Filter>D3DPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SharedSrc\D3DPipeline\Texture.cpp">
+      <Filter>D3DPipeline</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\..\SharedSrc\Common\DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\Common\DirectXHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\Common\StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\Content\quadRenderer.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\Content\Sample3DSceneRenderer.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\Content\SampleFpsTextRenderer.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\Content\ShaderStructures.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\D3DPipeline\Primitive.h">
+      <Filter>D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\D3DPipeline\RenderTexture.h">
+      <Filter>D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SharedSrc\D3DPipeline\Texture.h">
+      <Filter>D3DPipeline</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{4d58d6f0-d858-4eb1-b531-8e93de7ed286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="D3DPipeline">
+      <UniqueIdentifier>{93e8f188-c661-4ff5-98b0-e5729f0d5499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents">
+      <UniqueIdentifier>{bb7c6dcc-65d0-4d8d-9055-169b02ee04b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{d0778eb8-ebd0-4230-924e-e5d53477c798}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\SharedSrc\Shaders\NaiveComputeShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\SharedSrc\Shaders\QuadPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\SharedSrc\Shaders\QuadVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\SharedSrc\Shaders\SamplePixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\SharedSrc\Shaders\SampleVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

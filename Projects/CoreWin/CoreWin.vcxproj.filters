@@ -38,6 +38,9 @@
     <Filter Include="Source\Shaders">
       <UniqueIdentifier>{3c0abe22-a062-4e9e-8f54-0a47d4712508}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Renderers">
+      <UniqueIdentifier>{55a5d8db-a373-4327-823a-4d9566934af7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -57,6 +60,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Content\quadRenderer.cpp">
       <Filter>Source\Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Content\quadRenderer.h">
       <Filter>Source\Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\baseRenderer.h">
+      <Filter>Source\Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
