@@ -63,20 +63,6 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 
 // Renders one frame using the vertex and pixel shaders.
 void baseRenderer::Draw(ID3D11DeviceContext* context) {
-	// Loading is asynchronous. Only draw geometry after it's loaded.
-	if (!m_loadingComplete){return;}
-
-	if(m_constantBuffer != nullptr)
-	// Prepare the constant buffer to send it to the graphics device.
-	context->UpdateSubresource(
-		m_constantBuffer.get(),
-		0,
-		NULL,
-		&m_constantBufferData,
-		0,
-		0
-		);
-
 	context->IASetVertexBuffers(
 		0,
 		1,

@@ -64,6 +64,9 @@
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -99,6 +102,9 @@
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -122,6 +128,12 @@
       <Filter>Source\Contents</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

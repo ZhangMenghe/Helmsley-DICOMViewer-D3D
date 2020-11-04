@@ -39,6 +39,17 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 
 // Renders one frame using the vertex and pixel shaders.
 void quadRenderer::Draw(ID3D11DeviceContext* context) {
+	if (!m_loadingComplete) return; 
+	if (m_constantBuffer != nullptr)
+		// Prepare the constant buffer to send it to the graphics device.
+		context->UpdateSubresource(
+			m_constantBuffer.get(),
+			0,
+			nullptr,
+			&m_constantBufferData,
+			0,
+			0
+		);
 	baseRenderer::Draw(context);
 }
 void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -70,41 +81,41 @@ void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<
 }
 void quadRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the pixel shader file is loaded, create the shader and constant buffer.
-		DX::ThrowIfFailed(
-			device->CreatePixelShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				m_pixelShader.put()
-			)
-		);
-		//texture
-		D3D11_SAMPLER_DESC samplerDesc;
+	DX::ThrowIfFailed(
+		device->CreatePixelShader(
+			&fileData[0],
+			fileData.size(),
+			nullptr,
+			m_pixelShader.put()
+		)
+	);
+	//texture
+	D3D11_SAMPLER_DESC samplerDesc;
 
-		// Create a texture sampler state description.
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.MipLODBias = 0.0f;
-		samplerDesc.MaxAnisotropy = 1;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		samplerDesc.BorderColor[0] = 0;
-		samplerDesc.BorderColor[1] = 0;
-		samplerDesc.BorderColor[2] = 0;
-		samplerDesc.BorderColor[3] = 0;
-		samplerDesc.MinLOD = 0;
-		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	// Create a texture sampler state description.
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		// Create the texture sampler state.
-		DX::ThrowIfFailed(device->CreateSamplerState(&samplerDesc, &m_sampleState));
+	// Create the texture sampler state.
+	DX::ThrowIfFailed(device->CreateSamplerState(&samplerDesc, &m_sampleState));
 
-		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-		DX::ThrowIfFailed(
-			device->CreateBuffer(
-				&constantBufferDesc,
-				nullptr,
-				m_constantBuffer.put()
-			)
-		);
+	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	DX::ThrowIfFailed(
+		device->CreateBuffer(
+			&constantBufferDesc,
+			nullptr,
+			m_constantBuffer.put()
+		)
+	);
 }

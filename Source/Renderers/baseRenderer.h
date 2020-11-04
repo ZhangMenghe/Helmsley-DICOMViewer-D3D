@@ -8,10 +8,6 @@ public:
 	baseRenderer(ID3D11Device* device,
 		const wchar_t* vname, const wchar_t* pname,
 		const float* vdata, const unsigned short* idata);
-	void updateMatrix(ModelViewProjectionConstantBuffer buff_data) {
-		m_constantBufferData.projection = buff_data.projection;
-		m_constantBufferData.view = buff_data.view;
-	}
 	virtual void Draw(ID3D11DeviceContext* context);
 	virtual void Clear() {};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
@@ -28,8 +24,6 @@ protected:
 	//texture
 	ID3D11SamplerState* m_sampleState = nullptr;
 	Texture* texture = nullptr;
-
-	ModelViewProjectionConstantBuffer	m_constantBufferData;
 
 	const float m_clear_color[4] = {
 		1.f,1.f,1.f,1.f
