@@ -53,7 +53,7 @@
 		float	m_degreesPerSecond;
 		bool	m_tracking;
 		bool	m_isholographic;
-		bool	m_render_to_texture = false;
+		bool	m_render_to_texture = true;
 
 		const float m_clear_color[4] = {
 			0.f,0.f,0.f,0.f

@@ -6,7 +6,7 @@
 using namespace DirectX;
 quadRenderer::quadRenderer(ID3D11Device* device)
 :baseRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso",
-	quad_vertices_pos_w_tex, quad_indices){
+	quad_vertices_pos_w_tex, quad_indices,16,6){
 }
 bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height){
 	texture = new Texture;
@@ -78,6 +78,8 @@ void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<
 			m_inputLayout.put()
 		)
 	);
+	m_vertex_stride = sizeof(VertexPosTex2d);
+	m_vertex_offset = 0;
 }
 void quadRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the pixel shader file is loaded, create the shader and constant buffer.

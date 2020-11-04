@@ -6,8 +6,11 @@
 using namespace DirectX;
 baseRenderer::baseRenderer(ID3D11Device* device,
 	const wchar_t* vname, const wchar_t* pname,
-	const float* vdata, const unsigned short* idata)
-	:m_loadingComplete(false) {
+	const float* vdata, const unsigned short* idata,
+	UINT vertice_num, UINT idx_num)
+	:m_loadingComplete(false),
+	 m_vertice_count(vertice_num),
+	m_index_count(idx_num){
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(vname);
 	auto loadPSTask = DX::ReadDataAsync(pname);
@@ -30,7 +33,7 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 		vertexBufferData.pSysMem = vdata;
 		vertexBufferData.SysMemPitch = 0;
 		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(vdata), D3D11_BIND_VERTEX_BUFFER);
+		CD3D11_BUFFER_DESC vertexBufferDesc(m_vertice_count * sizeof(float), D3D11_BIND_VERTEX_BUFFER);
 		winrt::check_hresult(
 			device->CreateBuffer(
 				&vertexBufferDesc,
@@ -39,13 +42,11 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 			)
 		);
 
-		m_index_count = sizeof(idata) / sizeof(uint16);
-
 		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
 		indexBufferData.pSysMem = idata;
 		indexBufferData.SysMemPitch = 0;
 		indexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(idata), D3D11_BIND_INDEX_BUFFER);
+		CD3D11_BUFFER_DESC indexBufferDesc(m_index_count * sizeof(unsigned short), D3D11_BIND_INDEX_BUFFER);
 		winrt::check_hresult(
 			device->CreateBuffer(
 				&indexBufferDesc,
@@ -63,10 +64,11 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 
 // Renders one frame using the vertex and pixel shaders.
 void baseRenderer::Draw(ID3D11DeviceContext* context) {
+	ID3D11Buffer* tmp_vertex_buff{ m_vertexBuffer.get() };
 	context->IASetVertexBuffers(
 		0,
 		1,
-		m_vertexBuffer.put(),
+		&tmp_vertex_buff,
 		&m_vertex_stride,
 		&m_vertex_offset
 		);
@@ -87,7 +89,10 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 	if(m_pixelShader!=nullptr) context->PSSetShader(m_pixelShader.get(),nullptr,0);
 	
 	// Send the constant buffer to the graphics device.
-	if (m_constantBuffer != nullptr) context->VSSetConstantBuffers(0, 1, m_constantBuffer.put());
+	if (m_constantBuffer != nullptr) {
+		ID3D11Buffer* constantBufferNeverChanges{ m_constantBuffer.get() };
+		context->VSSetConstantBuffers(0, 1, &constantBufferNeverChanges);
+	}
 
 	//texture sampler
 	if(m_sampleState!=nullptr) context->PSSetSamplers(0, 1, &m_sampleState);

@@ -7,7 +7,8 @@ class baseRenderer {
 public:
 	baseRenderer(ID3D11Device* device,
 		const wchar_t* vname, const wchar_t* pname,
-		const float* vdata, const unsigned short* idata);
+		const float* vdata, const unsigned short* idata,
+		UINT vertice_num, UINT idx_num);
 	virtual void Draw(ID3D11DeviceContext* context);
 	virtual void Clear() {};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
@@ -29,7 +30,8 @@ protected:
 		1.f,1.f,1.f,1.f
 	};
 	bool m_loadingComplete;
-	UINT m_vertex_stride = 0, m_vertex_offset = 0, m_index_count;
+	UINT m_vertex_stride = 0, m_vertex_offset = 0;
+	UINT m_vertice_count, m_index_count;
 
 
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;

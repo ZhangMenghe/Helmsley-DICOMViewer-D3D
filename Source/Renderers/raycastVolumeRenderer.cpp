@@ -6,7 +6,8 @@ using namespace DirectX;
 raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
 	:baseRenderer(device, 
 		L"raycastVertexShader.cso", L"raycastPixelShader.cso",
-		cube_vertices_pos_w_tex, cube_indices
+		cube_vertices_pos_w_tex, cube_indices,
+		48, 36
 	)
 {
 

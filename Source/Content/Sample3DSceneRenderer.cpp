@@ -210,7 +210,6 @@ void Sample3DSceneRenderer::Render() {
 	{
 		return;
 	}
-
 	if (!m_render_to_texture) { render_scene(); return; }
 	
 	auto context = m_deviceResources->GetD3DDeviceContext();
@@ -225,7 +224,7 @@ void Sample3DSceneRenderer::Render() {
 	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), m_clear_color);
 	
 	//draw to screen
-	screen_quad->Draw(context);
+	screen_quad->Draw(m_deviceResources->GetD3DDeviceContext());
 }
 void Sample3DSceneRenderer::render_scene(){
 	auto context = m_deviceResources->GetD3DDeviceContext();
