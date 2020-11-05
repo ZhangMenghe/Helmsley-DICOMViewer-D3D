@@ -8,12 +8,14 @@ struct raycastConstantBuffer
 {
 	DirectX::XMFLOAT4X4 uModelMat;
 	DirectX::XMFLOAT4X4 uViewProjMat;
-	DirectX::XMFLOAT3 uCamPosInObjSpace;
+	//DirectX::XMFLOAT3 uCamPosInObjSpace;
 };
 
 class raycastVolumeRenderer:public baseRenderer {
 public:
 	raycastVolumeRenderer(ID3D11Device* device);
+	void updateMatrix(allConstantBuffer buff_data);
+
 	void Draw(ID3D11DeviceContext* context);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);

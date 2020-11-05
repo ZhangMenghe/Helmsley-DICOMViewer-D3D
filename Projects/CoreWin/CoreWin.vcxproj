@@ -262,6 +262,7 @@
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h" />
+    <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="CoreWinMain.h" />
     <ClInclude Include="pch.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp" />
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp" />
+    <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="CoreWinMain.cpp" />
     <ClCompile Include="pch.cpp">

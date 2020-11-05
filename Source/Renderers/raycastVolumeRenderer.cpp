@@ -12,6 +12,11 @@ raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
 {
 
 }
+void raycastVolumeRenderer::updateMatrix(allConstantBuffer buff_data) {
+	XMMATRIX projMat = XMLoadFloat4x4(&buff_data.projection);
+	XMMATRIX viewMat = XMLoadFloat4x4(&buff_data.view);
+	XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, XMMatrixMultiply(projMat, viewMat));
+}
 void raycastVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	winrt::check_hresult(
 		device->CreateVertexShader(
@@ -37,6 +42,8 @@ void raycastVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std
 			m_inputLayout.put()
 		)
 	);
+	m_vertex_stride = sizeof(VertexPositionColor);
+	m_vertex_offset = 0;
 }
 void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	winrt::check_hresult(

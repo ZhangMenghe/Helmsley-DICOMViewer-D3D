@@ -64,6 +64,9 @@
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -97,6 +100,9 @@
       <Filter>Source\Contents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
   </ItemGroup>

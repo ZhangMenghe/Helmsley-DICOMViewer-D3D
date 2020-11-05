@@ -9,7 +9,7 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 	const float* vdata, const unsigned short* idata,
 	UINT vertice_num, UINT idx_num)
 	:m_loadingComplete(false),
-	 m_vertice_count(vertice_num),
+	m_vertice_count(vertice_num),
 	m_index_count(idx_num){
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(vname);

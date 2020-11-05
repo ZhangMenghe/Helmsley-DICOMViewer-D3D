@@ -31,8 +31,8 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 	view_desc.Texture2D.MipSlice = 0;
 	if (!texture->Initialize(device, texDesc, view_desc)) { delete texture; texture = nullptr; return false; }
 	
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	context->Map(texture->GetTexture2D(), 0, D3D11_MAP_READ, 0, &mappedResource);
+	//D3D11_MAPPED_SUBRESOURCE mappedResource;
+	//context->Map(texture->GetTexture2D(), 0, D3D11_MAP_READ, 0, &mappedResource);
 
 	return true;
 }

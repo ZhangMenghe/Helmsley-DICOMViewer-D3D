@@ -9,13 +9,10 @@ using namespace Windows::Foundation;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, bool is_holographic) :
-	m_isholographic(is_holographic),
-	m_loadingComplete(false),
-	m_degreesPerSecond(45),
-	m_indexCount(0),
 	m_tracking(false),
 	m_deviceResources(deviceResources){
 	screen_quad = new quadRenderer(m_deviceResources->GetD3DDevice());
+	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
 
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
@@ -45,7 +42,7 @@ void Sample3DSceneRenderer::init_texture() {
 	}
 	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete texture; texture = nullptr; }
 	*/
-	if (tex2d_srv_from_uav != nullptr) { delete tex2d_srv_from_uav; tex2d_srv_from_uav = nullptr; }
+	/*if (tex2d_srv_from_uav != nullptr) { delete tex2d_srv_from_uav; tex2d_srv_from_uav = nullptr; }
 	tex2d_srv_from_uav = new Texture;
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = screen_width;
@@ -104,11 +101,11 @@ void Sample3DSceneRenderer::init_texture() {
 	DX::ThrowIfFailed(
 		m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV)
 	);
+	*/
 }
 
 // Initializes view parameters when the window size changes.
 void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
-	//if (m_isholographic) return;
 	Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0) return;
 	screen_width = outputSize.Width; screen_height = outputSize.Height;
@@ -149,7 +146,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	XMMATRIX orientationMatrix = XMLoadFloat4x4(&orientation);
 
 	XMStoreFloat4x4(
-		&m_constantBufferData.projection,
+		&m_all_buff_Data.projection,
 		XMMatrixTranspose(perspectiveMatrix * orientationMatrix)
 		);
 
@@ -158,10 +155,12 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
+	XMStoreFloat4x4(&m_all_buff_Data.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
 
 	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
-	screen_quad->updateMatrix(m_constantBufferData);
+	screen_quad->updateMatrix(m_all_buff_Data);
+	//todo camera pos
+	raycast_renderer->updateMatrix(m_all_buff_Data);
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -177,10 +176,9 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer) {
 }
 
 // Rotate the 3D cube model a set amount of radians.
-void Sample3DSceneRenderer::Rotate(float radians)
-{
+void Sample3DSceneRenderer::Rotate(float radians){
 	// Prepare to pass the updated model matrix to the shader
-	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+	XMStoreFloat4x4(&m_all_buff_Data.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
 }
 
 void Sample3DSceneRenderer::StartTracking()
@@ -205,6 +203,7 @@ void Sample3DSceneRenderer::StopTracking()
 
 // Renders one frame using the vertex and pixel shaders.
 void Sample3DSceneRenderer::Render() {
+	/*
 	// Loading is asynchronous. Only draw geometry after it's loaded.
 	if (!m_loadingComplete)
 	{
@@ -224,10 +223,14 @@ void Sample3DSceneRenderer::Render() {
 	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), m_clear_color);
 	
 	//draw to screen
-	screen_quad->Draw(m_deviceResources->GetD3DDeviceContext());
+	*/
+	//screen_quad->Draw(m_deviceResources->GetD3DDeviceContext());
+	render_scene();
 }
 void Sample3DSceneRenderer::render_scene(){
-	auto context = m_deviceResources->GetD3DDeviceContext();
+	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext());
+	/*
+	/*auto context = m_deviceResources->GetD3DDeviceContext();
 
 	// Set shader texture resource in the pixel shader.
 	if (texture != nullptr) {
@@ -315,10 +318,12 @@ void Sample3DSceneRenderer::render_scene(){
 		0,
 		0
 		);
+		*/
 }
 
 void Sample3DSceneRenderer::CreateDeviceDependentResources()
 {
+	/*
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(L"SampleVertexShader.cso");
 	auto loadPSTask = DX::ReadDataAsync(L"SamplePixelShader.cso");
@@ -439,14 +444,10 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 	createCubeTask.then([this] () {
 		m_loadingComplete = true;
 	});
+	*/
 }
 
 void Sample3DSceneRenderer::ReleaseDeviceDependentResources(){
-	m_loadingComplete = false;
-	m_vertexShader.Reset();
-	m_inputLayout.Reset();
-	m_pixelShader.Reset();
-	m_constantBuffer.Reset();
-	m_vertexBuffer.Reset();
-	m_indexBuffer.Reset();
+	raycast_renderer->Clear();
+	screen_quad->Clear();
 }

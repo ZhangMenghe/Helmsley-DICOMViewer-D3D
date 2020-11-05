@@ -10,7 +10,15 @@ public:
 		const float* vdata, const unsigned short* idata,
 		UINT vertice_num, UINT idx_num);
 	virtual void Draw(ID3D11DeviceContext* context);
-	virtual void Clear() {};
+	virtual void Clear() {
+		m_loadingComplete = false;
+		m_vertexShader = nullptr;
+		m_inputLayout = nullptr;
+		m_pixelShader = nullptr;
+		m_constantBuffer = nullptr;
+		m_vertexBuffer = nullptr;
+		m_indexBuffer = nullptr;
+	};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
 protected:
 	//buffers
