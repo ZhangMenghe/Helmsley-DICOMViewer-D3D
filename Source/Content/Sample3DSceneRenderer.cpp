@@ -19,8 +19,7 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 
 }
 void Sample3DSceneRenderer::init_texture() {
-
-	/*uncomment this to use 3d texture
+	//uncomment this to use 3d texture
 	texture = new Texture;
 	D3D11_TEXTURE3D_DESC texDesc{
 		400,400,400,
@@ -38,10 +37,10 @@ void Sample3DSceneRenderer::init_texture() {
 		m_targaData[i] = (unsigned char)255;
 		m_targaData[i + 1] = 0;
 		m_targaData[i + 2] = 0;
-		m_targaData[i + 3] = (unsigned char)255;
+		m_targaData[i + 3] = (unsigned char)10;
 	}
 	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete texture; texture = nullptr; }
-	*/
+	
 	/*if (tex2d_srv_from_uav != nullptr) { delete tex2d_srv_from_uav; tex2d_srv_from_uav = nullptr; }
 	tex2d_srv_from_uav = new Texture;
 	D3D11_TEXTURE2D_DESC texDesc;
@@ -228,7 +227,7 @@ void Sample3DSceneRenderer::Render() {
 	render_scene();
 }
 void Sample3DSceneRenderer::render_scene(){
-	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext());
+	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), texture);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 

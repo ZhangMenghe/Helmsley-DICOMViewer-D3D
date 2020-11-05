@@ -16,7 +16,7 @@ struct VertexShaderInput{
 struct v2f{
 	float4 pos : SV_POSITION;
 	float3 tex :TEXCOORD0;
-	float3 screenPos : TEXCOORD1;
+	float3 ro : TEXCOORD1;
 	float3 FragPos: TEXCOORD2;
 	float3 raydir: TEXCOORD3;
 };
@@ -27,7 +27,8 @@ v2f main(VertexShaderInput input){
 	output.raydir = input.pos - uCamPosInObjSpace.xyz;
 	output.FragPos = mul(float4(input.pos, 1.0f), uModelMat);
 	output.pos = mul(float4(input.pos, 1.0f), uViewProjMat);
-	output.screenPos = output.pos.xyw;
+	//output.screenPos = output.pos.xyw;
+	output.ro = uCamPosInObjSpace.xyz;
 	output.tex = input.tex;
 	return output;
 }

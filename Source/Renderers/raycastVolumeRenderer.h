@@ -16,7 +16,7 @@ public:
 	raycastVolumeRenderer(ID3D11Device* device);
 	void updateMatrix(allConstantBuffer buff_data);
 
-	void Draw(ID3D11DeviceContext* context);
+	void Draw(ID3D11DeviceContext* context, Texture* tex);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

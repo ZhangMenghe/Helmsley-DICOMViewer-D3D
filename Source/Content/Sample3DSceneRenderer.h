@@ -41,10 +41,10 @@
 
 		allConstantBuffer	m_all_buff_Data;
 		//uint32	m_indexCount;
-
+		Texture* texture = nullptr;
 		//texture
 		/*ID3D11SamplerState* m_sampleState;
-		Texture* texture = nullptr;
+		
 		Texture* tex2d_srv_from_uav;
 		ID3D11Texture2D* m_comp_tex_d3d = nullptr;
 		ID3D11UnorderedAccessView* m_textureUAV;*/

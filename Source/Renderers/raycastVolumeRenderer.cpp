@@ -86,7 +86,7 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 		)
 	);
 }
-void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context) {
+void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex) {
 	if (!m_loadingComplete) return;
 	if (m_constantBuffer != nullptr)
 		// Prepare the constant buffer to send it to the graphics device.
@@ -98,5 +98,9 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context) {
 			0,
 			0
 		);
+	if (tex != nullptr) {
+		auto texview = tex->GetTextureView();
+		context->PSSetShaderResources(0, 1, &texview);
+	}
 	baseRenderer::Draw(context);
 }
