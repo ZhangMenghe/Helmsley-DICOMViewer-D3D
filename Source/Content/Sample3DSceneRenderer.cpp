@@ -127,7 +127,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 	// this transform should not be applied.
 
 	// This sample makes use of a right-handed coordinate system using row-major matrices.
-	XMMATRIX perspectiveMatrix = XMMatrixPerspectiveFovRH(
+	XMMATRIX perspectiveMatrix = DirectX::XMMatrixPerspectiveFovRH(
 		fovAngleY,
 		aspectRatio,
 		0.01f,
@@ -147,19 +147,19 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(){
 
 	XMStoreFloat4x4(
 		&m_all_buff_Data.projection,
-		XMMatrixTranspose(perspectiveMatrix * orientationMatrix)
+		DirectX::XMMatrixTranspose(perspectiveMatrix * orientationMatrix)
 		);
 
 	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
 	static const XMVECTORF32 eye = { 0.0f, 0.7f, 1.5f, 0.0f };
 	static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-	XMStoreFloat4x4(&m_all_buff_Data.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
-
+	auto model_mat = DirectX::XMMatrixIdentity();
+	XMStoreFloat4x4(&m_all_buff_Data.model, model_mat);
+	XMStoreFloat4x4(&m_all_buff_Data.view, DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(eye, at, up)));
+	XMStoreFloat4(&m_all_buff_Data.uCamPosInObjSpace, DirectX::XMVector4Transform(eye, DirectX::XMMatrixInverse(nullptr, model_mat)));
 	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
 	screen_quad->updateMatrix(m_all_buff_Data);
-	//todo camera pos
 	raycast_renderer->updateMatrix(m_all_buff_Data);
 }
 

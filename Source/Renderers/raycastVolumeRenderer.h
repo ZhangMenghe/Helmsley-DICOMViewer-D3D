@@ -8,7 +8,7 @@ struct raycastConstantBuffer
 {
 	DirectX::XMFLOAT4X4 uModelMat;
 	DirectX::XMFLOAT4X4 uViewProjMat;
-	//DirectX::XMFLOAT3 uCamPosInObjSpace;
+	DirectX::XMFLOAT4 uCamPosInObjSpace;
 };
 
 class raycastVolumeRenderer:public baseRenderer {

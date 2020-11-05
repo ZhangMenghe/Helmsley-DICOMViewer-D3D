@@ -6,7 +6,7 @@
 		DirectX::XMFLOAT4X4 model;
 		DirectX::XMFLOAT4X4 view;
 		DirectX::XMFLOAT4X4 projection;
-		DirectX::XMFLOAT3 uCamPosInObjSpace;
+		DirectX::XMFLOAT4 uCamPosInObjSpace;
 	};
 	struct ModelViewProjectionConstantBuffer
 	{

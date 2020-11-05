@@ -4,7 +4,7 @@
 cbuffer raycastConstantBuffer : register(b0) {
 	matrix uModelMat;
 	matrix uViewProjMat;
-	//float3 uCamPosInObjSpace;
+	float4 uCamPosInObjSpace;
 };
 // Per-vertex data used as input to the vertex shader.
 struct VertexShaderInput{
@@ -24,7 +24,7 @@ struct v2f{
 // Simple shader to do vertex processing on the GPU.
 v2f main(VertexShaderInput input){
 	v2f output;
-	output.raydir = input.pos;// -uCamPosInObjSpace;
+	output.raydir = input.pos - uCamPosInObjSpace.xyz;
 	output.FragPos = mul(float4(input.pos, 1.0f), uModelMat);
 	output.pos = mul(float4(input.pos, 1.0f), uViewProjMat);
 	output.screenPos = output.pos.xyw;
