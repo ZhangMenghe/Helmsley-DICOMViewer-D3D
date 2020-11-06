@@ -29,9 +29,6 @@
     <Filter Include="Source\Common">
       <UniqueIdentifier>{58e7692d-1dff-4c28-9f02-911207ae5dca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Contents">
-      <UniqueIdentifier>{39ff42aa-e37f-4d6f-9cd7-f85e9515aade}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\D3DPipeline">
       <UniqueIdentifier>{f395c6dc-f019-412e-b67e-8e627b3ed861}</UniqueIdentifier>
     </Filter>
@@ -41,6 +38,18 @@
     <Filter Include="Source\Renderers">
       <UniqueIdentifier>{55a5d8db-a373-4327-823a-4d9566934af7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Utils">
+      <UniqueIdentifier>{61ac4094-c18c-4a47-910b-b3db374efb77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\dicom-data">
+      <UniqueIdentifier>{497261e0-5ef3-46e2-8bc5-8f4640207403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\dicom-data\IRB01">
+      <UniqueIdentifier>{37285a4b-0158-442b-88eb-306699e3fd0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs">
+      <UniqueIdentifier>{831cedc4-552f-435c-a538-1f889792c246}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -49,23 +58,23 @@
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Content\Sample3DSceneRenderer.cpp">
-      <Filter>Source\Contents</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Content\SampleFpsTextRenderer.cpp">
-      <Filter>Source\Contents</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp">
       <Filter>Source\D3DPipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\Content\quadRenderer.cpp">
-      <Filter>Source\Contents</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp">
       <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\vrController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\quadRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp">
+      <Filter>Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,29 +90,29 @@
     <ClInclude Include="..\..\Source\Common\StepTimer.h">
       <Filter>Source\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Content\Sample3DSceneRenderer.h">
-      <Filter>Source\Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Content\SampleFpsTextRenderer.h">
-      <Filter>Source\Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Content\ShaderStructures.h">
-      <Filter>Source\Contents</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h">
       <Filter>Source\D3DPipeline</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h">
       <Filter>Source\D3DPipeline</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Content\quadRenderer.h">
-      <Filter>Source\Contents</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h">
       <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\vrController.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\quadRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\dicomLoader.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\ShaderStructures.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -115,18 +124,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Source\Content\SamplePixelShader.hlsl">
-      <Filter>Source\Contents</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Content\SampleVertexShader.hlsl">
-      <Filter>Source\Contents</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Content\QuadPixelShader.hlsl">
-      <Filter>Source\Contents</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Content\QuadVertexShader.hlsl">
-      <Filter>Source\Contents</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
@@ -136,5 +133,19 @@
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\QuadVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
+      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    </None>
+    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
+      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    </None>
   </ItemGroup>
 </Project>
