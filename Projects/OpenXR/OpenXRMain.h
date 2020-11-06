@@ -1,9 +1,10 @@
-﻿#pragma once
+﻿#ifndef OPENXR_MAIN_H
+#define OPENXR_MAIN_H
 
 #include "Common\StepTimer.h"
 #include "Common\DeviceResources.h"
-#include "Content\Sample3DSceneRenderer.h"
-#include "Content\SampleFpsTextRenderer.h"
+#include <vrController.h>
+#include <Utils/dicomLoader.h>
 
 // Renders Direct2D and 3D content on the screen.
 namespace OpenXR
@@ -22,14 +23,17 @@ namespace OpenXR
 		virtual void OnDeviceRestored();
 
 	private:
+		std::string m_ds_path = "dicom-data/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
+		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
+
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
-		// TODO: Replace with your own content renderers.
-		std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer;
-		std::unique_ptr<SampleFpsTextRenderer> m_fpsTextRenderer;
+		std::unique_ptr<vrController> m_sceneRenderer;
+		dicomLoader m_dicom_loader;
 
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
 	};
 }
+#endif // !OPENXR_MAIN_H

@@ -3,7 +3,7 @@
 #include "pch.h"
 #include <vector>
 #include <Common/DeviceResources.h>
-#include <Content/Sample3DSceneRenderer.h>
+#include <vrController.h>
 namespace DX {
 	struct swapchain_surfdata_t {
 		ID3D11DepthStencilView* depth_view;
@@ -36,7 +36,7 @@ namespace DX {
 		bool InitOxrSession(const char* app_name);
 		void InitOxrActions();
 		bool Update();
-		void Render(Sample3DSceneRenderer* scene);
+		void Render(vrController* scene);
 		void ShutDown();
 
 	private:
@@ -76,7 +76,7 @@ namespace DX {
 		bool openxr_render_layer(XrTime predictedTime, 
 			std::vector<XrCompositionLayerProjectionView>& projectionViews,
 			XrCompositionLayerProjection& layer,
-			Sample3DSceneRenderer* scene);
+			vrController* scene);
 		void d3d_render_layer(XrCompositionLayerProjectionView& layerView, swapchain_surfdata_t& surface);
 
 	};

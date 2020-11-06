@@ -296,7 +296,7 @@ bool OXRManager::Update() {
 	}
 	return !xr_quit;
 }
-void OXRManager::Render(Sample3DSceneRenderer * scene){
+void OXRManager::Render(vrController* scene){
 	// Block until the previous frame is finished displaying, and is ready for another one.
 	// Also returns a prediction of when the next frame will be displayed, for use with predicting
 	// locations of controllers, viewpoints, etc.
@@ -497,7 +497,7 @@ swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapch
 bool OXRManager::openxr_render_layer(XrTime predictedTime, 
 	std::vector<XrCompositionLayerProjectionView>& views, 
 	XrCompositionLayerProjection& layer,
-	Sample3DSceneRenderer* scene) {
+	vrController* scene) {
 
 	// Find the state and location of each viewpoint at the predicted time
 	uint32_t         view_count = 0;

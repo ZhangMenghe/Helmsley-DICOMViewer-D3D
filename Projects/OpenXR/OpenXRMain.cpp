@@ -14,11 +14,14 @@ OpenXRMain::OpenXRMain(const std::shared_ptr<DX::DeviceResources>& deviceResourc
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
 
-	// TODO: Replace this with your app's content initialization.
-	m_sceneRenderer = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources));
+	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources));
 
-	m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
+	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
 
+	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
+		//m_sceneRenderer.reset();
+	}
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
 	/*
@@ -48,7 +51,6 @@ void OpenXRMain::Update()
 	{
 		// TODO: Replace this with your app's content update functions.
 		m_sceneRenderer->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
 	});
 }
 
@@ -79,7 +81,6 @@ bool OpenXRMain::Render()
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
 	m_sceneRenderer->Render();
-	m_fpsTextRenderer->Render();
 
 	return true;
 }
@@ -88,13 +89,11 @@ bool OpenXRMain::Render()
 void OpenXRMain::OnDeviceLost()
 {
 	m_sceneRenderer->ReleaseDeviceDependentResources();
-	m_fpsTextRenderer->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.
 void OpenXRMain::OnDeviceRestored()
 {
 	m_sceneRenderer->CreateDeviceDependentResources();
-	m_fpsTextRenderer->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }
