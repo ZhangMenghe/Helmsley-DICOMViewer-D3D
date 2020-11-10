@@ -91,6 +91,11 @@ private:
 	DirectX::XMFLOAT2 Mouse_old;
 	std::string cst_name;
 
+	//volume
+	DirectX::XMINT3 vol_dimension_;
+	DirectX::XMFLOAT3 vol_dim_scale_;
+	DirectX::XMMATRIX vol_dim_scale_mat_;
+
 	//uint32	m_indexCount;
 	//Texture* texture = nullptr;
 	

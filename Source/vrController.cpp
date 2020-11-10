@@ -51,6 +51,31 @@ void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::
 }
 
 void vrController::assembleTexture(int update_target, int ph, int pw, int pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
+	if (update_target == 0 || update_target == 2) {
+		vol_dimension_ = { ph, pw, pd };
+		if (sh <= 0 || sw <= 0 || sd <= 0) {
+			if (pd > 200) vol_dim_scale_ = { 1.0f, 1.0f, 0.5f };
+			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f };
+			else vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };
+		}
+		else if (abs(sh - sw) < 1) {
+			vol_dim_scale_ = { 1.0f, 1.0f, sd / sh };
+		}
+		else {
+			vol_dim_scale_ = { 1.0f, 1.0f, sd / fmax(sw, sh) };
+			if (sw > sh) {
+				ScaleVec3_.y *= sh / sw;
+			}
+			else {
+				ScaleVec3_.x *= sw / sh;
+			}
+			volume_model_dirty = true;
+		}
+		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
+		//texvrRenderer_->setDimension(vol_dimension_, vol_dim_scale_);
+		//cutter_->setDimension(pd, vol_dim_scale_.z);
+	}
+	
 	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
 
 	tex_volume = new Texture;
@@ -230,8 +255,9 @@ void vrController::Render() {
 void vrController::render_scene(){
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
+	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 
-	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, ModelMat_);
+	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, model_mat);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 
