@@ -2,7 +2,7 @@
 #include "quadRenderer.h"
 #include "Common/DirectXHelper.h"
 #include <D3DPipeline/Primitive.h>
-
+#include <Common/Manager.h>
 using namespace DirectX;
 quadRenderer::quadRenderer(ID3D11Device* device)
 :baseRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso",
@@ -40,7 +40,10 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 // Renders one frame using the vertex and pixel shaders.
 void quadRenderer::Draw(ID3D11DeviceContext* context) {
 	if (!m_loadingComplete) return; 
-	if (m_constantBuffer != nullptr)
+	if (m_constantBuffer != nullptr) {
+		XMStoreFloat4x4(&m_constantBufferData.projection, Manager::camera->getProjMat());
+		XMStoreFloat4x4(&m_constantBufferData.view, Manager::camera->getViewMat());
+
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
 			m_constantBuffer.get(),
@@ -50,6 +53,8 @@ void quadRenderer::Draw(ID3D11DeviceContext* context) {
 			0,
 			0
 		);
+	}
+
 	baseRenderer::Draw(context);
 }
 void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -78,7 +83,7 @@ void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<
 			m_inputLayout.put()
 		)
 	);
-	m_vertex_stride = sizeof(VertexPosTex2d);
+	m_vertex_stride = sizeof(dvr::VertexPosTex2d);
 	m_vertex_offset = 0;
 }
 void quadRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -112,7 +117,7 @@ void quadRenderer::create_fragment_shader(ID3D11Device* device, const std::vecto
 	// Create the texture sampler state.
 	DX::ThrowIfFailed(device->CreateSamplerState(&samplerDesc, &m_sampleState));
 
-	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(dvr::ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	DX::ThrowIfFailed(
 		device->CreateBuffer(
 			&constantBufferDesc,

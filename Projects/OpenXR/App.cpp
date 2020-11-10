@@ -7,6 +7,7 @@
 #include "OXRs/OXRManager.h"
 #include <vrController.h>
 #include <Utils/dicomLoader.h>
+#include <Common/Manager.h>
 
 using namespace std;
 using namespace DirectX; // Matrix math
@@ -17,6 +18,8 @@ DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
 
 OXRManager* oxr_manager = nullptr;
 std::unique_ptr<vrController> m_sceneRenderer;
+std::unique_ptr<Manager> m_manager;
+
 dicomLoader m_dicom_loader;
 DX::StepTimer m_timer;
 
@@ -31,6 +34,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	}
 	
 	oxr_manager->InitOxrActions();
+	m_manager = std::unique_ptr<Manager>(new Manager());
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(std::unique_ptr<DX::DeviceResources>(oxr_manager)));
 
 	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);

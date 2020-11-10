@@ -14,6 +14,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
 
+	m_manager = std::unique_ptr<Manager>(new Manager());
+
 	// TODO: Replace this with your app's content initialization.
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources));
 
@@ -31,6 +33,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_timer.SetFixedTimeStep(true);
 	m_timer.SetTargetElapsedSeconds(1.0 / 60);
 	*/
+	Size outputSize = m_deviceResources->GetOutputSize();
+	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 }
 
 CoreWinMain::~CoreWinMain()
@@ -44,6 +48,8 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
 	m_sceneRenderer->CreateWindowSizeDependentResources();
+	Size outputSize = m_deviceResources->GetOutputSize();
+	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 }
 
 // Updates the application state once per frame.
@@ -103,4 +109,13 @@ void CoreWinMain::OnDeviceRestored()
 	m_sceneRenderer->CreateDeviceDependentResources();
 	//m_fpsTextRenderer->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
+}
+void CoreWinMain::OnPointerPressed(float x, float y) {
+	m_sceneRenderer->onSingleTouchDown(x, y);
+}
+void CoreWinMain::OnPointerMoved(float x, float y) {
+	m_sceneRenderer->onTouchMove(x, y);
+}
+void CoreWinMain::OnPointerReleased() {
+	m_sceneRenderer->onTouchReleased();
 }

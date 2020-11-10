@@ -252,16 +252,18 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Common\ConstantAndStruct.h" />
     <ClInclude Include="..\..\Source\Common\DeviceResources.h" />
     <ClInclude Include="..\..\Source\Common\DirectXHelper.h" />
+    <ClInclude Include="..\..\Source\Common\Manager.h" />
     <ClInclude Include="..\..\Source\Common\StepTimer.h" />
+    <ClInclude Include="..\..\Source\D3DPipeline\Camera.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
-    <ClInclude Include="..\..\Source\Utils\ShaderStructures.h" />
     <ClInclude Include="..\..\Source\vrController.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="CoreWinMain.h" />
@@ -269,6 +271,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp" />
+    <ClCompile Include="..\..\Source\Common\Manager.cpp" />
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\quadRenderer.cpp" />
@@ -348,13 +351,13 @@
   <ItemGroup>
     <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>
     <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>

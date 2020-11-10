@@ -14,7 +14,6 @@ struct raycastConstantBuffer
 class raycastVolumeRenderer:public baseRenderer {
 public:
 	raycastVolumeRenderer(ID3D11Device* device);
-	void updateMatrix(allConstantBuffer buff_data);
 
 	void Draw(ID3D11DeviceContext* context, Texture* tex);
 protected:
@@ -22,5 +21,6 @@ protected:
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 private:
 	raycastConstantBuffer m_const_buff_data;
+	DirectX::XMMATRIX projMat, viewMat;
 };
 #endif

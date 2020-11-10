@@ -254,9 +254,12 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Common\ConstantAndStruct.h" />
     <ClInclude Include="..\..\Source\Common\DeviceResources.h" />
     <ClInclude Include="..\..\Source\Common\DirectXHelper.h" />
+    <ClInclude Include="..\..\Source\Common\Manager.h" />
     <ClInclude Include="..\..\Source\Common\StepTimer.h" />
+    <ClInclude Include="..\..\Source\D3DPipeline\Camera.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
@@ -264,7 +267,6 @@
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
-    <ClInclude Include="..\..\Source\Utils\ShaderStructures.h" />
     <ClInclude Include="..\..\Source\vrController.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="OpenXRMain.h" />
@@ -272,6 +274,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp" />
+    <ClCompile Include="..\..\Source\Common\Manager.cpp" />
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp" />

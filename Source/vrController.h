@@ -2,10 +2,8 @@
 #define VR_CONTROLLER_H
 #include <Renderers/raycastVolumeRenderer.h>
 #include <Renderers/quadRenderer.h>
-#include <Utils/ShaderStructures.h>
 #include <Common/DeviceResources.h>
 #include <Common/StepTimer.h>
-
 class vrController{
 public:
 	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
@@ -22,6 +20,16 @@ public:
 	void StopTracking();
 	bool IsTracking() { return m_tracking; }
 
+	//Interaction
+	void onSingleTouchDown(float x, float y);
+	void onTouchMove(float x, float y);
+	void onTouchReleased();
+	void onScale(float sx, float sy);
+	void onPan(float x, float y);
+
+	//getter
+	Texture* getVolumeTex() { return tex_volume; }
+	Texture* getBakedTex() { return tex_baked; }
 private:
 	static vrController* myPtr_;
 
@@ -31,20 +39,24 @@ private:
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
-	//// Direct3D resources for cube geometry.
-	//Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_inputLayout;
-	//Microsoft::WRL::ComPtr<ID3D11Buffer>		m_vertexBuffer;
-	//Microsoft::WRL::ComPtr<ID3D11Buffer>		m_indexBuffer;
-	//Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_vertexShader;
-	//Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_pixelShader;
-	//Microsoft::WRL::ComPtr<ID3D11Buffer>		m_constantBuffer;
+	//TEXTURES
+	Texture* tex_volume = nullptr, * tex_baked = nullptr;
 
 	////compute shader
 	//ID3D11ComputeShader* m_computeShader;
 
-	allConstantBuffer	m_all_buff_Data;
+	DirectX::XMMATRIX ModelMat_, RotateMat_;
+	DirectX::XMFLOAT3 ScaleVec3_, PosVec3_;
+	dvr::allConstantBuffer	m_all_buff_Data;
+
+	//UI
+	DirectX::XMFLOAT2 Mouse_old;
+
 	//uint32	m_indexCount;
-	Texture* texture = nullptr;
+	//Texture* texture = nullptr;
+	
+	
+
 	//texture
 	/*ID3D11SamplerState* m_sampleState;
 		

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "raycastVolumeRenderer.h"
 #include <D3DPipeline/Primitive.h>
+#include <Common/Manager.h>
 using namespace DirectX;
 
 raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
@@ -12,13 +13,7 @@ raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
 {
 
 }
-void raycastVolumeRenderer::updateMatrix(allConstantBuffer buff_data) {
-	XMMATRIX projMat = XMLoadFloat4x4(&buff_data.projection);
-	XMMATRIX viewMat = XMLoadFloat4x4(&buff_data.view);
-	XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, XMMatrixMultiply(projMat, viewMat));
-	m_const_buff_data.uModelMat = buff_data.model;
-	m_const_buff_data.uCamPosInObjSpace = buff_data.uCamPosInObjSpace;
-}
+
 void raycastVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	winrt::check_hresult(
 		device->CreateVertexShader(
@@ -44,7 +39,7 @@ void raycastVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std
 			m_inputLayout.put()
 		)
 	);
-	m_vertex_stride = sizeof(VertexPositionColor);
+	m_vertex_stride = sizeof(dvr::VertexPositionColor);
 	m_vertex_offset = 0;
 }
 void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -88,7 +83,12 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 }
 void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex) {
 	if (!m_loadingComplete) return;
-	if (m_constantBuffer != nullptr)
+	if (m_constantBuffer != nullptr) {
+		XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
+		auto model_mat = DirectX::XMMatrixIdentity();
+		XMStoreFloat4x4(&m_const_buff_data.uModelMat, model_mat);
+		XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, DirectX::XMVector4Transform(Manager::camera->getCameraPosition(), DirectX::XMMatrixInverse(nullptr, model_mat)));
+
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
 			m_constantBuffer.get(),
@@ -98,6 +98,8 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex) {
 			0,
 			0
 		);
+	}
+
 	if (tex != nullptr) {
 		auto texview = tex->GetTextureView();
 		context->PSSetShaderResources(0, 1, &texview);

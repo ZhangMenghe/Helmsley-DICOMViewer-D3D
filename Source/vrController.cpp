@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "vrController.h"
-
+#include <Common/Manager.h>
+#include <iostream>
 using namespace DirectX;
 using namespace Windows::Foundation;
 
@@ -19,11 +20,14 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	screen_quad = new quadRenderer(m_deviceResources->GetD3DDevice());
 	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
 
+	Manager::camera = new Camera;
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }
 void vrController::assembleTexture(int update_target, int ph, int pw, int pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
-	texture = new Texture;
+	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
+
+	tex_volume = new Texture;
 	D3D11_TEXTURE3D_DESC texDesc{
 		ph,pw,pd,
 		1,
@@ -33,43 +37,16 @@ void vrController::assembleTexture(int update_target, int ph, int pw, int pd, fl
 		0,
 		D3D11_RESOURCE_MISC_SHARED
 	};
+	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
 
-	auto imageSize = texDesc.Width * texDesc.Height * texDesc.Depth * 4;
-	unsigned char* m_targaData = new unsigned char[imageSize];
-	auto idx = 0;
-	for (int i = 0; i < imageSize; i += 4) {
-		m_targaData[i] = data[4*idx];//0xff;// (unsigned char)255;
-		m_targaData[i + 1] = data[4 * idx];//0;
-		m_targaData[i + 2] = data[4 * idx]; ///0;
-		m_targaData[i + 3] = data[4 * idx]; //(unsigned char)10;
-		idx++;
-	}
-	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete texture; texture = nullptr; }
-
-
-	/*auto vsize = ph * pw * pd;
-	uint32_t* vol_data = new uint32_t[vsize];
-	uint16_t tm;
-	//fuse volume data
-	for (auto i = 0, shift = 0; i < vsize; i++, shift += channel_num) {
-		vol_data[i] = uint32_t((((uint32_t)data[shift + 1]) << 8) + (uint32_t)data[shift]);
-		tm = (channel_num == 4) ? uint16_t((((uint16_t)data[shift + 3]) << 8) + data[shift + 2]) : (uint16_t)0;
-		vol_data[i] = uint32_t((((uint32_t)tm) << 16) + vol_data[i]);
-		// vol_data[i] = (((uint32_t)data[4*i+3])<<24)+(((uint32_t)data[4*i+3])<<16)+(((uint32_t)data[4*i+1])<<8) + ((uint32_t)data[4*i]);
-	}
-	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
-	tex_volume = new Texture(GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, pw, ph, pd, vol_data);
-
-	auto* tb_data = new GLubyte[vsize * 4];
-	if (tex_baked != nullptr) { delete tex_baked; tex_baked = nullptr; }
-	tex_baked = new Texture(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, pw, ph, pd, tb_data);
-	delete[]tb_data;
-	delete[]vol_data;*/
+	tex_baked = new Texture;
+	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
+	Manager::baked_dirty_ = true;
 }
 
 void vrController::init_texture() {
 	//uncomment this to use 3d texture
-	texture = new Texture;
+	tex_volume = new Texture;
 	D3D11_TEXTURE3D_DESC texDesc{
 		400,400,400,
 		1,
@@ -82,13 +59,13 @@ void vrController::init_texture() {
 
 	auto imageSize = texDesc.Width * texDesc.Height * texDesc.Depth * 4;
 	unsigned char* m_targaData = new unsigned char[imageSize];
-	for (int i = 0; i < imageSize; i += 4) {
+	for (auto i = 0; i < imageSize; i += 4) {
 		m_targaData[i] = 0xff;// (unsigned char)255;
 		m_targaData[i + 1] = 0;
 		m_targaData[i + 2] = 0;
 		m_targaData[i + 3] = (unsigned char)10;
 	}
-	if (!texture->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete texture; texture = nullptr; }
+	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, m_targaData)) { delete tex_volume; tex_volume = nullptr; }
 	
 	/*if (tex2d_srv_from_uav != nullptr) { delete tex2d_srv_from_uav; tex2d_srv_from_uav = nullptr; }
 	tex2d_srv_from_uav = new Texture;
@@ -157,8 +134,11 @@ void vrController::CreateWindowSizeDependentResources(){
 	Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0) return;
 	screen_width = outputSize.Width; screen_height = outputSize.Height;
+
+	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
+	
 	//init_texture();
-	float aspectRatio = outputSize.Width / outputSize.Height;
+	/*float aspectRatio = outputSize.Width / outputSize.Height;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
 	// This is a simple example of change that can be made when the app is in
@@ -199,8 +179,8 @@ void vrController::CreateWindowSizeDependentResources(){
 		);
 
 	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
-	static const XMVECTORF32 eye = { 0.0f, 0.7f, 1.5f, 0.0f };
-	static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
+	static const XMVECTORF32 eye = { 0.0f, 0.f, 1.5f, 0.0f };
+	static const XMVECTORF32 at = { 0.0f, 0.f, .0f, 0.0f };//{ 0.0f, -0.1f, 0.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 	auto model_mat = DirectX::XMMatrixIdentity();
 	XMStoreFloat4x4(&m_all_buff_Data.model, model_mat);
@@ -208,7 +188,7 @@ void vrController::CreateWindowSizeDependentResources(){
 	XMStoreFloat4(&m_all_buff_Data.uCamPosInObjSpace, DirectX::XMVector4Transform(eye, DirectX::XMMatrixInverse(nullptr, model_mat)));
 	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
 	screen_quad->updateMatrix(m_all_buff_Data);
-	raycast_renderer->updateMatrix(m_all_buff_Data);
+	raycast_renderer->updateMatrix(m_all_buff_Data);*/
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -276,7 +256,7 @@ void vrController::Render() {
 	render_scene();
 }
 void vrController::render_scene(){
-	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), texture);
+	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 
@@ -494,8 +474,23 @@ void vrController::CreateDeviceDependentResources()
 	});
 	*/
 }
+void vrController::onSingleTouchDown(float x, float y) {
+}
+void vrController::onTouchMove(float x, float y) {
+
+}
+void vrController::onTouchReleased(){}
+void vrController::onScale(float sx, float sy) {
+
+}
+void vrController::onPan(float x, float y) {
+
+}
 
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();
 	screen_quad->Clear();
+	//texture
+	if (tex_volume) delete tex_volume;
+	if (tex_baked) delete tex_baked;
 }

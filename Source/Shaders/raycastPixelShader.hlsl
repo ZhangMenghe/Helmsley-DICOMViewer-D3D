@@ -31,7 +31,7 @@ float RayPlane(float3 ro, float3 rd, float3 planep, float3 planen) {
 	return d > 1e-5 ? (t / d) : (t > 0 ? 1e5 : -1e5);
 }
 float4 Sample(float3 p) {
-	return shaderTexture.Sample(uSampler, p);
+	return shaderTexture.Sample(uSampler, p).x;
 }
 float4 subDivide(float3 p, float3 ro, float3 rd, float t, float StepSize) {
 	float t0 = t - StepSize * 4.0;

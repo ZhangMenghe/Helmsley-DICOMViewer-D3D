@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "OXRManager.h"
 #include <thread> // sleep_for
-
+#include <Common/Manager.h>
 using namespace DX;
 
 OXRManager::OXRManager()
@@ -539,6 +539,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 			m_outputSize.Width = xr_swapchains[i].width;
 			m_outputSize.Height = xr_swapchains[i].height;
 			scene->CreateWindowSizeDependentResources();
+			Manager::instance()->onViewChange(m_outputSize.Width, m_outputSize.Height);
 		}
 
 		scene->Render();
