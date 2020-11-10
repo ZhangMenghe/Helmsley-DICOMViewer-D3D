@@ -87,6 +87,7 @@ private:
 	std::map<std::string, reservedStatus*> rStates_;
 
 	//UI
+	bool m_IsPressed = false;
 	DirectX::XMFLOAT2 Mouse_old;
 	std::string cst_name;
 

@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "vrController.h"
 #include <Common/Manager.h>
-#include <iostream>
+#include <Utils/MathUtils.h>
 using namespace DirectX;
 using namespace Windows::Foundation;
 
@@ -202,6 +202,7 @@ void vrController::StopTracking(){
 
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render() {
+	if (!tex_volume) return;
 	/*
 	// Loading is asynchronous. Only draw geometry after it's loaded.
 	if (!m_loadingComplete)
@@ -227,6 +228,9 @@ void vrController::Render() {
 	render_scene();
 }
 void vrController::render_scene(){
+	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
+
+
 	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, ModelMat_);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
@@ -446,12 +450,32 @@ void vrController::CreateDeviceDependentResources()
 	*/
 }
 void vrController::onSingleTouchDown(float x, float y) {
-	//Mouse_old = { x, y };
+	Mouse_old = { x, y };
+	m_IsPressed = true;
 }
 void vrController::onTouchMove(float x, float y) {
+	if (!m_IsPressed || !tex_volume) return;
 
+	//if (!Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
+
+	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
+
+	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
+	Mouse_old = { x, y };
+	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
+	yoffset *= -dvr::MOUSE_ROTATE_SENSITIVITY;
+
+	/*if (Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) {
+		cutter_->onRotate(xoffset, yoffset);
+		return;
+	}*/
+
+	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
+	volume_model_dirty = true;
 }
-void vrController::onTouchReleased(){}
+void vrController::onTouchReleased(){
+	m_IsPressed = false;
+}
 void vrController::onScale(float sx, float sy) {
 
 }
