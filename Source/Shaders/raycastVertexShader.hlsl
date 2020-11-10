@@ -26,7 +26,8 @@ v2f main(VertexShaderInput input){
 	v2f output;
 	output.raydir = input.pos - uCamPosInObjSpace.xyz;
 	output.FragPos = mul(float4(input.pos, 1.0f), uModelMat);
-	output.pos = mul(float4(input.pos, 1.0f), uViewProjMat);
+	output.pos = mul(float4(input.pos, 1.0f), uModelMat);
+	output.pos = mul(output.pos, uViewProjMat);
 	//output.screenPos = output.pos.xyw;
 	output.ro = uCamPosInObjSpace.xyz;
 	output.tex = input.tex;

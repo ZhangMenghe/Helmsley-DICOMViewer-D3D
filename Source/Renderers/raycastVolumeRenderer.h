@@ -15,7 +15,7 @@ class raycastVolumeRenderer:public baseRenderer {
 public:
 	raycastVolumeRenderer(ID3D11Device* device);
 
-	void Draw(ID3D11DeviceContext* context, Texture* tex);
+	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

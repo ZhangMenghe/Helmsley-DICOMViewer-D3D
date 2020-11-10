@@ -1,14 +1,43 @@
 ﻿#ifndef VR_CONTROLLER_H
 #define VR_CONTROLLER_H
+#include "pch.h"
 #include <Renderers/raycastVolumeRenderer.h>
 #include <Renderers/quadRenderer.h>
 #include <Common/DeviceResources.h>
 #include <Common/StepTimer.h>
+#include <unordered_map>
+#include <D3DPipeline/Camera.h>
+
+class reservedStatus {
+public:
+	DirectX::XMFLOAT4X4 model_mat, rot_mat;
+	DirectX::XMFLOAT3 scale_vec, pos_vec;
+	Camera* vcam;
+	reservedStatus(DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* mcam)
+		:scale_vec(sv), pos_vec(pv) {
+		DirectX::XMStoreFloat4x4(&model_mat, mm);
+		DirectX::XMStoreFloat4x4(&rot_mat, rm);
+		vcam = mcam;
+	}
+	reservedStatus()
+		:rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS), vcam(new Camera) {
+		DirectX::XMMATRIX mrot = DirectX::XMLoadFloat4x4(&rot_mat);
+		DirectX::XMMATRIX mmodel =
+			DirectX::XMMatrixScaling(scale_vec.x, scale_vec.y, scale_vec.z)
+			* mrot
+			* DirectX::XMMatrixTranslation(pos_vec.x, pos_vec.y, pos_vec.z);
+		DirectX::XMStoreFloat4x4(&model_mat, mmodel);
+	}
+};
+
 class vrController{
 public:
 	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 	static vrController* instance();
 	void assembleTexture(int update_target, int ph, int pw, int pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
+
+	void onReset();
+	void onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam);
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
@@ -26,6 +55,11 @@ public:
 	void onTouchReleased();
 	void onScale(float sx, float sy);
 	void onPan(float x, float y);
+
+	//setter
+	bool addStatus(std::string name, DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* cam);
+	bool addStatus(std::string name, bool use_current_status = false);
+	void setMVPStatus(std::string status_name);
 
 	//getter
 	Texture* getVolumeTex() { return tex_volume; }
@@ -45,12 +79,16 @@ private:
 	////compute shader
 	//ID3D11ComputeShader* m_computeShader;
 
+
+
 	DirectX::XMMATRIX ModelMat_, RotateMat_;
 	DirectX::XMFLOAT3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer	m_all_buff_Data;
+	std::map<std::string, reservedStatus*> rStates_;
 
 	//UI
 	DirectX::XMFLOAT2 Mouse_old;
+	std::string cst_name;
 
 	//uint32	m_indexCount;
 	//Texture* texture = nullptr;
@@ -65,6 +103,8 @@ private:
 	ID3D11UnorderedAccessView* m_textureUAV;*/
 	bool	m_tracking;
 	float	m_degreesPerSecond = 1;
+	//flags
+	bool volume_model_dirty;
 	// Variables used with the rendering loop.
 	/*bool	m_loadingComplete;
 		
@@ -81,5 +121,7 @@ private:
 	void Rotate(float radians);
 	void render_scene();
 	void init_texture();
+	void updateVolumeModelMat();
+
 };
 #endif

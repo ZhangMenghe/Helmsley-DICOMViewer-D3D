@@ -113,7 +113,11 @@ namespace dvr{
     const float MOUSE_PAN_SENSITIVITY = 1.2f;
 
     //TRS
-    const DirectX::XMMATRIX DEFAULT_ROTATE = DirectX::XMMatrixIdentity();
+    const DirectX::XMFLOAT4X4 DEFAULT_ROTATE(
+        1.0f, .0f,.0f,.0f,
+        .0f, 1.0f, .0f, .0f, 
+        .0f, .0f, 1.0f, .0f, 
+        .0f, .0f, .0f, 1.0f);
     const DirectX::XMFLOAT3 DEFAULT_SCALE = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
     const DirectX::XMFLOAT3 DEFAULT_POS = DirectX::XMFLOAT3(.0f, .0f, .0f);
 
@@ -124,8 +128,7 @@ namespace dvr{
         float width;float height;
         float left;float top;
     };
-    struct allConstantBuffer
-    {
+    struct allConstantBuffer{
         DirectX::XMFLOAT4X4 model;
         DirectX::XMFLOAT4X4 view;
         DirectX::XMFLOAT4X4 projection;

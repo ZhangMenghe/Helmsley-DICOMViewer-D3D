@@ -37,6 +37,5 @@ namespace CoreWin{
 		dicomLoader m_dicom_loader;
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
-
 	};
 }

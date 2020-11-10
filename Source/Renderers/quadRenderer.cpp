@@ -38,11 +38,12 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void quadRenderer::Draw(ID3D11DeviceContext* context) {
+void quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
 	if (!m_loadingComplete) return; 
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.projection, Manager::camera->getProjMat());
 		XMStoreFloat4x4(&m_constantBufferData.view, Manager::camera->getViewMat());
+		XMStoreFloat4x4(&m_constantBufferData.model, modelMat);
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(

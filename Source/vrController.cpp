@@ -23,7 +23,33 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	Manager::camera = new Camera;
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
+	onReset();
 }
+void vrController::onReset() {
+	Mouse_old = { .0f, .0f };
+	rStates_.clear();
+	cst_name = "";
+	addStatus("default_status");
+	setMVPStatus("default_status");
+}
+
+void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam) {
+	Mouse_old = { .0f, .0f };
+	rStates_.clear();
+	cst_name = "";
+	DirectX::XMMATRIX mrot = DirectX::XMLoadFloat4x4(&rm);
+
+	XMMATRIX mmodel =
+		DirectX::XMMatrixScaling(sv.x, sv.y, sv.z)
+		* mrot
+		* DirectX::XMMatrixTranslation(pv.x, pv.y, pv.z);
+
+	addStatus("template", mmodel, mrot, sv, pv, cam);
+	setMVPStatus("template");
+
+	volume_model_dirty = false;
+}
+
 void vrController::assembleTexture(int update_target, int ph, int pw, int pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
 	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
 
@@ -134,61 +160,7 @@ void vrController::CreateWindowSizeDependentResources(){
 	Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0) return;
 	screen_width = outputSize.Width; screen_height = outputSize.Height;
-
 	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
-	
-	//init_texture();
-	/*float aspectRatio = outputSize.Width / outputSize.Height;
-	float fovAngleY = 70.0f * XM_PI / 180.0f;
-
-	// This is a simple example of change that can be made when the app is in
-	// portrait or snapped view.
-	if (aspectRatio < 1.0f)
-	{
-		fovAngleY *= 2.0f;
-	}
-
-	// Note that the OrientationTransform3D matrix is post-multiplied here
-	// in order to correctly orient the scene to match the display orientation.
-	// This post-multiplication step is required for any draw calls that are
-	// made to the swap chain render target. For draw calls to other targets,
-	// this transform should not be applied.
-
-	// This sample makes use of a right-handed coordinate system using row-major matrices.
-	XMMATRIX perspectiveMatrix = DirectX::XMMatrixPerspectiveFovRH(
-		fovAngleY,
-		aspectRatio,
-		0.01f,
-		100.0f
-		);
-	
-	const XMFLOAT4X4 orientation(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-	//XMFLOAT4X4 orientation = m_deviceResources->GetOrientationTransform3D();
-
-	XMMATRIX orientationMatrix = XMLoadFloat4x4(&orientation);
-
-	XMStoreFloat4x4(
-		&m_all_buff_Data.projection,
-		DirectX::XMMatrixTranspose(perspectiveMatrix * orientationMatrix)
-		);
-
-	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
-	static const XMVECTORF32 eye = { 0.0f, 0.f, 1.5f, 0.0f };
-	static const XMVECTORF32 at = { 0.0f, 0.f, .0f, 0.0f };//{ 0.0f, -0.1f, 0.0f, 0.0f };
-	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-	auto model_mat = DirectX::XMMatrixIdentity();
-	XMStoreFloat4x4(&m_all_buff_Data.model, model_mat);
-	XMStoreFloat4x4(&m_all_buff_Data.view, DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(eye, at, up)));
-	XMStoreFloat4(&m_all_buff_Data.uCamPosInObjSpace, DirectX::XMVector4Transform(eye, DirectX::XMMatrixInverse(nullptr, model_mat)));
-	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
-	screen_quad->updateMatrix(m_all_buff_Data);
-	raycast_renderer->updateMatrix(m_all_buff_Data);*/
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -224,8 +196,7 @@ void vrController::TrackingUpdate(float positionX)
 	}
 }
 
-void vrController::StopTracking()
-{
+void vrController::StopTracking(){
 	m_tracking = false;
 }
 
@@ -256,7 +227,7 @@ void vrController::Render() {
 	render_scene();
 }
 void vrController::render_scene(){
-	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume);
+	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, ModelMat_);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 
@@ -475,6 +446,7 @@ void vrController::CreateDeviceDependentResources()
 	*/
 }
 void vrController::onSingleTouchDown(float x, float y) {
+	//Mouse_old = { x, y };
 }
 void vrController::onTouchMove(float x, float y) {
 
@@ -486,11 +458,51 @@ void vrController::onScale(float sx, float sy) {
 void vrController::onPan(float x, float y) {
 
 }
+void vrController::updateVolumeModelMat() {
+	ModelMat_ =
+		DirectX::XMMatrixScaling(ScaleVec3_.x, ScaleVec3_.y, ScaleVec3_.z)
+		* RotateMat_
+		* DirectX::XMMatrixTranslation(PosVec3_.x, PosVec3_.y, PosVec3_.z);
+}
 
+bool vrController::addStatus(std::string name, DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* cam) {
+	auto it = rStates_.find(name);
+	if (it != rStates_.end()) return false;
+
+	rStates_[name] = new reservedStatus(mm, rm, sv, pv, cam);
+	if (Manager::screen_w != 0) rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
+	return true;
+}
+bool vrController::addStatus(std::string name, bool use_current_status) {
+	auto it = rStates_.find(name);
+	if (it != rStates_.end()) return false;
+
+	if (use_current_status) {
+		if (volume_model_dirty) {
+			updateVolumeModelMat();
+			volume_model_dirty = false;
+		}
+		rStates_[name] = new reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
+	}
+	else rStates_[name] = new reservedStatus();
+	if (Manager::screen_w != 0)rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
+	return true;
+}
+void vrController::setMVPStatus(std::string status_name) {
+	if (status_name == cst_name) return;
+	auto rstate_ = rStates_[status_name];
+	ModelMat_ = DirectX::XMLoadFloat4x4(&rstate_->model_mat);
+	RotateMat_ = DirectX::XMLoadFloat4x4(&rstate_->rot_mat);
+	ScaleVec3_ = rstate_->scale_vec; PosVec3_ = rstate_->pos_vec; 
+	Manager::camera = rstate_->vcam;
+	volume_model_dirty = false;
+	cst_name = status_name;
+}
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();
 	screen_quad->Clear();
 	//texture
 	if (tex_volume) delete tex_volume;
 	if (tex_baked) delete tex_baked;
+	rStates_.clear();
 }

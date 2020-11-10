@@ -81,13 +81,14 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 		)
 	);
 }
-void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex) {
+void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat) {
 	if (!m_loadingComplete) return;
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
 		auto model_mat = DirectX::XMMatrixIdentity();
 		XMStoreFloat4x4(&m_const_buff_data.uModelMat, model_mat);
 		XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, DirectX::XMVector4Transform(Manager::camera->getCameraPosition(), DirectX::XMMatrixInverse(nullptr, model_mat)));
+		XMStoreFloat4x4(&m_const_buff_data.uModelMat, modelMat);
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
