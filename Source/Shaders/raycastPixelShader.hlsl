@@ -31,7 +31,7 @@ float RayPlane(float3 ro, float3 rd, float3 planep, float3 planen) {
 	return d > 1e-5 ? (t / d) : (t > 0 ? 1e5 : -1e5);
 }
 float4 Sample(float3 p) {
-	return shaderTexture.Sample(uSampler, p).x;
+	return shaderTexture.Sample(uSampler, p);
 }
 float4 subDivide(float3 p, float3 ro, float3 rd, float t, float StepSize) {
 	float t0 = t - StepSize * 4.0;
@@ -70,12 +70,14 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 }
 // A pass-through function for the (interpolated) color data.
 float4 main(v2f input) : SV_TARGET{
-	float3 ro = input.ro;
+	return shaderTexture.Sample(uSampler, input.tex);
+
+	/*float3 ro = input.ro;
 	float3 rd = normalize(input.raydir);
 	
 	float2 intersect = RayCube(ro, rd, .5);
 	intersect.x = max(0, intersect.x);
 
 	clip(intersect.y - intersect.x);
-	return Volume(ro + 0.5, rd, intersect.x, intersect.y);
+	return Volume(ro + 0.5, rd, intersect.x, intersect.y);*/
 }

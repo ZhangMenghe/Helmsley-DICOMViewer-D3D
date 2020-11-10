@@ -267,6 +267,7 @@
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
+    <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
     <ClInclude Include="..\..\Source\vrController.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="OpenXRMain.h" />

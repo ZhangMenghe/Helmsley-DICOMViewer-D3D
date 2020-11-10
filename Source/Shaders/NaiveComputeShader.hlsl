@@ -1,7 +1,8 @@
-RWTexture2D<float4> sampleTexture : register(u0);
+Texture3D<float4> srcVolume : register(t0);
+RWTexture3D<float4> destVolume : register(u0);
 
 
-[numthreads(8,8,1)]
+[numthreads(8,8,8)]
 void main(uint3 threadID : SV_DispatchThreadID)
 {
 	//float4 res = float4(0.392, 0.584, 0.929, 1.f);
@@ -28,6 +29,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
 	//	ray += dir * depth;
 	//}
 	//threadID.y = HEIGHT - threadID.y;	//Flip y due to how d3d handles textures
-	sampleTexture[threadID.xy] = float4(1.0,1.0,.0,1.0f);//res;
+	destVolume[threadID.xyz] = srcVolume[threadID.xyz].r;
+		//float4(1.0f, 1.0f, .0f, 1.0f);//res;
 	//sampleTexture[threadID.xy] = float4(threadID / 600.f, 1.f);
 }

@@ -74,12 +74,12 @@ private:
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
 	//TEXTURES
-	Texture* tex_volume = nullptr, * tex_baked = nullptr;
+	Texture *tex_volume = nullptr, *tex_baked = nullptr;
 
-	////compute shader
-	//ID3D11ComputeShader* m_computeShader;
-
-
+	//compute shader
+	ID3D11ComputeShader* bakeShader_;
+	ID3D11Texture3D* m_comp_tex_d3d = nullptr;
+	ID3D11UnorderedAccessView* m_textureUAV;
 
 	DirectX::XMMATRIX ModelMat_, RotateMat_;
 	DirectX::XMFLOAT3 ScaleVec3_, PosVec3_;
@@ -105,8 +105,7 @@ private:
 	/*ID3D11SamplerState* m_sampleState;
 		
 	Texture* tex2d_srv_from_uav;
-	ID3D11Texture2D* m_comp_tex_d3d = nullptr;
-	ID3D11UnorderedAccessView* m_textureUAV;*/
+	*/
 	bool	m_tracking;
 	float	m_degreesPerSecond = 1;
 	//flags
@@ -128,6 +127,7 @@ private:
 	void render_scene();
 	void init_texture();
 	void updateVolumeModelMat();
+	void precompute();
 
 };
 #endif

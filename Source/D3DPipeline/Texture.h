@@ -16,6 +16,7 @@ public:
 	void ShutDown();
 
 	ID3D11Texture2D* GetTexture2D() { return mTex2D; }
+	ID3D11Texture3D* GetTexture3D() { return mTex3D; }
 	ID3D11ShaderResourceView* GetTextureView() { return mTexView; }
 	ID3D11RenderTargetView* GetRenderTargetView() { return m_renderTargetView; }
 
