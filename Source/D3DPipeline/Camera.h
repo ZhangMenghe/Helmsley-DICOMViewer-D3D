@@ -1,47 +1,53 @@
 #ifndef D3DPIPELINE_CAMERA_H
 #define D3DPIPELINE_CAMERA_H
 #include "pch.h"
-
 class Camera {
     const char* name_;
 
     DirectX::XMMATRIX _viewMat, _projMat, pose_mat;
-    DirectX::XMVECTOR _eyePos, _center, _up, _front, _right;
+    DirectX::XMFLOAT3 _eyePos, _center, _up, _front, _right;
 
     float fov;
 
     const float NEAR_PLANE = 0.01f;//as close as possible
     const float FAR_PLANE = 100.0f;
-    DirectX::XMVECTOR ORI_CAM_POS = { 0.0f, .0f, 2.0f, 0.0f};
-    DirectX::XMVECTOR ORI_UP = { 0.0f, 1.0f, 0.0f, 0.0f };
-    DirectX::XMVECTOR ORI_FRONT = { 0.0f, 0.0f, -1.0f };
+    DirectX::XMFLOAT3 ORI_CAM_POS = { 0.0f, .0f, 1.5f};
+    DirectX::XMFLOAT3 ORI_UP = { 0.0f, 1.0f, 0.0f };
+    DirectX::XMFLOAT3 ORI_FRONT = { 0.0f, 0.0f, -1.0f };
 
     void updateCameraVector() {
-        _viewMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(_eyePos, _center, _up));
-        DirectX::XMFLOAT3 pos_dest;
-        DirectX::XMStoreFloat3(&pos_dest, _eyePos);
-        pose_mat = DirectX::XMMatrixTranslation(pos_dest.x, pos_dest.y, pos_dest.z);
+        DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&_eyePos);
+        DirectX::XMVECTOR vc = DirectX::XMLoadFloat3(&_center);
+        DirectX::XMVECTOR vu = DirectX::XMLoadFloat3(&_up);
+
+        _viewMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(veye, vc, vu));
+
+        pose_mat = DirectX::XMMatrixTranslation(_eyePos.x, _eyePos.y, _eyePos.z);
     }
     void updateCameraVector(DirectX::XMMATRIX model) {
-        _viewMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(_eyePos, _center, _up));
+        DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&_eyePos);
+        DirectX::XMVECTOR vc = DirectX::XMLoadFloat3(&_center);
+        DirectX::XMVECTOR vu = DirectX::XMLoadFloat3(&_up);
+
+        _viewMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(veye, vc, vu));
         pose_mat = model;
     }
-    void reset(DirectX::XMVECTOR pos, DirectX::XMVECTOR up, DirectX::XMVECTOR center) {
+    void reset(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
         _up = up; _eyePos = pos;
         _center = center;
-        _front = DirectX::XMVectorSubtract(_center, _eyePos);
+        _front = { _center.x-_eyePos.x, _center.y - _eyePos.y, _center.z - _eyePos.z}; //DirectX::XMVectorSubtract(_center, _eyePos);
         updateCameraVector();
     }
 public:
     Camera() {
-        auto mcenter = DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
+        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
         reset(ORI_CAM_POS, ORI_UP, mcenter);
     }
     Camera(const char* cam_name) :name_(cam_name) { 
-        auto mcenter = DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
+        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
         reset(ORI_CAM_POS, ORI_UP, mcenter);
     }
-    Camera(DirectX::XMVECTOR pos, DirectX::XMVECTOR up, DirectX::XMVECTOR center) {
+    Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
         reset(pos, up, center);
     }
 
@@ -77,7 +83,7 @@ public:
 
         //XMFLOAT4X4 orientation = m_deviceResources->GetOrientationTransform3D();
 
-        DirectX::XMMATRIX orientationMatrix = XMLoadFloat4x4(&orientation);
+        DirectX::XMMATRIX orientationMatrix = DirectX::XMLoadFloat4x4(&orientation);
         _projMat = DirectX::XMMatrixTranspose(_projMat * orientationMatrix);
     }
     void setViewMat(DirectX::XMMATRIX viewmat) { _viewMat = viewmat; }
@@ -99,10 +105,10 @@ public:
     DirectX::XMMATRIX getProjMat() { return _projMat; }
     DirectX::XMMATRIX getViewMat() { return _viewMat; }
     DirectX::XMMATRIX getVPMat() { return DirectX::XMMatrixMultiply(_projMat, _viewMat); }
-    DirectX::XMVECTOR getCameraPosition() { return _eyePos; }
-    DirectX::XMVECTOR getViewCenter() { return _center; }
-    DirectX::XMVECTOR getViewDirection() { return _front; }
-    DirectX::XMVECTOR getViewUpDirection() { return _up; }
+    DirectX::XMFLOAT3 getCameraPosition() { return _eyePos; }
+    DirectX::XMFLOAT3 getViewCenter() { return _center; }
+    DirectX::XMFLOAT3 getViewDirection() { return _front; }
+    DirectX::XMFLOAT3 getViewUpDirection() { return _up; }
     DirectX::XMMATRIX getCameraPose() { return pose_mat; }
     //DirectX::XMVECTOR getRotationMatrixOfCameraDirection() {
     //    //a is the vector you want to translate to and b is where you are

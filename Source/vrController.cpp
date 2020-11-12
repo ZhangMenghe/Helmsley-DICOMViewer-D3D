@@ -323,10 +323,10 @@ void vrController::precompute() {
 		m_cmpdata.u_visible_bits = 1;
 		//contrast
 		m_cmpdata.u_contrast_low = .0f;
-		m_cmpdata.u_contrast_high = .3f;
+		m_cmpdata.u_contrast_high = .2f;
 		m_cmpdata.u_brightness = 0.5f;
 		//mask
-		m_cmpdata.u_maskbits = 8;//mask_bits_;
+		m_cmpdata.u_maskbits = 0xffff-1;//mask_bits_;
 		m_cmpdata.u_organ_num = 7;//mask_num
 		m_cmpdata.u_mask_color = 1;
 		//others
