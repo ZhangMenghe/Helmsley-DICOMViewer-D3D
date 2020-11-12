@@ -51,7 +51,7 @@ void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::
 	volume_model_dirty = false;
 }
 
-void vrController::assembleTexture(int update_target, int ph, int pw, int pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
+void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
 	if (update_target == 0 || update_target == 2) {
 		vol_dimension_ = { ph, pw, pd };
 		if (sh <= 0 || sw <= 0 || sd <= 0) {
@@ -83,16 +83,17 @@ void vrController::assembleTexture(int update_target, int ph, int pw, int pd, fl
 	D3D11_TEXTURE3D_DESC texDesc{
 		ph,pw,pd,
 		1,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
+		//DXGI_FORMAT_R8G8B8A8_UNORM,
+		DXGI_FORMAT_R32_UINT,
 		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 		0,
 		D3D11_RESOURCE_MISC_SHARED
 	};
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
-	
 	if (tex_baked != nullptr) { delete tex_baked; tex_baked = nullptr; }
 	tex_baked = new Texture;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
 	init_texture();
 	Manager::baked_dirty_ = true;
@@ -268,6 +269,30 @@ void vrController::Render() {
 	precompute();
 	render_scene();
 }
+void vrController::getGraphPoints(float values[], float*& points) {
+	DirectX::XMFLOAT2 lb, lm, lt, rb, rm, rt;
+	float half_top = values[dvr::TUNE_WIDTHTOP] / 2.0f;
+	float half_bottom = std::fmax(values[dvr::TUNE_WIDTHBOTTOM] / 2.0f, half_top);
+
+	float lb_x = values[dvr::TUNE_CENTER] - half_bottom;
+	float rb_x = values[dvr::TUNE_CENTER] + half_bottom;
+
+	lb = DirectX::XMFLOAT2(lb_x, .0f);
+	rb = DirectX::XMFLOAT2(rb_x, .0f);
+
+	lt = DirectX::XMFLOAT2(values[dvr::TUNE_CENTER] - half_top, values[dvr::TUNE_OVERALL]);
+	rt = DirectX::XMFLOAT2(values[dvr::TUNE_CENTER] + half_top, values[dvr::TUNE_OVERALL]);
+
+	float mid_y = values[dvr::TUNE_LOWEST] * values[dvr::TUNE_OVERALL];
+	lm = DirectX::XMFLOAT2(lb_x, mid_y);
+	rm = DirectX::XMFLOAT2(rb_x, mid_y);
+
+	//if (points) delete points;
+	points = new float[12]{
+			lb.x, lb.y, lm.x, lm.y, lt.x, lt.y,
+			rb.x, rb.y, rm.x, rm.y, rt.x, rt.y
+	};
+}
 void vrController::precompute() {
 	if (!Manager::baked_dirty_) return;
 	if (!bakeShader_) CreateDeviceDependentResources();
@@ -278,6 +303,49 @@ void vrController::precompute() {
 	ID3D11ShaderResourceView* texview = tex_volume->GetTextureView();
 	context->CSSetShaderResources(0, 1, &texview);
 	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
+
+	if (m_compute_constbuff != nullptr) {
+		m_cmpdata.u_tex_size = { vol_dimension_.x, vol_dimension_.y, vol_dimension_.z, (UINT)0 };
+		
+		float opa_values[5] = {
+	1.0f,
+	.0f,
+	2.0f,
+	0.0f,
+	1.0f
+		};
+		float* points;
+		getGraphPoints(opa_values, points);
+
+		//for (int i = 0; i < 6; i++)m_cmpdata.u_opacity[i] = { points[2*i], points[2*i+1] };
+		//m_cmpdata.u_widget_num = 1;
+		//m_cmpdata.u_visible_bits = 1;
+		//contrast
+		m_cmpdata.u_contrast = {.0f, .6f, .4f, .0f};
+		//m_cmpdata.u_contrast_low = .0f;
+		//m_cmpdata.u_contrast_high = .8f;
+		//m_cmpdata.u_brightness = 0.2f;
+		//mask
+		//m_cmpdata.u_maskbits = 8;//mask_bits_;
+		//m_cmpdata.u_organ_num = 7;//mask_num
+		//m_cmpdata.u_mask_color = true;
+		//m_cmpdata.u_flipy = false;//true;
+		//m_cmpdata.u_show_organ = false;
+		//m_cmpdata.u_color_scheme = 1;
+
+		// Prepare the constant buffer to send it to the graphics device.
+		context->UpdateSubresource(
+			m_compute_constbuff,
+			0,
+			nullptr,
+			&m_cmpdata,
+			0,
+			0
+		);
+		ID3D11Buffer* constantBufferNeverChanges{ m_compute_constbuff };
+		context->CSSetConstantBuffers(0, 1, &constantBufferNeverChanges);
+	}
+
 	context->Dispatch((vol_dimension_.x+7) / 8, (vol_dimension_.y+7) / 8, (vol_dimension_.z + 7) / 8);
 	context->CopyResource(tex_baked->GetTexture3D(), m_comp_tex_d3d);
 	//unbind UAV
@@ -387,7 +455,7 @@ void vrController::render_scene(){
 
 void vrController::CreateDeviceDependentResources(){
 	if (bakeShader_) return;
-	auto loadCSTask = DX::ReadDataAsync(L"NaiveComputeShader.cso");
+	auto loadCSTask = DX::ReadDataAsync(L"VolumeCompute.cso");
 	// After the vertex shader file is loaded, create the shader and input layout.
 	auto createCSTask = loadCSTask.then([this](const std::vector<byte>& fileData) {
 		DX::ThrowIfFailed(
@@ -399,6 +467,14 @@ void vrController::CreateDeviceDependentResources(){
 			)
 		);
 
+		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(computeConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		winrt::check_hresult(
+			m_deviceResources->GetD3DDevice()->CreateBuffer(
+				&constantBufferDesc,
+				nullptr,
+				&m_compute_constbuff
+			)
+		);
 	});
 
 	/*

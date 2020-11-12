@@ -170,5 +170,8 @@
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\VolumeCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

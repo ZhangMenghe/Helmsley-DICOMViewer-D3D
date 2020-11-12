@@ -29,12 +29,35 @@ public:
 		DirectX::XMStoreFloat4x4(&model_mat, mmodel);
 	}
 };
+struct computeConstantBuffer{
+	DirectX::XMUINT4 u_tex_size;
 
+	//opacity widget
+	//DirectX::XMFLOAT2 u_opacity[60];
+	//int u_widget_num;
+	//int u_visible_bits;
+
+	//contrast
+	DirectX::XMFLOAT4 u_contrast;
+	/*float u_contrast_low;
+	float u_contrast_high;
+	float u_brightness;*/
+
+	//mask
+	//UINT u_maskbits;
+	//UINT u_organ_num;
+	//bool u_mask_color;
+
+	//
+	//bool u_flipy;
+	//bool u_show_organ;
+	//int u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
+};
 class vrController{
 public:
 	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 	static vrController* instance();
-	void assembleTexture(int update_target, int ph, int pw, int pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
+	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
 
 	void onReset();
 	void onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam);
@@ -80,6 +103,11 @@ private:
 	ID3D11ComputeShader* bakeShader_;
 	ID3D11Texture3D* m_comp_tex_d3d = nullptr;
 	ID3D11UnorderedAccessView* m_textureUAV;
+	ID3D11Buffer* m_compute_constbuff = nullptr;
+
+	computeConstantBuffer m_cmpdata;
+
+
 
 	DirectX::XMMATRIX ModelMat_, RotateMat_;
 	DirectX::XMFLOAT3 ScaleVec3_, PosVec3_;
@@ -92,7 +120,7 @@ private:
 	std::string cst_name;
 
 	//volume
-	DirectX::XMINT3 vol_dimension_;
+	DirectX::XMUINT3 vol_dimension_;
 	DirectX::XMFLOAT3 vol_dim_scale_;
 	DirectX::XMMATRIX vol_dim_scale_mat_;
 
@@ -128,6 +156,6 @@ private:
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
-
+	void getGraphPoints(float values[], float*& points);
 };
 #endif

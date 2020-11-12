@@ -22,5 +22,7 @@ protected:
 private:
 	raycastConstantBuffer m_const_buff_data;
 	DirectX::XMMATRIX projMat, viewMat;
+	ID3D11BlendState* d3dBlendState;
+	ID3D11RasterizerState* m_render_state;
 };
 #endif
