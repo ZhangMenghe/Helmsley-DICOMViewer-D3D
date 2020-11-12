@@ -1,8 +1,3 @@
-//#pragma multi_compile SHOW_ORGANS
-//#pragma multi_compile COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
-//#pragma multi_compile LIGHT_DIRECTIONAL LIGHT_SPOT LIGHT_POINT
-//#pragma multi_compile FLIPY
-
 Texture3D<uint> srcVolume : register(t0);
 RWTexture3D<float4> destVolume : register(u0);
 
@@ -10,40 +5,25 @@ cbuffer computeConstantBuffer : register(b0){
 	uint4 u_tex_size;
 
 	//opacity widget
-	//float2 u_opacity[60];
-	//int u_widget_num;
-	//int u_visible_bits;
+	float4 u_opacity[30];
+	int u_widget_num;
+	int u_visible_bits;
 	
 	//contrast
-	float4 u_contrast;
-	//float u_contrast_low;
-	//float u_contrast_high;
-	//float u_brightness;
+	float u_contrast_low;
+	float u_contrast_high;
+	float u_brightness;
 
 	//mask
-	///uint u_maskbits;
-	//uint u_organ_num;
-	//bool u_mask_color;
+	uint u_maskbits;
+	uint u_organ_num;
+	bool u_mask_color;
 	
-	//
-	//bool u_flipy;
-	//bool u_show_organ;
-	//int u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
+	//others
+	bool u_flipy;
+	bool u_show_organ;
+	uint u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
 };
-//uint4 u_tex_size = { 512,512,144,0 };
-const float2 u_opacity[60];
-const int u_widget_num;
-const int u_visible_bits;
-const uint u_maskbits = 8;
-const uint u_organ_num = 7;
-const bool  u_mask_color = true;
-const bool  u_flipy = false;
-const int u_color_scheme;
-const bool  u_show_organ = true;
-//const static float u_contrast_low = .0f;
-//const static float u_contrast_high = 0.8f;
-//float u_brightness = 0.5f;
-
 const static float3 ORGAN_COLORS[7] = {
 	float3(0.24, 0.004, 0.64), float3(0.008, 0.278, 0.99), float3(0.75, 0.634, 0.996),
 	float3(1, 0.87, 0.14), float3(0.98, 0.88, 1.0), float3(0.99, 0.106, 0.365), float3(.0, 0.314, 0.75) };
@@ -65,10 +45,10 @@ float3 bright_scheme(float gray) {
 	return hsv2rgb(float3((1.0 - gray) * 180.0 / 255.0, 1.0, 1.0));
 }
 float UpdateOpacityAlpha(int woffset, float alpha) {
-	float2 lb = u_opacity[woffset], rb = u_opacity[woffset + 3];
+	float2 lb = u_opacity[woffset].xy, rb = u_opacity[woffset + 1].zw;
 	if (alpha < lb.x || alpha > rb.x) return .0;
-	float2 lm = u_opacity[woffset + 1], lt = u_opacity[woffset + 2];
-	float2 rm = u_opacity[woffset + 4], rt = u_opacity[woffset + 5];
+	float2 lm = u_opacity[woffset].zw, lt = u_opacity[woffset + 1].xy;
+	float2 rm = u_opacity[woffset + 2].xy, rt = u_opacity[woffset + 2].zw;
 	float k = (lt.y - lm.y) / (lt.x - lm.x);
 	if (alpha < lt.x) alpha *= k * (alpha - lm.x) + lm.y;
 	else if (alpha < rt.x) alpha *= rt.y;
@@ -92,77 +72,49 @@ int getMaskBit(uint mask_value) {
 	return CHECK_BIT;
 }
 
-////applied contrast, brightness, 12bit->8bit, return value 0-1
+//applied contrast, brightness, 12bit->8bit, return value 0-1
 float TransferIntensityStepOne(uint intensity) {
 	//max value 4095
 	float intensity_01 = float(intensity) * 0.0002442002442002442;
-	/*if (intensity_01 > u_contrast.y || intensity_01 < u_contrast.x) intensity_01 = .0;
-	intensity_01 = smoothstep(u_contrast.x, u_contrast.y, intensity_01);
-	intensity_01 = saturate(u_contrast.z + intensity_01 - 0.5);
-	*/
+	if (intensity_01 > u_contrast_high || intensity_01 < u_contrast_low) intensity_01 = .0;
+	intensity_01 = smoothstep(u_contrast_low, u_contrast_high, intensity_01);
+	//    intensity_01 = (intensity_01 - u_contrast_low) / (u_contrast_high - u_contrast_low) * u_contrast_level;
+	intensity_01 = clamp(u_brightness + intensity_01 - 0.5, .0, 1.0);
 	return intensity_01;
 }
 
 float3 TransferColor(float intensity, int ORGAN_BIT) {
-	intensity = smoothstep(u_contrast.x, u_contrast.y, intensity);
+	intensity = smoothstep(u_contrast_low, u_contrast_high, intensity);
 	intensity = max(.0, min(1.0f, intensity));
 
-	/*float3 color = intensity;
+	float3 color = intensity;
 	
-//#ifdef COLOR_HSV
-	if(u_color_scheme == 1)color = transfer_scheme(intensity);
-//#elif defined(COLOR_BRIGHT)
-	else if(u_color_scheme == 2)color = bright_scheme(intensity);
-//#endif
-
-//#ifdef SHOW_ORGANS
+	if(u_color_scheme==1)color = transfer_scheme(intensity);
+	else if(u_color_scheme==2) color = bright_scheme(intensity);
 	if (u_show_organ && u_mask_color && ORGAN_BIT > int(0)) color = transfer_scheme(ORGAN_BIT, intensity);
-//#endif
-	return color;*/
-	return bright_scheme(intensity);
+	
+	return color;
 }
 
 [numthreads(8,8,8)]
 void main(uint3 threadID : SV_DispatchThreadID){
-	
-	//sampling
-//#ifdef FLIPY
-	//if(u_flipy) threadID.y = u_tex_size.y - threadID.y;
-//#endif
+	if(u_flipy) threadID.y = u_tex_size.y - threadID.y;
+
 	uint value = srcVolume[threadID.xyz].r;
-	uint u_intensity = value & uint(0xffff);
-	float intensity = TransferIntensityStepOne(u_intensity);
 	//mask
 	uint u_mask = value >> uint(16);
-	//int ORGAN_BIT = -1;
-////#ifdef SHOW_ORGANS
-//	ORGAN_BIT = getMaskBit(u_mask);
-//	if (ORGAN_BIT < 0) { destVolume[threadID.xyz] = .0f; return; }
-//#endif
-	if(u_mask > 0 )destVolume[threadID.xyz] = float4(1.0f, 1.0f, .0f, 0.3f);
-	else destVolume[threadID.xyz] = .0f;
+	int ORGAN_BIT = -1;
+	if (u_show_organ) {
+		ORGAN_BIT = getMaskBit(u_mask);
+		if (ORGAN_BIT < 0) { destVolume[threadID.xyz] = .0f; return; }
+	}
 
-	//float alpha = .0;
-	//for (int i = 0; i < u_widget_num; i++)
-	//	if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(6 * i, intensity));
-	//if (u_mask == 1) srcVolume[threadID.xyz].g;//
-	//threadID.y = 512 - threadID.y;
-	//threadID.z = u_tex_size.z - threadID.z;
-
-	/*if (srcVolume[threadID.xyz].b > 0)
-		destVolume[threadID.xyz] = float4(1.0f, 1.0f, .0f, 0.3f); //float4(TransferColor(intensity, ORGAN_BIT), intensity);//srcVolume[threadID.xyz].r;
-	else destVolume[threadID.xyz] = .0f;//float4(1.0f, .0f, .0f, 0.4f);*/
-	//destVolume[threadID.xyz] = srcVolume[threadID.xyz].r;
-
-	/*threadID.y =512 - threadID.y;
-	uint value = srcVolume[threadID.xyz].r;
 	uint u_intensity = value & uint(0xffff);
 	float intensity = TransferIntensityStepOne(u_intensity);
 
-	//destVolume[threadID.xyz] = float4(TransferColor(intensity, -1), intensity);//srcVolume[threadID.xyz].r;
-
-	destVolume[threadID.xyz] = float4(TransferColor(intensity, -1), intensity);*/
-
-	//destVolume[threadID.xyz] = float4(1.0f, 1.0f, .0f, 1.0f);//res;
-	//sampleTexture[threadID.xy] = float4(threadID / 600.f, 1.f);
+	float alpha = intensity;
+	for (int i = 0; i < u_widget_num; i++)
+		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity));
+	if (u_flipy) threadID.y = u_tex_size.y - threadID.y;
+	destVolume[threadID.xyz] = float4(TransferColor(intensity, ORGAN_BIT), alpha);
 }

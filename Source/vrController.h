@@ -33,25 +33,24 @@ struct computeConstantBuffer{
 	DirectX::XMUINT4 u_tex_size;
 
 	//opacity widget
-	//DirectX::XMFLOAT2 u_opacity[60];
-	//int u_widget_num;
-	//int u_visible_bits;
+	DirectX::XMFLOAT4 u_opacity[30];
+	int u_widget_num;
+	int u_visible_bits;
 
 	//contrast
-	DirectX::XMFLOAT4 u_contrast;
-	/*float u_contrast_low;
+	float u_contrast_low;
 	float u_contrast_high;
-	float u_brightness;*/
+	float u_brightness;
 
 	//mask
-	//UINT u_maskbits;
-	//UINT u_organ_num;
-	//bool u_mask_color;
+	UINT u_maskbits;
+	UINT u_organ_num;
+	int u_mask_color;
 
 	//
-	//bool u_flipy;
-	//bool u_show_organ;
-	//int u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
+	int u_flipy;
+	int u_show_organ;
+	UINT u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
 };
 class vrController{
 public:
@@ -145,9 +144,10 @@ private:
 	bool	m_isholographic;
 	bool	m_render_to_texture = false;
 
-	/*const float m_clear_color[4] = {
+	/**/
+	const float m_clear_color[4] = {
 		0.f,0.f,0.f,0.f
-	};*/
+	};
 	int screen_width, screen_height;
 	//XMINT3 vol_dimension_, vol_dim_scale_;
 

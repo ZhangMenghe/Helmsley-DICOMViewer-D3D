@@ -266,6 +266,7 @@ void vrController::Render() {
 	//draw to screen
 	*/
 	//screen_quad->Draw(m_deviceResources->GetD3DDeviceContext());
+
 	precompute();
 	render_scene();
 }
@@ -306,7 +307,7 @@ void vrController::precompute() {
 
 	if (m_compute_constbuff != nullptr) {
 		m_cmpdata.u_tex_size = { vol_dimension_.x, vol_dimension_.y, vol_dimension_.z, (UINT)0 };
-		
+
 		float opa_values[5] = {
 	1.0f,
 	.0f,
@@ -317,24 +318,24 @@ void vrController::precompute() {
 		float* points;
 		getGraphPoints(opa_values, points);
 
-		//for (int i = 0; i < 6; i++)m_cmpdata.u_opacity[i] = { points[2*i], points[2*i+1] };
-		//m_cmpdata.u_widget_num = 1;
-		//m_cmpdata.u_visible_bits = 1;
+		for (int i = 0; i < 3; i++)m_cmpdata.u_opacity[i] = { points[4 * i], points[4 * i + 1] , points[4 * i + 2] , points[4 * i + 3] };
+		m_cmpdata.u_widget_num = 1;
+		m_cmpdata.u_visible_bits = 1;
 		//contrast
-		m_cmpdata.u_contrast = {.0f, .6f, .4f, .0f};
-		//m_cmpdata.u_contrast_low = .0f;
-		//m_cmpdata.u_contrast_high = .8f;
-		//m_cmpdata.u_brightness = 0.2f;
+		m_cmpdata.u_contrast_low = .0f;
+		m_cmpdata.u_contrast_high = .3f;
+		m_cmpdata.u_brightness = 0.5f;
 		//mask
-		//m_cmpdata.u_maskbits = 8;//mask_bits_;
-		//m_cmpdata.u_organ_num = 7;//mask_num
-		//m_cmpdata.u_mask_color = true;
-		//m_cmpdata.u_flipy = false;//true;
-		//m_cmpdata.u_show_organ = false;
-		//m_cmpdata.u_color_scheme = 1;
+		m_cmpdata.u_maskbits = 8;//mask_bits_;
+		m_cmpdata.u_organ_num = 7;//mask_num
+		m_cmpdata.u_mask_color = 1;
+		//others
+		m_cmpdata.u_flipy = 1;
+		m_cmpdata.u_show_organ = 0;
+		m_cmpdata.u_color_scheme = 2;
 
 		// Prepare the constant buffer to send it to the graphics device.
-		context->UpdateSubresource(
+		m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(
 			m_compute_constbuff,
 			0,
 			nullptr,
@@ -342,8 +343,7 @@ void vrController::precompute() {
 			0,
 			0
 		);
-		ID3D11Buffer* constantBufferNeverChanges{ m_compute_constbuff };
-		context->CSSetConstantBuffers(0, 1, &constantBufferNeverChanges);
+		context->CSSetConstantBuffers(0, 1, &m_compute_constbuff);
 	}
 
 	context->Dispatch((vol_dimension_.x+7) / 8, (vol_dimension_.y+7) / 8, (vol_dimension_.z + 7) / 8);
@@ -356,6 +356,10 @@ void vrController::precompute() {
 }
 
 void vrController::render_scene(){
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(),m_clear_color);
+	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
@@ -467,7 +471,7 @@ void vrController::CreateDeviceDependentResources(){
 			)
 		);
 
-		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(computeConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(XMFLOAT4X4) *12, D3D11_BIND_CONSTANT_BUFFER);
 		winrt::check_hresult(
 			m_deviceResources->GetD3DDevice()->CreateBuffer(
 				&constantBufferDesc,
@@ -475,6 +479,7 @@ void vrController::CreateDeviceDependentResources(){
 				&m_compute_constbuff
 			)
 		);
+
 	});
 
 	/*
