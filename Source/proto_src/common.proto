@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message Request{
+    int32 client_id = 1;
+    string req_msg = 2;
+}
+
+message commonResponse{
+    bool success = 1;
+    string res_msg = 2;
+}

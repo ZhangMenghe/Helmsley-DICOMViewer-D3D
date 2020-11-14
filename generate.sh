@@ -1,0 +1,1 @@
+./tools/protobuf/protoc.exe --plugin=protoc-gen-grpc=./tools/protobuf/grpc_cpp_plugin.exe --proto_path=Source/proto_src/ --cpp_out=Source/proto/ --grpc_out=Source/proto/  common.proto transManager.proto inspectorSync.proto

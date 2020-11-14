@@ -27,6 +27,8 @@ public:
         // for(auto& offset:n_data_offset) offset = 0;
     }
     void startToAssemble(vrController* controller);
+  void send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, const char* data);
+
 private:
     int CHANEL_NUM = 4;
     UCHAR* g_VolumeTexData = nullptr, *g_maskTexData = nullptr;
@@ -35,7 +37,6 @@ private:
     size_t g_ssize = 0, g_vol_len;
     size_t n_data_offset[3] = {0};
 
-    void send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, char* data);
 };
 
 #endif

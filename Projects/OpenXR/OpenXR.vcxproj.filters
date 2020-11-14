@@ -53,6 +53,30 @@
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{9b6d6c2a-afa4-4ca6-854e-82042768a0da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\proto">
+      <UniqueIdentifier>{d97b8935-b188-4be7-9914-47fb00bb2670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\proto_src">
+      <UniqueIdentifier>{0841da0e-38be-4f59-bc3d-9aff909e98d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\grpc">
+      <UniqueIdentifier>{a56aa1f1-1b18-4c73-9f72-5caed3c5fe30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{33c03ba3-e6bb-4c45-86e0-2e8516024424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\x64">
+      <UniqueIdentifier>{bcf81333-1c86-4115-92a3-6284ac21aa05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\x64\debug">
+      <UniqueIdentifier>{5c7ce628-5ea9-4886-b219-d4216aa2e73e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\arm64">
+      <UniqueIdentifier>{bdc4e6da-bb34-43d1-ba3b-2ed2d96386ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\arm64\debug">
+      <UniqueIdentifier>{ec0107f7-4242-47ef-bc42-ab1a788573c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -81,6 +105,27 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\vrController.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\proto\inspectorSync.pb.cc">
+      <Filter>Source\proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\proto\transManager.pb.cc">
+      <Filter>Source\proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\proto\common.pb.cc">
+      <Filter>Source\proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\grpc\rpcHandler.cpp">
+      <Filter>Source\grpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\proto\inspectorSync.grpc.pb.cc">
+      <Filter>Source\proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\proto\transManager.grpc.pb.cc">
+      <Filter>Source\proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\proto\common.grpc.pb.cc">
+      <Filter>Source\proto</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +168,27 @@
     <ClInclude Include="..\..\Source\vrController.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\proto\inspectorSync.pb.h">
+      <Filter>Source\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\proto\transManager.pb.h">
+      <Filter>Source\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\proto\common.pb.h">
+      <Filter>Source\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\grpc\rpcHandler.h">
+      <Filter>Source\grpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\proto\inspectorSync.grpc.pb.h">
+      <Filter>Source\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\proto\transManager.grpc.pb.h">
+      <Filter>Source\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\proto\common.grpc.pb.h">
+      <Filter>Source\proto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -134,13 +200,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
     <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
       <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
     </None>
     <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
       <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
     </None>
+    <None Include="..\..\Source\proto_src\inspectorSync.proto">
+      <Filter>Source\proto_src</Filter>
+    </None>
+    <None Include="..\..\Source\proto_src\transManager.proto">
+      <Filter>Source\proto_src</Filter>
+    </None>
+    <None Include="..\..\Source\proto_src\common.proto">
+      <Filter>Source\proto_src</Filter>
+    </None>
+    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
@@ -158,5 +233,91 @@
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\libprotobuf.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\libprotobuf-lite.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\libssl-1_1-x64.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\re2.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\zlib1.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\abseil_dll.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\bin\libcrypto-1_1-x64.dll">
+      <Filter>Library\x64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\libprotobuf-lited.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\libssl-1_1-x64.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\re2.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\zlibd1.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\abseil_dll.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\libcrypto-1_1-x64.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\x64\debug\bin\libprotobufd.dll">
+      <Filter>Library\x64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\libprotobuf.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\libprotobuf-lite.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\libssl-1_1-arm64.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\re2.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\zlib1.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\abseil_dll.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\bin\libcrypto-1_1-arm64.dll">
+      <Filter>Library\arm64</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libprotobuf-lited.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libssl-1_1-arm64.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\re2.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\zlibd1.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\abseil_dll.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libcrypto-1_1-arm64.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libprotobufd.dll">
+      <Filter>Library\arm64\debug</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

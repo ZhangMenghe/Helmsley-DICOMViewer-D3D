@@ -18,10 +18,23 @@ OpenXRMain::OpenXRMain(const std::shared_ptr<DX::DeviceResources>& deviceResourc
 
 	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
 
-	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+	m_rpcHandler = new rpcHandler("192.168.1.74:23333");
+	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+	m_rpcHandler->setLoader(&m_dicom_loader);
+
+	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
+
+	auto vector = m_rpcHandler->getVolumeFromDataset("Larry_Smarr_2017", false);
+
+	std::string path = "Larry_Smarr_2017/" + vector[0].folder_name();//m_rpcHandler->target_ds.folder_name() + vector[0].folder_name();
+
+	m_rpcHandler->DownloadVolume(path);
+	m_rpcHandler->DownloadMasks(path);
+
+	//if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 		//m_sceneRenderer.reset();
-	}
+	//}
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
 	/*

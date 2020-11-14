@@ -17,12 +17,32 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// TODO: Replace this with your app's content initialization.
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources));
 
+	m_rpcHandler = new rpcHandler("localhost:23333");
+	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+	m_rpcHandler->setLoader(&m_dicom_loader);
+
 	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
 
-	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+	auto vector = m_rpcHandler->getVolumeFromDataset("Larry_Smarr_2017", false);
+
+	if (vector.size() > 0) {
+		std::string path = "Larry_Smarr_2017/" + vector[0].folder_name();//m_rpcHandler->target_ds.folder_name() + vector[0].folder_name();
+
+		m_rpcHandler->DownloadVolume(path);
+		m_rpcHandler->DownloadMasks(path);
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
-		//m_sceneRenderer.reset();
+
+	}else {
+		if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+		  m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
+		  //m_sceneRenderer.reset();
+	  }
 	}
+
+	//if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+	//m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
+		//m_sceneRenderer.reset();
+	//}
 	//m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.

@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package helmsley;
+import "common.proto";
+
+
+enum ReqType{
+    SET = 0;
+    GET = 1;
+}
+message VPMsg{
+    int32 client_id = 1;
+    ReqType req_type = 2;
+    enum VPType{
+        POS = 0;
+        SCALE = 1;
+        ROT = 2;
+    }
+    VPType volume_pose_type = 3;
+    repeated float values = 4;
+}
+
+message GestureOp{
+    enum OPType{
+        TOUCH_DOWN = 0;
+        TOUCH_MOVE = 1;
+        SCALE = 2;
+        PAN=3;
+    }
+    int64 gid = 1;
+    OPType type = 2;
+    float x = 3;
+    float y = 4;
+}
+message OperationBatch{
+    float bid = 1;
+    repeated GestureOp gesture_op = 2;
+}
+message ResetMsg{
+    repeated string check_keys = 1;
+    repeated bool check_values = 2;
+    repeated float volume_pose = 3;
+    repeated float camera_pose = 4;
+}
+
+message TuneMsg{
+    enum TuneType{
+        ADD_ONE = 0;
+        REMOVE_ONE = 1;
+        REMOTE_ALL = 2;
+        SET_ONE = 3;
+        SET_ALL = 4;
+        SET_VISIBLE = 5;
+        SET_TARGET = 6;
+        CUT_PLANE = 7;
+        COLOR_SCHEME = 8;
+    }
+    TuneType type = 1;
+    int32 target = 2;
+    int32 sub_target = 3;
+    float value = 4;
+    repeated float values = 5;
+}
+
+message CheckMsg{
+    string key = 1;
+    bool value = 2;
+}
+message MaskMsg{
+    int32 num = 1;
+    int32 mbits = 2;
+}
+message volumeConcise{
+    string vol_path = 1;
+    repeated int32 dims = 2;
+    repeated float size = 3;
+    bool with_mask = 4;
+}
+message FrameUpdateMsg{
+    enum MsgType{
+        GESTURE = 0;
+        TUNE = 1;
+        CHECK = 2;
+        MASK = 3;
+        RESET = 4;
+        DATA = 5;
+    }
+    repeated MsgType types = 1;
+    repeated GestureOp gestures = 2;
+    repeated TuneMsg tunes = 3;
+    repeated CheckMsg checks = 4;
+    MaskMsg mask_value = 5;
+    ResetMsg reset_value = 6;
+    volumeConcise data_value = 7;
+}
+service inspectorSync{
+    rpc startBroadcast(Request) returns(commonResponse);
+    rpc gsVolumePose(VPMsg) returns(commonResponse);
+    rpc getOperations(Request) returns(OperationBatch);
+    rpc getUpdates(Request) returns(FrameUpdateMsg);
+
+    rpc reqestReset(ResetMsg) returns(commonResponse);
+    rpc setGestureOp(GestureOp) returns(commonResponse);
+    rpc setTuneParams(TuneMsg) returns(commonResponse);
+    rpc setCheckParams(CheckMsg) returns(commonResponse);
+    rpc setMaskParams(MaskMsg) returns(commonResponse);
+    rpc setDisplayVolume(volumeConcise) returns(commonResponse);
+}

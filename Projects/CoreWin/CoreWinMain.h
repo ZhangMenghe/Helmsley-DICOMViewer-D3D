@@ -4,6 +4,8 @@
 #include "Common\DeviceResources.h"
 #include <vrController.h>
 #include <Utils/dicomLoader.h>
+#include <grpc/rpcHandler.h>
+
 namespace CoreWin{
 	class CoreWinMain : public DX::IDeviceNotify
 	{
@@ -32,5 +34,10 @@ namespace CoreWin{
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
 
+		// RPC instance
+		rpcHandler * m_rpcHandler;
+
+		// RPC thread
+		std::thread * m_rpcThread;
 	};
 }

@@ -5,6 +5,8 @@
 #include "Common\DeviceResources.h"
 #include <vrController.h>
 #include <Utils/dicomLoader.h>
+#include <grpc/rpcHandler.h>
+#include <thread>
 
 // Renders Direct2D and 3D content on the screen.
 namespace OpenXR
@@ -34,6 +36,12 @@ namespace OpenXR
 
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
+
+		// RPC instance
+		rpcHandler* m_rpcHandler;
+
+		// RPC thread
+		std::thread* m_rpcThread;
 	};
 }
 #endif // !OPENXR_MAIN_H
