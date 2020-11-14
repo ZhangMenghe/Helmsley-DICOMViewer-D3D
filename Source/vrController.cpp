@@ -333,7 +333,7 @@ void vrController::render_scene(){
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
-	meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
 	cutter_->Update(model_mat);
 	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	

@@ -111,6 +111,9 @@ namespace dvr{
     const float MOUSE_ROTATE_SENSITIVITY = 0.005f;
     const float MOUSE_SCALE_SENSITIVITY = 0.8f;
     const float MOUSE_PAN_SENSITIVITY = 1.2f;
+    
+    //setting
+    const bool CONNECT_TO_SERVER = false;
 
     //TRS
     //const DirectX::XMFLOAT4X4 DEFAULT_ROTATE(

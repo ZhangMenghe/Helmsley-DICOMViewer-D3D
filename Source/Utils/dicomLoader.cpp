@@ -6,7 +6,7 @@
 #include <locale>
 #include <string>
 #include <sstream> 
-void dicomLoader:: setupDCMIConfig(int height, int width, int dims, float sh, float sw, float sd, bool b_wmask){
+void dicomLoader::sendDataPrepare(int height, int width, int dims, float sh, float sw, float sd, bool b_wmask){
     CHANEL_NUM = b_wmask? 4:2;
     g_img_h = height; g_img_w = width; g_img_d = dims;
     g_ssize = CHANEL_NUM * width * height;
@@ -77,8 +77,8 @@ bool dicomLoader::loadData(std::string filename, mLoadTarget target, int unit_si
     return true;
 }
 bool dicomLoader::setupCenterLineData(vrController* controller, std::string filename){
-    std::vector<int>ids;
-    std::vector<float*> cline_data;
+    //std::vector<int>ids;
+    //std::vector<float*> cline_data;
 
     int cidx = 0;
     float* data = nullptr;
@@ -90,9 +90,10 @@ bool dicomLoader::setupCenterLineData(vrController* controller, std::string file
     int idx;
     while (getline(inFile, line)) {
         if (line.length() < 3) {
-            cline_data.push_back(new float[4000 * 3]);
-            data = cline_data.back();
-            ids.push_back(std::stoi(line));
+            //cline_data.push_back(new float[4000 * 3]);
+            //data = cline_data.back();
+            data = new float[4000 * 3];
+            centerline_map[std::stoi(line)] = data;
             idx = 0;
             continue;
         }
@@ -103,16 +104,10 @@ bool dicomLoader::setupCenterLineData(vrController* controller, std::string file
         }
     }
     inFile.close();
-
-    for (int i = 0; i < 2; i++) {
-        controller->setupCenterLine(ids[i], cline_data[i]);
-        delete cline_data[i];
-        cline_data[i] = nullptr;
-    }
     return true;
 }
 
-void dicomLoader::send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, char* data){
+void dicomLoader::send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, const char* data){
     //check initialization
     if(!g_VolumeTexData) return;
     UCHAR* buffer = g_VolumeTexData+n_data_offset[(int)target];
@@ -133,7 +128,25 @@ void dicomLoader::send_dicom_data(mLoadTarget target, int id, int chunk_size, in
     }
    n_data_offset[target] += CHANEL_NUM / unit_size * chunk_size;   
 }
-void dicomLoader::startToAssemble(vrController* controller){
-    // std::cout<<g_img_h<<" "<<g_img_w<< " "<< g_img_d<< " "<< g_vol_h<<" "<< g_vol_w<<" "<< g_vol_depth<<std::endl;
-    controller->assembleTexture(2, g_img_h, g_img_w, g_img_d, g_vol_h, g_vol_w, g_vol_depth, g_VolumeTexData, CHANEL_NUM);
+void dicomLoader::sendDataFloats(int target, int chunk_size, std::vector<float> data) {
+    float* cdata = new float[chunk_size - 1];
+    memcpy(cdata, &data[1], (chunk_size - 1) * sizeof(float));
+    centerline_map[(int)data[0]] = cdata;
+}
+void dicomLoader::sendDataDone(){
+    for (int i = 0; i < 3; i++) {
+        if (n_data_offset[i] != 0) {
+            vrController::instance()->assembleTexture(i, g_img_h, g_img_w, g_img_d, g_vol_h, g_vol_w, g_vol_depth, g_VolumeTexData, CHANEL_NUM);
+            n_data_offset[i] = 0;
+            break;
+        }
+    }
+    if (!centerline_map.empty()) {
+        for (auto inst : centerline_map) {
+            vrController::instance()->setupCenterLine(inst.first, inst.second);
+            delete inst.second;
+            inst.second = nullptr;
+        }
+        centerline_map.clear();
+    }
 }

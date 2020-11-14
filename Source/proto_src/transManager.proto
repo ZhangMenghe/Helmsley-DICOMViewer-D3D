@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package helmsley;
+import "common.proto";
+
+
+message configResponse{
+    message configInfo{
+        string file_name = 1;
+        string content = 2;
+    }
+    repeated configInfo configs = 1;
+}
+
+message datasetResponse{
+    message datasetInfo{
+        string folder_name = 1;
+        string patient_name = 2;
+        string date = 3;
+        string physican_name = 4;
+        repeated string mask_folders = 5;
+    }
+    repeated datasetInfo datasets = 1;
+}
+
+message volumeResponse{
+    message scoreInfo{
+        int32 rgroup_id = 1;
+        int32 rank_id = 2;
+        float rank_score = 3;
+        repeated float raw_score = 4;
+        repeated float vol_score = 5;
+    }
+    message volumeInfo{
+        string folder_name = 1;
+        string folder_path = 2;
+        repeated int32 dims = 3;/*height,width,depth*/
+        repeated float orientation = 4;
+        repeated float resolution = 5;/*pix_spacing y, x, slice thickness*/
+        float volume_loc_range = 6;
+        bool with_mask = 7;
+        enum DataSource{
+            LOCAL = 0;
+            SERVER = 1;
+            DEVICE = 2;
+        }
+        DataSource data_source = 8;
+        bytes sample_img = 9;
+        scoreInfo scores = 10;
+    }
+    repeated volumeInfo volumes = 1;
+}
+
+message volumeWholeResponse{
+    bytes data = 1;
+}
+
+message centerlineData{
+    repeated float data = 1;
+}
+
+message dcmImage{
+    int32 dcmID = 1;
+    float position = 2;
+    bytes data = 3;
+}
+
+message RequestWholeVolume{
+    int32 client_id = 1;
+    string req_msg = 2;
+    int32 unit_size = 3;
+}
+
+service dataTransfer{
+    rpc getAvailableConfigs(Request) returns(configResponse);
+    rpc exportConfigs(Request) returns(commonResponse);
+    rpc getAvailableDatasets(Request) returns(datasetResponse);
+    rpc getVolumeFromDataset(Request) returns(stream volumeResponse);
+    rpc Download(Request) returns (stream dcmImage);
+    rpc DownloadVolume(RequestWholeVolume) returns(stream volumeWholeResponse);
+    rpc DownloadMasks(Request) returns(stream dcmImage);
+    rpc DownloadMasksVolume(Request) returns(stream volumeWholeResponse);
+    rpc DownloadCenterLineData(Request) returns(stream centerlineData);
+}

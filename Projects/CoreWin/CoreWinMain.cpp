@@ -9,8 +9,7 @@ using namespace Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
-	m_deviceResources(deviceResources)
-{
+	m_deviceResources(deviceResources){
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
 
@@ -19,29 +18,53 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// TODO: Replace this with your app's content initialization.
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources));
 
-	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
+	dvr::CONNECT_TO_SERVER? setup_volume_server(): setup_volume_local();
 
+	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+
+	Size outputSize = m_deviceResources->GetOutputSize();
+	m_manager->onViewChange(outputSize.Width, outputSize.Height);
+}
+void CoreWinMain::setup_volume_server(){
+	m_rpcHandler = new rpcHandler("localhost:23333");
+	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+	m_rpcHandler->setLoader(&m_dicom_loader);
+	
+	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);
+
+	if (vector.size() > 0) {
+		volumeResponse::volumeInfo sel_vol_info;// = vector[0];
+		for (auto vol : vector) {
+			if (vol.folder_name().compare("21_WATERPOSTCORLAVAFLEX20secs") == 0) {
+				sel_vol_info = vol;
+				break;
+			}
+		}
+		auto vdims = sel_vol_info.dims();
+		auto spacing = sel_vol_info.resolution();
+		m_dicom_loader.sendDataPrepare(
+			vdims.Get(0), vdims.Get(1), vdims.Get(2),
+			spacing.Get(0) * vdims.Get(0), spacing.Get(1) * vdims.Get(1), spacing.Get(2) * vdims.Get(2),
+			sel_vol_info.with_mask());
+
+		std::string path = m_rpcHandler->target_ds.folder_name() +'/'+ sel_vol_info.folder_name();
+		m_rpcHandler->DownloadVolume(path);
+		m_rpcHandler->DownloadMasksAndCenterlines(path);
+		m_dicom_loader.sendDataDone();
+	}
+	else {
+		setup_volume_local();
+	}
+}
+void CoreWinMain::setup_volume_local() {
+	m_dicom_loader.sendDataPrepare(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
 	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 		//m_sceneRenderer.reset();
 	}
 	m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
-
-	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
-	//m_tex_quad->setQuadSize(m_deviceResources->GetD3DDevice(), 
-	//	m_deviceResources->GetD3DDeviceContext(), 
-	//	300,150);
-
-	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
-	// e.g. for 60 FPS fixed timestep update logic, call:
-	/*
-	m_timer.SetFixedTimeStep(true);
-	m_timer.SetTargetElapsedSeconds(1.0 / 60);
-	*/
-	Size outputSize = m_deviceResources->GetOutputSize();
-	m_manager->onViewChange(outputSize.Width, outputSize.Height);
+	m_dicom_loader.sendDataDone();
 }
-
 CoreWinMain::~CoreWinMain()
 {
 	// Deregister device notification
