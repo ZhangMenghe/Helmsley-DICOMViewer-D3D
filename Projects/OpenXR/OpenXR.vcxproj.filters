@@ -44,12 +44,6 @@
     <Filter Include="Assets\dicom-data">
       <UniqueIdentifier>{31313c94-4fce-4bbd-b873-e63b6a529403}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data\IRB01">
-      <UniqueIdentifier>{20787c6d-b15d-4d53-afce-9813be8d247d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs">
-      <UniqueIdentifier>{04f87dd6-6003-4ad7-a4c3-bd8036d30882}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{9b6d6c2a-afa4-4ca6-854e-82042768a0da}</UniqueIdentifier>
     </Filter>
@@ -76,6 +70,12 @@
     </Filter>
     <Filter Include="Library\arm64\debug">
       <UniqueIdentifier>{ec0107f7-4242-47ef-bc42-ab1a788573c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\dicom-data\Larry_Smarr_2016">
+      <UniqueIdentifier>{71289dd9-a41a-447e-98b1-114ca90a73fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
+      <UniqueIdentifier>{1233eb50-6233-4905-9736-e6cda659fcd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +127,9 @@
     <ClCompile Include="..\..\Source\proto\common.grpc.pb.cc">
       <Filter>Source\proto</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Common\Manager.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -162,9 +165,6 @@
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Utils\ShaderStructures.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\vrController.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -189,6 +189,18 @@
     <ClInclude Include="..\..\Source\proto\common.grpc.pb.h">
       <Filter>Source\proto</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Common\ConstantAndStruct.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Common\Manager.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\D3DPipeline\Camera.h">
+      <Filter>Source\D3DPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\MathUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -200,11 +212,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
+    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
+      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
     </None>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
+      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
     </None>
     <None Include="..\..\Source\proto_src\inspectorSync.proto">
       <Filter>Source\proto_src</Filter>
@@ -231,6 +244,9 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\VolumeCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -37,7 +37,7 @@ bool dicomLoader::loadData(std::string filename, int h, int w, int d){
     if(!inFile.is_open()) 
         return false;
 
-    int offset = 0;
+    auto offset = 0;
 
     for(int id = 0; !inFile.eof(); id++){
         inFile.read(buffer, 1024);

@@ -42,7 +42,7 @@ void App::Initialize(CoreApplicationView^ applicationView)
 	// can make the CoreWindow active and start rendering on the window.
 	applicationView->Activated +=
 		ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
-
+	
 	CoreApplication::Suspending +=
 		ref new EventHandler<SuspendingEventArgs^>(this, &App::OnSuspending);
 
@@ -65,6 +65,10 @@ void App::SetWindow(CoreWindow^ window)
 
 	window->Closed += 
 		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
+
+	window->PointerPressed += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerPressed);
+	window->PointerMoved += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerMoved);
+	window->PointerReleased += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerReleased);
 
 	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
 
@@ -193,4 +197,14 @@ void App::OnOrientationChanged(DisplayInformation^ sender, Object^ args)
 void App::OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
 {
 	m_deviceResources->ValidateDevice();
+}
+
+void App::OnPointerPressed(Windows::UI::Core::CoreWindow^ window, Windows::UI::Core::PointerEventArgs^ args) {
+	if (m_main != nullptr) m_main->OnPointerPressed(args->CurrentPoint->Position.X, args->CurrentPoint->Position.Y);
+}
+void App::OnPointerMoved(Windows::UI::Core::CoreWindow^ window, Windows::UI::Core::PointerEventArgs^ args) {
+	if (m_main != nullptr) m_main->OnPointerMoved(args->CurrentPoint->Position.X, args->CurrentPoint->Position.Y);
+}
+void App::OnPointerReleased(Windows::UI::Core::CoreWindow^ window, Windows::UI::Core::PointerEventArgs^ args) {
+	if (m_main != nullptr) m_main->OnPointerReleased();
 }
