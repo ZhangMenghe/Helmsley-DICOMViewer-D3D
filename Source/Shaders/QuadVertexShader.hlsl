@@ -2,8 +2,7 @@
 cbuffer ModelViewProjectionConstantBuffer : register(b0)
 {
 	matrix model;
-	matrix view;
-	matrix projection;
+	matrix uViewProjMat;
 };
 
 // Per-vertex data used as input to the vertex shader.
@@ -23,14 +22,14 @@ struct PixelShaderInput
 // Simple shader to do vertex processing on the GPU.
 PixelShaderInput main(VertexShaderInput input){
 	PixelShaderInput output;
-	float4 pos = float4(input.pos,0.5f, 1.0f);
-	//output.pos = pos;
-
-	//pos = mul(pos, view);
-	//pos = mul(pos, projection);
+	float4 pos = mul(float4(input.pos.xy, .0f, 1.0f), model);
+	//debug only! xmmatrix trans not working
+	pos.x += 0.6;
+	pos.y -= 0.6;
+	pos = mul(pos, uViewProjMat);
 	output.pos = pos;
 
-	output.tex = input.tex;
+	output.tex = input.tex.xy;
 
 	return output;
 }

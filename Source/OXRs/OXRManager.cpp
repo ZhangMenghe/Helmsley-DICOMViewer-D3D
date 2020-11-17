@@ -2,8 +2,8 @@
 #include "OXRManager.h"
 #include <thread> // sleep_for
 #include <Common/Manager.h>
+#include <Common/DirectXHelper.h>
 using namespace DX;
-
 OXRManager::OXRManager()
 :DeviceResources(true){
 	m_d3dFeatureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -128,13 +128,17 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 	IDXGIAdapter1* adapter = d3d_get_adapter(requirement.adapterLuid);
 	if (adapter == nullptr)
 		return false;
+	//support d2d
+	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 	Microsoft::WRL::ComPtr<ID3D11Device> device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
 	if (FAILED(D3D11CreateDevice(
 		adapter, 
 		D3D_DRIVER_TYPE_UNKNOWN, 
-		0, 0, 
+		0, 
+		creationFlags,
 		featureLevels,
 		_countof(featureLevels), 
 		D3D11_SDK_VERSION, 
@@ -145,10 +149,15 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 	device.As(&m_d3dDevice);
 	context.As(&m_d3dContext);
 	// Create the Direct2D device object and a corresponding context.
-	//Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
-	//m_d3dDevice.As(&dxgiDevice);
-	//m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice);
-	//m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,&m_d2dContext);
+	Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
+	m_d3dDevice.As(&dxgiDevice);
+	auto hr=m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice);
+	if (FAILED(hr)) {
+		throw Platform::Exception::CreateException(hr);
+
+	}
+	m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,&m_d2dContext);
+	
 	adapter->Release();
 
 
@@ -296,7 +305,7 @@ bool OXRManager::Update() {
 	}
 	return !xr_quit;
 }
-void OXRManager::Render(vrController* scene){
+void OXRManager::Render(OXRScenes* scene){
 	// Block until the previous frame is finished displaying, and is ready for another one.
 	// Also returns a prediction of when the next frame will be displayed, for use with predicting
 	// locations of controllers, viewpoints, etc.
@@ -497,7 +506,7 @@ swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapch
 bool OXRManager::openxr_render_layer(XrTime predictedTime, 
 	std::vector<XrCompositionLayerProjectionView>& views, 
 	XrCompositionLayerProjection& layer,
-	vrController* scene) {
+	OXRScenes* scene) {
 
 	// Find the state and location of each viewpoint at the predicted time
 	uint32_t         view_count = 0;
@@ -538,7 +547,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 		if (m_outputSize.Width != xr_swapchains[i].width) {
 			m_outputSize.Width = xr_swapchains[i].width;
 			m_outputSize.Height = xr_swapchains[i].height;
-			scene->CreateWindowSizeDependentResources();
+			scene->onViewChanged();
 			Manager::instance()->onViewChange(m_outputSize.Width, m_outputSize.Height);
 		}
 

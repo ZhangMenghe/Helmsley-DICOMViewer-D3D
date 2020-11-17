@@ -96,7 +96,11 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 
 	//texture sampler
 	if(m_sampleState!=nullptr) context->PSSetSamplers(0, 1, &m_sampleState);
-
+	
+	if (texture != nullptr) {
+		ID3D11ShaderResourceView* texview = texture->GetTextureView();
+		context->PSSetShaderResources(0, 1, &texview);
+	}
 	// Draw the objects.
 	context->DrawIndexed(m_index_count,0,0);
 }

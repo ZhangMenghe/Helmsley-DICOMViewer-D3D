@@ -25,7 +25,10 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 		//m_sceneRenderer.reset();
 	}
-	//m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
+	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	//m_tex_quad->setQuadSize(m_deviceResources->GetD3DDevice(), 
+	//	m_deviceResources->GetD3DDeviceContext(), 
+	//	300,150);
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
@@ -53,14 +56,14 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 }
 
 // Updates the application state once per frame.
-void CoreWinMain::Update() 
+void CoreWinMain::Update()
 {
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{
 		// TODO: Replace this with your app's content update functions.
 		m_sceneRenderer->Update(m_timer);
-		//m_fpsTextRenderer->Update(m_timer);
+		m_fpsTextRenderer->Update(m_timer);
 	});
 }
 
@@ -91,8 +94,8 @@ bool CoreWinMain::Render()
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
 	m_sceneRenderer->Render();
-	//m_fpsTextRenderer->Render();
-
+	m_fpsTextRenderer->Render();
+	
 	return true;
 }
 
@@ -100,14 +103,14 @@ bool CoreWinMain::Render()
 void CoreWinMain::OnDeviceLost()
 {
 	m_sceneRenderer->ReleaseDeviceDependentResources();
-	//m_fpsTextRenderer->ReleaseDeviceDependentResources();
+	m_fpsTextRenderer->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.
 void CoreWinMain::OnDeviceRestored()
 {
 	m_sceneRenderer->CreateDeviceDependentResources();
-	//m_fpsTextRenderer->CreateDeviceDependentResources();
+	m_fpsTextRenderer->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {

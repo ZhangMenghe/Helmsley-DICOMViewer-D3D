@@ -118,7 +118,7 @@ namespace dvr{
         .0f, 1.0f, .0f, .0f, 
         .0f, .0f, 1.0f, .0f, 
         .0f, .0f, .0f, 1.0f);
-    const DirectX::XMFLOAT3 DEFAULT_SCALE = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+    const DirectX::XMFLOAT3 DEFAULT_SCALE = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
     const DirectX::XMFLOAT3 DEFAULT_POS = DirectX::XMFLOAT3(.0f, .0f, .0f);
 
     //color scheme
@@ -137,8 +137,7 @@ namespace dvr{
     struct ModelViewProjectionConstantBuffer
     {
         DirectX::XMFLOAT4X4 model;
-        DirectX::XMFLOAT4X4 view;
-        DirectX::XMFLOAT4X4 projection;
+        DirectX::XMFLOAT4X4 uViewProjMat;
     };
 
     // Used to send per-vertex data to the vertex shader.

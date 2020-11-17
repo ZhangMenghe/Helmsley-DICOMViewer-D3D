@@ -5,6 +5,7 @@
 #include <vrController.h>
 #include <Utils/dicomLoader.h>
 #include <Common/Manager.h>
+#include <Renderers/FpsTextRenderer.h>
 namespace CoreWin{
 	class CoreWinMain : public DX::IDeviceNotify
 	{
@@ -35,7 +36,8 @@ namespace CoreWin{
 		std::unique_ptr<vrController> m_sceneRenderer;
 		std::unique_ptr<Manager> m_manager;
 
-		//std::unique_ptr<SampleFpsTextRenderer> m_fpsTextRenderer;
+		std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
+		
 		dicomLoader m_dicom_loader;
 		// Rendering loop timer.
 		DX::StepTimer m_timer;

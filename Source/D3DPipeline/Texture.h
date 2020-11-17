@@ -15,7 +15,7 @@ public:
 
 	void ShutDown();
 
-	ID3D11Texture2D* GetTexture2D() { return mTex2D; }
+	ID3D11Texture2D* GetTexture2D() { return mTex2D.get(); }
 	ID3D11Texture3D* GetTexture3D() { return mTex3D; }
 	ID3D11ShaderResourceView* GetTextureView() { return mTexView; }
 	ID3D11RenderTargetView* GetRenderTargetView() { return m_renderTargetView; }
@@ -24,7 +24,7 @@ public:
 	UINT Height() const { return mHeight; }
 	UINT Depth() const { return mDepth; }
 
-private:
+protected:
 	enum TexDim
 	{
 		ONE_DIM=0,
@@ -37,7 +37,7 @@ private:
 	UINT mDepth;
 	ID3D11ShaderResourceView* mTexView = nullptr;
 	ID3D11RenderTargetView* m_renderTargetView = nullptr;
-	ID3D11Texture2D* mTex2D = nullptr;
+	winrt::com_ptr<ID3D11Texture2D> mTex2D;
 	ID3D11Texture3D* mTex3D = nullptr;
 };
 

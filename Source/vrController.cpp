@@ -202,8 +202,8 @@ void vrController::init_texture() {
 void vrController::CreateWindowSizeDependentResources(){
 	Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0) return;
-	screen_width = outputSize.Width; screen_height = outputSize.Height;
-	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
+	//screen_width = outputSize.Width; screen_height = outputSize.Height;
+	//screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -328,7 +328,7 @@ void vrController::precompute() {
 	context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	// Disable Compute Shader
 	context->CSSetShader(nullptr, nullptr, 0);
-	//Manager::baked_dirty_ = false;
+	Manager::baked_dirty_ = false;
 }
 
 void vrController::render_scene(){

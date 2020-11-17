@@ -4,9 +4,10 @@
 #include <D3DPipeline/Primitive.h>
 #include <Common/Manager.h>
 using namespace DirectX;
-quadRenderer::quadRenderer(ID3D11Device* device)
+quadRenderer::quadRenderer(ID3D11Device* device, bool as_render_target)
 :baseRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso",
-	quad_vertices_pos_w_tex, quad_indices,16,6){
+	quad_vertices_pos_w_tex, quad_indices,16,6),
+	m_as_render_target(as_render_target){
 }
 bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height){
 	texture = new Texture;
@@ -23,13 +24,27 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
 
+	if (!m_as_render_target) if (!texture->Initialize(device, texDesc)) { delete texture; texture = nullptr; return false; }
+	else {
+		D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+			texDesc.Format,
+			D3D11_RTV_DIMENSION_TEXTURE2D,
+		};
+		view_desc.Texture2D.MipSlice = 0;
+		if (!texture->Initialize(device, texDesc, view_desc)) { delete texture; texture = nullptr; return false; }
+	}
 
-	D3D11_RENDER_TARGET_VIEW_DESC view_desc{
-		texDesc.Format,
-		D3D11_RTV_DIMENSION_TEXTURE2D,
-	};
-	view_desc.Texture2D.MipSlice = 0;
-	if (!texture->Initialize(device, texDesc, view_desc)) { delete texture; texture = nullptr; return false; }
+	//debug only: fuse tex with naive data
+	/*auto imageSize = texDesc.Width * texDesc.Height * 4;
+	unsigned char* m_targaData = new unsigned char[imageSize];
+	for (int i = 0; i < imageSize; i += 4) {
+		m_targaData[i] = (unsigned char)255;
+		m_targaData[i + 1] = 0;
+		m_targaData[i + 2] = 0;
+		m_targaData[i + 3] = (unsigned char)255;
+	}
+	if (!texture->Initialize(device, context, texDesc, m_targaData)) { delete texture; texture = nullptr; return false; }
+	*/
 	
 	//D3D11_MAPPED_SUBRESOURCE mappedResource;
 	//context->Map(texture->GetTexture2D(), 0, D3D11_MAP_READ, 0, &mappedResource);
@@ -41,8 +56,7 @@ bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* contex
 void quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
 	if (!m_loadingComplete) return; 
 	if (m_constantBuffer != nullptr) {
-		XMStoreFloat4x4(&m_constantBufferData.projection, Manager::camera->getProjMat());
-		XMStoreFloat4x4(&m_constantBufferData.view, Manager::camera->getViewMat());
+		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
 		XMStoreFloat4x4(&m_constantBufferData.model, modelMat);
 
 		// Prepare the constant buffer to send it to the graphics device.
