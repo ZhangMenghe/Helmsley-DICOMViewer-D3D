@@ -8,7 +8,7 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc) {
 	//	return false;
 	//}
 	DX::ThrowIfFailed(device->CreateTexture2D(&texDesc, nullptr, mTex2D.put()));
-
+	mWidth = texDesc.Width; mHeight = texDesc.Height;
 	mDim = TWO_DIMS;
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = texDesc.Format;
@@ -30,6 +30,7 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc) {
 		throw std::exception("fail to create 3d tex");
 		return false;
 	}
+	mWidth = texDesc.Width; mHeight = texDesc.Height; mDepth = texDesc.Depth;
 	mDim = THREE_DIMS;
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = texDesc.Format;

@@ -20,6 +20,8 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 
 	screen_quad = new quadRenderer(m_deviceResources->GetD3DDevice());
 	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
+	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
+
 
 	Manager::camera = new Camera;
 	CreateDeviceDependentResources();
@@ -58,7 +60,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 		if (sh <= 0 || sw <= 0 || sd <= 0) {
 			if (pd > 200) vol_dim_scale_ = { 1.0f, 1.0f, 0.5f };
-			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f };
+			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };//
 			else vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };
 		}
 		else if (abs(sh - sw) < 1) {
@@ -75,7 +77,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			volume_model_dirty = true;
 		}
 		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
-		//texvrRenderer_->setDimension(vol_dimension_, vol_dim_scale_);
+		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		//cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
 
@@ -195,7 +197,6 @@ void vrController::init_texture() {
 	DX::ThrowIfFailed(
 		m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV)
 	);
-
 }
 
 // Initializes view parameters when the window size changes.
@@ -340,7 +341,13 @@ void vrController::render_scene(){
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 
-	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+	//raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+	auto dir = Manager::camera->getViewDirection();
+	
+	DirectX::XMFLOAT4X4 m_rot_mat;
+	XMStoreFloat4x4(&m_rot_mat, RotateMat_);
+	float front_test = m_rot_mat._33 * dir.z;
+	texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, ModelMat_, front_test < 0);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 
@@ -481,7 +488,7 @@ void vrController::CreateDeviceDependentResources(){
 		m_cmpdata.u_mask_color = 1;
 		//others
 		m_cmpdata.u_flipy = 1;
-		m_cmpdata.u_show_organ = 0;
+		m_cmpdata.u_show_organ = 1;
 		m_cmpdata.u_color_scheme = 2;
 
 	});
