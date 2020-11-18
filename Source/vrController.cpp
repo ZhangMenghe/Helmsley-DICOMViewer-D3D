@@ -60,7 +60,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 		if (sh <= 0 || sw <= 0 || sd <= 0) {
 			if (pd > 200) vol_dim_scale_ = { 1.0f, 1.0f, 0.5f };
-			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };//
+			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f *2.0f };
 			else vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };
 		}
 		else if (abs(sh - sw) < 1) {
@@ -95,10 +95,15 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		D3D11_RESOURCE_MISC_SHARED
 	};
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
+	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
+
 	if (tex_baked != nullptr) { delete tex_baked; tex_baked = nullptr; }
 	tex_baked = new Texture;
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
+	// Generate mipmaps for this texture.
+	tex_baked->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
+
 	init_texture();
 	Manager::baked_dirty_ = true;
 }
@@ -487,7 +492,7 @@ void vrController::CreateDeviceDependentResources(){
 		m_cmpdata.u_organ_num = 7;//mask_num
 		m_cmpdata.u_mask_color = 1;
 		//others
-		m_cmpdata.u_flipy = 1;
+		m_cmpdata.u_flipy = 0;
 		m_cmpdata.u_show_organ = 1;
 		m_cmpdata.u_color_scheme = 2;
 

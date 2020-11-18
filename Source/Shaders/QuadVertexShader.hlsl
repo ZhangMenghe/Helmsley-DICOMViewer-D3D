@@ -24,8 +24,8 @@ PixelShaderInput main(VertexShaderInput input){
 	PixelShaderInput output;
 	float4 pos = mul(float4(input.pos.xy, .0f, 1.0f), model);
 	//debug only! xmmatrix trans not working
-	pos.x += 0.6;
-	pos.y -= 0.6;
+	pos.x += 0.8;
+	pos.y -= 0.8;
 	pos = mul(pos, uViewProjMat);
 	output.pos = pos;
 

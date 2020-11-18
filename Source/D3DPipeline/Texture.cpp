@@ -14,7 +14,7 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc) {
 	shaderResourceViewDesc.Format = texDesc.Format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	shaderResourceViewDesc.Texture2D.MipLevels = -1;
 	auto hr = device->CreateShaderResourceView(mTex2D.get(), &shaderResourceViewDesc, &mTexView);
 	if (FAILED(hr)) {
 		mTex2D = nullptr; mTexView = nullptr;
@@ -36,7 +36,7 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc) {
 	shaderResourceViewDesc.Format = texDesc.Format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
 	shaderResourceViewDesc.Texture3D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture3D.MipLevels = 1;
+	shaderResourceViewDesc.Texture3D.MipLevels = -1;
 	hr = device->CreateShaderResourceView(mTex3D, &shaderResourceViewDesc, &mTexView);
 	if (FAILED(hr)) {
 		mTex3D = nullptr; mTexView = nullptr;
@@ -67,6 +67,9 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc, D3D
 	if (!Initialize(device, texDesc)) return false;
 	auto result = device->CreateRenderTargetView(mTex2D.get(), &renderTargetViewDesc, &m_renderTargetView);
 	return !FAILED(result);
+}
+void Texture::GenerateMipMap(ID3D11DeviceContext* context) {
+	if(mTexView!=nullptr)context->GenerateMips(mTexView);
 }
 
 void Texture::setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch){
