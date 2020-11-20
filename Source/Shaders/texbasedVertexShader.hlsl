@@ -1,4 +1,7 @@
+
+
 // A constant buffer that stores the three basic column-major matrices for composing geometry.
+
 cbuffer ModelViewProjectionConstantBuffer : register(b0)
 {
 	matrix model;
@@ -6,30 +9,24 @@ cbuffer ModelViewProjectionConstantBuffer : register(b0)
 };
 
 // Per-vertex data used as input to the vertex shader.
-struct VertexShaderInput
-{
+struct VertexShaderInput{
 	float2 pos : POSITION;
-	float2 tex : TEXCOORD1;
+	float2 tex : TEXCOORD0;
+	float2 zinfo: TEXCOORD1;
 };
 
 // Per-pixel color data passed through the pixel shader.
-struct PixelShaderInput
-{
+struct v2f{
 	float4 pos : SV_POSITION;
-	float2 tex : TEXCOORD1;
+	float3 tex :TEXCOORD0;
 };
 
 // Simple shader to do vertex processing on the GPU.
-PixelShaderInput main(VertexShaderInput input){
-	PixelShaderInput output;
-	float4 pos = mul(float4(input.pos.xy, .0f, 1.0f), model);
-	//debug only! xmmatrix trans not working
-	pos.x += 0.8;
-	pos.y -= 0.8;
-	pos = mul(pos, uViewProjMat);
-	output.pos = pos;
-
-	output.tex = input.tex.xy;
-
+v2f main(VertexShaderInput input){
+	v2f output;
+	output.tex = float3(input.tex, input.zinfo.y);
+	output.pos = float4(input.pos.xy, input.zinfo.x, 1.0f);
+	output.pos = mul(output.pos, model);
+	output.pos = mul(output.pos, uViewProjMat);
 	return output;
 }

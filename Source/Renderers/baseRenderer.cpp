@@ -29,39 +29,43 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 
 	// Once both shaders are loaded, create the mesh.
 	auto createModelTask = (createPSTask && createVSTask).then([this, device, vdata, idata]() {
-		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-		vertexBufferData.pSysMem = vdata;
-		vertexBufferData.SysMemPitch = 0;
-		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(m_vertice_count * sizeof(float), D3D11_BIND_VERTEX_BUFFER);
-		winrt::check_hresult(
-			device->CreateBuffer(
-				&vertexBufferDesc,
-				&vertexBufferData,
-				m_vertexBuffer.put()
-			)
-		);
-
-		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-		indexBufferData.pSysMem = idata;
-		indexBufferData.SysMemPitch = 0;
-		indexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC indexBufferDesc(m_index_count * sizeof(unsigned short), D3D11_BIND_INDEX_BUFFER);
-		winrt::check_hresult(
-			device->CreateBuffer(
-				&indexBufferDesc,
-				&indexBufferData,
-				m_indexBuffer.put()
-			)
-		);
+		initialize_vertices(device, vdata);
+		initialize_indices(device, idata);
+		initialize_mesh_others(device);
 	});
 
 	createModelTask.then([this]() {
 		m_loadingComplete = true;
 	});
 }
-
-
+void baseRenderer::initialize_vertices(ID3D11Device* device, const float* vdata){
+	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+	vertexBufferData.pSysMem = vdata;
+	vertexBufferData.SysMemPitch = 0;
+	vertexBufferData.SysMemSlicePitch = 0;
+	CD3D11_BUFFER_DESC vertexBufferDesc(m_vertice_count * sizeof(float), D3D11_BIND_VERTEX_BUFFER);
+	winrt::check_hresult(
+		device->CreateBuffer(
+			&vertexBufferDesc,
+			&vertexBufferData,
+			m_vertexBuffer.put()
+		)
+	);
+}
+void baseRenderer::initialize_indices(ID3D11Device* device, const unsigned short* idata) {
+	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+	indexBufferData.pSysMem = idata;
+	indexBufferData.SysMemPitch = 0;
+	indexBufferData.SysMemSlicePitch = 0;
+	CD3D11_BUFFER_DESC indexBufferDesc(m_index_count * sizeof(unsigned short), D3D11_BIND_INDEX_BUFFER);
+	winrt::check_hresult(
+		device->CreateBuffer(
+			&indexBufferDesc,
+			&indexBufferData,
+			m_indexBuffer.put()
+		)
+	);
+}
 // Renders one frame using the vertex and pixel shaders.
 void baseRenderer::Draw(ID3D11DeviceContext* context) {
 	ID3D11Buffer* tmp_vertex_buff{ m_vertexBuffer.get() };
@@ -93,10 +97,18 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 		ID3D11Buffer* constantBufferNeverChanges{ m_constantBuffer.get() };
 		context->VSSetConstantBuffers(0, 1, &constantBufferNeverChanges);
 	}
+	if (m_pixConstantBuffer != nullptr) {
+		ID3D11Buffer* constantBuffer_pix{ m_pixConstantBuffer.get() };
+		context->PSSetConstantBuffers(0, 1, &constantBuffer_pix);
+	}
 
 	//texture sampler
 	if(m_sampleState!=nullptr) context->PSSetSamplers(0, 1, &m_sampleState);
-
+	
+	if (texture != nullptr) {
+		ID3D11ShaderResourceView* texview = texture->GetTextureView();
+		context->PSSetShaderResources(0, 1, &texview);
+	}
 	// Draw the objects.
 	context->DrawIndexed(m_index_count,0,0);
 }

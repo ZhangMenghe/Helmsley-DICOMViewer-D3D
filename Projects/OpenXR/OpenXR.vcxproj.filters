@@ -130,6 +130,18 @@
     <ClCompile Include="..\..\Source\Common\Manager.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\FpsTextRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Common\TextTexture.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRScenes.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -201,6 +213,18 @@
     <ClInclude Include="..\..\Source\Utils\MathUtils.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\FpsTextRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Common\TextTexture.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRScenes.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -247,6 +271,12 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\VolumeCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\texbasedPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\texbasedVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

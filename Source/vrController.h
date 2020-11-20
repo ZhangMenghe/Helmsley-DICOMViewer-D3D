@@ -7,7 +7,7 @@
 #include <Common/StepTimer.h>
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
-
+#include <Renderers/textureBasedVolumeRenderer.h>
 class reservedStatus {
 public:
 	DirectX::XMFLOAT4X4 model_mat, rot_mat;
@@ -91,6 +91,7 @@ private:
 
 	quadRenderer* screen_quad;
 	raycastVolumeRenderer* raycast_renderer;
+	textureBasedVolumeRenderer* texvrRenderer_;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;

@@ -20,6 +20,8 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 
 	screen_quad = new quadRenderer(m_deviceResources->GetD3DDevice());
 	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
+	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
+
 
 	Manager::camera = new Camera;
 	CreateDeviceDependentResources();
@@ -54,9 +56,11 @@ void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
 	if (update_target == 0 || update_target == 2) {
 		vol_dimension_ = { ph, pw, pd };
+		m_cmpdata.u_tex_size = { ph,pw,pd, (UINT)0 };
+
 		if (sh <= 0 || sw <= 0 || sd <= 0) {
 			if (pd > 200) vol_dim_scale_ = { 1.0f, 1.0f, 0.5f };
-			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f };
+			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f *2.0f };
 			else vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };
 		}
 		else if (abs(sh - sw) < 1) {
@@ -73,10 +77,10 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			volume_model_dirty = true;
 		}
 		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
-		//texvrRenderer_->setDimension(vol_dimension_, vol_dim_scale_);
+		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		//cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
-	
+
 	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
 
 	tex_volume = new Texture;
@@ -91,10 +95,15 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		D3D11_RESOURCE_MISC_SHARED
 	};
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
+	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
+
 	if (tex_baked != nullptr) { delete tex_baked; tex_baked = nullptr; }
 	tex_baked = new Texture;
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
+	// Generate mipmaps for this texture.
+	tex_baked->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
+
 	init_texture();
 	Manager::baked_dirty_ = true;
 }
@@ -193,15 +202,14 @@ void vrController::init_texture() {
 	DX::ThrowIfFailed(
 		m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV)
 	);
-	
 }
 
 // Initializes view parameters when the window size changes.
 void vrController::CreateWindowSizeDependentResources(){
 	Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0) return;
-	screen_width = outputSize.Width; screen_height = outputSize.Height;
-	screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
+	//screen_width = outputSize.Width; screen_height = outputSize.Height;
+	//screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -251,10 +259,10 @@ void vrController::Render() {
 		return;
 	}
 	if (!m_render_to_texture) { render_scene(); return; }
-	
+
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	auto tview = screen_quad->GetRenderTargetView();
-	
+
 	context->OMSetRenderTargets(1, &tview, m_deviceResources->GetDepthStencilView());
 	// Clear the render to texture.
 	context->ClearRenderTargetView(tview, m_clear_color);
@@ -262,7 +270,7 @@ void vrController::Render() {
 	render_scene();
 	m_deviceResources->SetBackBufferRenderTarget();
 	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), m_clear_color);
-	
+
 	//draw to screen
 	*/
 	//screen_quad->Draw(m_deviceResources->GetD3DDeviceContext());
@@ -305,35 +313,8 @@ void vrController::precompute() {
 	context->CSSetShaderResources(0, 1, &texview);
 	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
 
+
 	if (m_compute_constbuff != nullptr) {
-		m_cmpdata.u_tex_size = { vol_dimension_.x, vol_dimension_.y, vol_dimension_.z, (UINT)0 };
-
-		float opa_values[5] = {
-	1.0f,
-	.0f,
-	2.0f,
-	0.0f,
-	1.0f
-		};
-		float* points;
-		getGraphPoints(opa_values, points);
-
-		for (int i = 0; i < 3; i++)m_cmpdata.u_opacity[i] = { points[4 * i], points[4 * i + 1] , points[4 * i + 2] , points[4 * i + 3] };
-		m_cmpdata.u_widget_num = 1;
-		m_cmpdata.u_visible_bits = 1;
-		//contrast
-		m_cmpdata.u_contrast_low = .0f;
-		m_cmpdata.u_contrast_high = .2f;
-		m_cmpdata.u_brightness = 0.5f;
-		//mask
-		m_cmpdata.u_maskbits = 0xffff-1;//mask_bits_;
-		m_cmpdata.u_organ_num = 7;//mask_num
-		m_cmpdata.u_mask_color = 1;
-		//others
-		m_cmpdata.u_flipy = 1;
-		m_cmpdata.u_show_organ = 0;
-		m_cmpdata.u_color_scheme = 2;
-
 		// Prepare the constant buffer to send it to the graphics device.
 		m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(
 			m_compute_constbuff,
@@ -353,6 +334,7 @@ void vrController::precompute() {
 	context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	// Disable Compute Shader
 	context->CSSetShader(nullptr, nullptr, 0);
+	Manager::baked_dirty_ = false;
 }
 
 void vrController::render_scene(){
@@ -364,7 +346,13 @@ void vrController::render_scene(){
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 
-	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+	//raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+	auto dir = Manager::camera->getViewDirection();
+	
+	DirectX::XMFLOAT4X4 m_rot_mat;
+	XMStoreFloat4x4(&m_rot_mat, RotateMat_);
+	float front_test = m_rot_mat._33 * dir.z;
+	texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, ModelMat_, front_test < 0);
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 
@@ -479,6 +467,34 @@ void vrController::CreateDeviceDependentResources(){
 				&m_compute_constbuff
 			)
 		);
+
+		//m_cmpdata.u_tex_size = { vol_dimension_.x, vol_dimension_.y, vol_dimension_.z, (UINT)0 };
+
+		float opa_values[5] = {
+			1.0f,
+			.0f,
+			2.0f,
+			0.0f,
+			1.0f
+		};
+		float* points;
+		getGraphPoints(opa_values, points);
+
+		for (int i = 0; i < 3; i++)m_cmpdata.u_opacity[i] = { points[4 * i], points[4 * i + 1] , points[4 * i + 2] , points[4 * i + 3] };
+		m_cmpdata.u_widget_num = 1;
+		m_cmpdata.u_visible_bits = 1;
+		//contrast
+		m_cmpdata.u_contrast_low = .0f;
+		m_cmpdata.u_contrast_high = .2f;
+		m_cmpdata.u_brightness = 0.5f;
+		//mask
+		m_cmpdata.u_maskbits = 0xffff - 1;//mask_bits_;
+		m_cmpdata.u_organ_num = 7;//mask_num
+		m_cmpdata.u_mask_color = 1;
+		//others
+		m_cmpdata.u_flipy = 0;
+		m_cmpdata.u_show_organ = 1;
+		m_cmpdata.u_color_scheme = 2;
 
 	});
 
@@ -673,7 +689,7 @@ void vrController::setMVPStatus(std::string status_name) {
 	auto rstate_ = rStates_[status_name];
 	ModelMat_ = DirectX::XMLoadFloat4x4(&rstate_->model_mat);
 	RotateMat_ = DirectX::XMLoadFloat4x4(&rstate_->rot_mat);
-	ScaleVec3_ = rstate_->scale_vec; PosVec3_ = rstate_->pos_vec; 
+	ScaleVec3_ = rstate_->scale_vec; PosVec3_ = rstate_->pos_vec;
 	Manager::camera = rstate_->vcam;
 	volume_model_dirty = false;
 	cst_name = status_name;

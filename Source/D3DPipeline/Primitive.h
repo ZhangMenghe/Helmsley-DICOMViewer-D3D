@@ -6,6 +6,12 @@ static const float quad_vertices_pos_w_tex[] = {
     1.0f,  -1.0f,   1.0f, 1.0f,
     -1.0f, -1.0f,   0.0f, 1.0f,
 };
+static const float quad_vertices_2d[] = {
+        -0.5f, 0.5, .0,.0,
+        0.5,0.5, 1.0,.0,
+        0.5,-0.5, 1.0,1.0,
+        -0.5,-0.5, .0,1.0,
+};
 static const unsigned short quad_indices[] = {
     0,1,3,1,2,3
 };

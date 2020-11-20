@@ -8,7 +8,7 @@ public:
 	baseRenderer(ID3D11Device* device,
 		const wchar_t* vname, const wchar_t* pname,
 		const float* vdata, const unsigned short* idata,
-		UINT vertice_num, UINT idx_num);
+		UINT vertice_num = 0, UINT idx_num = 0);
 	virtual void Draw(ID3D11DeviceContext* context);
 	virtual void Clear() {
 		m_loadingComplete = false;
@@ -29,6 +29,7 @@ protected:
 	winrt::com_ptr<ID3D11PixelShader> m_pixelShader = nullptr;
 	winrt::com_ptr<ID3D11ComputeShader> m_computeShader = nullptr;
 	winrt::com_ptr<ID3D11Buffer> m_constantBuffer = nullptr;
+	winrt::com_ptr<ID3D11Buffer> m_pixConstantBuffer = nullptr;
 
 	//texture
 	ID3D11SamplerState* m_sampleState = nullptr;
@@ -41,9 +42,10 @@ protected:
 	UINT m_vertex_stride = 0, m_vertex_offset = 0;
 	UINT m_vertice_count, m_index_count;
 
-
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
-
+	void initialize_vertices(ID3D11Device* device, const float* vdata);
+	void initialize_indices(ID3D11Device* device, const unsigned short* idata);
+	void initialize_mesh_others(ID3D11Device* device){}
 };
 #endif

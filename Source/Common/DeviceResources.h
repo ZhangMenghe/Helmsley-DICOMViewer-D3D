@@ -14,7 +14,7 @@ namespace DX
 	{
 	public:
 		DeviceResources();
-		DeviceResources(bool noprapere_tag) { };
+		DeviceResources(bool noprapere_tag);
 		void SetWindow(Windows::UI::Core::CoreWindow^ window);
 		void SetLogicalSize(Windows::Foundation::Size logicalSize);
 		void SetCurrentOrientation(Windows::Graphics::Display::DisplayOrientations currentOrientation);

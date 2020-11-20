@@ -79,7 +79,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 			val_color.rgb *= val_color.a;
 			sum += val_color * (1 - sum.a);
 		}
-		t += usample_step_inverse;//val_color.a > 0.01 ? usample_step_inverse : usample_step_inverse * 4.0;
+		t += val_color.a > 0.01 ? usample_step_inverse : usample_step_inverse * 4.0;
 		pd = sum.a;
 	}
 	return float4(sum.rgb, saturate(sum.a));

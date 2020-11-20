@@ -15,3 +15,4 @@
 #include <concrt.h>
 //winrt stuff
 #include <winrt/base.h>
+#include <iostream>
