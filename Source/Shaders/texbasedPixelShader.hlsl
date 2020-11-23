@@ -11,5 +11,5 @@ cbuffer texPixConstantBuffer : register(b0){
 // A pass-through function for the (interpolated) color data.
 float4 main(v2f input) : SV_TARGET{
 	//return float4(input.tex, 1.0);
-	return shaderTexture.Sample(uSampler, u_front? input.tex:float3(input.tex.xy, 1.0 - input.tex.z));
+	return shaderTexture.SampleLevel(uSampler, u_front? input.tex:float3(input.tex.xy, 1.0 - input.tex.z),0);
 }

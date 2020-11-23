@@ -16,7 +16,7 @@ struct TextTextureInfo {
     uint32_t Width;
     uint32_t Height;
     const wchar_t* FontName = L"Segoe UI";
-    float FontSize = 18;
+    float FontSize = 36;
     float Margin = 0;
     D2D1::ColorF Foreground = D2D1::ColorF::White;
     D2D1::ColorF Background = D2D1::ColorF::Black;

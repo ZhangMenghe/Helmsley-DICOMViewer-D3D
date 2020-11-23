@@ -76,7 +76,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			}
 			volume_model_dirty = true;
 		}
-		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
+		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x*1.5, vol_dim_scale_.y * 1.5, vol_dim_scale_.z* 1.5);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		//cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
@@ -87,12 +87,11 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	D3D11_TEXTURE3D_DESC texDesc{
 		ph,pw,pd,
 		1,
-		//DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_FORMAT_R32_UINT,
 		D3D11_USAGE_DEFAULT,
-		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+		D3D11_BIND_SHADER_RESOURCE,
 		0,
-		D3D11_RESOURCE_MISC_SHARED
+		0
 	};
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
 	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
@@ -353,6 +352,7 @@ void vrController::render_scene(){
 	XMStoreFloat4x4(&m_rot_mat, RotateMat_);
 	float front_test = m_rot_mat._33 * dir.z;
 	texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, ModelMat_, front_test < 0);
+	
 	/*
 	/*auto context = m_deviceResources->GetD3DDeviceContext();
 

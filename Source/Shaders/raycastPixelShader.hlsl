@@ -32,7 +32,7 @@ float RayPlane(float3 ro, float3 rd, float3 planep, float3 planen) {
 }
 float4 Sample(float3 p) {
 	float3 cp = clamp(p, .01f, 0.99f);
-
+	cp.y = 1.0 - cp.y;
 	return shaderTexture.Sample(uSampler, cp);
 }
 float4 subDivide(float3 p, float3 ro, float3 rd, float t, float StepSize) {
