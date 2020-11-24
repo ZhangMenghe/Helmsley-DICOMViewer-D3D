@@ -9,6 +9,10 @@ quadRenderer::quadRenderer(ID3D11Device* device, bool as_render_target)
 	quad_vertices_pos_w_tex, quad_indices,16,6),
 	m_as_render_target(as_render_target){
 }
+quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata)
+	:baseRenderer(device, vname, pname,
+		vdata, quad_indices, 16, 6){
+}
 bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height){
 	texture = new Texture;
 	D3D11_TEXTURE2D_DESC texDesc;

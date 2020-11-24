@@ -34,8 +34,11 @@ void FpsTextRenderer::Render()
 	DirectX::XMVECTOR vy = XMLoadFloat3(&y_axis);
 
 	m_text_texture->Draw(m_text.c_str());
+
+	m_deviceResources->GetD3DDeviceContext()->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
 	m_tex_quad->Draw(m_deviceResources->GetD3DDeviceContext(),
-		DirectX::XMMatrixScaling(0.15, 0.1, 0.2)
+		DirectX::XMMatrixScaling(0.3, 0.2, 0.2)
 	* DirectX::XMMatrixRotationAxis(vy, .2f)
 	);
 		/** DirectX::XMMatrixTranslation(0.3f, 0.f, .0f)*/

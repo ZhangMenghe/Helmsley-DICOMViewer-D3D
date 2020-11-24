@@ -1,10 +1,16 @@
 #ifndef D3DPIPELINE_MESH_PRIMITIVE_H
 #define D3DPIPELINE_MESH_PRIMITIVE_H
-static const float quad_vertices_pos_w_tex[] = {
+static const float quad_vertices_pos_w_tex_full[] = {
    -1.0f,  1.0f,   0.0f, .0f,
     1.0f,   1.0f,   1.0f, .0f,
     1.0f,  -1.0f,   1.0f, 1.0f,
     -1.0f, -1.0f,   0.0f, 1.0f,
+};
+static const float quad_vertices_pos_w_tex[] = {
+   -0.5f,  0.5f,   0.0f, .0f,
+    0.5f,   0.5f,   1.0f, .0f,
+    0.5f,  -0.5f,   1.0f, 1.0f,
+    -0.5f, -0.5f,   0.0f, 1.0f,
 };
 static const float quad_vertices_2d[] = {
         -0.5f, 0.5, .0,.0,

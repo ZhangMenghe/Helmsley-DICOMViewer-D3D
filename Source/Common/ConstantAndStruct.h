@@ -118,8 +118,12 @@ namespace dvr{
         .0f, 1.0f, .0f, .0f, 
         .0f, .0f, 1.0f, .0f, 
         .0f, .0f, .0f, 1.0f);
-    const DirectX::XMFLOAT3 DEFAULT_SCALE = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f);
+    const DirectX::XMFLOAT3 DEFAULT_SCALE = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
     const DirectX::XMFLOAT3 DEFAULT_POS = DirectX::XMFLOAT3(.0f, .0f, .0f);
+
+    const float SCREEN_CLEAR_COLOR[4] = {
+            0.f,0.f,0.f,0.f
+    };
 
     //color scheme
     constexpr char* COLOR_SCHEMES[3]={"COLOR_GRAYSCALE", "COLOR_HSV", "COLOR_BRIGHT"};

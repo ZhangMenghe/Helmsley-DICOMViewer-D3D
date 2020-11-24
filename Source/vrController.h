@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
 #include <Renderers/textureBasedVolumeRenderer.h>
+#include <Renderers/screenQuadRenderer.h>
 class reservedStatus {
 public:
 	DirectX::XMFLOAT4X4 model_mat, rot_mat;
@@ -86,10 +87,15 @@ public:
 	//getter
 	Texture* getVolumeTex() { return tex_volume; }
 	Texture* getBakedTex() { return tex_baked; }
+	static bool isRayCasting() { 
+		return true;
+		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
+	}
+
 private:
 	static vrController* myPtr_;
 
-	quadRenderer* screen_quad;
+	screenQuadRenderer* screen_quad;
 	raycastVolumeRenderer* raycast_renderer;
 	textureBasedVolumeRenderer* texvrRenderer_;
 
@@ -107,8 +113,6 @@ private:
 
 	computeConstantBuffer m_cmpdata;
 
-
-
 	DirectX::XMMATRIX ModelMat_, RotateMat_;
 	DirectX::XMFLOAT3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer	m_all_buff_Data;
@@ -124,33 +128,12 @@ private:
 	DirectX::XMFLOAT3 vol_dim_scale_;
 	DirectX::XMMATRIX vol_dim_scale_mat_;
 
-	//uint32	m_indexCount;
-	//Texture* texture = nullptr;
-	
-	
-
-	//texture
-	/*ID3D11SamplerState* m_sampleState;
-		
-	Texture* tex2d_srv_from_uav;
-	*/
 	bool	m_tracking;
 	float	m_degreesPerSecond = 1;
+
 	//flags
 	bool volume_model_dirty;
-	// Variables used with the rendering loop.
-	/*bool	m_loadingComplete;
-		
-		
-	bool	m_isholographic;
-	bool	m_render_to_texture = false;
-
-	/**/
-	const float m_clear_color[4] = {
-		0.f,0.f,0.f,0.f
-	};
-	int screen_width, screen_height;
-	//XMINT3 vol_dimension_, vol_dim_scale_;
+	bool pre_draw_ = true;
 
 	void Rotate(float radians);
 	void render_scene();
