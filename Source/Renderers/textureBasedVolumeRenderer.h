@@ -15,7 +15,7 @@ class textureBasedVolumeRenderer:public baseRenderer {
 public:
 	textureBasedVolumeRenderer(ID3D11Device* device);
 
-	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front, bool pre_draw = true);
+	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
 	void setDimension(ID3D11Device* device, DirectX::XMUINT3 vol_dimension, DirectX::XMFLOAT3 vol_dim_scale);
 
 protected:
@@ -48,8 +48,5 @@ private:
 	DirectX::XMMATRIX projMat, viewMat;
 	ID3D11BlendState* d3dBlendState;
 	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
-
-	void draw_scene(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
-	void draw_baked(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
 };
 #endif

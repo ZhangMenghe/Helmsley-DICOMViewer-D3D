@@ -174,18 +174,11 @@ void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	//delete[]zInfos;
 	m_data_dirty = true;
 }
-void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front, bool pre_draw){
-	if (pre_draw) draw_baked(context, tex, modelMat, is_front);
-	else draw_scene(context, tex, modelMat, is_front);
-}
-void textureBasedVolumeRenderer::draw_baked(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
-	draw_scene(context, tex, modelMat, is_front);
-}
-void textureBasedVolumeRenderer::draw_scene(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
+void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front){
 	if (!m_loadingComplete) return;
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.model, modelMat);
+		DirectX::XMStoreFloat4x4(&m_const_buff_data.model, DirectX::XMMatrixTranspose(modelMat));
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(

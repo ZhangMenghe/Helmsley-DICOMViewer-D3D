@@ -39,7 +39,8 @@ void FpsTextRenderer::Render()
 
 	m_tex_quad->Draw(m_deviceResources->GetD3DDeviceContext(),
 		DirectX::XMMatrixScaling(0.3, 0.2, 0.2)
-	* DirectX::XMMatrixRotationAxis(vy, .2f)
+		* DirectX::XMMatrixRotationAxis(vy, .2f)
+		* DirectX::XMMatrixTranslation(0.8f, -0.8f, .0f) 
 	);
 		/** DirectX::XMMatrixTranslation(0.3f, 0.f, .0f)*/
 
