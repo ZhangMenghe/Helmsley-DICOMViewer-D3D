@@ -671,10 +671,21 @@ void DX::DeviceResources::Present()
 		DX::ThrowIfFailed(hr);
 	}
 }
+ID3D11DepthStencilView* DX::DeviceResources::GetDepthStencilView() {
+	if (current_depth_view == nullptr) current_depth_view = restoreDepthStencilView();
+	return current_depth_view;
+}
 void DX::DeviceResources::SetBackBufferRenderTarget() {
 	// Reset render targets to the screen.
-	ID3D11RenderTargetView* const targets[1] = { restoreRenderTargetView() };
-	m_d3dContext.Get()->OMSetRenderTargets(1, targets, restoreDepthStencilView());
+	current_render_target_view = restoreRenderTargetView();
+	current_depth_view = restoreDepthStencilView();
+	ID3D11RenderTargetView* const targets[1] = { current_render_target_view  };
+	m_d3dContext.Get()->OMSetRenderTargets(1, targets, current_depth_view);
+}
+
+void DX::DeviceResources::ClearCurrentDepthBuffer() {
+	if(current_depth_view == nullptr) current_depth_view = restoreDepthStencilView();
+	m_d3dContext.Get()->ClearDepthStencilView(current_depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 // This method determines the rotation between the display device's native orientation and the
@@ -736,16 +747,19 @@ void DX::DeviceResources::saveCurrentTargetViews(ID3D11RenderTargetView* render_
 	m_renderTargetViewStack.push(render_target);
 	m_depthStencilViewStack.push(depth_target);
 }
-
+void DX::DeviceResources::removeCurrentTargetViews() {
+	if (!m_renderTargetViewStack.empty())m_renderTargetViewStack.pop();
+	if (!m_depthStencilViewStack.empty())m_depthStencilViewStack.pop();
+}
 ID3D11RenderTargetView* DX::DeviceResources::restoreRenderTargetView() {
 	if (m_renderTargetViewStack.empty())return m_d3dRenderTargetView.Get();
 	auto v = m_renderTargetViewStack.top();
-	m_renderTargetViewStack.pop();
+	//m_renderTargetViewStack.pop();
 	return v;
 }
 ID3D11DepthStencilView* DX::DeviceResources::restoreDepthStencilView() {
 	if (m_depthStencilViewStack.empty())return m_d3dDepthStencilView.Get();
 	auto v = m_depthStencilViewStack.top();
-	m_depthStencilViewStack.pop();
+	//m_depthStencilViewStack.pop();
 	return v;
 }

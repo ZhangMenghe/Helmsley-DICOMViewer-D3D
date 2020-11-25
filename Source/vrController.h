@@ -87,10 +87,7 @@ public:
 	//getter
 	Texture* getVolumeTex() { return tex_volume; }
 	Texture* getBakedTex() { return tex_baked; }
-	static bool isRayCasting() { 
-		return true;
-		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
-	}
+	bool isDirty();
 
 private:
 	static vrController* myPtr_;
@@ -134,12 +131,16 @@ private:
 	//flags
 	bool volume_model_dirty;
 	bool pre_draw_ = true;
-
+	int frame_num = 0;
 	void Rotate(float radians);
 	void render_scene();
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
 	void getGraphPoints(float values[], float*& points);
+	static bool isRayCasting() {
+		return false;
+		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
+	}
 };
 #endif

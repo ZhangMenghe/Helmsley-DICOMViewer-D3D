@@ -35,7 +35,7 @@ void FpsTextRenderer::Render()
 
 	m_text_texture->Draw(m_text.c_str());
 
-	m_deviceResources->GetD3DDeviceContext()->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	//m_deviceResources->GetD3DDeviceContext()->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	m_tex_quad->Draw(m_deviceResources->GetD3DDeviceContext(),
 		DirectX::XMMatrixScaling(0.3, 0.2, 0.2)

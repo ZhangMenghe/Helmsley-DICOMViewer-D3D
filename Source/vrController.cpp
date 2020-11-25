@@ -254,11 +254,15 @@ void vrController::Render() {
 	if (!pre_draw_) { render_scene(); return; }
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
-	render_scene();
-
+	//TODO:WTF..
+	if (frame_num<10 || isDirty()) {
+		screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
+		render_scene();
+		frame_num++;
+	}
 	m_deviceResources->SetBackBufferRenderTarget();
 	screen_quad->Draw(context);	
+	m_deviceResources->ClearCurrentDepthBuffer();
 }
 void vrController::getGraphPoints(float values[], float*& points) {
 	DirectX::XMFLOAT2 lb, lm, lt, rb, rm, rt;
@@ -336,7 +340,6 @@ void vrController::render_scene(){
 		float front_test = m_rot_mat._33 * dir.z;
 		texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, ModelMat_, front_test < 0);
 	}
-
 }
 
 void vrController::CreateDeviceDependentResources(){
@@ -595,4 +598,22 @@ void vrController::ReleaseDeviceDependentResources(){
 	if (tex_volume) delete tex_volume;
 	if (tex_baked) delete tex_baked;
 	rStates_.clear();
+}
+bool vrController::isDirty() {
+	if (!tex_volume) return false;
+	if (volume_model_dirty || Manager::baked_dirty_) {
+		//meshRenderer_->dirtyPrecompute();
+		return true;
+	}
+	/*if (Manager::IsCuttingNeedUpdate() && cutter_->isPrecomputeDirty()) {
+		meshRenderer_->dirtyPrecompute();
+		if (isRayCasting())raycastRenderer_->dirtyPrecompute();
+		else texvrRenderer_->dirtyPrecompute();
+		return true;
+	}
+	if (Manager::param_bool[dvr::CHECK_VOLUME_ON]) {
+		if (isRayCasting()) return raycastRenderer_->isPrecomputeDirty();
+		return texvrRenderer_->isPrecomputeDirty();
+	}*/
+	return false;
 }

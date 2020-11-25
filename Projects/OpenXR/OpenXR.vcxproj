@@ -271,6 +271,7 @@
     <ClInclude Include="..\..\Source\Renderers\FpsTextRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
+    <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
@@ -290,6 +291,7 @@
     <ClCompile Include="..\..\Source\Renderers\FpsTextRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\quadRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp" />
+    <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp" />
     <ClCompile Include="..\..\Source\vrController.cpp" />
@@ -327,6 +329,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\Source\Shaders\Naive2DTexVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>

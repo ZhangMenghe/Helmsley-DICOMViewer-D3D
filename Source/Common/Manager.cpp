@@ -21,7 +21,7 @@ Manager::Manager(){
     myPtr_ = this;
     shader_contents = std::vector<std::string>(dvr::SHADER_ALL_END-1);
     screen_w = 0; screen_h = 0;
-    show_ar_ray = false;volume_ar_hold = false;
+    show_ar_ray = false; volume_ar_hold = false; baked_dirty_ = true;
     onReset();
 }
 Manager::~Manager(){
