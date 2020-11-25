@@ -458,6 +458,10 @@ namespace xr::math {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
 
+    inline XrVector3f Cross(const XrVector3f& a, const XrVector3f& b) {
+      return XrVector3f{ a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x };
+    }
+
     inline float Length(const XrVector3f& v) {
         return std::sqrt(Dot(v, v));
     }

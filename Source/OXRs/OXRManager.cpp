@@ -296,6 +296,8 @@ void OXRManager::InitOxrActions() {
 	attach_info.countActionSets = 1;
 	attach_info.actionSets = &xr_input.actionSet;
 	xrAttachSessionActionSets(xr_session, &attach_info);
+	lastFrameState = { XR_TYPE_FRAME_STATE };
+
 }
 bool OXRManager::Update() {
 	openxr_poll_events();
@@ -317,6 +319,7 @@ void OXRManager::Render(OXRScenes* scene){
 	// Must be called before any rendering is done! This can return some interesting flags, like 
 	// XR_SESSION_VISIBILITY_UNAVAILABLE, which means we could skip rendering this frame and call
 	// xrEndFrame right away.
+	lastFrameState = frame_state;
 	xrBeginFrame(xr_session, nullptr);
 
 	// Execute any code that's dependant on the predicted time, such as updating the location of
@@ -329,6 +332,7 @@ void OXRManager::Render(OXRScenes* scene){
 	XrCompositionLayerProjection             layer_proj = { XR_TYPE_COMPOSITION_LAYER_PROJECTION };
 	std::vector<XrCompositionLayerProjectionView> views;
 	bool session_active = xr_session_state == XR_SESSION_STATE_VISIBLE || xr_session_state == XR_SESSION_STATE_FOCUSED;
+	
 	if (session_active && openxr_render_layer(frame_state.predictedDisplayTime, views, layer_proj, scene)) {
 		layer = (XrCompositionLayerBaseHeader*)&layer_proj;
 	}
@@ -469,7 +473,7 @@ void OXRManager::openxr_poll_actions() {
 		// Constantly update pose if isActive
 		if (xr_input.renderHand[hand]) {
 			XrSpaceLocation space_location = { XR_TYPE_SPACE_LOCATION };
-			XrResult        res = xrLocateSpace(xr_input.handSpace[hand], xr_app_space, select_state.lastChangeTime, &space_location);
+			XrResult        res = xrLocateSpace(xr_input.handSpace[hand], xr_app_space, lastFrameState.predictedDisplayTime, &space_location);
 			if (XR_UNQUALIFIED_SUCCESS(res) &&
 				(space_location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
 				(space_location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0) {
@@ -478,21 +482,24 @@ void OXRManager::openxr_poll_actions() {
 				float y = space_location.pose.position.y;
 				float z = space_location.pose.position.z;
 
-				// Send on3DTouchMove
-				on3DTouchMove(x, y, z, hand);
+				
 
 				if(xr_input.handSelect[hand]) {
 					// If we have a select event, send onSingle3DTouchDown
 					onSingle3DTouchDown(x, y, z, hand);
-				}
-
-				if (xr_input.handDeselect[hand]) {
+				}else if (xr_input.handDeselect[hand]) {
 					// If we have a deselect event, send on3DTouchReleased
 					on3DTouchReleased(hand);
+				}else{
+				  // Send on3DTouchMove
+					on3DTouchMove(x, y, z, hand);
 				}
 
 			}
 		}
+	  /*else {
+			on3DTouchReleased(hand);
+		}*/
 
 		
 	}

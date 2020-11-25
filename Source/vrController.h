@@ -165,6 +165,9 @@ private:
 	DirectX::XMFLOAT3 Mouse3D_old_left;
 	DirectX::XMFLOAT3 Mouse3D_old_right;
 
+	float sens = 1.0f;// 0.1f;
+
+	XrVector3f vector_old;
 	float distance_old = 0;
 	float uniScale = 0.5f;
 	std::string cst_name;
@@ -201,7 +204,7 @@ private:
 
 	//flags
 	bool volume_model_dirty;
-	bool pre_draw_ = true;
+	bool pre_draw_ = false;
 	int frame_num = 0;
 	void Rotate(float radians);
 	void render_scene();

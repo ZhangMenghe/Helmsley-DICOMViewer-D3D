@@ -67,6 +67,7 @@ namespace DX {
 		input_state_t  xr_input = { };
 		XrEnvironmentBlendMode   xr_blend = {};
 		XrDebugUtilsMessengerEXT xr_debug = {};
+		XrFrameState lastFrameState;
 
 		std::vector<XrView>                  xr_views;
 		std::vector<XrViewConfigurationView> xr_config_views;

@@ -162,9 +162,6 @@
     <ClCompile Include="..\..\Source\pbr\PbrResources.cpp">
       <Filter>Source\pbr</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\pbr\pch.cpp">
-      <Filter>Source\pbr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\pbr\PbrCommon.cpp">
       <Filter>Source\pbr</Filter>
     </ClCompile>
@@ -312,7 +309,7 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Utils\XrExtensions.h">
       <Filter>Source\Utils</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
