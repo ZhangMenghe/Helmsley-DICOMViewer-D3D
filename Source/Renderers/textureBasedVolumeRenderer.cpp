@@ -95,8 +95,8 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;// D3D11_BLEND_ONE;
-	omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ZERO;
+	omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;// D3D11_BLEND_ONE;// D3D11_BLEND_ONE;
+	omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;// D3D11_BLEND_ZERO;
 	omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	omDesc.AlphaToCoverageEnable = false;
@@ -174,8 +174,14 @@ void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	//delete[]zInfos;
 	m_data_dirty = true;
 }
-
-void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
+void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front, bool pre_draw){
+	if (pre_draw) draw_baked(context, tex, modelMat, is_front);
+	else draw_scene(context, tex, modelMat, is_front);
+}
+void textureBasedVolumeRenderer::draw_baked(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
+	draw_scene(context, tex, modelMat, is_front);
+}
+void textureBasedVolumeRenderer::draw_scene(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
 	if (!m_loadingComplete) return;
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
@@ -228,7 +234,6 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	//texture sampler
 	if (m_sampleState != nullptr) context->PSSetSamplers(0, 1, &m_sampleState);
 
-
 	//todo: if its front or back
 	ID3D11Buffer* vertInstBuffers[2] = { m_vertexBuffer.get(), nullptr };
 
@@ -256,9 +261,13 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	// Attach our pixel shader.
 	if (m_pixelShader != nullptr) context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 	context->DrawIndexedInstanced(m_index_count, dimensions, 0, 0, 0);
+	
+	//setback states
+	context->RSSetState(m_render_state_front);
+	context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, DirectX::XMUINT3 vol_dimension, DirectX::XMFLOAT3 vol_dim_scale) {
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
-	vol_thickness_factor = vol_dim_scale.z;
+	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);
 }

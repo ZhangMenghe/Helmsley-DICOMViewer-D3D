@@ -81,18 +81,18 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 		)
 	);
 
-	D3D11_BLEND_DESC omDesc;
-	ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
-	omDesc.RenderTarget[0].BlendEnable = TRUE;
-	omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ONE;
-	omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ZERO;
-	omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	//D3D11_BLEND_DESC omDesc;
+	//ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
+	//omDesc.RenderTarget[0].BlendEnable = TRUE;
+	//omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	//omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	//omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	//omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ONE;
+	//omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ZERO;
+	//omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	//omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	device->CreateBlendState(&omDesc, &d3dBlendState);
+	//device->CreateBlendState(&omDesc, &d3dBlendState);
 
 
 	/*D3D11_RASTERIZER_DESC wfdesc;
@@ -123,7 +123,8 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 			0
 		);
 	}
-	context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
+	//todo: don't know why we don't need it anymore 
+	//context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
 
 	if (tex != nullptr) {
 		auto texview = tex->GetTextureView();

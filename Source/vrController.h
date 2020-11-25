@@ -12,6 +12,7 @@
 #include <pbr/PbrMaterial.h>
 #include <pbr/PbrModelObject.h>
 
+#include <Renderers/screenQuadRenderer.h>
 class reservedStatus {
 public:
 	DirectX::XMFLOAT4X4 model_mat, rot_mat;
@@ -122,6 +123,7 @@ public:
 	//getter
 	Texture* getVolumeTex() { return tex_volume; }
 	Texture* getBakedTex() { return tex_baked; }
+	bool isDirty();
 
 private:
 	XrSpace * space;
@@ -129,7 +131,7 @@ private:
 
 	static vrController* myPtr_;
 
-	quadRenderer* screen_quad;
+	screenQuadRenderer* screen_quad;
 	raycastVolumeRenderer* raycast_renderer;
 	textureBasedVolumeRenderer* texvrRenderer_;
 
@@ -196,27 +198,20 @@ private:
 	*/
 	bool	m_tracking;
 	float	m_degreesPerSecond = 1;
+
 	//flags
 	bool volume_model_dirty;
-	// Variables used with the rendering loop.
-	/*bool	m_loadingComplete;
-		
-		
-	bool	m_isholographic;
-	bool	m_render_to_texture = false;
-
-	/**/
-	const float m_clear_color[4] = {
-		0.f,0.f,0.f,0.f
-	};
-	int screen_width, screen_height;
-	//XMINT3 vol_dimension_, vol_dim_scale_;
-
+	bool pre_draw_ = true;
+	int frame_num = 0;
 	void Rotate(float radians);
 	void render_scene();
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
 	void getGraphPoints(float values[], float*& points);
+	static bool isRayCasting() {
+		return false;
+		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
+	}
 };
 #endif

@@ -25,13 +25,15 @@ namespace DX
 		void Trim();
 		void Present();
 		void SetBackBufferRenderTarget();
+		void ClearCurrentDepthBuffer();
 
 		void saveCurrentTargetViews(ID3D11RenderTargetView* render_target, ID3D11DepthStencilView* depth_target);
-		ID3D11DepthStencilView*		GetDepthStencilView() const {
-			if (m_depthStencilViewStack.empty())	return m_d3dDepthStencilView.Get();
-			return m_depthStencilViewStack.top();
-		}
-
+		void removeCurrentTargetViews();
+		//ID3D11DepthStencilView*		GetDepthStencilView() const {
+		//	if (m_depthStencilViewStack.empty())	return m_d3dDepthStencilView.Get();
+		//	return m_depthStencilViewStack.top();
+		//}
+		ID3D11DepthStencilView* GetDepthStencilView();
 		// The size of the render target, in pixels.
 		Windows::Foundation::Size	GetOutputSize() const					{ return m_outputSize; }
 
@@ -109,6 +111,9 @@ namespace DX
 
 		std::stack<ID3D11RenderTargetView*> m_renderTargetViewStack;
 		std::stack<ID3D11DepthStencilView*> m_depthStencilViewStack;
+		
+		ID3D11RenderTargetView* current_render_target_view = nullptr;
+		ID3D11DepthStencilView* current_depth_view = nullptr;
 
 		ID3D11RenderTargetView* restoreRenderTargetView();
 		ID3D11DepthStencilView* restoreDepthStencilView();

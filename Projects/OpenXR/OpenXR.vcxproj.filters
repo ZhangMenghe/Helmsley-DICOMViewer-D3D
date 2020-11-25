@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\..\OpenXR-MixedReality\shared\gltf\GltfHelper.cpp">
       <Filter>Source\pbr\gltf</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -309,6 +312,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Utils\XrExtensions.h">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h">
+      <Filter>Source\Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -381,6 +387,9 @@
     </FxCompile>
     <FxCompile Include="..\..\Source\pbr\Shaders\HighlightVertexShader.hlsl">
       <Filter>Source\pbr\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\Naive2DTexVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

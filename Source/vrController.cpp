@@ -18,10 +18,9 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	m_deviceResources(deviceResources){
 	myPtr_ = this;
 
-	screen_quad = new quadRenderer(m_deviceResources->GetD3DDevice());
-	//raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
+	screen_quad = new screenQuadRenderer(m_deviceResources->GetD3DDevice());
+	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
 	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
-
 
 	Manager::camera = new Camera;
 	CreateDeviceDependentResources();
@@ -61,7 +60,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 		if (sh <= 0 || sw <= 0 || sd <= 0) {
 			if (pd > 200) vol_dim_scale_ = { 1.0f, 1.0f, 0.5f };
-			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f *2.0f };
+			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f };
 			else vol_dim_scale_ = { 1.0f, 1.0f, pd / 200.f };
 		}
 		else if (abs(sh - sw) < 1) {
@@ -88,12 +87,11 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	D3D11_TEXTURE3D_DESC texDesc{
 		ph,pw,pd,
 		1,
-		//DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_FORMAT_R32_UINT,
 		D3D11_USAGE_DEFAULT,
-		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+		D3D11_BIND_SHADER_RESOURCE,
 		0,
-		D3D11_RESOURCE_MISC_SHARED
+		0
 	};
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
 	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
@@ -284,7 +282,7 @@ void vrController::init_texture() {
 		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_UNORDERED_ACCESS,
 		0,
-		D3D11_RESOURCE_MISC_SHARED
+		0
 	};
 
 	DX::ThrowIfFailed(
@@ -292,7 +290,7 @@ void vrController::init_texture() {
 	);
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;// D3D11_UAV_DIMENSION_TEXTURE2D;
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 	uavDesc.Format = texDesc.Format;
 	uavDesc.Texture3D.MipSlice = 0;
 	uavDesc.Texture3D.FirstWSlice = 0;
@@ -308,6 +306,7 @@ void vrController::CreateWindowSizeDependentResources(){
 	if (outputSize.Width == .0) return;
 	//screen_width = outputSize.Width; screen_height = outputSize.Height;
 	//screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
+	DX::ThrowIfFailed(screen_quad->InitializeQuadTex(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height));
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -356,33 +355,18 @@ void vrController::StopTracking(){
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render() {
 	if (!tex_volume) return;
-
-
-	/*
-	// Loading is asynchronous. Only draw geometry after it's loaded.
-	if (!m_loadingComplete)
-	{
-		return;
-	}
-	if (!m_render_to_texture) { render_scene(); return; }
+	if (!pre_draw_) { render_scene(); return; }
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	auto tview = screen_quad->GetRenderTargetView();
-
-	context->OMSetRenderTargets(1, &tview, m_deviceResources->GetDepthStencilView());
-	// Clear the render to texture.
-	context->ClearRenderTargetView(tview, m_clear_color);
-	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-	render_scene();
+	//TODO:WTF..
+	if (frame_num<10 || isDirty()) {
+		screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
+		render_scene();
+		frame_num++;
+	}
 	m_deviceResources->SetBackBufferRenderTarget();
-	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), m_clear_color);
-
-	//draw to screen
-	*/
-	//screen_quad->Draw(m_deviceResources->GetD3DDeviceContext());
-
-	precompute();
-	render_scene();
+	screen_quad->Draw(context);	
+	m_deviceResources->ClearCurrentDepthBuffer();
 }
 void vrController::getGraphPoints(float values[], float*& points) {
 	DirectX::XMFLOAT2 lb, lm, lt, rb, rm, rt;
@@ -444,111 +428,23 @@ void vrController::precompute() {
 }
 
 void vrController::render_scene(){
+	precompute();
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(),m_clear_color);
-	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
 
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_ * SpaceMat_;
-
-	//raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
-	auto dir = Manager::camera->getViewDirection();
 	
-	DirectX::XMFLOAT4X4 m_rot_mat;
-	XMStoreFloat4x4(&m_rot_mat, RotateMat_);
-	float front_test = m_rot_mat._33 * dir.z;
-	texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, XMMatrixTranspose(ModelMat_), front_test < 0);
-	/*
-	/*auto context = m_deviceResources->GetD3DDeviceContext();
-
-	// Set shader texture resource in the pixel shader.
-	if (texture != nullptr) {
-		ID3D11ShaderResourceView* texview = texture->GetTextureView();
-		context->PSSetShaderResources(0, 1, &texview);
+	if(isRayCasting())
+		raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+	else {
+		auto dir = Manager::camera->getViewDirection();
+		DirectX::XMFLOAT4X4 m_rot_mat;
+		XMStoreFloat4x4(&m_rot_mat, RotateMat_);
+		float front_test = m_rot_mat._33 * dir.z;
+		texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, ModelMat_, front_test < 0);
 	}
-
-	//compute shader stuff
-	context->CSSetShader(m_computeShader, nullptr, 0);
-	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
-	context->Dispatch(screen_width / 8, screen_height / 8, 1);
-	context->CopyResource(tex_baked->GetTexture2D(), m_comp_tex_d3d);
-	//unbind UAV
-	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
-	context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
-	// Disable Compute Shader
-	context->CSSetShader(nullptr, nullptr, 0);
-
-	if (tex_baked != nullptr) {
-		ID3D11ShaderResourceView* texview = tex_baked->GetTextureView();
-		context->PSSetShaderResources(0, 1, &texview);
-	}
-
-
-	// Prepare the constant buffer to send it to the graphics device.
-	context->UpdateSubresource1(
-		m_constantBuffer.Get(),
-		0,
-		NULL,
-		&m_constantBufferData,
-		0,
-		0,
-		0
-		);
-
-	// Each vertex is one instance of the VertexPositionColor struct.
-	UINT stride = sizeof(VertexPositionColor);
-	UINT offset = 0;
-	context->IASetVertexBuffers(
-		0,
-		1,
-		m_vertexBuffer.GetAddressOf(),
-		&stride,
-		&offset
-		);
-
-	context->IASetIndexBuffer(
-		m_indexBuffer.Get(),
-		DXGI_FORMAT_R16_UINT, // Each index is one 16-bit unsigned integer (short).
-		0
-		);
-
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	context->IASetInputLayout(m_inputLayout.Get());
-
-	// Attach our vertex shader.
-	context->VSSetShader(
-		m_vertexShader.Get(),
-		nullptr,
-		0
-		);
-
-	// Send the constant buffer to the graphics device.
-	context->VSSetConstantBuffers1(
-		0,
-		1,
-		m_constantBuffer.GetAddressOf(),
-		nullptr,
-		nullptr
-	);
-
-	// Attach our pixel shader.
-	context->PSSetShader(
-		m_pixelShader.Get(),
-		nullptr,
-		0
-		);
-	//texture sampler
-	context->PSSetSamplers(0, 1, &m_sampleState);
-
-	// Draw the objects.
-	context->DrawIndexed(
-		36,
-		0,
-		0
-		);
-		*/
 }
 
 void vrController::CreateDeviceDependentResources(){
@@ -919,10 +815,28 @@ void vrController::setSpaces(XrSpace * space, XrSpace * app_space) {
 
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();
-	screen_quad->Clear();
+	//screen_quad->Clear();
 	//texture
 	if (tex_volume) delete tex_volume;
 	if (tex_baked) delete tex_baked;
 	rStates_.clear();
 }
 
+bool vrController::isDirty() {
+	if (!tex_volume) return false;
+	if (volume_model_dirty || Manager::baked_dirty_) {
+		//meshRenderer_->dirtyPrecompute();
+		return true;
+	}
+	/*if (Manager::IsCuttingNeedUpdate() && cutter_->isPrecomputeDirty()) {
+		meshRenderer_->dirtyPrecompute();
+		if (isRayCasting())raycastRenderer_->dirtyPrecompute();
+		else texvrRenderer_->dirtyPrecompute();
+		return true;
+	}
+	if (Manager::param_bool[dvr::CHECK_VOLUME_ON]) {
+		if (isRayCasting()) return raycastRenderer_->isPrecomputeDirty();
+		return texvrRenderer_->isPrecomputeDirty();
+	}*/
+	return false;
+}

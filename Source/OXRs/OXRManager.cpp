@@ -616,6 +616,8 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 		// And tell OpenXR we're done with rendering to this one!
 		XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };
 		xrReleaseSwapchainImage(xr_swapchains[i].handle, &release_info);
+		//remove saved views
+		removeCurrentTargetViews();
 	}
 
 	layer.space = xr_app_space;
@@ -630,12 +632,14 @@ void OXRManager::d3d_render_layer(XrCompositionLayerProjectionView& view, swapch
 	XrRect2Di& rect = view.subImage.imageRect;
 	D3D11_VIEWPORT viewport = CD3D11_VIEWPORT((float)rect.offset.x, (float)rect.offset.y, (float)rect.extent.width, (float)rect.extent.height);
 	m_d3dContext.Get()->RSSetViewports(1, &viewport);
+	
+	m_d3dContext.Get()->OMSetRenderTargets(1, &surface.target_view, surface.depth_view);
 
 	// Wipe our swapchain color and depth target clean, and then set them up for rendering!
-	float clear[] = { 0, 0, 0, 1 };
+	float clear[] = { 0, 0, 0, 0 };
 	m_d3dContext.Get()->ClearRenderTargetView(surface.target_view, clear);
-	m_d3dContext.Get()->ClearDepthStencilView(surface.depth_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_d3dContext.Get()->OMSetRenderTargets(1, &surface.target_view, surface.depth_view);
+	m_d3dContext.Get()->ClearDepthStencilView(surface.depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);// | D3D11_CLEAR_STENCIL
+
 	saveCurrentTargetViews(surface.target_view, surface.depth_view);
 }
 void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
