@@ -2,7 +2,7 @@
 
 #include "pch.h"
 #include "Common\DeviceResources.h"
-#include "OpenXRMain.h"
+//#include "OpenXRMain.h"
 
 namespace OpenXR
 {
@@ -37,7 +37,7 @@ namespace OpenXR
 
 	private:
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
-		std::unique_ptr<OpenXRMain> m_main;
+		//std::unique_ptr<OpenXRMain> m_main;
 		bool m_windowClosed;
 		bool m_windowVisible;
 	};

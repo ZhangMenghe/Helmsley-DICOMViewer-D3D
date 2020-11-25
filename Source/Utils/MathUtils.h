@@ -12,4 +12,5 @@ inline DirectX::XMMATRIX mouseRotateMat(DirectX::XMMATRIX bmat, float xoffset, f
         bmat
     );
 }
+
 #endif // !MATH_UTILS_H

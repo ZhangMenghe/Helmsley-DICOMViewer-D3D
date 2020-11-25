@@ -25,6 +25,7 @@ public:
     ~Manager();
     void onReset();
     void onViewChange(int w, int h);
+    void updateCamera(const XrPosef& pose, const XrFovf& fov);
     static bool IsCuttingEnabled();
     static bool IsCuttingNeedUpdate();
 private:

@@ -28,7 +28,7 @@ const static float3 ORGAN_COLORS[7] = {
 	float3(0.24, 0.004, 0.64), float3(0.008, 0.278, 0.99), float3(0.75, 0.634, 0.996),
 	float3(1, 0.87, 0.14), float3(0.98, 0.88, 1.0), float3(0.99, 0.106, 0.365), float3(.0, 0.314, 0.75) };
 
-// All components are in the range [0…1], including hue.
+// All components are in the range [0?], including hue.
 float3 hsv2rgb(float3 c) {
 	float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
 	float3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);

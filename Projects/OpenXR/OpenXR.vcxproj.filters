@@ -77,10 +77,18 @@
     <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
       <UniqueIdentifier>{1233eb50-6233-4905-9736-e6cda659fcd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\pbr">
+      <UniqueIdentifier>{6fa86382-e79b-40b8-b94b-4067dd3beede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\pbr\Shaders">
+      <UniqueIdentifier>{00170999-3023-4170-a697-15a63ed094a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\pbr\gltf">
+      <UniqueIdentifier>{721b146d-eeca-49d4-9a33-78957f18ee6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="OpenXRMain.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp">
       <Filter>Source\Common</Filter>
@@ -142,10 +150,45 @@
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\PbrMaterial.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\PbrModel.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\PbrPrimitive.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\PbrResources.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\pch.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\PbrCommon.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\ObjectMotion.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\PbrModelObject.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\Object.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\GltfLoader.cpp">
+      <Filter>Source\pbr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\pbr\gltf\ExternalImpl.cpp">
+      <Filter>Source\pbr\gltf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\OpenXR-MixedReality\shared\gltf\GltfHelper.cpp">
+      <Filter>Source\pbr\gltf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="OpenXRMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="..\..\Source\Common\DeviceResources.h">
       <Filter>Source\Common</Filter>
@@ -225,10 +268,55 @@
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\XrMath.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\PbrMaterial.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\PbrModel.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\PbrPrimitive.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\PbrResources.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\PbrCommon.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\ObjectMotion.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\PbrModelObject.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\Object.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\header.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\pbr\GltfLoader.h">
+      <Filter>Source\pbr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\OpenXR-MixedReality\shared\gltf\GltfHelper.h">
+      <Filter>Source\pbr\gltf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\XrExtensionContext.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\XrExtensions.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\Source\pbr\brdf_lut.png">
+      <Filter>Source\pbr</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +341,9 @@
       <Filter>Source\proto_src</Filter>
     </None>
     <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
+    <None Include="..\..\Source\pbr\Shaders\HighlightShared.hlsl" />
+    <None Include="..\..\Source\pbr\Shaders\PbrShared.hlsl" />
+    <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
@@ -278,6 +369,18 @@
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\texbasedVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\pbr\Shaders\PbrPixelShader.hlsl">
+      <Filter>Source\pbr\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\pbr\Shaders\PbrVertexShader.hlsl">
+      <Filter>Source\pbr\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\pbr\Shaders\HighlightPixelShader.hlsl">
+      <Filter>Source\pbr\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\pbr\Shaders\HighlightVertexShader.hlsl">
+      <Filter>Source\pbr\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

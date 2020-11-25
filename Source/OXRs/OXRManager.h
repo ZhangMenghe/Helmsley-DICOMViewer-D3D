@@ -27,6 +27,7 @@ namespace DX {
 		XrPosef  handPose[2];
 		XrBool32 renderHand[2];
 		XrBool32 handSelect[2];
+		XrBool32 handDeselect[2];
 	};
 
 	class OXRManager : public DeviceResources {
@@ -38,6 +39,16 @@ namespace DX {
 		bool Update();
 		void Render(OXRScenes* scene);
 		void ShutDown();
+
+		XrSpace createReferenceSpace(XrReferenceSpaceType referenceSpaceType, XrPosef poseInReferenceSpace);
+		XrSpatialAnchorMSFT createAnchor(const XrPosef& poseInScene);
+
+		XrSpace createAnchorSpace(const XrPosef& poseInScene);
+		XrSpace * getAppSpace();
+
+		std::function<void(float, float, float, int)> onSingle3DTouchDown;
+		std::function<void(float, float, float, int)> on3DTouchMove;
+		std::function<void(int)> on3DTouchReleased;
 
 	private:
 		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -65,10 +76,14 @@ namespace DX {
 		PFN_xrGetD3D11GraphicsRequirementsKHR ext_xrGetD3D11GraphicsRequirementsKHR = nullptr;
 		PFN_xrCreateDebugUtilsMessengerEXT    ext_xrCreateDebugUtilsMessengerEXT = nullptr;
 		PFN_xrDestroyDebugUtilsMessengerEXT   ext_xrDestroyDebugUtilsMessengerEXT = nullptr;
+		PFN_xrCreateSpatialAnchorMSFT    ext_xrCreateSpatialAnchorMSFT = nullptr;
+		PFN_xrCreateSpatialAnchorSpaceMSFT    ext_xrCreateSpatialAnchorSpaceMSFT = nullptr;
 
 		void openxr_poll_events();
 		void openxr_poll_actions();
 		void openxr_poll_predicted(XrTime predicted_time);
+
+		
 
 		DirectX::XMMATRIX d3d_xr_projection(XrFovf fov, float clip_near, float clip_far);
 		IDXGIAdapter1* d3d_get_adapter(LUID& adapter_luid);

@@ -34,8 +34,13 @@ void Manager::onReset(){
     if(camera){delete camera; camera= nullptr;}
     baked_dirty_ = true;
 }
+
+void Manager::updateCamera(const XrPosef & pose, const XrFovf & fov) {
+  camera->update(pose, fov);
+}
+
 void Manager::onViewChange(int w, int h){
-    camera->setProjMat(w, h);
+    //camera->setProjMat(w, h);
     screen_w = w; screen_h = h;
 }
 bool Manager::isRayCut(){return param_bool[dvr::CHECK_RAYCAST] && param_bool[dvr::CHECK_CUTTING];}
