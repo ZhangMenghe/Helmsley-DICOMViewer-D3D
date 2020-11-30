@@ -9,7 +9,9 @@ struct InstanceType{
 	DirectX::XMFLOAT2 zinfo;
 };
 struct texPixConstantBuffer {
-	bool u_front;
+	alignas(16)bool u_front;
+	alignas(16)bool u_cut;
+	alignas(16)float u_cut_texz;
 };
 class textureBasedVolumeRenderer:public baseRenderer {
 public:
@@ -17,6 +19,8 @@ public:
 
 	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
 	void setDimension(ID3D11Device* device, DirectX::XMUINT3 vol_dimension, DirectX::XMFLOAT3 vol_dim_scale);
+	void setCuttingPlane(float percent);
+	void setCuttingPlaneDelta(int delta);
 
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);

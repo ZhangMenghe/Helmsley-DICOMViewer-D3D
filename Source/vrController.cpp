@@ -394,129 +394,6 @@ void vrController::CreateDeviceDependentResources(){
 		m_cmpdata.u_color_scheme = 2;
 
 	});
-
-	/*
-	// Load shaders asynchronously.
-	auto loadVSTask = DX::ReadDataAsync(L"SampleVertexShader.cso");
-	auto loadPSTask = DX::ReadDataAsync(L"SamplePixelShader.cso");
-	auto loadCSTask = DX::ReadDataAsync(L"NaiveComputeShader.cso");
-
-	// After the vertex shader file is loaded, create the shader and input layout.
-	auto createVSTask = loadVSTask.then([this](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateVertexShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				&m_vertexShader
-				)
-			);
-
-		static const D3D11_INPUT_ELEMENT_DESC vertexDesc [] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		};
-
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateInputLayout(
-				vertexDesc,
-				ARRAYSIZE(vertexDesc),
-				&fileData[0],
-				fileData.size(),
-				&m_inputLayout
-				)
-			);
-	});
-
-	// After the pixel shader file is loaded, create the shader and constant buffer.
-	auto createPSTask = loadPSTask.then([this](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreatePixelShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				&m_pixelShader
-				)
-			);
-		//texture
-		D3D11_SAMPLER_DESC samplerDesc;
-
-		// Create a texture sampler state description.
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.MipLODBias = 0.0f;
-		samplerDesc.MaxAnisotropy = 1;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		samplerDesc.BorderColor[0] = 0;
-		samplerDesc.BorderColor[1] = 0;
-		samplerDesc.BorderColor[2] = 0;
-		samplerDesc.BorderColor[3] = 0;
-		samplerDesc.MinLOD = 0;
-		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-		// Create the texture sampler state.
-		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&samplerDesc, &m_sampleState));
-
-		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer) , D3D11_BIND_CONSTANT_BUFFER);
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateBuffer(
-				&constantBufferDesc,
-				nullptr,
-				&m_constantBuffer
-				)
-			);
-	});
-
-	// After the vertex shader file is loaded, create the shader and input layout.
-	auto createCSTask = loadCSTask.then([this](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateComputeShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				&m_computeShader
-			)
-		);
-
-	});
-
-	// Once both shaders are loaded, create the mesh.
-	auto createCubeTask = (createPSTask && createVSTask && createCSTask).then([this] () {
-		D3D11_SUBRESOURCE_DATA vertexBufferData = {0};
-		vertexBufferData.pSysMem = cube_vertices_pos_w_tex;
-		vertexBufferData.SysMemPitch = 0;
-		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cube_vertices_pos_w_tex), D3D11_BIND_VERTEX_BUFFER);
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateBuffer(
-				&vertexBufferDesc,
-				&vertexBufferData,
-				&m_vertexBuffer
-				)
-			);
-
-		D3D11_SUBRESOURCE_DATA indexBufferData = {0};
-		indexBufferData.pSysMem = cube_indices;
-		indexBufferData.SysMemPitch = 0;
-		indexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cube_indices), D3D11_BIND_INDEX_BUFFER);
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateBuffer(
-				&indexBufferDesc,
-				&indexBufferData,
-				&m_indexBuffer
-				)
-			);
-	});
-
-	// Once the cube is loaded, the object is ready to be rendered.
-	createCubeTask.then([this] () {
-		m_loadingComplete = true;
-	});
-	*/
 }
 void vrController::onSingleTouchDown(float x, float y) {
 	Mouse_old = { x, y };
@@ -528,8 +405,9 @@ void vrController::onTouchMove(float x, float y) {
 	//if (!Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
 
 	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
+	//float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
 
-	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
+	float xoffset =  Mouse_old.x -x, yoffset = y - Mouse_old.y;
 	Mouse_old = { x, y };
 	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
 	yoffset *= -dvr::MOUSE_ROTATE_SENSITIVITY;

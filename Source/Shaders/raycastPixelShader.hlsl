@@ -5,9 +5,16 @@ struct v2f {
 	float4 pos : SV_POSITION;
 	float3 tex :TEXCOORD0;
 	float3 ro : TEXCOORD1;
-	float3 FragPos: TEXCOORD2;
-	float3 raydir: TEXCOORD3;
+	//float3 FragPos: TEXCOORD2;
+	float3 raydir: TEXCOORD2;
 };
+
+cbuffer raypixConstantBuffer : register(b0) {
+	bool u_cut : packoffset(c0);
+	float4 u_pp: packoffset(c1);
+	float4 u_pn: packoffset(c2);
+};
+
 float2 RayCube(float3 ro, float3 rd, float3 extents) {
 	float3 aabb[2] = { -extents, extents };
 	float3 ird = 1.0 / rd;
@@ -83,6 +90,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	}
 	return float4(sum.rgb, saturate(sum.a));
 }
+
 // A pass-through function for the (interpolated) color data.
 float4 main(v2f input) : SV_TARGET{
 	//return float4(input.tex, 1.0);
@@ -94,7 +102,22 @@ float4 main(v2f input) : SV_TARGET{
 	
 	float2 intersect = RayCube(ro, rd, .5);
 	intersect.x = max(0, intersect.x);
-
+	bool blocked_by_plane = false;
+	if (u_cut) {
+		float t;
+		if (dot(u_pn.xyz, -ro) > .0f) {
+			t = RayPlane(ro, rd, u_pp.xyz, u_pn.xyz);
+			blocked_by_plane = (t <= intersect.x);
+			intersect.x = max(intersect.x, t);
+		}else {
+			t = RayPlane(ro, rd, u_pp.xyz, -u_pn.xyz); intersect.y = min(intersect.y, t);
+		}
+		if (blocked_by_plane && intersect.x <= intersect.y) {
+			float4 traced_color = Volume(ro + 0.5, rd, intersect.x, intersect.y);
+			return lerp(traced_color, float4(.0f, .0f, .0f, 1.0f), 1.0 - traced_color.a);
+		}
+	}
+	clip(blocked_by_plane ? -1.0f : 1.0f);
 	clip(intersect.y - intersect.x);
 	return Volume(ro + 0.5, rd, intersect.x, intersect.y);
 }

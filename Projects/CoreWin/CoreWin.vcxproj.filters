@@ -50,6 +50,9 @@
     <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
       <UniqueIdentifier>{05327bab-dc6c-4792-b98f-39853a145765}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SceneObjs">
+      <UniqueIdentifier>{03fceeb5-fd72-4246-b02d-5360130f2fe3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp">
       <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp">
+      <Filter>Source\SceneObjs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h">
       <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h">
+      <Filter>Source\SceneObjs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

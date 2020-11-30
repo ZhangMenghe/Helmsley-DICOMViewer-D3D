@@ -278,6 +278,7 @@
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h" />
+    <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
     <ClInclude Include="..\..\Source\vrController.h" />
@@ -296,6 +297,7 @@
     <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp" />
+    <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />
     <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp" />
     <ClCompile Include="..\..\Source\vrController.cpp" />
     <ClCompile Include="App.cpp" />

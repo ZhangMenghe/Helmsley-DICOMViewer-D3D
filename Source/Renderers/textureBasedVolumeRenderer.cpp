@@ -6,12 +6,12 @@
 using namespace DirectX;
 
 textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
-	:baseRenderer(device, 
+	:baseRenderer(device,
 		L"texbasedVertexShader.cso", L"texbasedPixelShader.cso",
 		quad_vertices_pos_w_tex, quad_indices, 16, 6
-	)
+	),
+	cut_id(0)
 {
-
 }
 
 void textureBasedVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -80,7 +80,7 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 		)
 	);
 
-	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(DirectX::XMFLOAT4X4), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(texPixConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&pixconstantBufferDesc,
@@ -194,6 +194,8 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	}
 	if (m_pixConstantBuffer != nullptr) {
 		m_const_buff_data_pix.u_front = is_front;
+		m_const_buff_data_pix.u_cut = true;
+		m_const_buff_data_pix.u_cut_texz = is_front ? 1.0f - dimension_inv * cut_id : dimension_inv * cut_id;
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),
 			0,
@@ -263,4 +265,12 @@ void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, DirectX::XMU
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);
+}
+void textureBasedVolumeRenderer::setCuttingPlane(float percent) {
+	cut_id = int(dimensions * percent);
+	//baked_dirty_ = true;
+}
+void textureBasedVolumeRenderer::setCuttingPlaneDelta(int delta) {
+	cut_id = ((int)fmax(0, cut_id + delta)) % dimensions;
+	//baked_dirty_ = true;
 }
