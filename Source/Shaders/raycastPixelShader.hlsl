@@ -61,7 +61,6 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 		float4 val_color = Sample(p);
 		if (val_color.a > 0.01) {
 			if (pd < 0.01) {
-			
 				float t0 = t - usample_step_inverse * 3;
 				float t1 = t;
 				float tm;

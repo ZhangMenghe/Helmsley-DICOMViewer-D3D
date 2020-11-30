@@ -106,8 +106,9 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	//context->RSSetState(m_render_state);
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
+		//TODO: don't know why no transpose...
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, modelMat);
-		auto inv_mat = DirectX::XMMatrixTranspose( DirectX::XMMatrixInverse(nullptr, modelMat));
+		auto inv_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, modelMat));
 		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
 		DirectX::XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, //Manager::camera->getCameraPosition()
 			DirectX::XMVector4Transform(veye,

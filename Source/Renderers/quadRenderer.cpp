@@ -61,7 +61,7 @@ void quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMa
 	if (!m_loadingComplete) return; 
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
-		XMStoreFloat4x4(&m_constantBufferData.model, modelMat);
+		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(modelMat));
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(

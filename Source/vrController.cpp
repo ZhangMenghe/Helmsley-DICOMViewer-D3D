@@ -663,7 +663,7 @@ void vrController::onTouchMove(float x, float y) {
 
 	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
 
-	float xoffset = Mouse_old.x - x, yoffset = y- Mouse_old.y;
+	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
 	Mouse_old = { x, y };
 	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
 	yoffset *= -dvr::MOUSE_ROTATE_SENSITIVITY;
