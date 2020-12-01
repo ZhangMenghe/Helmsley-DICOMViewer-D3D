@@ -10,25 +10,18 @@
 #include <Renderers/textureBasedVolumeRenderer.h>
 #include <Renderers/screenQuadRenderer.h>
 #include <SceneObjs/cuttingPlane.h>
-class reservedStatus {
-public:
-	DirectX::XMFLOAT4X4 model_mat, rot_mat;
-	DirectX::XMFLOAT3 scale_vec, pos_vec;
+#include <glm/gtc/matrix_transform.hpp>
+struct reservedStatus {
+	glm::mat4 model_mat, rot_mat;
+	glm::vec3 scale_vec, pos_vec;
 	Camera* vcam;
-	reservedStatus(DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* mcam)
-		:scale_vec(sv), pos_vec(pv) {
-		DirectX::XMStoreFloat4x4(&model_mat, mm);
-		DirectX::XMStoreFloat4x4(&rot_mat, rm);
-		vcam = mcam;
+	reservedStatus(glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam) {
+		model_mat = mm; rot_mat = rm; scale_vec = sv; pos_vec = pv; vcam = cam;
 	}
-	reservedStatus()
-		:rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS), vcam(new Camera) {
-		DirectX::XMMATRIX mrot = DirectX::XMLoadFloat4x4(&rot_mat);
-		DirectX::XMMATRIX mmodel =
-			DirectX::XMMatrixScaling(scale_vec.x, scale_vec.y, scale_vec.z)
-			* mrot
-			* DirectX::XMMatrixTranslation(pos_vec.x, pos_vec.y, pos_vec.z);
-		DirectX::XMStoreFloat4x4(&model_mat, mmodel);
+	reservedStatus() :rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS), vcam(new Camera) {
+		model_mat = glm::translate(glm::mat4(1.0), pos_vec)
+			* rot_mat
+			* glm::scale(glm::mat4(1.0), scale_vec);
 	}
 };
 struct computeConstantBuffer{
@@ -61,7 +54,7 @@ public:
 	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
 
 	void onReset();
-	void onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam);
+	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam);
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
@@ -81,7 +74,7 @@ public:
 	void onPan(float x, float y);
 
 	//setter
-	bool addStatus(std::string name, DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* cam);
+	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam);
 	bool addStatus(std::string name, bool use_current_status = false);
 	void setMVPStatus(std::string status_name);
 
@@ -112,20 +105,19 @@ private:
 
 	computeConstantBuffer m_cmpdata;
 
-	DirectX::XMMATRIX ModelMat_, RotateMat_;
-	DirectX::XMFLOAT3 ScaleVec3_, PosVec3_;
+	glm::mat4 ModelMat_, RotateMat_;
+	glm::vec3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer	m_all_buff_Data;
-	std::map<std::string, reservedStatus*> rStates_;
+	std::map<std::string, reservedStatus> rStates_;
 
 	//UI
 	bool m_IsPressed = false;
-	DirectX::XMFLOAT2 Mouse_old;
+	glm::fvec2 Mouse_old;
 	std::string cst_name;
 
 	//volume
-	DirectX::XMUINT3 vol_dimension_;
-	DirectX::XMFLOAT3 vol_dim_scale_;
-	DirectX::XMMATRIX vol_dim_scale_mat_;
+	glm::vec3 vol_dimension_, vol_dim_scale_;
+	glm::mat4 vol_dim_scale_mat_;
 
 	bool	m_tracking;
 	float	m_degreesPerSecond = 1;

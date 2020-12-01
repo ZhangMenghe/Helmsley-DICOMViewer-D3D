@@ -81,7 +81,7 @@ public:
     cuttingController(ID3D11Device* device, DirectX::XMMATRIX model_mat);
     cuttingController(ID3D11Device* device, DirectX::XMFLOAT3 ps, DirectX::XMFLOAT3 pn);
     void setTarget(mTarget target) {current_target = target; }
-    void Update(DirectX::XMMATRIX model_mat);
+    void Update(glm::mat4 model_mat);
     //void UpdateAndDraw(DirectX::XMMATRIX model_mat_m);
     void Draw(ID3D11DeviceContext* context);
 

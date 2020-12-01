@@ -4,7 +4,6 @@
 #include <D3DPipeline/Texture.h>
 #include <Renderers/baseRenderer.h>
 #include <Common/ConstantAndStruct.h>
-
 struct InstanceType{
 	DirectX::XMFLOAT2 zinfo;
 };
@@ -18,7 +17,7 @@ public:
 	textureBasedVolumeRenderer(ID3D11Device* device);
 
 	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
-	void setDimension(ID3D11Device* device, DirectX::XMUINT3 vol_dimension, DirectX::XMFLOAT3 vol_dim_scale);
+	void setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale);
 	void setCuttingPlane(float percent);
 	void setCuttingPlaneDelta(int delta);
 
@@ -49,7 +48,6 @@ private:
 	dvr::ModelViewProjectionConstantBuffer m_const_buff_data;
 	texPixConstantBuffer m_const_buff_data_pix;
 
-	DirectX::XMMATRIX projMat, viewMat;
 	ID3D11BlendState* d3dBlendState;
 	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
 };

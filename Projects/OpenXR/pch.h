@@ -22,3 +22,6 @@
 
 //winrt stuff
 #include <winrt/base.h>
+
+//glm
+#include <glm/glm.hpp>

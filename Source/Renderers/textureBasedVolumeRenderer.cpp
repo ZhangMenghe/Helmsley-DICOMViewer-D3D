@@ -261,7 +261,7 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	context->RSSetState(m_render_state_front);
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
-void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, DirectX::XMUINT3 vol_dimension, DirectX::XMFLOAT3 vol_dim_scale) {
+void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);

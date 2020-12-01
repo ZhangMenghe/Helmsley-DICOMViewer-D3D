@@ -3,6 +3,7 @@
 #include <Common/Manager.h>
 #include <Common/DirectXHelper.h>
 #include <Utils/MathUtils.h>
+#include <Utils/TypeConvertUtils.h>
 using namespace DirectX;
 using namespace Windows::Foundation;
 
@@ -37,18 +38,15 @@ void vrController::onReset() {
 	setMVPStatus("default_status");
 }
 
-void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam) {
+void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam) {
 	Mouse_old = { .0f, .0f };
 	rStates_.clear();
 	cst_name = "";
-	DirectX::XMMATRIX mrot = DirectX::XMLoadFloat4x4(&rm);
 
-	XMMATRIX mmodel =
-		DirectX::XMMatrixScaling(sv.x, sv.y, sv.z)
-		* mrot
-		* DirectX::XMMatrixTranslation(pv.x, pv.y, pv.z);
-
-	addStatus("template", mmodel, mrot, sv, pv, cam);
+	glm::mat4 mm = glm::translate(glm::mat4(1.0), pv)
+		* rm
+		* glm::scale(glm::mat4(1.0), sv);
+	addStatus("template", mm, rm, sv, pv, cam);
 	setMVPStatus("template");
 
 	volume_model_dirty = false;
@@ -77,7 +75,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			}
 			volume_model_dirty = true;
 		}
-		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
+		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
@@ -329,20 +327,19 @@ void vrController::render_scene(){
 	precompute();
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
-
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
-	auto model_mat = vol_dim_scale_mat_ * ModelMat_;
+	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 	cutter_->Update(model_mat);
 	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	if(isRayCasting())
-		raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+		raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(model_mat));
 	else {
 		auto dir = Manager::camera->getViewDirection();
 		DirectX::XMFLOAT4X4 m_rot_mat;
-		XMStoreFloat4x4(&m_rot_mat, RotateMat_);
+		XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
 		float front_test = m_rot_mat._33 * dir.z;
-		texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, ModelMat_, front_test < 0);
+		texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
 	}
 }
 
@@ -410,8 +407,6 @@ void vrController::onTouchMove(float x, float y) {
 
 	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
 	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
-
-	//float xoffset =  Mouse_old.x - x, yoffset = y - Mouse_old.y;
 	Mouse_old = { x, y };
 	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
 	yoffset *= -dvr::MOUSE_ROTATE_SENSITIVITY;
@@ -420,13 +415,8 @@ void vrController::onTouchMove(float x, float y) {
 		cutter_->onRotate(xoffset, yoffset);
 		return;
 	}*/
-
-	//RotateMat_ = DirectX::XMMatrixMultiply(
-	//	DirectX::XMMatrixMultiply(DirectX::XMMatrixRotationAxis(dvr::AXIS_Y, xoffset),
-	//		DirectX::XMMatrixRotationAxis(dvr::AXIS_X, yoffset)),
-	//	RotateMat_
-	//);
-	//volume_model_dirty = true;
+	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
+	volume_model_dirty = true;
 }
 void vrController::onTouchReleased(){
 	m_IsPressed = false;
@@ -438,18 +428,17 @@ void vrController::onPan(float x, float y) {
 
 }
 void vrController::updateVolumeModelMat() {
-	ModelMat_ =
-		DirectX::XMMatrixScaling(ScaleVec3_.x, ScaleVec3_.y, ScaleVec3_.z)
+	ModelMat_ = glm::translate(glm::mat4(1.0), PosVec3_)
 		* RotateMat_
-		* DirectX::XMMatrixTranslation(PosVec3_.x, PosVec3_.y, PosVec3_.z);
+		* glm::scale(glm::mat4(1.0), ScaleVec3_);
 }
 
-bool vrController::addStatus(std::string name, DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* cam) {
+bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam) {
 	auto it = rStates_.find(name);
 	if (it != rStates_.end()) return false;
 
-	rStates_[name] = new reservedStatus(mm, rm, sv, pv, cam);
-	if (Manager::screen_w != 0) rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
+	rStates_[name] = reservedStatus(mm, rm, sv, pv, cam);
+	if (Manager::screen_w != 0) rStates_[name].vcam->setProjMat(Manager::screen_w, Manager::screen_h);
 	return true;
 }
 bool vrController::addStatus(std::string name, bool use_current_status) {
@@ -461,21 +450,18 @@ bool vrController::addStatus(std::string name, bool use_current_status) {
 			updateVolumeModelMat();
 			volume_model_dirty = false;
 		}
-		rStates_[name] = new reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
+		rStates_[name] = reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
 	}
-	else rStates_[name] = new reservedStatus();
-	if (Manager::screen_w != 0)rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
+	else rStates_[name] = reservedStatus();
+	if (Manager::screen_w != 0)rStates_[name].vcam->setProjMat(Manager::screen_w, Manager::screen_h);
 	return true;
 }
-void vrController::setMVPStatus(std::string status_name) {
-	if (status_name == cst_name) return;
-	auto rstate_ = rStates_[status_name];
-	ModelMat_ = DirectX::XMLoadFloat4x4(&rstate_->model_mat);
-	RotateMat_ = DirectX::XMLoadFloat4x4(&rstate_->rot_mat);
-	ScaleVec3_ = rstate_->scale_vec; PosVec3_ = rstate_->pos_vec;
-	Manager::camera = rstate_->vcam;
+void vrController::setMVPStatus(std::string name) {
+	if (name == cst_name) return;
+	auto rstate_ = rStates_[name];
+	ModelMat_ = rstate_.model_mat; RotateMat_ = rstate_.rot_mat; ScaleVec3_ = rstate_.scale_vec; PosVec3_ = rstate_.pos_vec; Manager::camera = rstate_.vcam;
 	volume_model_dirty = false;
-	cst_name = status_name;
+	cst_name = name;
 }
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();

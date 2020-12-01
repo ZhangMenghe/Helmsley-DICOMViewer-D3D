@@ -159,6 +159,9 @@
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h">
       <Filter>Source\SceneObjs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\TypeConvertUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

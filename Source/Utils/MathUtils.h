@@ -64,5 +64,10 @@ inline glm::vec3 cloestVertexToPlane(const float* cuboid_with_texture, glm::vec3
 inline glm::vec3 rotateNormal(glm::mat4 modelMat, glm::vec3 ori_n) {
     return vec3MatNorm(glm::transpose(glm::inverse(modelMat)), ori_n);
 }
+inline glm::mat4 mouseRotateMat(glm::mat4 bmat, float xoffset, float yoffset) {
+    return glm::rotate(glm::mat4(1.0f), xoffset, glm::vec3(0, 1, 0))
+        * glm::rotate(glm::mat4(1.0f), yoffset, glm::vec3(1, 0, 0))
+        * bmat;
+}
 
 #endif // !MATH_UTILS_H

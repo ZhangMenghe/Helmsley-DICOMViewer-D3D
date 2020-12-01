@@ -7,24 +7,11 @@
 #include <vrController.h>
 #include <glm/gtx/rotate_vector.hpp>
 #include <Utils/mathUtils.h>
-#include <glm/gtc/type_ptr.hpp>
+#include <Utils/TypeConvertUtils.h>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
 using namespace glm;
 
-glm::mat4 xmmatrix2mat4(DirectX::XMMATRIX mmat) {
-    DirectX::XMFLOAT4X4 mmat_f;
-    DirectX::XMStoreFloat4x4(&mmat_f, mmat);
-    const float* tmp = mmat_f.m[0];
-    return glm::make_mat4(tmp);
-}
-DirectX::XMMATRIX mat42xmmatrix(glm::mat4 gmat) {
-    DirectX::XMFLOAT4X4 mmat_f(glm::value_ptr(gmat));
-    return DirectX::XMLoadFloat4x4(&mmat_f);
-}
-glm::vec3 float32vec3(DirectX::XMFLOAT3 v) {
-    return vec3(v.x, v.y, v.z);
-}
 cuttingController::cuttingController(ID3D11Device* device) {
     p_start_ = vec3(.0, .0, .0f);
     p_norm_ = vec3(.0, .0, -1.0);
@@ -73,8 +60,7 @@ void cuttingController::onReset(ID3D11Device* device) {
         device->CreateBlendState(&omDesc, &d3dBlendState);
     }
 }
-void cuttingController::Update(DirectX::XMMATRIX model_mat_m) {
-    auto model_mat = xmmatrix2mat4(model_mat_m);
+void cuttingController::Update(glm::mat4 model_mat) {
     if (keep_cutting_position()) {//keep it static
         p_norm_ = vec3MatNorm(glm::inverse(model_mat), float32vec3(Manager::camera->getViewDirection()));
         p_point_ += p_norm_ * cmove_value;
