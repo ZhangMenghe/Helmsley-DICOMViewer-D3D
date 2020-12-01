@@ -9,6 +9,7 @@
 #include <D3DPipeline/Camera.h>
 #include <Renderers/textureBasedVolumeRenderer.h>
 #include <Renderers/screenQuadRenderer.h>
+#include <SceneObjs/cuttingPlane.h>
 class reservedStatus {
 public:
 	DirectX::XMFLOAT4X4 model_mat, rot_mat;
@@ -95,6 +96,7 @@ private:
 	screenQuadRenderer* screen_quad;
 	raycastVolumeRenderer* raycast_renderer;
 	textureBasedVolumeRenderer* texvrRenderer_;
+	cuttingController* cutter_;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;

@@ -20,6 +20,7 @@ public:
 		m_indexBuffer = nullptr;
 	};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
+	void createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data);
 protected:
 	//buffers
 	winrt::com_ptr<ID3D11InputLayout> m_inputLayout;

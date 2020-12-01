@@ -115,8 +115,8 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
 		//TODO: don't know why no transpose...
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, modelMat);
-		auto inv_mat = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, modelMat));
+		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, DirectX::XMMatrixTranspose(modelMat));
+		auto inv_mat = DirectX::XMMatrixInverse(nullptr, modelMat);
 		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
 		DirectX::XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, //Manager::camera->getCameraPosition()
 			DirectX::XMVector4Transform(veye,
@@ -136,7 +136,7 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	if (m_pixConstantBuffer != nullptr) {
 		m_pix_const_buff_data.u_cut = true;
 		m_pix_const_buff_data.u_pn = {.0f, .0f, -1.0f, .0f};
-		m_pix_const_buff_data.u_pp = {.0f, .0f, .2f, .0f};
+		m_pix_const_buff_data.u_pp = {.0f, .0f, .0f, .0f};
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),
 			0,

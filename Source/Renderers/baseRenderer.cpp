@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿
+#include "pch.h"
 #include "baseRenderer.h"
 #include <Common/DirectXHelper.h>
 #include <D3DPipeline/Primitive.h>
@@ -66,6 +67,16 @@ void baseRenderer::initialize_indices(ID3D11Device* device, const unsigned short
 		)
 	);
 }
+void baseRenderer::createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data) {
+	winrt::check_hresult(
+		device->CreateBuffer(
+			&pixconstBufferDesc,
+			data,
+			m_pixConstantBuffer.put()
+		)
+	);
+}
+
 // Renders one frame using the vertex and pixel shaders.
 void baseRenderer::Draw(ID3D11DeviceContext* context) {
 	ID3D11Buffer* tmp_vertex_buff{ m_vertexBuffer.get() };

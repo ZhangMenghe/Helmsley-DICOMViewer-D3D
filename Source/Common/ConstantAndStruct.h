@@ -118,8 +118,8 @@ namespace dvr{
         .0f, 1.0f, .0f, .0f, 
         .0f, .0f, 1.0f, .0f, 
         .0f, .0f, .0f, 1.0f);
-    const DirectX::XMFLOAT3 DEFAULT_SCALE = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
-    const DirectX::XMFLOAT3 DEFAULT_POS = DirectX::XMFLOAT3(.0f, .0f, .0f);
+    const DirectX::XMFLOAT3 DEFAULT_SCALE = { 0.8f, 0.8f, 0.8f };
+    const DirectX::XMFLOAT3 DEFAULT_POS = { .0f, .0f, .0f };
 
     const float SCREEN_CLEAR_COLOR[4] = {
             0.f,0.f,0.f,0.f
@@ -142,6 +142,9 @@ namespace dvr{
     {
         DirectX::XMFLOAT4X4 model;
         DirectX::XMFLOAT4X4 uViewProjMat;
+    };
+    struct ColorConstantBuffer{
+        DirectX::XMFLOAT4 u_color;
     };
 
     // Used to send per-vertex data to the vertex shader.

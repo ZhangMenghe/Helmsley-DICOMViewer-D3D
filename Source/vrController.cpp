@@ -21,8 +21,10 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	screen_quad = new screenQuadRenderer(m_deviceResources->GetD3DDevice());
 	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
 	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
+	cutter_ = new cuttingController(m_deviceResources->GetD3DDevice());
 
 	Manager::camera = new Camera;
+
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 	onReset();
@@ -77,7 +79,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		}
 		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
-		//cutter_->setDimension(pd, vol_dim_scale_.z);
+		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
 
 	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
@@ -330,7 +332,9 @@ void vrController::render_scene(){
 
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
-	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
+	auto model_mat = vol_dim_scale_mat_ * ModelMat_;
+	cutter_->Update(model_mat);
+	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	if(isRayCasting())
 		raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
 	else {
@@ -390,7 +394,7 @@ void vrController::CreateDeviceDependentResources(){
 		m_cmpdata.u_mask_color = 1;
 		//others
 		m_cmpdata.u_flipy = 0;
-		m_cmpdata.u_show_organ = 1;
+		m_cmpdata.u_show_organ = 0;
 		m_cmpdata.u_color_scheme = 2;
 
 	});
@@ -405,9 +409,9 @@ void vrController::onTouchMove(float x, float y) {
 	//if (!Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
 
 	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
-	//float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
+	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
 
-	float xoffset =  Mouse_old.x -x, yoffset = y - Mouse_old.y;
+	//float xoffset =  Mouse_old.x - x, yoffset = y - Mouse_old.y;
 	Mouse_old = { x, y };
 	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
 	yoffset *= -dvr::MOUSE_ROTATE_SENSITIVITY;
@@ -417,8 +421,12 @@ void vrController::onTouchMove(float x, float y) {
 		return;
 	}*/
 
-	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
-	volume_model_dirty = true;
+	//RotateMat_ = DirectX::XMMatrixMultiply(
+	//	DirectX::XMMatrixMultiply(DirectX::XMMatrixRotationAxis(dvr::AXIS_Y, xoffset),
+	//		DirectX::XMMatrixRotationAxis(dvr::AXIS_X, yoffset)),
+	//	RotateMat_
+	//);
+	//volume_model_dirty = true;
 }
 void vrController::onTouchReleased(){
 	m_IsPressed = false;

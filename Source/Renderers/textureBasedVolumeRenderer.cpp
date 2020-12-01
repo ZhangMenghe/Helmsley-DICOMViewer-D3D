@@ -265,6 +265,7 @@ void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, DirectX::XMU
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);
+	setCuttingPlane(0.5f);
 }
 void textureBasedVolumeRenderer::setCuttingPlane(float percent) {
 	cut_id = int(dimensions * percent);
