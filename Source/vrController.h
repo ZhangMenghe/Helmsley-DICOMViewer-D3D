@@ -11,6 +11,7 @@
 #include <Renderers/screenQuadRenderer.h>
 #include <SceneObjs/cuttingPlane.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <Renderers/organMeshRenderer.h>
 struct reservedStatus {
 	glm::mat4 model_mat, rot_mat;
 	glm::vec3 scale_vec, pos_vec;
@@ -90,6 +91,7 @@ private:
 	raycastVolumeRenderer* raycast_renderer;
 	textureBasedVolumeRenderer* texvrRenderer_;
 	cuttingController* cutter_;
+	organMeshRenderer* meshRenderer_;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;

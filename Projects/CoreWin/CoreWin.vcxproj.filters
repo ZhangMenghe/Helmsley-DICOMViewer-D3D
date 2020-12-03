@@ -97,6 +97,9 @@
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -162,6 +165,9 @@
     <ClInclude Include="..\..\Source\Utils\TypeConvertUtils.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -200,6 +206,15 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\MarchingCubeGeometryShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\mesh3DPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\mesh3DVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

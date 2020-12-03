@@ -30,8 +30,8 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 
 	// Once both shaders are loaded, create the mesh.
 	auto createModelTask = (createPSTask && createVSTask).then([this, device, vdata, idata]() {
-		initialize_vertices(device, vdata);
-		initialize_indices(device, idata);
+		if(vdata!=nullptr)initialize_vertices(device, vdata);
+		if (idata != nullptr)initialize_indices(device, idata);
 		initialize_mesh_others(device);
 	});
 
@@ -88,7 +88,7 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 		&m_vertex_offset
 		);
 
-	context->IASetIndexBuffer(
+	if(m_indexBuffer != nullptr) context->IASetIndexBuffer(
 		m_indexBuffer.get(),
 		DXGI_FORMAT_R16_UINT, // Each index is one 16-bit unsigned integer (short).
 		0);
@@ -121,5 +121,6 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 		context->PSSetShaderResources(0, 1, &texview);
 	}
 	// Draw the objects.
-	context->DrawIndexed(m_index_count,0,0);
+	if(m_index_count > 0)context->DrawIndexed(m_index_count,0,0);
+	else context->Draw(m_vertice_count, 0);
 }

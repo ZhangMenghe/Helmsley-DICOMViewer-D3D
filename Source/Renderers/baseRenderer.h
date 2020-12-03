@@ -7,7 +7,7 @@ class baseRenderer {
 public:
 	baseRenderer(ID3D11Device* device,
 		const wchar_t* vname, const wchar_t* pname,
-		const float* vdata, const unsigned short* idata,
+		const float* vdata = nullptr, const unsigned short* idata = nullptr,
 		UINT vertice_num = 0, UINT idx_num = 0);
 	virtual void Draw(ID3D11DeviceContext* context);
 	virtual void Clear() {

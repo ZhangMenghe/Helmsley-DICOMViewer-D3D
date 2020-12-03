@@ -19,11 +19,12 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	m_deviceResources(deviceResources){
 	myPtr_ = this;
 
-	screen_quad = new screenQuadRenderer(m_deviceResources->GetD3DDevice());
-	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
-	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
-	cutter_ = new cuttingController(m_deviceResources->GetD3DDevice());
-
+	auto device = m_deviceResources->GetD3DDevice();
+	screen_quad = new screenQuadRenderer(device);
+	raycast_renderer = new raycastVolumeRenderer(device);
+	texvrRenderer_ = new textureBasedVolumeRenderer(device);
+	cutter_ = new cuttingController(device);
+	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
 	CreateDeviceDependentResources();
@@ -101,9 +102,11 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
 	// Generate mipmaps for this texture.
 	tex_baked->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
-
 	init_texture();
 	Manager::baked_dirty_ = true;
+
+	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+
 }
 
 void vrController::init_texture() {
@@ -330,17 +333,18 @@ void vrController::render_scene(){
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
-	cutter_->Update(model_mat);
-	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
-	if(isRayCasting())
-		raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(model_mat));
-	else {
-		auto dir = Manager::camera->getViewDirection();
-		DirectX::XMFLOAT4X4 m_rot_mat;
-		XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-		float front_test = m_rot_mat._33 * dir.z;
-		texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
-	}
+	meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+	//cutter_->Update(model_mat);
+	//cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+	//if(isRayCasting())
+	//	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(model_mat));
+	//else {
+	//	auto dir = Manager::camera->getViewDirection();
+	//	DirectX::XMFLOAT4X4 m_rot_mat;
+	//	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
+	//	float front_test = m_rot_mat._33 * dir.z;
+	//	texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
+	//}
 }
 
 void vrController::CreateDeviceDependentResources(){
