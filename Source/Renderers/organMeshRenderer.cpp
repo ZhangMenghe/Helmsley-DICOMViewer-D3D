@@ -10,14 +10,14 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	//setup rasterization state
 	D3D11_RASTERIZER_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
-	desc.FillMode = D3D11_FILL_WIREFRAME;//D3D11_FILL_SOLID
+	desc.FillMode = D3D11_FILL_WIREFRAME;// D3D11_FILL_SOLID;//D3D11_FILL_WIREFRAME;//
 	desc.CullMode = D3D11_CULL_NONE;
 	//desc.CullMode = D3D11_CULL_BACK;
 	desc.FrontCounterClockwise = FALSE;
 	desc.DepthBias = 0;
 	desc.SlopeScaledDepthBias = 0.0f;
 	desc.DepthBiasClamp = 0.0f;
-	desc.DepthClipEnable = TRUE;
+	desc.DepthClipEnable = FALSE;
 	//desc.DepthClipEnable = FALSE;
 	desc.ScissorEnable = FALSE;
 	desc.MultisampleEnable = FALSE;
@@ -48,13 +48,13 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 			)
 		);
 		m_computeConstData.u_organ_num = 7;
-		m_computeConstData.u_maskbits = 0xffff - 1;
+		m_computeConstData.u_maskbits =8;
 	});
 
 	//setup StructuredBuffer(triangle table & configuration table)
 
 	CD3D11_BUFFER_DESC constantDataDesc(sizeof(int) * 256 * 16, D3D11_BIND_SHADER_RESOURCE);
-	constantDataDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
+	//constantDataDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	D3D11_SUBRESOURCE_DATA tri_data = { 0 };
 	tri_data.pSysMem = &triangle_table[0][0];
@@ -66,13 +66,13 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;// DXGI_FORMAT_UNKNOWN;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+	srvDesc.Format = DXGI_FORMAT_R32_SINT;// DXGI_FORMAT_UNKNOWN;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	
-	srvDesc.BufferEx.FirstElement = 0;
-	srvDesc.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
-	srvDesc.BufferEx.NumElements = 256 * 16;
-
+	srvDesc.Buffer.FirstElement = 0;
+	//srvDesc.Buffer.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
+	srvDesc.Buffer.NumElements = 256 * 16;
+	
 	
 	winrt::check_hresult(
 		device->CreateShaderResourceView(m_computeInBuff_tri, &srvDesc, &m_computeInSRV_tri)
@@ -191,9 +191,10 @@ void organMeshRenderer::Setup(ID3D11Device* device, UINT h, UINT w, UINT d) {
 		);
 
 	// a system memory version of the buffer to read the results back from
-	outputDesc.Usage = D3D11_USAGE_STAGING;
-	outputDesc.BindFlags = 0;
-	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	outputDesc.Usage = D3D11_USAGE_DYNAMIC;
+	outputDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	outputDesc.MiscFlags = 0;
 	winrt::check_hresult(
 		(device->CreateBuffer(&outputDesc, 0, m_vertexBuffer.put()))
 	);

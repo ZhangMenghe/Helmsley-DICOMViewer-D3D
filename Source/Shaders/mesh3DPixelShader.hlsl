@@ -6,6 +6,5 @@ struct v2f {
 };
 
 float4 main(v2f input) : SV_TARGET{
-	//return float4(input.tex, 1.0);
 	return 1.0;
 }

@@ -20,7 +20,7 @@ struct v2f{
 // Simple shader to do vertex processing on the GPU.
 v2f main(VertexShaderInput input){
 	v2f output;
-	output.pos = mul(float4(input.pos.x, -input.pos.y, input.pos.z, 1.0f), model);
+	output.pos = mul(float4(-input.pos.y, input.pos.x, input.pos.z, 1.0f), model);
 	output.pos = mul(output.pos, uViewProjMat);
 	return output;
 }

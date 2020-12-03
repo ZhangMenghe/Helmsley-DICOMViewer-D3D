@@ -135,7 +135,7 @@ private:
 	void precompute();
 	void getGraphPoints(float values[], float*& points);
 	static bool isRayCasting() {
-		return true;
+		return false;
 		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
 	}
 };

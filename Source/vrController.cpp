@@ -395,7 +395,7 @@ void vrController::CreateDeviceDependentResources(){
 		m_cmpdata.u_mask_color = 1;
 		//others
 		m_cmpdata.u_flipy = 0;
-		m_cmpdata.u_show_organ = 0;
+		m_cmpdata.u_show_organ = 1;
 		m_cmpdata.u_color_scheme = 2;
 
 	});
