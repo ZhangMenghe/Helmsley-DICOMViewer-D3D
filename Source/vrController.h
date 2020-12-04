@@ -165,6 +165,8 @@ private:
 	DirectX::XMFLOAT3 Mouse3D_old_left;
 	DirectX::XMFLOAT3 Mouse3D_old_right;
 
+	DirectX::XMFLOAT3 Mouse3D_old_mid;
+
 	float sens = 1.0f;// 0.1f;
 
 	XrVector3f vector_old;

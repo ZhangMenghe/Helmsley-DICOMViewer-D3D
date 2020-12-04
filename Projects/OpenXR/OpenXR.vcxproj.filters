@@ -315,9 +315,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\StoreLogo.png">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="..\..\Source\pbr\brdf_lut.png">
       <Filter>Source\pbr</Filter>
     </Image>

@@ -9,7 +9,7 @@ struct InstanceType{
 	DirectX::XMFLOAT2 zinfo;
 };
 struct texPixConstantBuffer {
-	bool u_front;
+	alignas(16)bool u_front;
 };
 class textureBasedVolumeRenderer:public baseRenderer {
 public:

@@ -497,9 +497,11 @@ void OXRManager::openxr_poll_actions() {
 
 			}
 		}
-	  /*else {
+	  else {
+
+			// lose tracking = release
 			on3DTouchReleased(hand);
-		}*/
+		}
 
 		
 	}

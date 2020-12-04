@@ -80,7 +80,7 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 		)
 	);
 
-	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(DirectX::XMFLOAT4X4), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(texPixConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&pixconstantBufferDesc,

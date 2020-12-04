@@ -23,6 +23,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
 
 	Manager::camera = new Camera;
+
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 	onReset();
@@ -35,6 +36,8 @@ void vrController::onReset() {
 	cst_name = "";
 	addStatus("default_status");
 	setMVPStatus("default_status");
+
+	volume_model_dirty = true;
 }
 
 void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam) {
@@ -299,6 +302,8 @@ void vrController::init_texture() {
 	DX::ThrowIfFailed(
 		m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV)
 	);
+
+	volume_model_dirty = true;
 }
 
 // Initializes view parameters when the window size changes.
@@ -726,6 +731,7 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
   }else {
     // both hand: scale
 		XrVector3f delta;
+		XrVector3f midpoint;
 		if (side == 0) {
 			delta.x = x - Mouse3D_old_right.x;
 			delta.y = y - Mouse3D_old_right.y;
@@ -736,38 +742,63 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
 			// Scale
 			float ratio = distance / distance_old;
 
-			uniScale *= ratio;
+			// Midpoint
+			midpoint = XrVector3f{ (x + Mouse3D_old_right.x) / 2.0f, (y + Mouse3D_old_right.y) / 2.0f, (z + Mouse3D_old_right.z) / 2.0f };
+
+			if (ratio > 0.8f && ratio < 1.2f) {
+				uniScale *= ratio;
+			}
 
 			distance_old = distance;
 			Mouse3D_old_left = { x, y, z };
 			volume_model_dirty = true;
 		}
 		else {
-			delta.x = x - Mouse3D_old_left.x;
-			delta.y = y - Mouse3D_old_left.y;
-			delta.z = z - Mouse3D_old_left.z;
+			delta.x = Mouse3D_old_left.x - x;
+			delta.y = Mouse3D_old_left.y - y;
+			delta.z = Mouse3D_old_left.z - z;
 
 			float distance = xr::math::Length(delta);
 
 			// Scale
 			float ratio = distance / distance_old;
 
-			uniScale *= ratio;
+			// Midpoint
+			midpoint = XrVector3f{ (x + Mouse3D_old_left.x) / 2.0f, (y + Mouse3D_old_left.y) / 2.0f, (z + Mouse3D_old_left.z) / 2.0f };
+
+			if (ratio > 0.8f && ratio < 1.2f) {
+				uniScale *= ratio;
+			}
 
 			distance_old = distance;
 			Mouse3D_old_right = { x, y, z };
 			volume_model_dirty = true;
 		}
 
+		// move
+		XrVector3f mid_delta = XrVector3f{ midpoint.x - Mouse3D_old_mid.x, midpoint.y - Mouse3D_old_mid.y, midpoint.z - Mouse3D_old_mid.z };
+		if (xr::math::Length(mid_delta) < 0.01f) {
+			PosVec3_.x += mid_delta.x;
+			PosVec3_.y += mid_delta.y;
+			PosVec3_.z += mid_delta.z;
+		}
+
+		Mouse3D_old_mid = { midpoint.x , midpoint.y , midpoint.z };
+
+		// rotate
 		XrVector3f curr = xr::math::Normalize(XrVector3f{ delta.x, 0, delta.z });
 		XrVector3f old = xr::math::Normalize(XrVector3f{ vector_old.x, 0, vector_old.z });
 		XrVector3f axis = xr::math::Normalize(xr::math::Cross(old, curr));
 		float angle = std::acos(xr::math::Dot(old, curr));
 
 
-		if (angle > 0.01f) {
+		if (angle < 0.5f && angle > 0.01f) {
 			auto q = xr::math::Quaternion::RotationAxisAngle(axis, angle);
 			auto rot = XMMatrixRotationQuaternion(xr::math::LoadXrQuaternion(q));
+
+			//char debug[256];
+			//sprintf(debug, "Touch %f\n", angle);
+			//OutputDebugStringA(debug);
 
 			RotateMat_ *= rot;
 		}
@@ -836,7 +867,11 @@ bool vrController::addStatus(std::string name, bool use_current_status) {
 		rStates_[name] = new reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
 		//rStates_[name] = new reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, Manager::camera());
 	}
-	else rStates_[name] = new reservedStatus();
+	else {
+	  rStates_[name] = new reservedStatus();
+		rStates_[name]->pos_vec = PosVec3_;
+	}
+
 	if (Manager::screen_w != 0) {
 		rStates_[name]->vcam->setViewMat(Manager::camera->getViewMat());
 		//rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
