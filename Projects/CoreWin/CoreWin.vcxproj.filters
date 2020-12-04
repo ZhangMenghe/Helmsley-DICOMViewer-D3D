@@ -53,6 +53,12 @@
     <Filter Include="Source\SceneObjs">
       <UniqueIdentifier>{03fceeb5-fd72-4246-b02d-5360130f2fe3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\dicom-data\IRB01">
+      <UniqueIdentifier>{dcbfdf4b-224a-4773-93b5-156c30eb645f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs">
+      <UniqueIdentifier>{dbb9fb5d-8302-4dea-9b0a-5a118869a9fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -98,6 +104,9 @@
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\lineRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -168,6 +177,9 @@
     <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\lineRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -217,6 +229,9 @@
     <FxCompile Include="..\..\Source\Shaders\mesh3DVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
@@ -226,5 +241,16 @@
       <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
+      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    </None>
+    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
+      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt">
+      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    </Text>
   </ItemGroup>
 </Project>

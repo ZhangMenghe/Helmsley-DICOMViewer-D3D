@@ -5,6 +5,7 @@
 #include <codecvt>
 #include <locale>
 #include <string>
+#include <sstream> 
 void dicomLoader:: setupDCMIConfig(int height, int width, int dims, float sh, float sw, float sd, bool b_wmask){
     CHANEL_NUM = b_wmask? 4:2;
     g_img_h = height; g_img_w = width; g_img_d = dims;
@@ -73,6 +74,41 @@ bool dicomLoader::loadData(std::string filename, mLoadTarget target, int unit_si
         send_dicom_data(target, id, len, unit_size, buffer);
     }
     n_data_offset[(int)target] = 0;
+    return true;
+}
+bool dicomLoader::setupCenterLineData(vrController* controller, std::string filename){
+    std::vector<int>ids;
+    std::vector<float*> cline_data;
+
+    int cidx = 0;
+    float* data = nullptr;
+    std::ifstream inFile("Assets/" + filename, std::ios::in);
+    if (!inFile.is_open())
+        return false;
+
+    std::string line = "", substr;
+    int idx;
+    while (getline(inFile, line)) {
+        if (line.length() < 3) {
+            cline_data.push_back(new float[4000 * 3]);
+            data = cline_data.back();
+            ids.push_back(std::stoi(line));
+            idx = 0;
+            continue;
+        }
+        std::stringstream ss(line);
+        while (ss.good()) {
+            getline(ss, substr, ',');
+            if(data != nullptr)data[idx++] = std::stof(substr);
+        }
+    }
+    inFile.close();
+
+    for (int i = 0; i < 2; i++) {
+        controller->setupCenterLine(ids[i], cline_data[i]);
+        delete cline_data[i];
+        cline_data[i] = nullptr;
+    }
     return true;
 }
 

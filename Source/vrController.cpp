@@ -334,17 +334,24 @@ void vrController::render_scene(){
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 	meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	//cutter_->Update(model_mat);
-	//cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
-	//if(isRayCasting())
-	//	raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(model_mat));
-	//else {
-	//	auto dir = Manager::camera->getViewDirection();
-	//	DirectX::XMFLOAT4X4 m_rot_mat;
-	//	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-	//	float front_test = m_rot_mat._33 * dir.z;
-	//	texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
-	//}
+	cutter_->Update(model_mat);
+	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+	
+	m_deviceResources->ClearCurrentDepthBuffer();
+
+	if(isRayCasting())
+		raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+	else {
+		auto dir = Manager::camera->getViewDirection();
+		DirectX::XMFLOAT4X4 m_rot_mat;
+		XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
+		float front_test = m_rot_mat._33 * dir.z;
+		texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
+	}
+	m_deviceResources->ClearCurrentDepthBuffer();
+	for (auto line : line_renderers_)
+		//if ((mask_bits_ >> (line.first + 1)) & 1)
+		line.second->Draw(context, mat42xmmatrix(model_mat));
 }
 
 void vrController::CreateDeviceDependentResources(){
@@ -467,6 +474,16 @@ void vrController::setMVPStatus(std::string name) {
 	volume_model_dirty = false;
 	cst_name = name;
 }
+void vrController::setupCenterLine(int id, float* data) {
+	int oid = 0;
+	while (id /= 2)oid++;
+	if (line_renderers_.count(oid))
+		line_renderers_[oid]->updateVertices(m_deviceResources->GetD3DDevice(), 4000, data);
+	else
+		line_renderers_[oid] = new lineRenderer(m_deviceResources->GetD3DDevice(), oid, 4000, data);
+	//cutter_->setupCenterLine((dvr::ORGAN_IDS)oid, data);
+}
+
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();
 	//screen_quad->Clear();

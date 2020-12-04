@@ -78,7 +78,7 @@ void baseRenderer::createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void baseRenderer::Draw(ID3D11DeviceContext* context) {
+void baseRenderer::Draw(ID3D11DeviceContext* context, D3D11_PRIMITIVE_TOPOLOGY topology) {
 	ID3D11Buffer* tmp_vertex_buff{ m_vertexBuffer.get() };
 	context->IASetVertexBuffers(
 		0,
@@ -93,7 +93,7 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 		DXGI_FORMAT_R16_UINT, // Each index is one 16-bit unsigned integer (short).
 		0);
 
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetPrimitiveTopology(topology);
 
 	if (m_inputLayout != nullptr) context->IASetInputLayout(m_inputLayout.get());
 

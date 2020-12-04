@@ -9,7 +9,7 @@ public:
 		const wchar_t* vname, const wchar_t* pname,
 		const float* vdata = nullptr, const unsigned short* idata = nullptr,
 		UINT vertice_num = 0, UINT idx_num = 0);
-	virtual void Draw(ID3D11DeviceContext* context);
+	virtual void Draw(ID3D11DeviceContext* context, D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	virtual void Clear() {
 		m_loadingComplete = false;
 		m_vertexShader = nullptr;

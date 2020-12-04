@@ -24,10 +24,10 @@ namespace CoreWin{
 		void OnPointerMoved(float x, float y);
 		void OnPointerReleased();
 	private:
-		//std::string m_ds_path = "dicom-data/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
-		std::string m_ds_path = "dicom-data/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
+		std::string m_ds_path = "dicom-data/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
+		//std::string m_ds_path = "dicom-data/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
 
-		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
+		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
 
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;

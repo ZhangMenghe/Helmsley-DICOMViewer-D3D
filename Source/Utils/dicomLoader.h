@@ -27,6 +27,7 @@ public:
         // for(auto& offset:n_data_offset) offset = 0;
     }
     void startToAssemble(vrController* controller);
+    bool setupCenterLineData(vrController* controller, std::string filename);
 private:
     int CHANEL_NUM = 4;
     UCHAR* g_VolumeTexData = nullptr, *g_maskTexData = nullptr;

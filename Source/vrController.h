@@ -12,6 +12,8 @@
 #include <SceneObjs/cuttingPlane.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Renderers/organMeshRenderer.h>
+#include <Renderers/LineRenderer.h>
+
 struct reservedStatus {
 	glm::mat4 model_mat, rot_mat;
 	glm::vec3 scale_vec, pos_vec;
@@ -78,6 +80,7 @@ public:
 	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam);
 	bool addStatus(std::string name, bool use_current_status = false);
 	void setMVPStatus(std::string status_name);
+	void setupCenterLine(int id, float* data);
 
 	//getter
 	Texture* getVolumeTex() { return tex_volume; }
@@ -92,6 +95,7 @@ private:
 	textureBasedVolumeRenderer* texvrRenderer_;
 	cuttingController* cutter_;
 	organMeshRenderer* meshRenderer_;
+	std::unordered_map<int, lineRenderer*> line_renderers_;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
