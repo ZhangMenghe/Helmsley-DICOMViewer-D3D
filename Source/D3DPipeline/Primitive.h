@@ -32,6 +32,7 @@ static const float cube_vertices_pos_w_tex[] =
     0.5f,   0.5f, -0.5f,    1.0f, 1.0f, 0.0f,
     0.5f,   0.5f,  0.5f,    1.0f, 1.0f, 1.0f,
 };
+
 static const unsigned short cube_indices[] =
 {
     0,2,1, // -x

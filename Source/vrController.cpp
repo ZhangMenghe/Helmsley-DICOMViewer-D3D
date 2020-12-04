@@ -3,6 +3,7 @@
 #include <Common/Manager.h>
 #include <Common/DirectXHelper.h>
 #include <Utils/MathUtils.h>
+#include <Utils/TypeConvertUtils.h>
 using namespace DirectX;
 using namespace Windows::Foundation;
 
@@ -18,11 +19,14 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	m_deviceResources(deviceResources){
 	myPtr_ = this;
 
-	screen_quad = new screenQuadRenderer(m_deviceResources->GetD3DDevice());
-	raycast_renderer = new raycastVolumeRenderer(m_deviceResources->GetD3DDevice());
-	texvrRenderer_ = new textureBasedVolumeRenderer(m_deviceResources->GetD3DDevice());
-
+	auto device = m_deviceResources->GetD3DDevice();
+	screen_quad = new screenQuadRenderer(device);
+	raycast_renderer = new raycastVolumeRenderer(device);
+	texvrRenderer_ = new textureBasedVolumeRenderer(device);
+	cutter_ = new cuttingController(device);
+	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
+
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 	onReset();
@@ -37,18 +41,15 @@ void vrController::onReset() {
 	setMVPStatus("default_status");
 }
 
-void vrController::onReset(DirectX::XMFLOAT3 pv, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT4X4 rm, Camera* cam) {
+void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam) {
 	Mouse_old = { .0f, .0f };
 	rStates_.clear();
 	cst_name = "";
-	DirectX::XMMATRIX mrot = DirectX::XMLoadFloat4x4(&rm);
 
-	XMMATRIX mmodel =
-		DirectX::XMMatrixScaling(sv.x, sv.y, sv.z)
-		* mrot
-		* DirectX::XMMatrixTranslation(pv.x, pv.y, pv.z);
-
-	addStatus("template", mmodel, mrot, sv, pv, cam);
+	glm::mat4 mm = glm::translate(glm::mat4(1.0), pv)
+		* rm
+		* glm::scale(glm::mat4(1.0), sv);
+	addStatus("template", mm, rm, sv, pv, cam);
 	setMVPStatus("template");
 
 	volume_model_dirty = false;
@@ -77,9 +78,9 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			}
 			volume_model_dirty = true;
 		}
-		vol_dim_scale_mat_ = DirectX::XMMatrixScaling(vol_dim_scale_.x, vol_dim_scale_.y, vol_dim_scale_.z);
+		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
-		//cutter_->setDimension(pd, vol_dim_scale_.z);
+		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
 
 	if (tex_volume != nullptr) { delete tex_volume; tex_volume = nullptr; }
@@ -103,7 +104,6 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
 	// Generate mipmaps for this texture.
 	tex_baked->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
-
 	init_texture();
 
 	Pbr::Resources * pbrResources = new Pbr::Resources(m_deviceResources->GetD3DDevice());
@@ -202,6 +202,9 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	//	[this]() { m_mode = (HandDisplayMode)(((uint32_t)m_mode + 1) % (uint32_t)HandDisplayMode::Count); });
 
 	Manager::baked_dirty_ = true;
+
+	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+
 }
 
 void vrController::init_texture() {
@@ -432,20 +435,30 @@ void vrController::render_scene(){
 	precompute();
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
-
 	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
 
-	auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
+	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
 	
+	auto model_mat = SpaceMat_ * ModelMat_ * vol_dim_scale_mat_;
+	meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+	cutter_->Update(model_mat);
+	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+	
+	m_deviceResources->ClearCurrentDepthBuffer();
+
 	if(isRayCasting())
-		raycast_renderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, model_mat);
+		raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
 	else {
 		auto dir = Manager::camera->getViewDirection();
 		DirectX::XMFLOAT4X4 m_rot_mat;
-		XMStoreFloat4x4(&m_rot_mat, RotateMat_);
+		XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
 		float front_test = m_rot_mat._33 * dir.z;
-		texvrRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_baked, DirectX::XMMatrixTranspose(ModelMat_), front_test < 0);//DirectX::XMMatrixTranspose(ModelMat_)
+		texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
 	}
+	m_deviceResources->ClearCurrentDepthBuffer();
+	for (auto line : line_renderers_)
+		//if ((mask_bits_ >> (line.first + 1)) & 1)
+		line.second->Draw(context, mat42xmmatrix(model_mat));
 }
 
 void vrController::CreateDeviceDependentResources(){
@@ -500,129 +513,6 @@ void vrController::CreateDeviceDependentResources(){
 		m_cmpdata.u_color_scheme = 2;
 
 	});
-
-	/*
-	// Load shaders asynchronously.
-	auto loadVSTask = DX::ReadDataAsync(L"SampleVertexShader.cso");
-	auto loadPSTask = DX::ReadDataAsync(L"SamplePixelShader.cso");
-	auto loadCSTask = DX::ReadDataAsync(L"NaiveComputeShader.cso");
-
-	// After the vertex shader file is loaded, create the shader and input layout.
-	auto createVSTask = loadVSTask.then([this](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateVertexShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				&m_vertexShader
-				)
-			);
-
-		static const D3D11_INPUT_ELEMENT_DESC vertexDesc [] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		};
-
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateInputLayout(
-				vertexDesc,
-				ARRAYSIZE(vertexDesc),
-				&fileData[0],
-				fileData.size(),
-				&m_inputLayout
-				)
-			);
-	});
-
-	// After the pixel shader file is loaded, create the shader and constant buffer.
-	auto createPSTask = loadPSTask.then([this](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreatePixelShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				&m_pixelShader
-				)
-			);
-		//texture
-		D3D11_SAMPLER_DESC samplerDesc;
-
-		// Create a texture sampler state description.
-		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.MipLODBias = 0.0f;
-		samplerDesc.MaxAnisotropy = 1;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		samplerDesc.BorderColor[0] = 0;
-		samplerDesc.BorderColor[1] = 0;
-		samplerDesc.BorderColor[2] = 0;
-		samplerDesc.BorderColor[3] = 0;
-		samplerDesc.MinLOD = 0;
-		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-		// Create the texture sampler state.
-		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&samplerDesc, &m_sampleState));
-
-		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer) , D3D11_BIND_CONSTANT_BUFFER);
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateBuffer(
-				&constantBufferDesc,
-				nullptr,
-				&m_constantBuffer
-				)
-			);
-	});
-
-	// After the vertex shader file is loaded, create the shader and input layout.
-	auto createCSTask = loadCSTask.then([this](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateComputeShader(
-				&fileData[0],
-				fileData.size(),
-				nullptr,
-				&m_computeShader
-			)
-		);
-
-	});
-
-	// Once both shaders are loaded, create the mesh.
-	auto createCubeTask = (createPSTask && createVSTask && createCSTask).then([this] () {
-		D3D11_SUBRESOURCE_DATA vertexBufferData = {0};
-		vertexBufferData.pSysMem = cube_vertices_pos_w_tex;
-		vertexBufferData.SysMemPitch = 0;
-		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cube_vertices_pos_w_tex), D3D11_BIND_VERTEX_BUFFER);
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateBuffer(
-				&vertexBufferDesc,
-				&vertexBufferData,
-				&m_vertexBuffer
-				)
-			);
-
-		D3D11_SUBRESOURCE_DATA indexBufferData = {0};
-		indexBufferData.pSysMem = cube_indices;
-		indexBufferData.SysMemPitch = 0;
-		indexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cube_indices), D3D11_BIND_INDEX_BUFFER);
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateBuffer(
-				&indexBufferDesc,
-				&indexBufferData,
-				&m_indexBuffer
-				)
-			);
-	});
-
-	// Once the cube is loaded, the object is ready to be rendered.
-	createCubeTask.then([this] () {
-		m_loadingComplete = true;
-	});
-	*/
 }
 void vrController::onSingleTouchDown(float x, float y) {
 	Mouse_old = { x, y };
@@ -662,7 +552,6 @@ void vrController::onTouchMove(float x, float y) {
 	//if (!Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
 
 	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
-
 	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
 	Mouse_old = { x, y };
 	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
@@ -672,7 +561,6 @@ void vrController::onTouchMove(float x, float y) {
 		cutter_->onRotate(xoffset, yoffset);
 		return;
 	}*/
-
 	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
 	volume_model_dirty = true;
 }
@@ -808,20 +696,17 @@ void vrController::onPan(float x, float y) {
 
 }
 void vrController::updateVolumeModelMat() {
-	ModelMat_ =
-		DirectX::XMMatrixScaling(uniScale, uniScale, uniScale)
-		* DirectX::XMMatrixScaling(ScaleVec3_.x, ScaleVec3_.y, ScaleVec3_.z)
-		* RotateMat_ *
-		DirectX::XMMatrixTranslation(PosVec3_.x, PosVec3_.y, PosVec3_.z);
-  
+	ModelMat_ = glm::translate(glm::mat4(1.0), PosVec3_)
+		* RotateMat_
+		* glm::scale(glm::mat4(1.0), ScaleVec3_);
 }
 
-bool vrController::addStatus(std::string name, DirectX::XMMATRIX mm, DirectX::XMMATRIX rm, DirectX::XMFLOAT3 sv, DirectX::XMFLOAT3 pv, Camera* cam) {
+bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam) {
 	auto it = rStates_.find(name);
 	if (it != rStates_.end()) return false;
 
-	rStates_[name] = new reservedStatus(mm, rm, sv, pv, cam);
-	if (Manager::screen_w != 0) rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
+	rStates_[name] = reservedStatus(mm, rm, sv, pv, cam);
+	if (Manager::screen_w != 0) rStates_[name].vcam->setProjMat(Manager::screen_w, Manager::screen_h);
 	return true;
 }
 bool vrController::addStatus(std::string name, bool use_current_status) {
@@ -833,25 +718,30 @@ bool vrController::addStatus(std::string name, bool use_current_status) {
 			updateVolumeModelMat();
 			volume_model_dirty = false;
 		}
-		rStates_[name] = new reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
-		//rStates_[name] = new reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, Manager::camera());
+		rStates_[name] = reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
 	}
-	else rStates_[name] = new reservedStatus();
-	if (Manager::screen_w != 0) {
+	else rStates_[name] = reservedStatus();
+	if (Manager::screen_w != 0){
 		rStates_[name]->vcam->setViewMat(Manager::camera->getViewMat());
 		//rStates_[name]->vcam->setProjMat(Manager::screen_w, Manager::screen_h);
 	}
 	return true;
 }
-void vrController::setMVPStatus(std::string status_name) {
-	if (status_name == cst_name) return;
-	auto rstate_ = rStates_[status_name];
-	ModelMat_ = DirectX::XMLoadFloat4x4(&rstate_->model_mat);
-	RotateMat_ = DirectX::XMLoadFloat4x4(&rstate_->rot_mat);
-	ScaleVec3_ = rstate_->scale_vec; PosVec3_ = rstate_->pos_vec;
-	Manager::camera = rstate_->vcam;
+void vrController::setMVPStatus(std::string name) {
+	if (name == cst_name) return;
+	auto rstate_ = rStates_[name];
+	ModelMat_ = rstate_.model_mat; RotateMat_ = rstate_.rot_mat; ScaleVec3_ = rstate_.scale_vec; PosVec3_ = rstate_.pos_vec; Manager::camera = rstate_.vcam;
 	volume_model_dirty = false;
-	cst_name = status_name;
+	cst_name = name;
+}
+void vrController::setupCenterLine(int id, float* data) {
+	int oid = 0;
+	while (id /= 2)oid++;
+	if (line_renderers_.count(oid))
+		line_renderers_[oid]->updateVertices(m_deviceResources->GetD3DDevice(), 4000, data);
+	else
+		line_renderers_[oid] = new lineRenderer(m_deviceResources->GetD3DDevice(), oid, 4000, data);
+	//cutter_->setupCenterLine((dvr::ORGAN_IDS)oid, data);
 }
 
 void vrController::setSpaces(XrSpace * space, XrSpace * app_space) {

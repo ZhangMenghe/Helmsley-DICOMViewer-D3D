@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿
+#include "pch.h"
 #include "baseRenderer.h"
 #include <Common/DirectXHelper.h>
 #include <D3DPipeline/Primitive.h>
@@ -29,8 +30,8 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 
 	// Once both shaders are loaded, create the mesh.
 	auto createModelTask = (createPSTask && createVSTask).then([this, device, vdata, idata]() {
-		initialize_vertices(device, vdata);
-		initialize_indices(device, idata);
+		if(vdata!=nullptr)initialize_vertices(device, vdata);
+		if (idata != nullptr)initialize_indices(device, idata);
 		initialize_mesh_others(device);
 	});
 
@@ -66,8 +67,18 @@ void baseRenderer::initialize_indices(ID3D11Device* device, const unsigned short
 		)
 	);
 }
+void baseRenderer::createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data) {
+	winrt::check_hresult(
+		device->CreateBuffer(
+			&pixconstBufferDesc,
+			data,
+			m_pixConstantBuffer.put()
+		)
+	);
+}
+
 // Renders one frame using the vertex and pixel shaders.
-void baseRenderer::Draw(ID3D11DeviceContext* context) {
+void baseRenderer::Draw(ID3D11DeviceContext* context, D3D11_PRIMITIVE_TOPOLOGY topology) {
 	ID3D11Buffer* tmp_vertex_buff{ m_vertexBuffer.get() };
 	context->IASetVertexBuffers(
 		0,
@@ -77,12 +88,12 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 		&m_vertex_offset
 		);
 
-	context->IASetIndexBuffer(
+	if(m_indexBuffer != nullptr) context->IASetIndexBuffer(
 		m_indexBuffer.get(),
 		DXGI_FORMAT_R16_UINT, // Each index is one 16-bit unsigned integer (short).
 		0);
 
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetPrimitiveTopology(topology);
 
 	if (m_inputLayout != nullptr) context->IASetInputLayout(m_inputLayout.get());
 
@@ -110,5 +121,6 @@ void baseRenderer::Draw(ID3D11DeviceContext* context) {
 		context->PSSetShaderResources(0, 1, &texview);
 	}
 	// Draw the objects.
-	context->DrawIndexed(m_index_count,0,0);
+	if(m_index_count > 0)context->DrawIndexed(m_index_count,0,0);
+	else context->Draw(m_vertice_count, 0);
 }

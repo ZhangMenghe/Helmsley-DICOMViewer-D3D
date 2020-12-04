@@ -9,6 +9,11 @@ quadRenderer::quadRenderer(ID3D11Device* device, bool as_render_target)
 	quad_vertices_pos_w_tex, quad_indices,16,6),
 	m_as_render_target(as_render_target){
 }
+quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname) 
+: baseRenderer(device, vname, pname,
+	quad_vertices_pos_w_tex, quad_indices, 16, 6){
+
+}
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata)
 	:baseRenderer(device, vname, pname,
 		vdata, quad_indices, 16, 6){

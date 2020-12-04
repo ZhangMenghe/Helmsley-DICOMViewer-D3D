@@ -86,6 +86,9 @@
     <Filter Include="Source\pbr\gltf">
       <UniqueIdentifier>{721b146d-eeca-49d4-9a33-78957f18ee6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SceneObjs">
+      <UniqueIdentifier>{65290514-d3a2-48ab-a1eb-0f237314ba51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp">
       <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp">
+      <Filter>Source\SceneObjs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +319,12 @@
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h">
+      <Filter>Source\SceneObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\TypeConvertUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -387,6 +399,9 @@
       <Filter>Source\pbr\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\Naive2DTexVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

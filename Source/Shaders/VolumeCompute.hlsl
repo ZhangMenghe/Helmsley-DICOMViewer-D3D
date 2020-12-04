@@ -100,13 +100,13 @@ float3 TransferColor(float intensity, int ORGAN_BIT) {
 void main(uint3 threadID : SV_DispatchThreadID){
 	if(u_flipy) threadID.y = u_tex_size.y - threadID.y;
 
-	uint value = srcVolume[threadID.xyz].r;
+	uint value = srcVolume[threadID].r;
 	//mask
 	uint u_mask = value >> uint(16);
 	int ORGAN_BIT = -1;
 	if (u_show_organ) {
 		ORGAN_BIT = getMaskBit(u_mask);
-		if (ORGAN_BIT < 0) { destVolume[threadID.xyz] = .0f; return; }
+		if (ORGAN_BIT < 0) { destVolume[threadID] = .0f; return; }
 	}
 
 	uint u_intensity = value & uint(0xffff);
@@ -116,5 +116,5 @@ void main(uint3 threadID : SV_DispatchThreadID){
 	for (int i = 0; i < u_widget_num; i++)
 		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity));
 	if (u_flipy) threadID.y = u_tex_size.y - threadID.y;
-	destVolume[threadID.xyz] = float4(TransferColor(intensity, ORGAN_BIT), alpha);
+	destVolume[threadID] = float4(TransferColor(intensity, ORGAN_BIT), alpha);
 }
