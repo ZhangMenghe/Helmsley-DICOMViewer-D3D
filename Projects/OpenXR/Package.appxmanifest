@@ -13,8 +13,8 @@
   <mp:PhoneIdentity PhoneProductId="f07fa7ec-74b0-46e1-be8e-36a14ebd7baf" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>OpenXR</DisplayName>
-    <PublisherDisplayName>zzmmh</PublisherDisplayName>
+    <DisplayName>Helmsley-DICOMViewer</DisplayName>
+    <PublisherDisplayName>vcucsd</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -31,12 +31,12 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="OpenXR.App">
       <uap:VisualElements
-        DisplayName="OpenXR"
+        DisplayName="Helmsley-DICOMViewer"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="OpenXR"
+        Description="DICOM Viewer on Hololens 2. Developed with OpenXR + D3D11"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Helmsley"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     </Application>

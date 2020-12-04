@@ -6,12 +6,12 @@
 using namespace DirectX;
 
 textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
-	:baseRenderer(device, 
+	:baseRenderer(device,
 		L"texbasedVertexShader.cso", L"texbasedPixelShader.cso",
 		quad_vertices_pos_w_tex, quad_indices, 16, 6
-	)
+	),
+	cut_id(0)
 {
-
 }
 
 void textureBasedVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -174,18 +174,11 @@ void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	//delete[]zInfos;
 	m_data_dirty = true;
 }
-void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front, bool pre_draw){
-	if (pre_draw) draw_baked(context, tex, modelMat, is_front);
-	else draw_scene(context, tex, modelMat, is_front);
-}
-void textureBasedVolumeRenderer::draw_baked(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
-	draw_scene(context, tex, modelMat, is_front);
-}
-void textureBasedVolumeRenderer::draw_scene(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
+void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front){
 	if (!m_loadingComplete) return;
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.model, modelMat);
+		DirectX::XMStoreFloat4x4(&m_const_buff_data.model, DirectX::XMMatrixTranspose(modelMat));
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
@@ -201,6 +194,8 @@ void textureBasedVolumeRenderer::draw_scene(ID3D11DeviceContext* context, Textur
 	}
 	if (m_pixConstantBuffer != nullptr) {
 		m_const_buff_data_pix.u_front = is_front;
+		m_const_buff_data_pix.u_cut = true;
+		m_const_buff_data_pix.u_cut_texz = is_front ? 1.0f - dimension_inv * cut_id : dimension_inv * cut_id;
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),
 			0,
@@ -266,8 +261,17 @@ void textureBasedVolumeRenderer::draw_scene(ID3D11DeviceContext* context, Textur
 	context->RSSetState(m_render_state_front);
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
-void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, DirectX::XMUINT3 vol_dimension, DirectX::XMFLOAT3 vol_dim_scale) {
+void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);
+	setCuttingPlane(0.5f);
+}
+void textureBasedVolumeRenderer::setCuttingPlane(float percent) {
+	cut_id = int(dimensions * percent);
+	//baked_dirty_ = true;
+}
+void textureBasedVolumeRenderer::setCuttingPlaneDelta(int delta) {
+	cut_id = ((int)fmax(0, cut_id + delta)) % dimensions;
+	//baked_dirty_ = true;
 }

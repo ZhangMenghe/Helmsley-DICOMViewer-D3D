@@ -7,9 +7,9 @@ class baseRenderer {
 public:
 	baseRenderer(ID3D11Device* device,
 		const wchar_t* vname, const wchar_t* pname,
-		const float* vdata, const unsigned short* idata,
+		const float* vdata = nullptr, const unsigned short* idata = nullptr,
 		UINT vertice_num = 0, UINT idx_num = 0);
-	virtual void Draw(ID3D11DeviceContext* context);
+	virtual void Draw(ID3D11DeviceContext* context, D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	virtual void Clear() {
 		m_loadingComplete = false;
 		m_vertexShader = nullptr;
@@ -20,6 +20,7 @@ public:
 		m_indexBuffer = nullptr;
 	};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
+	void createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data);
 protected:
 	//buffers
 	winrt::com_ptr<ID3D11InputLayout> m_inputLayout;

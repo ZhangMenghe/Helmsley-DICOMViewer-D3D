@@ -29,6 +29,7 @@ public:
     void startToAssemble(vrController* controller);
   void send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, const char* data);
 
+    bool setupCenterLineData(vrController* controller, std::string filename);
 private:
     int CHANEL_NUM = 4;
     UCHAR* g_VolumeTexData = nullptr, *g_maskTexData = nullptr;

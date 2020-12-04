@@ -38,7 +38,7 @@ class Camera {
     void reset(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
         _up = up; _eyePos = pos;
         _center = center;
-        _front = { _center.x-_eyePos.x, _center.y - _eyePos.y, _center.z - _eyePos.z}; //DirectX::XMVectorSubtract(_center, _eyePos);
+        _front = { _center.x - _eyePos.x, _center.y - _eyePos.y, _center.z - _eyePos.z }; //DirectX::XMVectorSubtract(_center, _eyePos);
         updateCameraVector();
     }
 public:
@@ -46,7 +46,7 @@ public:
         DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
         reset(ORI_CAM_POS, ORI_UP, mcenter);
     }
-    Camera(const char* cam_name) :name_(cam_name) { 
+    Camera(const char* cam_name) :name_(cam_name) {
         DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
         reset(ORI_CAM_POS, ORI_UP, mcenter);
     }
@@ -56,15 +56,6 @@ public:
 
     //setters
     void setProjMat(int screen_width, int screen_height) {
-        /*float screen_ratio = ((float)screen_width) / screen_height;
-        fov = 70.0f * DirectX::XM_PI / 180.0f;
-        _projMat = DirectX::XMMatrixPerspectiveFovRH(
-            fov,
-            screen_ratio,
-            NEAR_PLANE,
-            FAR_PLANE
-        );*/
-
         float aspectRatio = ((float)screen_width) / screen_height;
         float fovAngleY = 70.0f * DirectX::XM_PI / 180.0f;
         if (aspectRatio < 1.0f)

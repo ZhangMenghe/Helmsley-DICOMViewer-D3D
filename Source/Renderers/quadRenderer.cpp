@@ -9,6 +9,11 @@ quadRenderer::quadRenderer(ID3D11Device* device, bool as_render_target)
 	quad_vertices_pos_w_tex, quad_indices,16,6),
 	m_as_render_target(as_render_target){
 }
+quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname) 
+: baseRenderer(device, vname, pname,
+	quad_vertices_pos_w_tex, quad_indices, 16, 6){
+
+}
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata)
 	:baseRenderer(device, vname, pname,
 		vdata, quad_indices, 16, 6){
@@ -61,7 +66,7 @@ void quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMa
 	if (!m_loadingComplete) return; 
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
-		XMStoreFloat4x4(&m_constantBufferData.model, modelMat);
+		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(modelMat));
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(

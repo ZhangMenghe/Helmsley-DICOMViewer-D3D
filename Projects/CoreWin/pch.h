@@ -16,3 +16,6 @@
 //winrt stuff
 #include <winrt/base.h>
 #include <iostream>
+
+//glm
+#include <glm/glm.hpp>

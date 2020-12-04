@@ -81,6 +81,14 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 		)
 	);
 
+	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(raypixConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	winrt::check_hresult(
+		device->CreateBuffer(
+			&pixconstantBufferDesc,
+			nullptr,
+			m_pixConstantBuffer.put()
+		)
+	);
 	//D3D11_BLEND_DESC omDesc;
 	//ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
 	//omDesc.RenderTarget[0].BlendEnable = TRUE;
@@ -106,8 +114,9 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	//context->RSSetState(m_render_state);
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, modelMat);
-		auto inv_mat = DirectX::XMMatrixTranspose( DirectX::XMMatrixInverse(nullptr, modelMat));
+		//TODO: don't know why no transpose...
+		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, DirectX::XMMatrixTranspose(modelMat));
+		auto inv_mat = DirectX::XMMatrixInverse(nullptr, modelMat);
 		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
 		DirectX::XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, //Manager::camera->getCameraPosition()
 			DirectX::XMVector4Transform(veye,
@@ -119,6 +128,20 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 			0,
 			nullptr,
 			&m_const_buff_data,
+			0,
+			0
+		);
+	}
+	//update pixel shader const buffer data
+	if (m_pixConstantBuffer != nullptr) {
+		m_pix_const_buff_data.u_cut = true;
+		m_pix_const_buff_data.u_pn = {.0f, .0f, -1.0f, .0f};
+		m_pix_const_buff_data.u_pp = {.0f, .0f, .0f, .0f};
+		context->UpdateSubresource(
+			m_pixConstantBuffer.get(),
+			0,
+			nullptr,
+			&m_pix_const_buff_data,
 			0,
 			0
 		);

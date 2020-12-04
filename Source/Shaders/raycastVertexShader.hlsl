@@ -18,8 +18,8 @@ struct v2f{
 	float4 pos : SV_POSITION;
 	float3 tex :TEXCOORD0;
 	float3 ro : TEXCOORD1;
-	float3 FragPos: TEXCOORD2;
-	float3 raydir: TEXCOORD3;
+	//float3 FragPos: TEXCOORD2;
+	float3 raydir: TEXCOORD2;
 };
 
 // Simple shader to do vertex processing on the GPU.
@@ -27,7 +27,7 @@ v2f main(VertexShaderInput input){
 	v2f output;
 	output.ro = uCamPosInObjSpace.xyz;
 	output.raydir = input.pos - output.ro;
-	output.FragPos = mul(float4(input.pos, 1.0f), uModelMat);
+	//output.FragPos = mul(float4(input.pos, 1.0f), uModelMat);
 	output.pos = mul(float4(input.pos, 1.0f), uModelMat);
 	output.pos = mul(output.pos, uViewProjMat);
 	//output.screenPos = output.pos.xyw;
