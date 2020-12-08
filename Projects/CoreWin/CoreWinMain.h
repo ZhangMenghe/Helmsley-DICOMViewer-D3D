@@ -4,6 +4,7 @@
 #include "Common\DeviceResources.h"
 #include <vrController.h>
 #include <Utils/dicomLoader.h>
+#include <Utils/uiController.h>
 #include <Common/Manager.h>
 #include <Renderers/FpsTextRenderer.h>
 #include <grpc/rpcHandler.h>
@@ -36,6 +37,8 @@ namespace CoreWin{
 		std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 		
 		dicomLoader m_dicom_loader;
+
+		uiController m_uiController;
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
 

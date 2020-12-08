@@ -27,11 +27,15 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 
 		dvr::LOAD_DATA_FROM_SERVER ? setup_volume_server() : setup_volume_local();
 	}
+	else {
+		setup_volume_local();
+	}
 
 	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
+	m_uiController.InitAll();
 }
 void CoreWinMain::setup_volume_server(){
 	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);

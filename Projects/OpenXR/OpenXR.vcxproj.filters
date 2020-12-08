@@ -89,7 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="OpenXRMain.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp">
       <Filter>Source\Common</Filter>
@@ -163,10 +162,12 @@
     <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\uiController.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="OpenXRMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="..\..\Source\Common\DeviceResources.h">
       <Filter>Source\Common</Filter>
@@ -260,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h">
       <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\uiController.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,10 @@
 #include <string>
 #include <fstream>
 
+/// <summary>
+/// JNIInterface for data loading stuff
+/// </summary>
+
 typedef enum{
     LOAD_DICOM = 0,
     LOAD_MASK

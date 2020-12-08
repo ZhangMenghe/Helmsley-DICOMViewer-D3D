@@ -6,6 +6,7 @@
 #include <Common/TextTexture.h>
 #include <Renderers/quadRenderer.h>
 #include <Utils/dicomLoader.h>
+#include <Utils/uiController.h>
 #include <Renderers/FpsTextRenderer.h>
 #include <grpc/rpcHandler.h>
 #include <thread>
@@ -30,6 +31,8 @@ private:
 	std::thread* m_rpcThread;
 
 	dicomLoader m_dicom_loader;
+	uiController m_uiController;
+
 	DX::StepTimer m_timer;
 
 	///////debug data//////

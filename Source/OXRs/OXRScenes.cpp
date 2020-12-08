@@ -15,7 +15,10 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 		m_rpcHandler->setVRController(m_sceneRenderer.get());
 		m_rpcHandler->setManager(m_manager.get());
 		dvr::LOAD_DATA_FROM_SERVER? setup_volume_server() : setup_volume_local();
+	}else {
+		setup_volume_local();
 	}
+	m_uiController.InitAll();
 }
 void OXRScenes::setup_volume_server() {
 	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);

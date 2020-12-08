@@ -27,29 +27,7 @@ struct reservedStatus {
 			* glm::scale(glm::mat4(1.0), scale_vec);
 	}
 };
-struct computeConstantBuffer{
-	DirectX::XMUINT4 u_tex_size;
 
-	//opacity widget
-	DirectX::XMFLOAT4 u_opacity[30];
-	int u_widget_num;
-	int u_visible_bits;
-
-	//contrast
-	float u_contrast_low;
-	float u_contrast_high;
-	float u_brightness;
-
-	//mask
-	UINT u_maskbits;
-	UINT u_organ_num;
-	int u_mask_color;
-
-	//
-	int u_flipy;
-	int u_show_organ;
-	UINT u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
-};
 class vrController{
 public:
 	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
@@ -99,7 +77,6 @@ private:
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
-
 	//TEXTURES
 	Texture *tex_volume = nullptr, *tex_baked = nullptr;
 
@@ -108,8 +85,6 @@ private:
 	ID3D11Texture3D* m_comp_tex_d3d = nullptr;
 	ID3D11UnorderedAccessView* m_textureUAV;
 	ID3D11Buffer* m_compute_constbuff = nullptr;
-
-	computeConstantBuffer m_cmpdata;
 
 	glm::mat4 ModelMat_, RotateMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
@@ -132,12 +107,12 @@ private:
 	bool volume_model_dirty;
 	bool pre_draw_ = true;
 	int frame_num = 0;
+
 	void Rotate(float radians);
 	void render_scene();
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
-	void getGraphPoints(float values[], float*& points);
 	static bool isRayCasting() {
 		return false;
 		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 

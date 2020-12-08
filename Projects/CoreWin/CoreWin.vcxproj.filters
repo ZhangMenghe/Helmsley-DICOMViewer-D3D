@@ -154,6 +154,9 @@
     <ClCompile Include="..\..\Source\grpc\rpcHandler.cpp">
       <Filter>Source\grpc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\uiController.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -245,6 +248,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\grpc\rpcHandler.h">
       <Filter>Source\grpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\uiController.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -409,7 +415,7 @@
       <Filter>Library\x64\debug</Filter>
     </CopyFileToFolders>
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <Text Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt">
       <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
     </Text>

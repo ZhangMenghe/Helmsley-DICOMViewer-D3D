@@ -19,7 +19,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	m_deviceResources(deviceResources){
 	myPtr_ = this;
 
-	auto device = m_deviceResources->GetD3DDevice();
+	auto device = deviceResources->GetD3DDevice();
 	screen_quad = new screenQuadRenderer(device);
 	raycast_renderer = new raycastVolumeRenderer(device);
 	texvrRenderer_ = new textureBasedVolumeRenderer(device);
@@ -56,8 +56,6 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num) {
 	if (update_target == 0 || update_target == 2) {
 		vol_dimension_ = { ph, pw, pd };
-		m_cmpdata.u_tex_size = { ph,pw,pd, (UINT)0 };
-
 		if (sh <= 0 || sw <= 0 || sd <= 0) {
 			if (pd > 200) vol_dim_scale_ = { 1.0f, 1.0f, 0.5f };
 			else if (pd > 100) vol_dim_scale_ = { 1.0f, 1.0f, pd / 300.f };
@@ -77,6 +75,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			volume_model_dirty = true;
 		}
 		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
+		Manager::instance()->setDimension(vol_dimension_);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
@@ -240,8 +239,7 @@ void vrController::StartTracking()
 // When tracking, the 3D cube can be rotated around its Y axis by tracking pointer position relative to the output screen width.
 void vrController::TrackingUpdate(float positionX)
 {
-	if (m_tracking)
-	{
+	if (m_tracking){
 		float radians = XM_2PI * 2.0f * positionX / m_deviceResources->GetOutputSize().Width;
 		Rotate(radians);
 	}
@@ -267,30 +265,7 @@ void vrController::Render() {
 	screen_quad->Draw(context);	
 	m_deviceResources->ClearCurrentDepthBuffer();
 }
-void vrController::getGraphPoints(float values[], float*& points) {
-	DirectX::XMFLOAT2 lb, lm, lt, rb, rm, rt;
-	float half_top = values[dvr::TUNE_WIDTHTOP] / 2.0f;
-	float half_bottom = std::fmax(values[dvr::TUNE_WIDTHBOTTOM] / 2.0f, half_top);
 
-	float lb_x = values[dvr::TUNE_CENTER] - half_bottom;
-	float rb_x = values[dvr::TUNE_CENTER] + half_bottom;
-
-	lb = DirectX::XMFLOAT2(lb_x, .0f);
-	rb = DirectX::XMFLOAT2(rb_x, .0f);
-
-	lt = DirectX::XMFLOAT2(values[dvr::TUNE_CENTER] - half_top, values[dvr::TUNE_OVERALL]);
-	rt = DirectX::XMFLOAT2(values[dvr::TUNE_CENTER] + half_top, values[dvr::TUNE_OVERALL]);
-
-	float mid_y = values[dvr::TUNE_LOWEST] * values[dvr::TUNE_OVERALL];
-	lm = DirectX::XMFLOAT2(lb_x, mid_y);
-	rm = DirectX::XMFLOAT2(rb_x, mid_y);
-
-	//if (points) delete points;
-	points = new float[12]{
-			lb.x, lb.y, lm.x, lm.y, lt.x, lt.y,
-			rb.x, rb.y, rm.x, rm.y, rt.x, rt.y
-	};
-}
 void vrController::precompute() {
 	if (!Manager::baked_dirty_) return;
 	if (!bakeShader_) CreateDeviceDependentResources();
@@ -309,7 +284,7 @@ void vrController::precompute() {
 			m_compute_constbuff,
 			0,
 			nullptr,
-			&m_cmpdata,
+			Manager::instance()->getVolumeSetupConstData(),
 			0,
 			0
 		);
@@ -376,35 +351,6 @@ void vrController::CreateDeviceDependentResources(){
 				&m_compute_constbuff
 			)
 		);
-
-		//m_cmpdata.u_tex_size = { vol_dimension_.x, vol_dimension_.y, vol_dimension_.z, (UINT)0 };
-
-		float opa_values[5] = {
-			1.0f,
-			.0f,
-			2.0f,
-			0.0f,
-			1.0f
-		};
-		float* points;
-		getGraphPoints(opa_values, points);
-
-		for (int i = 0; i < 3; i++)m_cmpdata.u_opacity[i] = { points[4 * i], points[4 * i + 1] , points[4 * i + 2] , points[4 * i + 3] };
-		m_cmpdata.u_widget_num = 1;
-		m_cmpdata.u_visible_bits = 1;
-		//contrast
-		m_cmpdata.u_contrast_low = .0f;
-		m_cmpdata.u_contrast_high = .2f;
-		m_cmpdata.u_brightness = 0.5f;
-		//mask
-		m_cmpdata.u_maskbits = 0xffff - 1;//mask_bits_;
-		m_cmpdata.u_organ_num = 7;//mask_num
-		m_cmpdata.u_mask_color = 1;
-		//others
-		m_cmpdata.u_flipy = 0;
-		m_cmpdata.u_show_organ = 1;
-		m_cmpdata.u_color_scheme = 2;
-
 	});
 }
 void vrController::onSingleTouchDown(float x, float y) {
@@ -483,6 +429,7 @@ void vrController::setupCenterLine(int id, float* data) {
 		line_renderers_[oid] = new lineRenderer(m_deviceResources->GetD3DDevice(), oid, 4000, data);
 	//cutter_->setupCenterLine((dvr::ORGAN_IDS)oid, data);
 }
+
 
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();
