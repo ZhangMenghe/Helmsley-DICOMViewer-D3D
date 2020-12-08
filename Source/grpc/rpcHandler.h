@@ -16,8 +16,8 @@
 #include <proto/transManager.pb.h>
 //#include <utils/uiController.h>
 #include <utils/dicomLoader.h>
-//#include <Manager.h>
 #include <vrController.h>
+#include <Common/Manager.h>
 #include <vector>
 
 template<class T>
@@ -37,7 +37,7 @@ private:
 	  helmsley::FrameUpdateMsg update_msg;
 
     //uiController* ui_ = nullptr;
-    //Manager* manager_ = nullptr;
+    Manager* manager_ = nullptr;
     vrController* vr_ = nullptr;
     dicomLoader* loader_ = nullptr;
 
@@ -50,15 +50,15 @@ private:
     std::vector<datasetResponse::datasetInfo> availableRemoteDatasets;
     std::vector<datasetResponse::datasetInfo> availableLocalDatasets;
 
+    void tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops);
 
 public:
     rpcHandler(const std::string& host);
     ~rpcHandler();
     const RPCVector<helmsley::GestureOp> getOperations();
     
-    /*void setUIController(uiController* ui){ui_ = ui;}
-    void setManager(Manager* manager){manager_ = manager;}*/
-    void setLoader(dicomLoader* loader) { loader_ = loader; }
+    /*void setUIController(uiController* ui){ui_ = ui;}*/
+    void setManager(Manager* manager){manager_ = manager;}
     void setVRController(vrController* vr){vr_ = vr;}
     void setDataLoader(dicomLoader* loader){loader_ = loader;}
     void setDataPath(std::string path){DATA_PATH = path;}

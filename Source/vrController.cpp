@@ -334,10 +334,10 @@ void vrController::render_scene(){
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	cutter_->Update(model_mat);
-	cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+	//cutter_->Update(model_mat);
+	//cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	
-	m_deviceResources->ClearCurrentDepthBuffer();
+	//m_deviceResources->ClearCurrentDepthBuffer();
 
 	if(isRayCasting())
 		raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
@@ -348,10 +348,10 @@ void vrController::render_scene(){
 		float front_test = m_rot_mat._33 * dir.z;
 		texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
 	}
-	m_deviceResources->ClearCurrentDepthBuffer();
-	for (auto line : line_renderers_)
-		//if ((mask_bits_ >> (line.first + 1)) & 1)
-		line.second->Draw(context, mat42xmmatrix(model_mat));
+	//m_deviceResources->ClearCurrentDepthBuffer();
+	//for (auto line : line_renderers_)
+	//	//if ((mask_bits_ >> (line.first + 1)) & 1)
+	//	line.second->Draw(context, mat42xmmatrix(model_mat));
 }
 
 void vrController::CreateDeviceDependentResources(){

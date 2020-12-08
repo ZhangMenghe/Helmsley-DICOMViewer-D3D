@@ -20,7 +20,7 @@ OpenXRMain::OpenXRMain(const std::shared_ptr<DX::DeviceResources>& deviceResourc
 
 	/*m_rpcHandler = new rpcHandler("192.168.1.74:23333");
 	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-	m_rpcHandler->setLoader(&m_dicom_loader);
+	m_rpcHandler->setDataLoader(&m_dicom_loader);
 
 	auto vector = m_rpcHandler->getVolumeFromDataset("Larry_Smarr_2017", false);
 

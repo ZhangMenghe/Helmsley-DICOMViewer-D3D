@@ -113,7 +113,8 @@ namespace dvr{
     const float MOUSE_PAN_SENSITIVITY = 1.2f;
     
     //setting
-    const bool CONNECT_TO_SERVER = false;
+    const bool CONNECT_TO_SERVER = true;
+    const bool LOAD_DATA_FROM_SERVER = false;
 
     //TRS
     //const DirectX::XMFLOAT4X4 DEFAULT_ROTATE(

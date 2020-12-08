@@ -18,7 +18,15 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// TODO: Replace this with your app's content initialization.
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources));
 
-	dvr::CONNECT_TO_SERVER? setup_volume_server(): setup_volume_local();
+	if (dvr::CONNECT_TO_SERVER) {
+		m_rpcHandler = new rpcHandler("localhost:23333");
+		m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+		m_rpcHandler->setDataLoader(&m_dicom_loader);
+		m_rpcHandler->setVRController(m_sceneRenderer.get());
+		m_rpcHandler->setManager(m_manager.get());
+
+		dvr::LOAD_DATA_FROM_SERVER ? setup_volume_server() : setup_volume_local();
+	}
 
 	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
@@ -26,10 +34,6 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 }
 void CoreWinMain::setup_volume_server(){
-	m_rpcHandler = new rpcHandler("localhost:23333");
-	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-	m_rpcHandler->setLoader(&m_dicom_loader);
-	
 	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);
 
 	if (vector.size() > 0) {

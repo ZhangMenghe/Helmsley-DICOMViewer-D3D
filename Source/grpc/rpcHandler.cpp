@@ -41,7 +41,7 @@ void rpcHandler::Run(){
     while(true){
         //if(ui_ == nullptr || manager_==nullptr || vr_ == nullptr || loader_==nullptr) continue;
 
-        if (vr_ == nullptr || loader_ == nullptr) continue;
+        if (vr_ == nullptr || manager_ == nullptr || loader_ == nullptr) continue;
 
         auto msg = getUpdates();
         int gid = 0, tid = 0, cid = 0;
@@ -51,7 +51,7 @@ void rpcHandler::Run(){
             switch(type){
                 case FrameUpdateMsg_MsgType_GESTURE:
                     if(!gesture_finished){
-                        //tackle_gesture_msg(msg.gestures());
+                        tackle_gesture_msg(msg.gestures());
                         gesture_finished = true;
                     }
                     break;
@@ -68,7 +68,7 @@ void rpcHandler::Run(){
                     //tackle_reset_msg(msg.reset_value());
                     break;
                 case FrameUpdateMsg_MsgType_DATA:
-                    tackle_volume_msg(msg.data_value());
+                    //tackle_volume_msg(msg.data_value());
                     break;
                 default:
                     std::cout<<"UNKNOWN TYPE"<<std::endl;
@@ -168,30 +168,33 @@ void rpcHandler::DownloadCenterlines(Request req) {
 
 }
 
-//void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops){
-//    for(auto op:ops){
-//        switch (op.type()){
-//            case GestureOp_OPType_TOUCH_DOWN:
-//                vr_->onSingleTouchDown(op.x(), op.y());
-//                // sp.notify();
-//                break;
-//            case GestureOp_OPType_TOUCH_MOVE:
-//                vr_->onTouchMove(op.x(), op.y());
-//                // sp.notify();
-//                break;
-//            case GestureOp_OPType_SCALE:
-//                vr_->onScale(op.x(), op.y());
-//                // sp.notify();
-//                break;
-//            case GestureOp_OPType_PAN:
-//                vr_->onPan(op.x(), op.y());
-//                // sp.notify();
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-//}
+////////////////////////////
+////////Inspectator/////////
+///////////////////////////
+void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops) {
+    for (auto op : ops) {
+        switch (op.type()) {
+        case GestureOp_OPType_TOUCH_DOWN:
+            vr_->onSingleTouchDown(op.x(), op.y());
+            // sp.notify();
+            break;
+        case GestureOp_OPType_TOUCH_MOVE:
+            vr_->onTouchMove(op.x(), op.y());
+            // sp.notify();
+            break;
+        case GestureOp_OPType_SCALE:
+            vr_->onScale(op.x(), op.y());
+            // sp.notify();
+            break;
+        case GestureOp_OPType_PAN:
+            vr_->onPan(op.x(), op.y());
+            // sp.notify();
+            break;
+        default:
+            break;
+        }
+    }
+}
 //void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg){
 //    google::protobuf::RepeatedField<float> f;
 //    switch (msg.type()){

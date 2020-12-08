@@ -1,48 +1,23 @@
 ﻿#include "pch.h"
 #include "OXRScenes.h"
 OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources)
-:m_deviceResources(deviceResources) {
+	:m_deviceResources(deviceResources) {
 	m_manager = std::unique_ptr<Manager>(new Manager());
 
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources));
-	
+
 	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
-	
-	dvr::CONNECT_TO_SERVER ? setup_volume_server() : setup_volume_local();
 
-	//m_rpcHandler = new rpcHandler("10.68.2.105:23333");
-	//m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-	//m_rpcHandler->setLoader(&m_dicom_loader);
-
-	//m_dicom_loader.sendDataPrepare(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
-
-	//auto vector = m_rpcHandler->getVolumeFromDataset("Larry_Smarr_2017", false);
-
-	//if (vector.size() > 0) {
-	//	std::string path = "Larry_Smarr_2017/" + vector[0].folder_name();//m_rpcHandler->target_ds.folder_name() + vector[0].folder_name();
-	//	m_rpcHandler->DownloadVolume(path);
-	//	m_rpcHandler->DownloadMasks(path);
-	//	m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
-	//}
-	//else {
-	//	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
-	//		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
-	//		//m_sceneRenderer.reset();
-	//	}
-	//}
-
-	/*m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
-
-	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
-		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
-		//m_sceneRenderer.reset();
-	}*/
+	if (dvr::CONNECT_TO_SERVER) {
+		m_rpcHandler = new rpcHandler("10.68.2.105:23333");
+		m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+		m_rpcHandler->setDataLoader(&m_dicom_loader);
+		m_rpcHandler->setVRController(m_sceneRenderer.get());
+		m_rpcHandler->setManager(m_manager.get());
+		dvr::LOAD_DATA_FROM_SERVER? setup_volume_server() : setup_volume_local();
+	}
 }
 void OXRScenes::setup_volume_server() {
-	m_rpcHandler = new rpcHandler("10.68.2.105:23333");
-	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-	m_rpcHandler->setLoader(&m_dicom_loader);
-
 	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);
 
 	if (vector.size() > 0) {
