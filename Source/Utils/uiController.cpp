@@ -1,8 +1,6 @@
 #include "uiController.h"
 #include <Common/Manager.h>
 #include <vrController.h>
-//#include <algorithm>
-//#include <glm/gtc/type_ptr.hpp>
 
 void uiController::InitAll(){
     AddTuneParams();
@@ -80,10 +78,10 @@ void uiController::InitCheckParam(){
     //mask
     true, //"Apply",
     true, //"Recolor",
-    false, //"Volume",
+    true, //"Volume",
     false, //"Mesh",
     false, //"Wireframe",
-    false, //"Center Line",
+    true, //"Center Line",
     
     //ar
     false, //"Show",

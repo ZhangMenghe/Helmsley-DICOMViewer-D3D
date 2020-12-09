@@ -49,12 +49,15 @@ public:
     void onViewChange(int w, int h);
     static bool IsCuttingEnabled();
     static bool IsCuttingNeedUpdate();
-
+    static bool isRayCasting();
     //getter
-    volumeSetupConstBuffer* getVolumeSetupConstData() { 
-        return &m_volset_data; 
-    }
-    
+    volumeSetupConstBuffer* getVolumeSetupConstData() {return &m_volset_data;}
+    UINT getMaskBits() { return m_volset_data.u_maskbits; }
+    bool getCheck(dvr::PARAM_BOOL id) { return param_bool[id]; }
+    bool isDrawVolume() { return !param_bool[dvr::CHECK_MASKON] || param_bool[dvr::CHECK_VOLUME_ON]; }
+    bool isDrawCenterLine() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_CENTER_LINE]; }
+    bool isDrawMesh() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_DRAW_POLYGON]; }
+
     //adder
     void InitCheckParams(int num, const char* keys[], bool values[]);
     void addOpacityWidget(int value_num, float* values);
@@ -76,7 +79,7 @@ private:
     //check names
     std::vector<std::string> param_checks;
 
-    //todo: move to grap renderer
+    //todo: move to graph renderer
     void getGraphPoints(float values[], float*& points);
 };
 

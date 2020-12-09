@@ -24,7 +24,6 @@ template<class T>
 using RPCVector = google::protobuf::RepeatedPtrField<T>;
 using helmsley::datasetResponse;
 using helmsley::volumeResponse;
-//todo: try to implement operation merge
 
 #define CLIENT_ID 5
 

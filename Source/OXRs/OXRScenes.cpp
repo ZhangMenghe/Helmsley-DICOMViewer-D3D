@@ -2,9 +2,9 @@
 #include "OXRScenes.h"
 OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources)
 	:m_deviceResources(deviceResources) {
-	m_manager = std::unique_ptr<Manager>(new Manager());
+	m_manager = std::make_shared<Manager>();
 
-	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources));
+	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 
 	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
@@ -63,7 +63,6 @@ void OXRScenes::onViewChanged() {
 void OXRScenes::Update() {
 	m_timer.Tick([&]()
 	{
-		// TODO: Replace this with your app's content update functions.
 		m_sceneRenderer->Update(m_timer);
 		m_fpsTextRenderer->Update(m_timer);
 	});

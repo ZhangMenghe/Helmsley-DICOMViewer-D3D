@@ -12,6 +12,7 @@ struct raycastConstantBuffer
 };
 struct raypixConstantBuffer {
 	alignas(16)bool u_cut;
+	alignas(16)bool u_cutplane_realsample;
 	alignas(16)DirectX::XMFLOAT4 u_pp;
 	alignas(16)DirectX::XMFLOAT4 u_pn;
 };

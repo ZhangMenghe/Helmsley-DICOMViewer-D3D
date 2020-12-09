@@ -4,6 +4,7 @@
 #include <Common/DirectXHelper.h>
 #include <Utils/MathUtils.h>
 #include <Utils/TypeConvertUtils.h>
+using namespace dvr;
 using namespace DirectX;
 using namespace Windows::Foundation;
 
@@ -14,9 +15,10 @@ vrController* vrController::instance() {
 }
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
+vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources, const std::shared_ptr<Manager>& manager):
 	m_tracking(false),
-	m_deviceResources(deviceResources){
+	m_deviceResources(deviceResources),
+	m_manager(manager){
 	myPtr_ = this;
 
 	auto device = deviceResources->GetD3DDevice();
@@ -75,7 +77,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			volume_model_dirty = true;
 		}
 		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
-		Manager::instance()->setDimension(vol_dimension_);
+		m_manager->setDimension(vol_dimension_);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
@@ -284,7 +286,7 @@ void vrController::precompute() {
 			m_compute_constbuff,
 			0,
 			nullptr,
-			Manager::instance()->getVolumeSetupConstData(),
+			m_manager->getVolumeSetupConstData(),
 			0,
 			0
 		);
@@ -302,31 +304,48 @@ void vrController::precompute() {
 }
 
 void vrController::render_scene(){
-	precompute();
+	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
+	
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
-	if (volume_model_dirty) { updateVolumeModelMat(); volume_model_dirty = false; }
-
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
-	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	//cutter_->Update(model_mat);
-	//cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	
-	//m_deviceResources->ClearCurrentDepthBuffer();
-
-	if(isRayCasting())
-		raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
-	else {
-		auto dir = Manager::camera->getViewDirection();
-		DirectX::XMFLOAT4X4 m_rot_mat;
-		XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-		float front_test = m_rot_mat._33 * dir.z;
-		texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
+	//////  CUTTING PLANE  //////
+	if (Manager::param_bool[CHECK_CUTTING]) {
+		cutter_->Update(model_mat);
+		cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+		m_deviceResources->ClearCurrentDepthBuffer();
 	}
-	//m_deviceResources->ClearCurrentDepthBuffer();
-	//for (auto line : line_renderers_)
-	//	//if ((mask_bits_ >> (line.first + 1)) & 1)
-	//	line.second->Draw(context, mat42xmmatrix(model_mat));
+
+	//////   VOLUME   //////
+	if (m_manager->isDrawVolume()) {
+		precompute();
+		if (Manager::isRayCasting())
+			raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+		else {
+			auto dir = Manager::camera->getViewDirection();
+			DirectX::XMFLOAT4X4 m_rot_mat;
+			XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
+			float front_test = m_rot_mat._33 * dir.z;
+			texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), front_test < 0);
+		}
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
+
+	///// MESH  ////
+	if (m_manager->isDrawMesh()) {
+		meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+	}
+
+	///// CENTER LINE/////
+	if (m_manager->isDrawCenterLine()) {
+		auto mask_bits_ = m_manager->getMaskBits();
+		for (auto line : line_renderers_)
+			if ((mask_bits_ >> (line.first + 1)) & 1) line.second->Draw(context, mat42xmmatrix(model_mat));
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
+
+	Manager::baked_dirty_ = false;
 }
 
 void vrController::CreateDeviceDependentResources(){
@@ -360,7 +379,7 @@ void vrController::onSingleTouchDown(float x, float y) {
 void vrController::onTouchMove(float x, float y) {
 	if (!m_IsPressed || !tex_volume) return;
 
-	//if (!Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
+	if (!Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
 
 	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
 	float xoffset = x - Mouse_old.x, yoffset = Mouse_old.y - y;
@@ -368,10 +387,10 @@ void vrController::onTouchMove(float x, float y) {
 	xoffset *= dvr::MOUSE_ROTATE_SENSITIVITY;
 	yoffset *= -dvr::MOUSE_ROTATE_SENSITIVITY;
 
-	/*if (Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) {
+	if (Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) {
 		cutter_->onRotate(xoffset, yoffset);
 		return;
-	}*/
+	}
 	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
 	volume_model_dirty = true;
 }
@@ -379,10 +398,27 @@ void vrController::onTouchReleased(){
 	m_IsPressed = false;
 }
 void vrController::onScale(float sx, float sy) {
+	if (!tex_volume) return;
+	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
+	//unified scaling
+	if (sx > 1.0f) sx = 1.0f + (sx - 1.0f) * MOUSE_SCALE_SENSITIVITY;
+	else sx = 1.0f - (1.0f - sx) * MOUSE_SCALE_SENSITIVITY;
 
+	if (Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) {
+		cutter_->onScale(sx);
+	}else {
+		ScaleVec3_ = ScaleVec3_ * sx;
+		volume_model_dirty = true;
+	}
 }
 void vrController::onPan(float x, float y) {
+	if (!tex_volume || Manager::param_bool[dvr::CHECK_FREEZE_VOLUME]) return;
+	//if (raycastRenderer_)isRayCasting() ? raycastRenderer_->dirtyPrecompute() : texvrRenderer_->dirtyPrecompute();
 
+	float offx = x / Manager::screen_w * MOUSE_PAN_SENSITIVITY, offy = -y / Manager::screen_h * MOUSE_PAN_SENSITIVITY;
+	PosVec3_.x += offx * ScaleVec3_.x;
+	PosVec3_.y += offy * ScaleVec3_.y;
+	volume_model_dirty = true;
 }
 void vrController::updateVolumeModelMat() {
 	ModelMat_ = glm::translate(glm::mat4(1.0), PosVec3_)

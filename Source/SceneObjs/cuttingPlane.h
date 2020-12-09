@@ -105,6 +105,7 @@ public:
     bool isPrecomputeDirty() { return baked_dirty; }
     void dirtyPrecompute() { baked_dirty = true; }
     void getCuttingPlane(glm::vec3& pp, glm::vec3& pn);
+    void getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn);
 };
 
 

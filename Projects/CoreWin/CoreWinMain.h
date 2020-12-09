@@ -32,7 +32,7 @@ namespace CoreWin{
 
 		// TODO: Replace with your own content renderers.
 		std::unique_ptr<vrController> m_sceneRenderer;
-		std::unique_ptr<Manager> m_manager;
+		std::shared_ptr<Manager> m_manager;
 
 		std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 		

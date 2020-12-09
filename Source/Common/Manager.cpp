@@ -45,6 +45,7 @@ bool Manager::IsCuttingNeedUpdate(){
 bool Manager::IsCuttingEnabled(){
     return param_bool[dvr::CHECK_CUTTING] ||(param_bool[dvr::CHECK_CENTER_LINE_TRAVEL] && param_bool[dvr::CHECK_TRAVERSAL_VIEW]);
 }
+bool Manager::isRayCasting() { return param_bool[dvr::CHECK_RAYCAST]; }
 
 //adder
 void Manager::InitCheckParams(int num, const char* keys[], bool values[]) {

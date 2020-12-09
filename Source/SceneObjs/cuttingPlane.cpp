@@ -77,12 +77,7 @@ void cuttingController::Update(glm::mat4 model_mat) {
     }
 }
 void cuttingController::Draw(ID3D11DeviceContext* context) {
-    //if (Manager::param_bool[dvr::CHECK_CUTTING] || Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]) {
-    //    if (pre_draw)draw_baked();
-    //    else draw_plane();
-    //}
     context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
-
     plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
@@ -102,6 +97,10 @@ void cuttingController::Draw(ID3D11DeviceContext* context) {
 void cuttingController::getCuttingPlane(glm::vec3& pp, glm::vec3& pn) {
     pp = p_point_; pn = p_norm_;
 }
+void cuttingController::getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn) {
+    pp = { p_point_.x, p_point_.y, p_point_.z, 0 };
+    pn = { p_norm_.x, p_norm_.y, p_norm_.z, 0 };
+}
 
 //for texture based only
 void cuttingController::setCutPlane(float value) {
@@ -111,8 +110,7 @@ void cuttingController::setCutPlane(float value) {
     baked_dirty = true;
 }
 bool cuttingController::keep_cutting_position() {
-    //return Manager::param_bool[dvr::CHECK_FREEZE_CPLANE];
-    return false;
+    return Manager::param_bool[dvr::CHECK_FREEZE_CPLANE];
 }
 void cuttingController::setCutPlane(glm::vec3 normal) {}
 void cuttingController::setCutPlane(glm::vec3 pp, glm::vec3 normal) {

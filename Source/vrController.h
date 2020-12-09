@@ -4,6 +4,7 @@
 #include <Renderers/raycastVolumeRenderer.h>
 #include <Renderers/quadRenderer.h>
 #include <Common/DeviceResources.h>
+#include <Common/Manager.h>
 #include <Common/StepTimer.h>
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
@@ -30,7 +31,7 @@ struct reservedStatus {
 
 class vrController{
 public:
-	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources, const std::shared_ptr<Manager>& manager);
 	static vrController* instance();
 	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
 
@@ -61,6 +62,7 @@ public:
 	void setupCenterLine(int id, float* data);
 
 	//getter
+	void getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn) { cutter_->getCuttingPlane(pp, pn); }
 	Texture* getVolumeTex() { return tex_volume; }
 	Texture* getBakedTex() { return tex_baked; }
 	bool isDirty();
@@ -77,6 +79,8 @@ private:
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
+	std::shared_ptr<Manager> m_manager;
+
 	//TEXTURES
 	Texture *tex_volume = nullptr, *tex_baked = nullptr;
 
@@ -105,7 +109,7 @@ private:
 
 	//flags
 	bool volume_model_dirty;
-	bool pre_draw_ = true;
+	bool pre_draw_ = false;
 	int frame_num = 0;
 
 	void Rotate(float radians);
@@ -113,9 +117,5 @@ private:
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
-	static bool isRayCasting() {
-		return false;
-		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
-	}
 };
 #endif

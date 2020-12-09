@@ -19,9 +19,9 @@ public:
 	void onViewChanged();
 private:
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
+	std::shared_ptr<Manager> m_manager;
 
 	std::unique_ptr<vrController> m_sceneRenderer;
-	std::unique_ptr<Manager> m_manager;
 	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 
 	// RPC instance

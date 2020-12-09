@@ -13,10 +13,10 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
 
-	m_manager = std::unique_ptr<Manager>(new Manager());
+	m_manager = std::make_shared<Manager>();
 
 	// TODO: Replace this with your app's content initialization.
-	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources));
+	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources, m_manager));
 
 	if (dvr::CONNECT_TO_SERVER) {
 		m_rpcHandler = new rpcHandler("localhost:23333");

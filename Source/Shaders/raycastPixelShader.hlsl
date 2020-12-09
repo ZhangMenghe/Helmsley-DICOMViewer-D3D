@@ -11,8 +11,9 @@ struct v2f {
 
 cbuffer raypixConstantBuffer : register(b0) {
 	bool u_cut : packoffset(c0);
-	float4 u_pp: packoffset(c1);
-	float4 u_pn: packoffset(c2);
+	bool u_cutplane_realsample : packoffset(c1);
+	float4 u_pp: packoffset(c2);
+	float4 u_pn: packoffset(c3);
 };
 
 float2 RayCube(float3 ro, float3 rd, float3 extents) {
@@ -115,6 +116,11 @@ float4 main(v2f input) : SV_TARGET{
 		if (blocked_by_plane && intersect.x <= intersect.y) {
 			float4 traced_color = Volume(ro + 0.5, rd, intersect.x, intersect.y);
 			return lerp(traced_color, float4(.0f, .0f, .0f, 1.0f), 1.0 - traced_color.a);
+		}
+		if (u_cutplane_realsample) {
+			clip(blocked_by_plane ? -1.0f : 1.0f);
+			clip(intersect.y - intersect.x);
+			return Sample(ro + 0.5 + rd * t);
 		}
 	}
 	clip(blocked_by_plane ? -1.0f : 1.0f);

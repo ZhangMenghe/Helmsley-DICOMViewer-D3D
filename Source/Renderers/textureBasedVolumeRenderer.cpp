@@ -194,7 +194,7 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	}
 	if (m_pixConstantBuffer != nullptr) {
 		m_const_buff_data_pix.u_front = is_front;
-		m_const_buff_data_pix.u_cut = false;
+		m_const_buff_data_pix.u_cut = Manager::param_bool[dvr::CHECK_CUTTING];
 		m_const_buff_data_pix.u_cut_texz = is_front ? 1.0f - dimension_inv * cut_id : dimension_inv * cut_id;
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),

@@ -2,6 +2,7 @@
 #include "raycastVolumeRenderer.h"
 #include <D3DPipeline/Primitive.h>
 #include <Common/Manager.h>
+#include <vrController.h>
 using namespace DirectX;
 
 raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
@@ -114,7 +115,6 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	//context->RSSetState(m_render_state);
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
-		//TODO: don't know why no transpose...
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, DirectX::XMMatrixTranspose(modelMat));
 		auto inv_mat = DirectX::XMMatrixInverse(nullptr, modelMat);
 		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
@@ -134,9 +134,9 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	}
 	//update pixel shader const buffer data
 	if (m_pixConstantBuffer != nullptr) {
-		m_pix_const_buff_data.u_cut = true;
-		m_pix_const_buff_data.u_pn = {.0f, .0f, -1.0f, .0f};
-		m_pix_const_buff_data.u_pp = {.0f, .0f, .0f, .0f};
+		m_pix_const_buff_data.u_cutplane_realsample = Manager::param_bool[dvr::CUT_PLANE_REAL_SAMPLE];
+		m_pix_const_buff_data.u_cut = Manager::IsCuttingEnabled();
+		if (m_pix_const_buff_data.u_cut) vrController::instance()->getCuttingPlane(m_pix_const_buff_data.u_pp, m_pix_const_buff_data.u_pn);
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),
 			0,
