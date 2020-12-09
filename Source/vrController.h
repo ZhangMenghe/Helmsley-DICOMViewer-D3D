@@ -109,7 +109,7 @@ private:
 
 	//flags
 	bool volume_model_dirty;
-	bool pre_draw_ = false;
+	bool pre_draw_ = true;
 	int frame_num = 0;
 
 	void Rotate(float radians);

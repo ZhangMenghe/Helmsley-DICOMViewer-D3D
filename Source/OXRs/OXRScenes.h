@@ -36,10 +36,10 @@ private:
 	DX::StepTimer m_timer;
 
 	///////debug data//////
-	std::string m_ds_path = "dicom-data/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
-	//std::string m_ds_path = "dicom-data/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
-	DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
-	//DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
+	//std::string m_ds_path = "dicom-data/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
+	std::string m_ds_path = "dicom-data/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
+	//DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
+	DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
 
 	void setup_volume_server();
 	void setup_volume_local();

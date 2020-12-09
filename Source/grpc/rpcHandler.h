@@ -25,7 +25,7 @@ using RPCVector = google::protobuf::RepeatedPtrField<T>;
 using helmsley::datasetResponse;
 using helmsley::volumeResponse;
 
-#define CLIENT_ID 5
+#define CLIENT_ID 6
 
 class rpcHandler{
 private:

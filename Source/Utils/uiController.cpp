@@ -27,9 +27,8 @@ void uiController::AddTuneParams(){
         0.0f,
         1.0f
     };
-    Manager::instance()->addOpacityWidget(5, opa_values);
-    //overlayController::instance()->addWidget(std::vector<float>(opa_values, opa_values+5));
-    //overlayController::instance()->setWidgetId(0);
+    Manager::instance()->addOpacityWidget(opa_values, 5);
+    Manager::instance()->setOpacityWidgetId(0);
 }
 
 void uiController::InitAllTuneParam(){
@@ -76,7 +75,7 @@ void uiController::InitCheckParam(){
     false, //"Traversal View",
     
     //mask
-    true, //"Apply",
+    false, //"Apply",
     true, //"Recolor",
     true, //"Volume",
     false, //"Mesh",
@@ -98,17 +97,17 @@ void uiController::setMaskBits(int num, unsigned int mbits){
 void uiController::setCheck(std::string key, bool value){
     Manager::instance()->setCheck(key, value);
 }
-void uiController::addTuneParams(std::vector<float> values){
-    //overlayController::instance()->addWidget(values);
+void uiController::addTuneParams(float* values, int num){
+    Manager::instance()->addOpacityWidget(values, num);
 }
 void uiController::removeTuneWidgetById(int wid){
-    //overlayController::instance()->removeWidget(wid);
+    Manager::instance()->removeOpacityWidget(wid);
 }
 void uiController::removeAllTuneWidget(){
-    //overlayController::instance()->removeAll();
+    Manager::instance()->removeAllOpacityWidgets();
 }
 void uiController::setTuneParamById(int tid, int pid, float value){
-    //if(tid == 0 && pid < dvr::TUNE_END)overlayController::instance()->setTuneParameter(pid, value);
+    if(tid == 0 && pid < dvr::TUNE_END)Manager::instance()->setOpacityValue(pid, value);
     if(tid == 1) Manager::instance()->setRenderParam(pid, value);
 }
 void uiController::setAllTuneParamById(int id, std::vector<float> values){  
@@ -116,11 +115,10 @@ void uiController::setAllTuneParamById(int id, std::vector<float> values){
     //else if(id == 2)vrController::instance()->setCuttingPlane(glm::vec3(values[0], values[1], values[2]), glm::vec3(values[3], values[4],values[5]));
 }
 void uiController::setTuneWidgetVisibility(int wid, bool visibility){
-    //overlayController::instance()->setWidgetsVisibility(wid, visibility);
-    //Manager::baked_dirty_ = true;
+    Manager::instance()->setOpacityWidgetVisibility(wid, visibility);
 }
 void uiController::setTuneWidgetById(int id){
-    //overlayController::instance()->setWidgetId(id);
+    Manager::instance()->setOpacityWidgetId(id);
 }
 void uiController::setCuttingPlane(int id, float value){
     //if(id<0)vrController::instance()->setCuttingPlane(value);

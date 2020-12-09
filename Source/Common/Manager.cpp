@@ -32,22 +32,24 @@ Manager::~Manager(){
 
 void Manager::onReset(){
     if(camera){delete camera; camera= nullptr;}
+    clear_opacity_widgets();
     baked_dirty_ = true;
 }
+
+void Manager::clear_opacity_widgets() {
+    m_volset_data.u_visible_bits = 0;
+    m_volset_data.u_widget_num = 0;
+    for (auto param : widget_params_) param.clear();
+    widget_params_.clear();
+    widget_visibilities_.clear();
+    if (default_widget_points_!=nullptr) { delete[]default_widget_points_; default_widget_points_ = nullptr; }
+    baked_dirty_ = true;
+}
+
 void Manager::onViewChange(int w, int h){
     camera->setProjMat(w, h);
     screen_w = w; screen_h = h;
 }
-bool Manager::isRayCut(){return param_bool[dvr::CHECK_RAYCAST] && param_bool[dvr::CHECK_CUTTING];}
-bool Manager::IsCuttingNeedUpdate(){
-    return param_bool[dvr::CHECK_CUTTING] || param_bool[dvr::CHECK_CENTER_LINE_TRAVEL];
-}
-bool Manager::IsCuttingEnabled(){
-    return param_bool[dvr::CHECK_CUTTING] ||(param_bool[dvr::CHECK_CENTER_LINE_TRAVEL] && param_bool[dvr::CHECK_TRAVERSAL_VIEW]);
-}
-bool Manager::isRayCasting() { return param_bool[dvr::CHECK_RAYCAST]; }
-
-//adder
 void Manager::InitCheckParams(int num, const char* keys[], bool values[]) {
     param_checks.clear(); param_bool.clear();
     for (int i = 0; i < num; i++) {
@@ -61,10 +63,30 @@ void Manager::InitCheckParams(int num, const char* keys[], bool values[]) {
 
     baked_dirty_ = true;
 }
+void Manager::addOpacityWidget(float* values, int value_num) {
+    widget_params_.push_back(std::vector<float>(dvr::TUNE_END, 0));
+    widget_visibilities_.push_back(true);
 
-void Manager::addOpacityWidget(int value_num, float* values) {
+    int wid = m_volset_data.u_widget_num;
+    if (value_num < dvr::TUNE_END) memset(widget_params_[wid].data(), .0f, dvr::TUNE_END * sizeof(float));
+    memcpy(widget_params_[wid].data(), values, value_num * sizeof(float));
+    if (!default_widget_points_) getGraphPoints(values, default_widget_points_);
+
+    //update data for shader
+    for (int i = 0; i < 3; i++){
+        m_volset_data.u_opacity[3 * wid + i] = {
+            default_widget_points_[4 * i],
+            default_widget_points_[4 * i + 1] ,
+            default_widget_points_[4 * i + 2] ,
+            default_widget_points_[4 * i + 3]
+        };
+    }
+    m_volset_data.u_widget_num = wid+1;
+    m_volset_data.u_visible_bits |= 1<<wid;
+    baked_dirty_ = true;
+
     // todo : real implementation
-    float* points;
+    /*float* points;
     getGraphPoints(values, points);
 
     for (int i = 0; i < 3; i++)
@@ -76,7 +98,30 @@ void Manager::addOpacityWidget(int value_num, float* values) {
     };
     m_volset_data.u_widget_num = 1;
     m_volset_data.u_visible_bits = 1;
-    baked_dirty_ = true;
+    baked_dirty_ = true;*/
+}
+void Manager::removeOpacityWidget(int wid) {
+    if (wid >= m_volset_data.u_widget_num) return;
+
+    widget_params_.erase(widget_params_.begin() + wid);
+    widget_visibilities_.erase(widget_visibilities_.begin() + wid);
+
+    //update data for shader
+    for (int swid = wid; swid < m_volset_data.u_widget_num - 1; swid++) {
+        for (int i = 0; i < 3; i++) {
+            auto p = m_volset_data.u_opacity[3 * (swid + 1) + i];
+            m_volset_data.u_opacity[3 * wid + i] = {
+                p.x, p.y, p.z, p.w
+            };
+        }
+    }
+    m_volset_data.u_widget_num--;
+    m_volset_data.u_visible_bits = 0;
+    for (int i = 0; i < m_volset_data.u_widget_num; i++)m_volset_data.u_visible_bits |= int(widget_visibilities_[i]) << i;
+    Manager::baked_dirty_ = true;
+}
+void Manager::removeAllOpacityWidgets() {
+    clear_opacity_widgets();
 }
 void Manager::setRenderParam(int id, float value) {
     m_render_params[id] = value; Manager::baked_dirty_ = true;
@@ -100,12 +145,10 @@ void Manager::setCheck(std::string key, bool value) {
         baked_dirty_ = true;
     }
 }
-
 void Manager::setMask(UINT num, UINT bits) {
     m_volset_data.u_organ_num = num; m_volset_data.u_maskbits = bits;
     Manager::baked_dirty_ = true;
 }
-//setter
 void Manager::setColorScheme(int id) {
     m_volset_data.u_color_scheme = id;
     baked_dirty_ = true;
@@ -113,6 +156,32 @@ void Manager::setColorScheme(int id) {
 void Manager::setDimension(glm::vec3 dim) {
     m_volset_data.u_tex_size = { (UINT)dim.x, (UINT)dim.y, (UINT)dim.z, (UINT)0 };
     new_data_available = true;
+}
+void Manager::setOpacityWidgetId(int id) {
+    if (id >= m_volset_data.u_widget_num) return;
+    m_current_wid = id;
+    baked_dirty_ = true;
+}
+void Manager::setOpacityValue(int pid, float value) {
+    if (pid >= dvr::TUNE_END) return;
+    widget_params_[m_current_wid][pid] = value;
+    float* points;
+    getGraphPoints(widget_params_[m_current_wid].data(), points);
+    
+    for (int i = 0; i < 3; i++)
+        m_volset_data.u_opacity[3* m_current_wid + i] = {
+        points[4 * i],
+        points[4 * i + 1] ,
+        points[4 * i + 2] ,
+        points[4 * i + 3]
+    };
+
+    baked_dirty_ = true;
+}
+void Manager::setOpacityWidgetVisibility(int wid, bool visible) {
+    widget_visibilities_[wid] = visible;
+    if (visible) m_volset_data.u_visible_bits |= 1 << wid;
+    else m_volset_data.u_visible_bits &= ~(1 << wid);
 }
 void Manager::getGraphPoints(float values[], float*& points) {
     DirectX::XMFLOAT2 lb, lm, lt, rb, rm, rt;
@@ -138,3 +207,15 @@ void Manager::getGraphPoints(float values[], float*& points) {
             rb.x, rb.y, rm.x, rm.y, rt.x, rt.y
     };
 }
+
+/// <summary>
+/// static functions
+/// </summary>
+bool Manager::isRayCut() { return param_bool[dvr::CHECK_RAYCAST] && param_bool[dvr::CHECK_CUTTING]; }
+bool Manager::IsCuttingNeedUpdate() {
+    return param_bool[dvr::CHECK_CUTTING] || param_bool[dvr::CHECK_CENTER_LINE_TRAVEL];
+}
+bool Manager::IsCuttingEnabled() {
+    return param_bool[dvr::CHECK_CUTTING] || (param_bool[dvr::CHECK_CENTER_LINE_TRAVEL] && param_bool[dvr::CHECK_TRAVERSAL_VIEW]);
+}
+bool Manager::isRayCasting() { return param_bool[dvr::CHECK_RAYCAST]; }

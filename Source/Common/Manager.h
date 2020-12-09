@@ -47,11 +47,14 @@ public:
     ~Manager();
     void onReset();
     void onViewChange(int w, int h);
+    void InitCheckParams(int num, const char* keys[], bool values[]);
+    
     static bool IsCuttingEnabled();
     static bool IsCuttingNeedUpdate();
     static bool isRayCasting();
+
     //getter
-    volumeSetupConstBuffer* getVolumeSetupConstData() {return &m_volset_data;}
+    volumeSetupConstBuffer* getVolumeSetupConstData(){ return &m_volset_data; }
     UINT getMaskBits() { return m_volset_data.u_maskbits; }
     bool getCheck(dvr::PARAM_BOOL id) { return param_bool[id]; }
     bool isDrawVolume() { return !param_bool[dvr::CHECK_MASKON] || param_bool[dvr::CHECK_VOLUME_ON]; }
@@ -59,9 +62,10 @@ public:
     bool isDrawMesh() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_DRAW_POLYGON]; }
 
     //adder
-    void InitCheckParams(int num, const char* keys[], bool values[]);
-    void addOpacityWidget(int value_num, float* values);
-    
+    void addOpacityWidget(float* values, int value_num);
+    void removeOpacityWidget(int wid);
+    void removeAllOpacityWidgets();
+
     //setter
     void setRenderParam(int id, float value);
     void setRenderParam(float* values);
@@ -69,16 +73,26 @@ public:
     void setMask(UINT num, UINT bits);
     void setColorScheme(int id);
     void setDimension(glm::vec3 dim);
+    void setOpacityWidgetId(int id);
+    void setOpacityValue(int pid, float value);
+    void setOpacityWidgetVisibility(int wid, bool visible);
 private:
     static Manager* myPtr_;
     volumeSetupConstBuffer m_volset_data;
     
     //contrast, brightness, etc
     float m_render_params[dvr::PARAM_RENDER_TUNE_END] = { .0f };
+    //opacity widgets
+    std::vector<std::vector<float>> widget_params_;
+    std::vector<bool> widget_visibilities_;
+    float* default_widget_points_ = nullptr;
+    float* u_opacity_data_ = nullptr;
+    int m_current_wid = -1;
 
     //check names
     std::vector<std::string> param_checks;
 
+    void clear_opacity_widgets();
     //todo: move to graph renderer
     void getGraphPoints(float values[], float*& points);
 };

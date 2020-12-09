@@ -13,7 +13,6 @@ rpcHandler::rpcHandler(const std::string& host){
     syncer_ = inspectorSync::NewStub(channel);
     stub_ = dataTransfer::NewStub(channel);
 
-    Request req;
     req.set_client_id(CLIENT_ID);
     datasetResponse response;
     ClientContext context;
@@ -197,7 +196,7 @@ void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg) {
     switch (msg.type()) {
     case TuneMsg_TuneType_ADD_ONE:
         f = msg.values();
-        ui_->addTuneParams(std::vector<float>(f.begin(), f.end()));
+        ui_->addTuneParams(f.mutable_data(), f.size());
         break;
     case TuneMsg_TuneType_REMOVE_ONE:
         ui_->removeTuneWidgetById(msg.target());

@@ -16,7 +16,7 @@ public:
     void setMaskBits(int num, unsigned int mbits);
     void setCheck(std::string key, bool value);
 
-    void addTuneParams(std::vector<float> values);
+    void addTuneParams(float* values, int num);
     void removeTuneWidgetById(int id);
     void removeAllTuneWidget();
     void setTuneParamById(int tid, int pid, float value);

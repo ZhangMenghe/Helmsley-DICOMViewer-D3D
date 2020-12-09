@@ -109,7 +109,7 @@ void main(uint3 threadID : SV_DispatchThreadID){
 	uint u_intensity = value & uint(0xffff);
 	float intensity = TransferIntensityStepOne(u_intensity);
 
-	float alpha = intensity;
+	float alpha = .0f;
 	for (int i = 0; i < u_widget_num; i++)
 		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity));
 	destVolume[threadID] = float4(TransferColor(intensity, ORGAN_BIT), alpha);

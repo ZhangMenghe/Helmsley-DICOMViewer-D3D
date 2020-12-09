@@ -282,7 +282,7 @@ void vrController::precompute() {
 
 	if (m_compute_constbuff != nullptr) {
 		// Prepare the constant buffer to send it to the graphics device.
-		m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(
+		context->UpdateSubresource(
 			m_compute_constbuff,
 			0,
 			nullptr,
