@@ -14,6 +14,7 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 		m_rpcHandler->setDataLoader(&m_dicom_loader);
 		m_rpcHandler->setVRController(m_sceneRenderer.get());
 		m_rpcHandler->setManager(m_manager.get());
+		m_rpcHandler->setUIController(&m_uiController);
 		dvr::LOAD_DATA_FROM_SERVER? setup_volume_server() : setup_volume_local();
 	}else {
 		setup_volume_local();
