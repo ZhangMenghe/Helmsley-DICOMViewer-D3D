@@ -49,6 +49,5 @@ private:
 	texPixConstantBuffer m_const_buff_data_pix;
 
 	ID3D11BlendState* d3dBlendState;
-	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
 };
 #endif

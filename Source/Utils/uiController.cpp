@@ -17,6 +17,8 @@ void uiController::InitAll(){
     //            glm::vec3(.0,1.0f,.0f),
     //            glm::vec3(.0f,.0f,2.0f)
     //    ));
+    //debug
+    //vrController::instance()->switchCuttingPlane(dvr::CUT_TRAVERSAL);
 }
 
 void uiController::AddTuneParams(){
@@ -48,7 +50,7 @@ void uiController::InitCheckParam(){
         "Cutting",
         "Freeze Volume",
         "Freeze Plane",
-        "Cutting Plane Real Sample",
+        "Real Value",
         "Center Line Travel",
         "Traversal View",
         "Apply",
@@ -70,14 +72,14 @@ void uiController::InitCheckParam(){
     false, //"Cutting",
     false, //"Freeze Volume",
     false, //"Freeze Plane",
-    false, //"Cutting Plane Real Sample",
+    false, //"Real Value(Cutting Plane Real Sample)",
     false, //"Center Line Travel",
     false, //"Traversal View",
     
     //mask
     false, //"Apply",
     true, //"Recolor",
-    true, //"Volume",
+    false, //"Volume",
     false, //"Mesh",
     false, //"Wireframe",
     true, //"Center Line",
@@ -112,7 +114,7 @@ void uiController::setTuneParamById(int tid, int pid, float value){
 }
 void uiController::setAllTuneParamById(int id, std::vector<float> values){  
     if(id == 1)Manager::instance()->setRenderParam(&values[0]);
-    //else if(id == 2)vrController::instance()->setCuttingPlane(glm::vec3(values[0], values[1], values[2]), glm::vec3(values[3], values[4],values[5]));
+    else if(id == 2)vrController::instance()->setCuttingPlane(glm::vec3(values[0], values[1], values[2]), glm::vec3(values[3], values[4],values[5]));
 }
 void uiController::setTuneWidgetVisibility(int wid, bool visibility){
     Manager::instance()->setOpacityWidgetVisibility(wid, visibility);
@@ -121,8 +123,8 @@ void uiController::setTuneWidgetById(int id){
     Manager::instance()->setOpacityWidgetId(id);
 }
 void uiController::setCuttingPlane(int id, float value){
-    //if(id<0)vrController::instance()->setCuttingPlane(value);
-    //else vrController::instance()->setCuttingPlane(id, value);
+    if(id<0)vrController::instance()->setCuttingPlane(value);
+    else vrController::instance()->setCuttingPlane(id, value);
 }
 void uiController::setColorScheme(int id){
     Manager::instance()->setColorScheme(id);

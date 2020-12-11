@@ -13,7 +13,7 @@
 using namespace glm;
 
 cuttingController::cuttingController(ID3D11Device* device) {
-    p_start_ = vec3(.0, .0, .0f);
+    p_start_ = vec3(.0, .0, 0.6f);
     p_norm_ = vec3(.0, .0, -1.0);
     p_rotate_mat_ = rotMatFromDir(p_norm_);
     onReset(device);
@@ -35,16 +35,7 @@ void cuttingController::onReset(ID3D11Device* device) {
     update_modelMat_o();
     rc.point = p_point_; rc.scale = p_scale; rc.rotate_mat = p_rotate_mat_; rc.move_value = cmove_value;
     baked_dirty = true;
-    if (plane_render_ == nullptr) {
-        plane_render_ = new quadRenderer(device, L"QuadVertexShader.cso", L"NaiveColorPixelShader.cso");
-        
-        CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-        dvr::ColorConstantBuffer tdata;
-        tdata.u_color = { 1.0, .0, .0, 0.4f };
-        D3D11_SUBRESOURCE_DATA color_resource;
-        color_resource.pSysMem = &tdata;
-        plane_render_->createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
-    }
+    if (plane_render_ == nullptr) init_plane_renderer(device);
 
     if (d3dBlendState == nullptr) {
         D3D11_BLEND_DESC omDesc;
@@ -59,6 +50,29 @@ void cuttingController::onReset(ID3D11Device* device) {
         omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
         device->CreateBlendState(&omDesc, &d3dBlendState);
     }
+}
+void cuttingController::init_plane_renderer(ID3D11Device* device) {
+    for (int a = 0, i = 0; a < 360; a += 360 / 20, i++) {
+        double heading = a * 3.1415926535897932384626433832795 / 180;
+        m_quad_vertices[3 * i] = cos(heading) * CUTTING_RADIUS;
+        m_quad_vertices[3 * i + 1] = sin(heading) * CUTTING_RADIUS;
+    }
+    unsigned short* indices = new unsigned short[60];
+    for (int i = 0; i < 20; i++) {
+        indices[3 * i] = 20;
+        indices[3 * i+1] = (i + 1) % 20 ;
+        indices[3 * i + 2] = i;
+    }
+    plane_render_ = new quadRenderer(device,
+        L"Naive3DVertexShader.cso", L"NaiveColorPixelShader.cso",
+        m_quad_vertices, indices, 63, 60, dvr::INPUT_POS_3D);
+
+    CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+    dvr::ColorConstantBuffer tdata;
+    tdata.u_color = { 1.0, .0, .0, 0.4f };
+    D3D11_SUBRESOURCE_DATA color_resource;
+    color_resource.pSysMem = &tdata;
+    plane_render_->createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
 }
 void cuttingController::Update(glm::mat4 model_mat) {
     if (keep_cutting_position()) {//keep it static
@@ -81,19 +95,6 @@ void cuttingController::Draw(ID3D11DeviceContext* context) {
     plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
-//void cuttingController::UpdateAndDraw(DirectX::XMMATRIX model_mat_m) {
-//    Update(model_mat_m);
-//    Draw(false);
-//    //if (Manager::param_bool[dvr::CHECK_CUTTING] || Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]) {
-//    //    draw_plane();
-//    //}
-//}
-//void cuttingController::setCuttingParams(GLuint sp) {
-//    Shader::Uniform(sp, "uPlane.p", p_point_);
-//    Shader::Uniform(sp, "uPlane.normal", p_norm_);
-//    Shader::Uniform(sp, "uPlane.r", CUTTING_RADIUS * p_scale.x);
-//    Shader::Uniform(sp, "u_plane_color", plane_color_);
-//}
 void cuttingController::getCuttingPlane(glm::vec3& pp, glm::vec3& pn) {
     pp = p_point_; pn = p_norm_;
 }
@@ -178,7 +179,9 @@ void cuttingController::update_plane_(glm::mat4 vm_inv, glm::vec3 pNorm) {
 //   p_start_ = cloestVertexToPlane(pNorm, vp_obj) + p_norm_*0.5f;
 }
 void cuttingController::SwitchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id) {
-    if (cut_plane_id == dvr::CUT_CUTTING_PLANE && last_mode == dvr::CUT_TRAVERSAL) {
+    if (cut_plane_id == last_mode)return;
+
+    if (cut_plane_id == dvr::CUT_CUTTING_PLANE) {
         rt.point = p_point_; rt.scale = p_scale; rt.rotate_mat = p_rotate_mat_; rt.move_value = cmove_value;
         p_scale = rc.scale;
         // setCutPlane(rc.point,rc.norm);
@@ -188,8 +191,7 @@ void cuttingController::SwitchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id) {
         update_plane_(rc.rotate_mat);
 
         last_mode = dvr::CUT_CUTTING_PLANE;
-    }
-    else if (cut_plane_id == dvr::CUT_TRAVERSAL && last_mode == dvr::CUT_CUTTING_PLANE) {
+    }else {
         rc.point = p_point_; rc.scale = p_scale; rc.rotate_mat = p_rotate_mat_; rc.move_value = cmove_value;
         p_scale = rt.scale;
         // setCutPlane(rt.point,rt.norm);
@@ -210,9 +212,7 @@ void cuttingController::set_centerline_cutting(dvr::ORGAN_IDS oid, int& id, glm:
     pp = glm::vec3(data[3 * id], data[3 * id + 1], data[3 * id + 2]);
     pn = glm::vec3(data[3 * (id + center_sample_gap)], data[3 * (id + center_sample_gap) + 1], data[3 * (id + center_sample_gap) + 2])
         - glm::vec3(data[3 * (id - center_sample_gap)], data[3 * (id - center_sample_gap) + 1], data[3 * (id - center_sample_gap) + 2]);
-    // if(glm::dot(pn,glm::vec3(0,0,-1)) < .0f) pn=-pn;
     pn = glm::vec3(pn.x, pn.y, pn.z * thick_scale);
-    // setCutPlane(pp, pn);
 }
 void cuttingController::setupCenterLine(dvr::ORGAN_IDS id, float* data) {
     pmap[id] = data;
@@ -224,16 +224,16 @@ void cuttingController::setupCenterLine(dvr::ORGAN_IDS id, float* data) {
     baked_dirty = true;
 }
 void cuttingController::setCenterLinePos(int id, int delta_id) {
-    //if (delta_id == 0) {
-    //    clp_id_ = id % (4000 - center_sample_gap);
-    //}
-    //else {
-    //    clp_id_ = (clp_id_ + delta_id) % (4000 - center_sample_gap);
-    //}
-    //set_centerline_cutting(Manager::traversal_target_id, clp_id_, p_point_, p_norm_);
-    //setCutPlane(p_point_, p_norm_);
-    //baked_dirty = true;
+    if (delta_id == 0) {
+        clp_id_ = id % (4000 - center_sample_gap);
+    }
+    else {
+        clp_id_ = (clp_id_ + delta_id) % (4000 - center_sample_gap);
+    }
+    set_centerline_cutting(dvr::ORGAN_COLON, clp_id_, p_point_, p_norm_);
+    setCutPlane(p_point_, p_norm_);
+    baked_dirty = true;
 }
 void cuttingController::getCurrentTraversalInfo(glm::vec3& pp, glm::vec3& pn) {
-    //set_centerline_cutting(Manager::traversal_target_id, clp_id_, pp, pn);
+    set_centerline_cutting(Manager::traversal_target_id, clp_id_, pp, pn);
 }

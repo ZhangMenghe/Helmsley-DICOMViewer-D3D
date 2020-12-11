@@ -65,16 +65,17 @@ private:
     std::unordered_map<dvr::ORGAN_IDS, float*> pmap;
     float thick_scale;
     bool centerline_available;
+    float m_quad_vertices[63] = { .0f };
 
     quadRenderer* plane_render_ = nullptr;
     ID3D11BlendState* d3dBlendState = nullptr;
 
+    void init_plane_renderer(ID3D11Device* device);
     bool keep_cutting_position();
     void update_modelMat_o();
     void update_plane_(glm::mat4 rotMat);
     void update_plane_(glm::mat4 vm_inv, glm::vec3 pNorm);
     void set_centerline_cutting(dvr::ORGAN_IDS oid, int& id, glm::vec3& pp, glm::vec3& pn);
-
 public:
     cuttingController(ID3D11Device* device);
 

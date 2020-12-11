@@ -216,7 +216,8 @@ void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg) {
         break;
     case TuneMsg_TuneType_SET_TARGET:
         if (msg.sub_target() == 0) ui_->setTuneWidgetById(msg.target());
-        //else if (msg.sub_target() == 1)vr_->SwitchCuttingPlane((dvr::PARAM_CUT_ID)msg.target());
+        else if (msg.sub_target() == 1) vr_->switchCuttingPlane((dvr::PARAM_CUT_ID)msg.target());
+        else if (msg.sub_target() == 2) Manager::setTraversalTargetId(msg.target());
         break;
     case TuneMsg_TuneType_CUT_PLANE:
         ui_->setCuttingPlane(msg.target(), msg.value());

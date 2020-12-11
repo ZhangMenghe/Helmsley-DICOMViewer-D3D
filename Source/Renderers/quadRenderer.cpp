@@ -7,17 +7,25 @@ using namespace DirectX;
 quadRenderer::quadRenderer(ID3D11Device* device, bool as_render_target)
 :baseRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso",
 	quad_vertices_pos_w_tex, quad_indices,16,6),
-	m_as_render_target(as_render_target){
+	m_as_render_target(as_render_target),
+	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
 }
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname) 
 : baseRenderer(device, vname, pname,
-	quad_vertices_pos_w_tex, quad_indices, 16, 6){
-
+	quad_vertices_pos_w_tex, quad_indices, 16, 6),
+	m_input_layout_id(dvr::INPUT_POS_TEX_2D) {
 }
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata)
 	:baseRenderer(device, vname, pname,
-		vdata, quad_indices, 16, 6){
+		vdata, quad_indices, 16, 6),
+	m_input_layout_id(dvr::INPUT_POS_TEX_2D) {
 }
+quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata, const unsigned short* idata, UINT vertice_num, UINT idx_num, dvr::INPUT_LAYOUT_IDS layout_id)
+	:baseRenderer(device, vname, pname,
+		vdata, idata, vertice_num, idx_num),
+	m_input_layout_id(layout_id){
+}
+
 bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height){
 	texture = new Texture;
 	D3D11_TEXTURE2D_DESC texDesc;
@@ -92,22 +100,35 @@ void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<
 		)
 	);
 
-	static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-	DX::ThrowIfFailed(
-		device->CreateInputLayout(
-			vertexDesc,
-			ARRAYSIZE(vertexDesc),
-			&fileData[0],
-			fileData.size(),
-			m_inputLayout.put()
-		)
-	);
-	m_vertex_stride = sizeof(dvr::VertexPosTex2d);
+	//static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	//{
+	//	{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//};
+	if (m_input_layout_id == dvr::INPUT_POS_TEX_2D) {
+		DX::ThrowIfFailed(
+			device->CreateInputLayout(
+				dvr::g_vinput_pos_tex_2d_desc,
+				ARRAYSIZE(dvr::g_vinput_pos_tex_2d_desc),
+				&fileData[0],
+				fileData.size(),
+				m_inputLayout.put()
+			)
+		);
+		m_vertex_stride = sizeof(dvr::VertexPosTex2d);
+	}
+	else {
+		DX::ThrowIfFailed(
+			device->CreateInputLayout(
+				dvr::g_vinput_pos_3d_desc,
+				ARRAYSIZE(dvr::g_vinput_pos_3d_desc),
+				&fileData[0],
+				fileData.size(),
+				m_inputLayout.put()
+			)
+		);
+		m_vertex_stride = sizeof(dvr::VertexPos3d);
+	}
 	m_vertex_offset = 0;
 }
 void quadRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {

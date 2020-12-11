@@ -107,6 +107,11 @@ namespace dvr{
         ORGAN_AROTA,
         ORGAN_END
     };
+    enum INPUT_LAYOUT_IDS {
+        INPUT_POS_TEX_2D=0,
+        INPUT_POS_3D,
+        INPUT_LAYOUT_END
+    };
     //UIs
     const float MOUSE_ROTATE_SENSITIVITY = 0.005f;
     const float MOUSE_SCALE_SENSITIVITY = 0.8f;
@@ -127,7 +132,7 @@ namespace dvr{
 
     const glm::mat4 DEFAULT_ROTATE = glm::mat4(1.0f);
     const glm::vec3 DEFAULT_SCALE = glm::vec3(0.8f);
-    const glm::vec3 DEFAULT_POS = glm::vec3(.0f,.0f,0.2f);
+    const glm::vec3 DEFAULT_POS = glm::vec3(.0f,.0f,0.0f);
 
     const float SCREEN_CLEAR_COLOR[4] = {
             0.f,0.f,0.f,0.f
@@ -165,6 +170,19 @@ namespace dvr{
     {
         DirectX::XMFLOAT2 pos;
         DirectX::XMFLOAT2 tex;
+    };
+    struct VertexPos3d{
+        DirectX::XMFLOAT3 pos;
+    };
+
+    static const D3D11_INPUT_ELEMENT_DESC g_vinput_pos_tex_2d_desc[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+    static const D3D11_INPUT_ELEMENT_DESC g_vinput_pos_3d_desc[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 }
 #endif

@@ -30,7 +30,7 @@ void lineRenderer::updateVertices(ID3D11Device* device, int point_num, const flo
 	vertexBufferData.pSysMem = data;
 	vertexBufferData.SysMemPitch = 0;
 	vertexBufferData.SysMemSlicePitch = 0;
-	CD3D11_BUFFER_DESC vertexBufferDesc(m_vertice_count * sizeof(Pos3DInput), D3D11_BIND_VERTEX_BUFFER);
+	CD3D11_BUFFER_DESC vertexBufferDesc(m_vertice_count * sizeof(dvr::VertexPos3d), D3D11_BIND_VERTEX_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&vertexBufferDesc,
@@ -88,7 +88,7 @@ void lineRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<
 			m_inputLayout.put()
 		)
 	);
-	m_vertex_stride = sizeof(Pos3DInput);
+	m_vertex_stride = sizeof(dvr::VertexPos3d);
 	m_vertex_offset = 0;
 }
 void lineRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {

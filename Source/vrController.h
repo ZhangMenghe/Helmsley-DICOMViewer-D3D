@@ -60,6 +60,10 @@ public:
 	bool addStatus(std::string name, bool use_current_status = false);
 	void setMVPStatus(std::string status_name);
 	void setupCenterLine(int id, float* data);
+	void setCuttingPlane(float value);
+	void setCuttingPlane(int id, int delta);
+	void setCuttingPlane(glm::vec3 pp, glm::vec3 pn);
+	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
 
 	//getter
 	void getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn) { cutter_->getCuttingPlane(pp, pn); }
@@ -83,6 +87,9 @@ private:
 
 	//TEXTURES
 	Texture *tex_volume = nullptr, *tex_baked = nullptr;
+
+	//rendering states
+	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
 
 	//compute shader
 	ID3D11ComputeShader* bakeShader_;
@@ -108,8 +115,8 @@ private:
 	float	m_degreesPerSecond = 1;
 
 	//flags
-	bool volume_model_dirty;
-	bool pre_draw_ = true;
+	bool volume_model_dirty, m_scene_dirty;
+	bool pre_draw_ = false;
 	int frame_num = 0;
 
 	void Rotate(float radians);
@@ -117,5 +124,6 @@ private:
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
+	void AlignModelMatToTraversalPlane();
 };
 #endif

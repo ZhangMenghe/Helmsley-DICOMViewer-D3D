@@ -2,10 +2,6 @@
 #define LINE_RENDERER_H
 
 #include <Renderers/baseRenderer.h>
-struct Pos3DInput
-{
-	DirectX::XMFLOAT3 pos;
-};
 class lineRenderer:public baseRenderer{
 public:
 	lineRenderer(ID3D11Device* device, int uid);

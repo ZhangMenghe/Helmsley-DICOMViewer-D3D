@@ -1,6 +1,5 @@
 struct PixelShaderInput{
 	float4 pos : SV_POSITION;
-	float2 tex : TEXCOORD0;
 };
 cbuffer ColorConstantBuffer : register(b0) {
 	float4 u_color;

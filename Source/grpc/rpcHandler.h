@@ -35,7 +35,6 @@ private:
 	  Request req;
 	  helmsley::FrameUpdateMsg update_msg;
 
-    //uiController* ui_ = nullptr;
     Manager* manager_ = nullptr;
     vrController* vr_ = nullptr;
     dicomLoader* loader_ = nullptr;

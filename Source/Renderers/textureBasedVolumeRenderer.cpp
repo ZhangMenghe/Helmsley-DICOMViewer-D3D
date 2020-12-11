@@ -101,32 +101,6 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	omDesc.AlphaToCoverageEnable = false;
 	device->CreateBlendState(&omDesc, &d3dBlendState);
-
-
-	//D3D11_RASTERIZER_DESC wfdesc;
-	//ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
-	//wfdesc.CullMode = D3D11_CULL_BACK;
-	//wfdesc.FrontCounterClockwise = true;
-
-	D3D11_RASTERIZER_DESC rasterDesc;
-
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
-	winrt::check_hresult(
-		device->CreateRasterizerState(&rasterDesc, &m_render_state_front)
-	);
-	rasterDesc.FrontCounterClockwise = true;
-	winrt::check_hresult(
-		device->CreateRasterizerState(&rasterDesc, &m_render_state_back)
-	);
 }
 void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	//update instance data
@@ -229,16 +203,7 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	//texture sampler
 	if (m_sampleState != nullptr) context->PSSetSamplers(0, 1, &m_sampleState);
 
-	//todo: if its front or back
-	ID3D11Buffer* vertInstBuffers[2] = { m_vertexBuffer.get(), nullptr };
-
-	if (is_front) {
-		vertInstBuffers[1] = m_instanceBuffer_front.get();
-		context->RSSetState(m_render_state_front);
-	}else {
-		vertInstBuffers[1] = m_instanceBuffer_back.get();
-		context->RSSetState(m_render_state_back);
-	}
+	ID3D11Buffer* vertInstBuffers[2] = { m_vertexBuffer.get(), is_front? m_instanceBuffer_front.get(): m_instanceBuffer_back.get() };
 	UINT strides[2] = { sizeof(dvr::VertexPosTex2d), sizeof(InstanceType) };
 	UINT offsets[2] = { 0, 0 };
 	context->IASetVertexBuffers(0, 2, vertInstBuffers, strides, offsets);
@@ -258,14 +223,12 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	context->DrawIndexedInstanced(m_index_count, dimensions, 0, 0, 0);
 	
 	//setback states
-	context->RSSetState(m_render_state_front);
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);
-	setCuttingPlane(0.5f);
 }
 void textureBasedVolumeRenderer::setCuttingPlane(float percent) {
 	cut_id = int(dimensions * percent);
