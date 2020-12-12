@@ -23,9 +23,10 @@ message VPMsg{
 message GestureOp{
     enum OPType{
         TOUCH_DOWN = 0;
-        TOUCH_MOVE = 1;
-        SCALE = 2;
-        PAN=3;
+        TOUCH_UP = 1;
+        TOUCH_MOVE = 2;
+        SCALE = 3;
+        PAN = 4;
     }
     int64 gid = 1;
     OPType type = 2;

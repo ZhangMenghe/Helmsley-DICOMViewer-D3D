@@ -174,6 +174,9 @@ void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops) {
             vr_->onSingleTouchDown(op.x(), op.y());
             // sp.notify();
             break;
+        case GestureOp_OPType_TOUCH_UP:
+            vr_->onTouchReleased();
+            break;
         case GestureOp_OPType_TOUCH_MOVE:
             vr_->onTouchMove(op.x(), op.y());
             // sp.notify();

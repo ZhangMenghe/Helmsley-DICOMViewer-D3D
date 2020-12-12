@@ -306,50 +306,50 @@ const char descriptor_table_protodef_inspectorSync_2eproto[] PROTOBUF_SECTION_VA
   "q_type\030\002 \001(\0162\021.helmsley.ReqType\0220\n\020volum"
   "e_pose_type\030\003 \001(\0162\026.helmsley.VPMsg.VPTyp"
   "e\022\016\n\006values\030\004 \003(\002\"%\n\006VPType\022\007\n\003POS\020\000\022\t\n\005"
-  "SCALE\020\001\022\007\n\003ROT\020\002\"\226\001\n\tGestureOp\022\013\n\003gid\030\001 "
+  "SCALE\020\001\022\007\n\003ROT\020\002\"\244\001\n\tGestureOp\022\013\n\003gid\030\001 "
   "\001(\003\022(\n\004type\030\002 \001(\0162\032.helmsley.GestureOp.O"
-  "PType\022\t\n\001x\030\003 \001(\002\022\t\n\001y\030\004 \001(\002\"<\n\006OPType\022\016\n"
-  "\nTOUCH_DOWN\020\000\022\016\n\nTOUCH_MOVE\020\001\022\t\n\005SCALE\020\002"
-  "\022\007\n\003PAN\020\003\"F\n\016OperationBatch\022\013\n\003bid\030\001 \001(\002"
-  "\022\'\n\ngesture_op\030\002 \003(\0132\023.helmsley.GestureO"
-  "p\"^\n\010ResetMsg\022\022\n\ncheck_keys\030\001 \003(\t\022\024\n\014che"
-  "ck_values\030\002 \003(\010\022\023\n\013volume_pose\030\003 \003(\002\022\023\n\013"
-  "camera_pose\030\004 \003(\002\"\214\002\n\007TuneMsg\022(\n\004type\030\001 "
-  "\001(\0162\032.helmsley.TuneMsg.TuneType\022\016\n\006targe"
-  "t\030\002 \001(\005\022\022\n\nsub_target\030\003 \001(\005\022\r\n\005value\030\004 \001"
-  "(\002\022\016\n\006values\030\005 \003(\002\"\223\001\n\010TuneType\022\013\n\007ADD_O"
-  "NE\020\000\022\016\n\nREMOVE_ONE\020\001\022\016\n\nREMOTE_ALL\020\002\022\013\n\007"
-  "SET_ONE\020\003\022\013\n\007SET_ALL\020\004\022\017\n\013SET_VISIBLE\020\005\022"
-  "\016\n\nSET_TARGET\020\006\022\r\n\tCUT_PLANE\020\007\022\020\n\014COLOR_"
-  "SCHEME\020\010\"&\n\010CheckMsg\022\013\n\003key\030\001 \001(\t\022\r\n\005val"
-  "ue\030\002 \001(\010\"%\n\007MaskMsg\022\013\n\003num\030\001 \001(\005\022\r\n\005mbit"
-  "s\030\002 \001(\005\"P\n\rvolumeConcise\022\020\n\010vol_path\030\001 \001"
-  "(\t\022\014\n\004dims\030\002 \003(\005\022\014\n\004size\030\003 \003(\002\022\021\n\twith_m"
-  "ask\030\004 \001(\010\"\367\002\n\016FrameUpdateMsg\022/\n\005types\030\001 "
-  "\003(\0162 .helmsley.FrameUpdateMsg.MsgType\022%\n"
-  "\010gestures\030\002 \003(\0132\023.helmsley.GestureOp\022 \n\005"
-  "tunes\030\003 \003(\0132\021.helmsley.TuneMsg\022\"\n\006checks"
-  "\030\004 \003(\0132\022.helmsley.CheckMsg\022%\n\nmask_value"
-  "\030\005 \001(\0132\021.helmsley.MaskMsg\022\'\n\013reset_value"
-  "\030\006 \001(\0132\022.helmsley.ResetMsg\022+\n\ndata_value"
-  "\030\007 \001(\0132\027.helmsley.volumeConcise\"J\n\007MsgTy"
-  "pe\022\013\n\007GESTURE\020\000\022\010\n\004TUNE\020\001\022\t\n\005CHECK\020\002\022\010\n\004"
-  "MASK\020\003\022\t\n\005RESET\020\004\022\010\n\004DATA\020\005*\033\n\007ReqType\022\007"
-  "\n\003SET\020\000\022\007\n\003GET\020\0012\236\004\n\rinspectorSync\022+\n\016st"
-  "artBroadcast\022\010.Request\032\017.commonResponse\022"
-  "0\n\014gsVolumePose\022\017.helmsley.VPMsg\032\017.commo"
-  "nResponse\0223\n\rgetOperations\022\010.Request\032\030.h"
-  "elmsley.OperationBatch\0220\n\ngetUpdates\022\010.R"
-  "equest\032\030.helmsley.FrameUpdateMsg\0222\n\013reqe"
-  "stReset\022\022.helmsley.ResetMsg\032\017.commonResp"
-  "onse\0224\n\014setGestureOp\022\023.helmsley.GestureO"
-  "p\032\017.commonResponse\0223\n\rsetTuneParams\022\021.he"
-  "lmsley.TuneMsg\032\017.commonResponse\0225\n\016setCh"
-  "eckParams\022\022.helmsley.CheckMsg\032\017.commonRe"
-  "sponse\0223\n\rsetMaskParams\022\021.helmsley.MaskM"
-  "sg\032\017.commonResponse\022<\n\020setDisplayVolume\022"
-  "\027.helmsley.volumeConcise\032\017.commonRespons"
-  "eb\006proto3"
+  "PType\022\t\n\001x\030\003 \001(\002\022\t\n\001y\030\004 \001(\002\"J\n\006OPType\022\016\n"
+  "\nTOUCH_DOWN\020\000\022\014\n\010TOUCH_UP\020\001\022\016\n\nTOUCH_MOV"
+  "E\020\002\022\t\n\005SCALE\020\003\022\007\n\003PAN\020\004\"F\n\016OperationBatc"
+  "h\022\013\n\003bid\030\001 \001(\002\022\'\n\ngesture_op\030\002 \003(\0132\023.hel"
+  "msley.GestureOp\"^\n\010ResetMsg\022\022\n\ncheck_key"
+  "s\030\001 \003(\t\022\024\n\014check_values\030\002 \003(\010\022\023\n\013volume_"
+  "pose\030\003 \003(\002\022\023\n\013camera_pose\030\004 \003(\002\"\214\002\n\007Tune"
+  "Msg\022(\n\004type\030\001 \001(\0162\032.helmsley.TuneMsg.Tun"
+  "eType\022\016\n\006target\030\002 \001(\005\022\022\n\nsub_target\030\003 \001("
+  "\005\022\r\n\005value\030\004 \001(\002\022\016\n\006values\030\005 \003(\002\"\223\001\n\010Tun"
+  "eType\022\013\n\007ADD_ONE\020\000\022\016\n\nREMOVE_ONE\020\001\022\016\n\nRE"
+  "MOTE_ALL\020\002\022\013\n\007SET_ONE\020\003\022\013\n\007SET_ALL\020\004\022\017\n\013"
+  "SET_VISIBLE\020\005\022\016\n\nSET_TARGET\020\006\022\r\n\tCUT_PLA"
+  "NE\020\007\022\020\n\014COLOR_SCHEME\020\010\"&\n\010CheckMsg\022\013\n\003ke"
+  "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\010\"%\n\007MaskMsg\022\013\n\003num"
+  "\030\001 \001(\005\022\r\n\005mbits\030\002 \001(\005\"P\n\rvolumeConcise\022\020"
+  "\n\010vol_path\030\001 \001(\t\022\014\n\004dims\030\002 \003(\005\022\014\n\004size\030\003"
+  " \003(\002\022\021\n\twith_mask\030\004 \001(\010\"\367\002\n\016FrameUpdateM"
+  "sg\022/\n\005types\030\001 \003(\0162 .helmsley.FrameUpdate"
+  "Msg.MsgType\022%\n\010gestures\030\002 \003(\0132\023.helmsley"
+  ".GestureOp\022 \n\005tunes\030\003 \003(\0132\021.helmsley.Tun"
+  "eMsg\022\"\n\006checks\030\004 \003(\0132\022.helmsley.CheckMsg"
+  "\022%\n\nmask_value\030\005 \001(\0132\021.helmsley.MaskMsg\022"
+  "\'\n\013reset_value\030\006 \001(\0132\022.helmsley.ResetMsg"
+  "\022+\n\ndata_value\030\007 \001(\0132\027.helmsley.volumeCo"
+  "ncise\"J\n\007MsgType\022\013\n\007GESTURE\020\000\022\010\n\004TUNE\020\001\022"
+  "\t\n\005CHECK\020\002\022\010\n\004MASK\020\003\022\t\n\005RESET\020\004\022\010\n\004DATA\020"
+  "\005*\033\n\007ReqType\022\007\n\003SET\020\000\022\007\n\003GET\020\0012\236\004\n\rinspe"
+  "ctorSync\022+\n\016startBroadcast\022\010.Request\032\017.c"
+  "ommonResponse\0220\n\014gsVolumePose\022\017.helmsley"
+  ".VPMsg\032\017.commonResponse\0223\n\rgetOperations"
+  "\022\010.Request\032\030.helmsley.OperationBatch\0220\n\n"
+  "getUpdates\022\010.Request\032\030.helmsley.FrameUpd"
+  "ateMsg\0222\n\013reqestReset\022\022.helmsley.ResetMs"
+  "g\032\017.commonResponse\0224\n\014setGestureOp\022\023.hel"
+  "msley.GestureOp\032\017.commonResponse\0223\n\rsetT"
+  "uneParams\022\021.helmsley.TuneMsg\032\017.commonRes"
+  "ponse\0225\n\016setCheckParams\022\022.helmsley.Check"
+  "Msg\032\017.commonResponse\0223\n\rsetMaskParams\022\021."
+  "helmsley.MaskMsg\032\017.commonResponse\022<\n\020set"
+  "DisplayVolume\022\027.helmsley.volumeConcise\032\017"
+  ".commonResponseb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_inspectorSync_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
@@ -367,7 +367,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ins
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_inspectorSync_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_inspectorSync_2eproto = {
-  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 1929,
+  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 1943,
   &descriptor_table_inspectorSync_2eproto_once, descriptor_table_inspectorSync_2eproto_sccs, descriptor_table_inspectorSync_2eproto_deps, 9, 1,
   schemas, file_default_instances, TableStruct_inspectorSync_2eproto::offsets,
   file_level_metadata_inspectorSync_2eproto, 9, file_level_enum_descriptors_inspectorSync_2eproto, file_level_service_descriptors_inspectorSync_2eproto,
@@ -409,6 +409,7 @@ bool GestureOp_OPType_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -417,6 +418,7 @@ bool GestureOp_OPType_IsValid(int value) {
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
 constexpr GestureOp_OPType GestureOp::TOUCH_DOWN;
+constexpr GestureOp_OPType GestureOp::TOUCH_UP;
 constexpr GestureOp_OPType GestureOp::TOUCH_MOVE;
 constexpr GestureOp_OPType GestureOp::SCALE;
 constexpr GestureOp_OPType GestureOp::PAN;
