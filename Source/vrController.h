@@ -89,8 +89,6 @@ private:
 	//TEXTURES
 	Texture *tex_volume = nullptr, *tex_baked = nullptr;
 
-	//rendering states
-
 	//compute shader
 	ID3D11ComputeShader* bakeShader_;
 	ID3D11Texture3D* m_comp_tex_d3d = nullptr;
@@ -116,7 +114,7 @@ private:
 
 	//flags
 	bool volume_model_dirty, m_scene_dirty;
-	bool pre_draw_ = false;
+	bool pre_draw_ = true;
 	int frame_num = 0;
 
 	void Rotate(float radians);

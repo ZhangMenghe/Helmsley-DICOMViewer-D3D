@@ -182,6 +182,7 @@ void Manager::setOpacityWidgetVisibility(int wid, bool visible) {
     widget_visibilities_[wid] = visible;
     if (visible) m_volset_data.u_visible_bits |= 1 << wid;
     else m_volset_data.u_visible_bits &= ~(1 << wid);
+    baked_dirty_ = true;
 }
 void Manager::getGraphPoints(float values[], float*& points) {
     DirectX::XMFLOAT2 lb, lm, lt, rb, rm, rt;
