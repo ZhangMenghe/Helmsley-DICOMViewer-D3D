@@ -79,10 +79,10 @@ void uiController::InitCheckParam(){
     //mask
     false, //"Apply",
     true, //"Recolor",
-    false, //"Volume",
+    true, //"Volume",
     false, //"Mesh",
     false, //"Wireframe",
-    true, //"Center Line",
+    false, //"Center Line",
     
     //ar
     false, //"Show",

@@ -120,7 +120,7 @@ namespace dvr{
     //setting
     const bool CONNECT_TO_SERVER = true;
     const bool LOAD_DATA_FROM_SERVER = false;
-
+    static const ORGAN_IDS DEFAULT_TRAVERSAL_ORGAN = ORGAN_COLON;
     //TRS
     //const DirectX::XMFLOAT4X4 DEFAULT_ROTATE(
     //    1.0f, .0f,.0f,.0f,

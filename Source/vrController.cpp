@@ -315,9 +315,10 @@ void vrController::render_scene(){
 
 	auto model_mat = ModelMat_ * vol_dim_scale_mat_;
 	
+	if (Manager::IsCuttingNeedUpdate()) cutter_->Update(model_mat); 
+
 	//////  CUTTING PLANE  //////
-	if (Manager::IsCuttingNeedUpdate()) {
-		cutter_->Update(model_mat);
+	if (Manager::param_bool[dvr::CHECK_CUTTING]){
 		cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
@@ -343,6 +344,11 @@ void vrController::render_scene(){
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 
+	///// CENTERLINE TRAVERSAL PLANE////
+	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]) {
+		cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
 	Manager::baked_dirty_ = false;
 	context->RSSetState(m_render_state_front);
 }

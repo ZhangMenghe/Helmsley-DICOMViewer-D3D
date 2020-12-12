@@ -62,7 +62,7 @@ private:
     glm::vec4 plane_color_ = glm::vec4(1.0, .0, .0, 0.4f);
     const float CUTTING_FACTOR = 0.00002f;
     mTarget current_target = VOLUME;
-    std::unordered_map<dvr::ORGAN_IDS, float*> pmap;
+    std::unordered_map<dvr::ORGAN_IDS, std::vector<float>> pmap;
     float thick_scale;
     bool centerline_available;
     float m_quad_vertices[63] = { .0f };
@@ -85,6 +85,7 @@ public:
     void Update(glm::mat4 model_mat);
     //void UpdateAndDraw(DirectX::XMMATRIX model_mat_m);
     void Draw(ID3D11DeviceContext* context);
+    void Draw(ID3D11DeviceContext* context, bool is_front);
 
     void SwitchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
     void setupCenterLine(dvr::ORGAN_IDS id, float* data);

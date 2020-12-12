@@ -95,6 +95,12 @@ void cuttingController::Draw(ID3D11DeviceContext* context) {
     plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
 }
+void cuttingController::Draw(ID3D11DeviceContext* context, bool is_front) {
+    bool is_front_same = glm::dot(p_norm_, glm::vec3(0, 0, -1.0)) > .0;
+    if(is_front_same != is_front) context->RSSetState(is_front ? vrController::instance()->m_render_state_back: vrController::instance()->m_render_state_front);
+    Draw(context);
+    if (is_front_same != is_front) context->RSSetState(is_front ? vrController::instance()->m_render_state_front: vrController::instance()->m_render_state_back);
+}
 void cuttingController::getCuttingPlane(glm::vec3& pp, glm::vec3& pn) {
     pp = p_point_; pn = p_norm_;
 }
@@ -208,20 +214,22 @@ void cuttingController::set_centerline_cutting(dvr::ORGAN_IDS oid, int& id, glm:
     id = fmax(id, center_sample_gap);
     id = fmin(id, 3999 - center_sample_gap);
 
-    float* data = pmap[oid];
+    auto data = pmap[oid];
     pp = glm::vec3(data[3 * id], data[3 * id + 1], data[3 * id + 2]);
     pn = glm::vec3(data[3 * (id + center_sample_gap)], data[3 * (id + center_sample_gap) + 1], data[3 * (id + center_sample_gap) + 2])
         - glm::vec3(data[3 * (id - center_sample_gap)], data[3 * (id - center_sample_gap) + 1], data[3 * (id - center_sample_gap) + 2]);
     pn = glm::vec3(pn.x, pn.y, pn.z * thick_scale);
 }
 void cuttingController::setupCenterLine(dvr::ORGAN_IDS id, float* data) {
-    pmap[id] = data;
-    clp_id_ = 0;
-    glm::vec3 pp, pn;
-    set_centerline_cutting(id, clp_id_, pp, pn);
-    rt.point = pp; rt.scale = glm::vec3(DEFAULT_TRAVERSAL_SCALE); rt.rotate_mat = rotMatFromDir(pn); rt.move_value = .0f;
-    centerline_available = true;
-    baked_dirty = true;
+    pmap[id] = std::vector<float>(data, data+4000*3);
+    if (id == dvr::DEFAULT_TRAVERSAL_ORGAN) {
+        clp_id_ = 0;
+        glm::vec3 pp, pn;
+        set_centerline_cutting(id, clp_id_, pp, pn);
+        rt.point = pp; rt.scale = glm::vec3(DEFAULT_TRAVERSAL_SCALE); rt.rotate_mat = rotMatFromDir(pn); rt.move_value = .0f;
+        centerline_available = true;
+        baked_dirty = true;
+    }
 }
 void cuttingController::setCenterLinePos(int id, int delta_id) {
     if (delta_id == 0) {
@@ -230,7 +238,7 @@ void cuttingController::setCenterLinePos(int id, int delta_id) {
     else {
         clp_id_ = (clp_id_ + delta_id) % (4000 - center_sample_gap);
     }
-    set_centerline_cutting(dvr::ORGAN_COLON, clp_id_, p_point_, p_norm_);
+    set_centerline_cutting(Manager::traversal_target_id, clp_id_, p_point_, p_norm_);
     setCutPlane(p_point_, p_norm_);
     baked_dirty = true;
 }

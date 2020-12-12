@@ -70,6 +70,7 @@ public:
 	Texture* getVolumeTex() { return tex_volume; }
 	Texture* getBakedTex() { return tex_baked; }
 	bool isDirty();
+	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
 
 private:
 	static vrController* myPtr_;
@@ -89,7 +90,6 @@ private:
 	Texture *tex_volume = nullptr, *tex_baked = nullptr;
 
 	//rendering states
-	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
 
 	//compute shader
 	ID3D11ComputeShader* bakeShader_;
