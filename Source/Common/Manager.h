@@ -61,7 +61,9 @@ public:
     bool isDrawVolume() { return !param_bool[dvr::CHECK_MASKON] || param_bool[dvr::CHECK_VOLUME_ON]; }
     bool isDrawCenterLine() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_CENTER_LINE]; }
     bool isDrawMesh() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_DRAW_POLYGON]; }
-
+    int getDirtyOpacityId() { return m_dirty_wid; }
+    float* getDefaultWidgetPoints() { return default_widget_points_; }
+    float* getDirtyWidgetPoints() { return dirty_widget_points_; }
     //adder
     void addOpacityWidget(float* values, int value_num);
     void removeOpacityWidget(int wid);
@@ -77,6 +79,7 @@ public:
     void setOpacityWidgetId(int id);
     void setOpacityValue(int pid, float value);
     void setOpacityWidgetVisibility(int wid, bool visible);
+    void resetDirtyOpacityId() { m_dirty_wid = -1; }
 private:
     static Manager* myPtr_;
     volumeSetupConstBuffer m_volset_data;
@@ -86,9 +89,9 @@ private:
     //opacity widgets
     std::vector<std::vector<float>> widget_params_;
     std::vector<bool> widget_visibilities_;
-    float* default_widget_points_ = nullptr;
-    float* u_opacity_data_ = nullptr;
+    float* default_widget_points_ = nullptr, *dirty_widget_points_=nullptr;
     int m_current_wid = -1;
+    int m_dirty_wid;
 
     //check names
     std::vector<std::string> param_checks;

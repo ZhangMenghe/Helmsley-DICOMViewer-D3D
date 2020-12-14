@@ -41,8 +41,8 @@ void lineRenderer::updateVertices(ID3D11Device* device, int point_num, const flo
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void lineRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
-	if (!m_loadingComplete) return; 
+bool lineRenderer::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
+	if (!m_loadingComplete) return false; 
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
 		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(modelMat));
@@ -61,7 +61,7 @@ void lineRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMa
 
 	baseRenderer::Draw(context, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
-
+	return true;
 }
 void lineRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the vertex shader file is loaded, create the shader and input layout.

@@ -16,7 +16,7 @@ class textureBasedVolumeRenderer:public baseRenderer {
 public:
 	textureBasedVolumeRenderer(ID3D11Device* device);
 
-	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
+	bool Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front);
 	void setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale);
 	void setCuttingPlane(float percent);
 	void setCuttingPlaneDelta(int delta);

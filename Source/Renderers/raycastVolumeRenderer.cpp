@@ -110,8 +110,8 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 	wfdesc.FrontCounterClockwise = TRUE;
 	device->CreateRasterizerState(&wfdesc, &m_render_state);*/
 }
-void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat) {
-	if (!m_loadingComplete) return;
+bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat) {
+	if (!m_loadingComplete) return false;
 	//context->RSSetState(m_render_state);
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
@@ -154,4 +154,5 @@ void raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 		context->PSSetShaderResources(0, 1, &texview);
 	}
 	baseRenderer::Draw(context);
+	return true;
 }

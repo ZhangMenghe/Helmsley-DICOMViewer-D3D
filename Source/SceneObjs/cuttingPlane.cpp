@@ -90,16 +90,18 @@ void cuttingController::Update(glm::mat4 model_mat) {
         p_p2w_mat = model_mat * p_p2o_mat;
     }
 }
-void cuttingController::Draw(ID3D11DeviceContext* context) {
+bool cuttingController::Draw(ID3D11DeviceContext* context) {
     context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
-    plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
+    bool render_complete = plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
+    return render_complete;
 }
-void cuttingController::Draw(ID3D11DeviceContext* context, bool is_front) {
+bool cuttingController::Draw(ID3D11DeviceContext* context, bool is_front) {
     bool is_front_same = glm::dot(p_norm_, glm::vec3(0, 0, -1.0)) > .0;
     if(is_front_same != is_front) context->RSSetState(is_front ? vrController::instance()->m_render_state_back: vrController::instance()->m_render_state_front);
-    Draw(context);
+    bool render_complete = Draw(context);
     if (is_front_same != is_front) context->RSSetState(is_front ? vrController::instance()->m_render_state_front: vrController::instance()->m_render_state_back);
+    return render_complete;
 }
 void cuttingController::getCuttingPlane(glm::vec3& pp, glm::vec3& pn) {
     pp = p_point_; pn = p_norm_;

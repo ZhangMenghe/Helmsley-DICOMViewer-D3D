@@ -4,7 +4,10 @@
 #include <Renderers/baseRenderer.h>
 class quadRenderer:public baseRenderer{
 public:
-	quadRenderer(ID3D11Device* device, bool as_render_target = false);
+	quadRenderer(ID3D11Device* device);
+	quadRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color);
+	quadRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color, const float* vdata);
+
 	quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname);
 	quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata);
 	quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, 
@@ -12,8 +15,7 @@ public:
 		UINT vertice_num, UINT idx_num,
 		dvr::INPUT_LAYOUT_IDS layout_id = dvr::INPUT_POS_TEX_2D);
 	
-	bool setQuadSize(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height);
-	void Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
+	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
 	void setTexture(Texture* tex) { texture = tex; }
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);

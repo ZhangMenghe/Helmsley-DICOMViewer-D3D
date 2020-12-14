@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Renderers/organMeshRenderer.h>
 #include <Renderers/LineRenderer.h>
+#include <SceneObjs/dataVisualizer.h>
 
 struct reservedStatus {
 	glm::mat4 model_mat, rot_mat;
@@ -79,6 +80,7 @@ private:
 	raycastVolumeRenderer* raycast_renderer;
 	textureBasedVolumeRenderer* texvrRenderer_;
 	cuttingController* cutter_;
+	dataBoard* data_board_;
 	organMeshRenderer* meshRenderer_;
 	std::unordered_map<int, lineRenderer*> line_renderers_;
 
@@ -115,7 +117,6 @@ private:
 	//flags
 	bool volume_model_dirty, m_scene_dirty;
 	bool pre_draw_ = true;
-	int frame_num = 0;
 
 	void Rotate(float radians);
 	void render_scene();

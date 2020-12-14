@@ -8,7 +8,7 @@ using namespace DirectX;
 textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
 	:baseRenderer(device,
 		L"texbasedVertexShader.cso", L"texbasedPixelShader.cso",
-		quad_vertices_pos_w_tex, quad_indices, 16, 6
+		quad_vertices_pos_w_tex, quad_indices, 24, 6
 	),
 	cut_id(0)
 {
@@ -25,8 +25,8 @@ void textureBasedVolumeRenderer::create_vertex_shader(ID3D11Device* device, cons
 	);
 	static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 	winrt::check_hresult(
@@ -148,8 +148,8 @@ void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	//delete[]zInfos;
 	m_data_dirty = true;
 }
-void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front){
-	if (!m_loadingComplete) return;
+bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front){
+	if (!m_loadingComplete) return false;
 	if (m_constantBuffer != nullptr) {
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.model, DirectX::XMMatrixTranspose(modelMat));
@@ -224,6 +224,7 @@ void textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	
 	//setback states
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
+	return true;
 }
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;

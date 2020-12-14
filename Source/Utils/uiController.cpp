@@ -7,6 +7,7 @@ void uiController::InitAll(){
     InitAllTuneParam();
     InitCheckParam();
     setMaskBits(7,8);
+    setColorScheme(0);
     // setMaskBits(7,2+4+8+16+32+64);
     //vrController::instance()->onReset(
     //    glm::vec3(.0f),
@@ -66,7 +67,7 @@ void uiController::InitCheckParam(){
     };
     bool values[pnum] = {
     false, //"Raycasting",
-    false, //"Overlays",
+    true, //"Overlays",
 
     //cutting
     false, //"Cutting",

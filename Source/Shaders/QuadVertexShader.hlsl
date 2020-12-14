@@ -8,8 +8,8 @@ cbuffer ModelViewProjectionConstantBuffer : register(b0)
 // Per-vertex data used as input to the vertex shader.
 struct VertexShaderInput
 {
-	float2 pos : POSITION;
-	float2 tex : TEXCOORD0;
+	float3 pos : POSITION;
+	float3 tex : TEXCOORD0;
 };
 
 // Per-pixel color data passed through the pixel shader.
@@ -22,10 +22,10 @@ struct PixelShaderInput
 // Simple shader to do vertex processing on the GPU.
 PixelShaderInput main(VertexShaderInput input){
 	PixelShaderInput output;
-	float4 pos = mul(float4(input.pos.xy, .0f, 1.0f), model);
-	pos = mul(pos, uViewProjMat);
-	output.pos = pos;
-
+	
+	output.pos = mul(float4(input.pos, 1.0f), model);
+	output.pos = mul(output.pos, uViewProjMat);
+	
 	output.tex = input.tex.xy;
 
 	return output;

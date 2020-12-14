@@ -84,8 +84,8 @@ public:
     void setTarget(mTarget target) {current_target = target; }
     void Update(glm::mat4 model_mat);
     //void UpdateAndDraw(DirectX::XMMATRIX model_mat_m);
-    void Draw(ID3D11DeviceContext* context);
-    void Draw(ID3D11DeviceContext* context, bool is_front);
+    bool Draw(ID3D11DeviceContext* context);
+    bool Draw(ID3D11DeviceContext* context, bool is_front);
 
     void SwitchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
     void setupCenterLine(dvr::ORGAN_IDS id, float* data);

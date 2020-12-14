@@ -168,17 +168,17 @@ namespace dvr{
     // Used to send per-vertex data to the vertex shader.
     struct VertexPosTex2d
     {
-        DirectX::XMFLOAT2 pos;
-        DirectX::XMFLOAT2 tex;
+        DirectX::XMFLOAT3 pos;
+        DirectX::XMFLOAT3 tex;
     };
     struct VertexPos3d{
         DirectX::XMFLOAT3 pos;
     };
 
-    static const D3D11_INPUT_ELEMENT_DESC g_vinput_pos_tex_2d_desc[] =
+    static const D3D11_INPUT_ELEMENT_DESC g_vinput_pos_tex_desc[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
     static const D3D11_INPUT_ELEMENT_DESC g_vinput_pos_3d_desc[] =
     {

@@ -26,6 +26,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	raycast_renderer = new raycastVolumeRenderer(device);
 	texvrRenderer_ = new textureBasedVolumeRenderer(device);
 	cutter_ = new cuttingController(device);
+	data_board_ = new dataBoard(device);
 	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
@@ -142,8 +143,6 @@ void vrController::init_texture() {
 void vrController::CreateWindowSizeDependentResources(){
 	Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0) return;
-	//screen_width = outputSize.Width; screen_height = outputSize.Height;
-	//screen_quad->setQuadSize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height);
 	DX::ThrowIfFailed(screen_quad->InitializeQuadTex(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height));
 }
 
@@ -189,11 +188,9 @@ void vrController::Render() {
 	if (!pre_draw_) { render_scene(); return; }
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	//TODO:WTF..
-	if (frame_num<10 || isDirty()) {
+	if (isDirty()) {
 		screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
 		render_scene();
-		frame_num++;
 	}
 	m_deviceResources->SetBackBufferRenderTarget();
 	screen_quad->Draw(context);	
@@ -232,6 +229,8 @@ void vrController::precompute() {
 	context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	// Disable Compute Shader
 	context->CSSetShader(nullptr, nullptr, 0);
+
+	data_board_->Update(m_deviceResources->GetD3DDevice(), context);
 	Manager::baked_dirty_ = false;
 }
 
@@ -249,40 +248,52 @@ void vrController::render_scene(){
 	
 	if (Manager::IsCuttingNeedUpdate()) cutter_->Update(model_mat); 
 
+	bool render_complete = true;
 	//////  CUTTING PLANE  //////
 	if (Manager::param_bool[dvr::CHECK_CUTTING]){
-		cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 
 	//////   VOLUME   //////
 	if (m_manager->isDrawVolume()) {
 		precompute();
-		if (Manager::isRayCasting()) raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
-		else texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
+		if (Manager::isRayCasting()) render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+		else render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 
 	///// MESH  ////
 	if (m_manager->isDrawMesh()) {
-		meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+		render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
 	}
 
 	///// CENTER LINE/////
 	if (m_manager->isDrawCenterLine()) {
 		auto mask_bits_ = m_manager->getMaskBits();
 		for (auto line : line_renderers_)
-			if ((mask_bits_ >> (line.first + 1)) & 1) line.second->Draw(context, mat42xmmatrix(model_mat));
+			if ((mask_bits_ >> (line.first + 1)) & 1) 
+				render_complete &= line.second->Draw(context, mat42xmmatrix(model_mat));
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 
 	///// CENTERLINE TRAVERSAL PLANE////
 	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]) {
-		cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
+		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
+
+	///// OVERLAY DATA BOARD/////
+	if (Manager::param_bool[dvr::CHECK_OVERLAY]) {
+		render_complete &= data_board_->Draw(m_deviceResources->GetD3DDeviceContext(),
+			DirectX::XMMatrixScaling(1.0, 0.3, 0.1)
+			* DirectX::XMMatrixTranslation(0.8f, 0.8f, .0f),
+			is_front
+		);
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 	Manager::baked_dirty_ = false;
-	m_scene_dirty = false;
+	m_scene_dirty = !render_complete;
 	context->RSSetState(m_render_state_front);
 }
 
@@ -315,7 +326,7 @@ void vrController::CreateDeviceDependentResources(){
 	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
+	rasterDesc.DepthClipEnable = false;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
 	rasterDesc.FrontCounterClockwise = false;
 	rasterDesc.MultisampleEnable = false;

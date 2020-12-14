@@ -52,7 +52,6 @@ TextTexture::TextTexture(const std::shared_ptr<DX::DeviceResources>& deviceResou
     m_d2dContext->SetTarget(m_d2dTargetBitmap.get());
     m_d2dContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
     m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
-    
 
 
     DX::ThrowIfFailed(m_d2dContext->CreateSolidColorBrush(textInfo.Foreground, m_brush.put()));

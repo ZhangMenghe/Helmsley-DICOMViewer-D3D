@@ -33,7 +33,8 @@ Manager::~Manager(){
 void Manager::onReset(){
     if(camera){delete camera; camera= nullptr;}
     clear_opacity_widgets();
-    baked_dirty_ = true;
+    baked_dirty_ = true;    
+    m_dirty_wid = -1;
 }
 
 void Manager::clear_opacity_widgets() {
@@ -84,6 +85,7 @@ void Manager::addOpacityWidget(float* values, int value_num) {
     m_volset_data.u_widget_num = wid+1;
     m_volset_data.u_visible_bits |= 1<<wid;
     baked_dirty_ = true;
+    m_dirty_wid = wid;
 
     // todo : real implementation
     /*float* points;
@@ -102,7 +104,6 @@ void Manager::addOpacityWidget(float* values, int value_num) {
 }
 void Manager::removeOpacityWidget(int wid) {
     if (wid >= m_volset_data.u_widget_num) return;
-
     widget_params_.erase(widget_params_.begin() + wid);
     widget_visibilities_.erase(widget_visibilities_.begin() + wid);
 
@@ -118,7 +119,8 @@ void Manager::removeOpacityWidget(int wid) {
     m_volset_data.u_widget_num--;
     m_volset_data.u_visible_bits = 0;
     for (int i = 0; i < m_volset_data.u_widget_num; i++)m_volset_data.u_visible_bits |= int(widget_visibilities_[i]) << i;
-    Manager::baked_dirty_ = true;
+    baked_dirty_ = true;
+    m_dirty_wid = wid;
 }
 void Manager::removeAllOpacityWidgets() {
     clear_opacity_widgets();
@@ -164,21 +166,23 @@ void Manager::setOpacityWidgetId(int id) {
 }
 void Manager::setOpacityValue(int pid, float value) {
     if (pid >= dvr::TUNE_END) return;
+    m_dirty_wid = m_current_wid;
     widget_params_[m_current_wid][pid] = value;
-    float* points;
-    getGraphPoints(widget_params_[m_current_wid].data(), points);
+
+    getGraphPoints(widget_params_[m_current_wid].data(), dirty_widget_points_);
     
     for (int i = 0; i < 3; i++)
         m_volset_data.u_opacity[3* m_current_wid + i] = {
-        points[4 * i],
-        points[4 * i + 1] ,
-        points[4 * i + 2] ,
-        points[4 * i + 3]
+        dirty_widget_points_[4 * i],
+        dirty_widget_points_[4 * i + 1] ,
+        dirty_widget_points_[4 * i + 2] ,
+        dirty_widget_points_[4 * i + 3]
     };
 
     baked_dirty_ = true;
 }
 void Manager::setOpacityWidgetVisibility(int wid, bool visible) {
+    m_dirty_wid = wid;
     widget_visibilities_[wid] = visible;
     if (visible) m_volset_data.u_visible_bits |= 1 << wid;
     else m_volset_data.u_visible_bits &= ~(1 << wid);
@@ -202,7 +206,7 @@ void Manager::getGraphPoints(float values[], float*& points) {
     lm = DirectX::XMFLOAT2(lb_x, mid_y);
     rm = DirectX::XMFLOAT2(rb_x, mid_y);
 
-    //if (points) delete points;
+    if (points != nullptr) { delete[] points; points = nullptr; }
     points = new float[12]{
             lb.x, lb.y, lm.x, lm.y, lt.x, lt.y,
             rb.x, rb.y, rm.x, rm.y, rt.x, rt.y

@@ -21,6 +21,9 @@ public:
 	};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
 	void createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data);
+	void updatePixelConstBuffer(ID3D11DeviceContext* context, const void* data);
+	void createDynamicVertexBuffer(ID3D11Device* device, int vertex_num);
+	void updateVertexBuffer(ID3D11DeviceContext* context, const void* data);
 protected:
 	//buffers
 	winrt::com_ptr<ID3D11InputLayout> m_inputLayout;

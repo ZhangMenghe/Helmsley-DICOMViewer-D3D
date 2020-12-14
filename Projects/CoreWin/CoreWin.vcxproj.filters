@@ -157,6 +157,9 @@
     <ClCompile Include="..\..\Source\Utils\uiController.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp">
+      <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -252,6 +255,9 @@
     <ClInclude Include="..\..\Source\Utils\uiController.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h">
+      <Filter>Source\SceneObjs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -302,6 +308,12 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
