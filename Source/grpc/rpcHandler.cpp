@@ -1,4 +1,5 @@
 #include "rpcHandler.h"
+#include <glm/gtc/type_ptr.hpp>
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::ClientReader;
@@ -14,14 +15,14 @@ rpcHandler::rpcHandler(const std::string& host){
     stub_ = dataTransfer::NewStub(channel);
 
     req.set_client_id(CLIENT_ID);
-    datasetResponse response;
-    ClientContext context;
+    //datasetResponse response;
+    //ClientContext context;
 
-    stub_->getAvailableDatasets(&context, req, &response);
-
-    for (datasetResponse::datasetInfo ds : response.datasets()) {
-      availableRemoteDatasets.push_back(ds);
-    }
+    //stub_->getAvailableDatasets(&context, req, &response);
+    //
+    //for (datasetResponse::datasetInfo ds : response.datasets()) {
+    //  availableRemoteDatasets.push_back(ds);
+    //}
 }
 
 FrameUpdateMsg rpcHandler::getUpdates(){
@@ -36,9 +37,21 @@ const RPCVector<GestureOp> rpcHandler::getOperations(){
     syncer_->getOperations(&context,req, &op_batch);
     return op_batch.gesture_op();
 }
+void rpcHandler::receiver_register() {
+    commonResponse resp;
+    ClientContext context;
+    syncer_->startReceiveBroadcast(&context, req, &resp);
+}
+
 void rpcHandler::Run(){
     while(true){
         if(ui_ == nullptr || manager_==nullptr || vr_ == nullptr || loader_==nullptr) continue;
+        //debug only: start to listen directly
+        if (!initialized) {
+            receiver_register();
+            initialized = true;
+        }
+
         auto msg = getUpdates();
         int gid = 0, tid = 0, cid = 0;
         bool gesture_finished = false;
@@ -74,81 +87,80 @@ void rpcHandler::Run(){
     }
 }
 
-vector<datasetResponse::datasetInfo> rpcHandler::getAvailableDatasets(bool isLocal)
-{
-  return availableRemoteDatasets;
+vector<datasetResponse::datasetInfo> rpcHandler::getAvailableDatasets(bool isLocal){
+    return availableRemoteDatasets;
 }
 
 vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string & dataset_name, bool isLocal){
-  vector<volumeResponse::volumeInfo> ret;
+    vector<volumeResponse::volumeInfo> ret;
 
-  for(datasetResponse::datasetInfo & ds: availableRemoteDatasets) {
+    for(datasetResponse::datasetInfo & ds: availableRemoteDatasets) {
     if(!ds.folder_name().compare(dataset_name)) {
-      target_ds = ds;
-      break;
+        target_ds = ds;
+        break;
     }
-  }
-  Request req;
-  req.set_client_id(CLIENT_ID);
-  req.set_req_msg(dataset_name);
+    }
+    Request req;
+    req.set_client_id(CLIENT_ID);
+    req.set_req_msg(dataset_name);
   
-  volumeResponse volume;
-  ClientContext context;
+    volumeResponse volume;
+    ClientContext context;
 
-  std::unique_ptr<ClientReader<volumeResponse>> volume_reader(
-      stub_->getVolumeFromDataset(&context, req));
-  while (volume_reader->Read(&volume)) {
-      std::cout << volume.volumes_size() << std::endl;
+    std::unique_ptr<ClientReader<volumeResponse>> volume_reader(
+        stub_->getVolumeFromDataset(&context, req));
+    while (volume_reader->Read(&volume)) {
+        std::cout << volume.volumes_size() << std::endl;
 
-      for (auto vol : volume.volumes()) {
-          ret.push_back(vol);
-      }
-  }
-  Status status = volume_reader->Finish();
-  winrt::check_hresult(status.ok());
-  return ret;
+        for (auto vol : volume.volumes()) {
+            ret.push_back(vol);
+        }
+    }
+    Status status = volume_reader->Finish();
+    winrt::check_hresult(status.ok());
+    return ret;
 }
 
 void rpcHandler::DownloadVolume(const string& folder_path){
-  RequestWholeVolume req;
-  req.set_client_id(CLIENT_ID);
-  req.set_req_msg(folder_path);
-  req.set_unit_size(2);
+    RequestWholeVolume req;
+    req.set_client_id(CLIENT_ID);
+    req.set_req_msg(folder_path);
+    req.set_unit_size(2);
 
-  ClientContext context;
-  volumeWholeResponse resData;
+    ClientContext context;
+    volumeWholeResponse resData;
 
-  std::unique_ptr<ClientReader<volumeWholeResponse>> data_reader(
-      stub_->DownloadVolume(&context, req));
+    std::unique_ptr<ClientReader<volumeWholeResponse>> data_reader(
+        stub_->DownloadVolume(&context, req));
 
-  int id = 0;
-  while (data_reader->Read(&resData)) {
+    int id = 0;
+    while (data_reader->Read(&resData)) {
     loader_->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
     id++;
-  };
+    };
 
-  Status status = data_reader->Finish();
-  winrt::check_hresult(status.ok());
+    Status status = data_reader->Finish();
+    winrt::check_hresult(status.ok());
 }
 
 void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name){
-  Request req;
-  req.set_client_id(CLIENT_ID);
-  req.set_req_msg(folder_name);
+    Request req;
+    req.set_client_id(CLIENT_ID);
+    req.set_req_msg(folder_name);
 
-  ClientContext context;
-  volumeWholeResponse resData;
-  std::unique_ptr<ClientReader<volumeWholeResponse>> data_reader(
-      stub_->DownloadMasksVolume(&context, req));
+    ClientContext context;
+    volumeWholeResponse resData;
+    std::unique_ptr<ClientReader<volumeWholeResponse>> data_reader(
+        stub_->DownloadMasksVolume(&context, req));
 
-  int id = 0;
-  while (data_reader->Read(&resData)) {
+    int id = 0;
+    while (data_reader->Read(&resData)) {
     loader_->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
     id++;
-  };
-  Status status = data_reader->Finish();
-  winrt::check_hresult(status.ok());
-  DownloadCenterlines(req);
+    };
+    Status status = data_reader->Finish();
+    winrt::check_hresult(status.ok());
+    DownloadCenterlines(req);
 }
 void rpcHandler::DownloadCenterlines(Request req) {
     ClientContext context;
@@ -254,31 +266,26 @@ void rpcHandler::tackle_volume_msg(helmsley::volumeConcise msg){
 	//Manager::new_data_available = true;
 }
 
-
 void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg){
 	//manager_->onReset();
 
-    //auto cvs = msg.check_values();
-    //int num = cvs.size();
+    //checks
+    auto f = msg.check_keys();
+    auto cvs = msg.check_values();
+    Manager::instance()->InitCheckParams(std::vector<std::string>(f.begin(), f.end()), std::vector<bool>(cvs.begin(), cvs.end()));
 
-    //if (param_checks.empty()) {
-    //    auto f = msg.check_keys();
-    //    param_checks = std::vector<std::string>(f.begin(), f.end());
-    //}
+    auto vps = msg.volume_pose();
+    auto cps = msg.camera_pose();
 
-    //Manager::param_bool = std::vector<bool>(cvs.begin(), cvs.end());
-    //Manager::baked_dirty_ = true;
-
-    //auto vps = msg.volume_pose();
-    //auto cps = msg.camera_pose();
-
-    //vrController::instance()->onReset(
-    //    glm::vec3(vps[0], vps[1], vps[2]),
-    //    glm::vec3(vps[3], vps[4], vps[5]),
-    //    glm::make_mat4(vps.Mutable(6)),
-    //    new Camera(
-    //        glm::vec3(cps[0], cps[1], cps[2]),
-    //        glm::vec3(cps[3], cps[4], cps[5]),
-    //        glm::vec3(cps[6], cps[7], cps[8])
-    //    ));
+    vrController::instance()->onReset(
+        glm::vec3(vps[0], vps[1], vps[2]),
+        glm::vec3(vps[3], vps[4], vps[5]),
+        glm::make_mat4(vps.Mutable(6)),
+        nullptr
+        //new Camera(
+        //    DirectX::XMFLOAT3(cps[0], cps[1], cps[2]),
+        //    DirectX::XMFLOAT3(cps[3], cps[4], cps[5]),
+        //    DirectX::XMFLOAT3(cps[6], cps[7], cps[8])
+        //)
+    );
 }

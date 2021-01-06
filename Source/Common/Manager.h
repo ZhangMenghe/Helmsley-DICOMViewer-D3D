@@ -47,8 +47,8 @@ public:
     ~Manager();
     void onReset();
     void onViewChange(int w, int h);
-    void InitCheckParams(int num, const char* keys[], bool values[]);
-    
+    void InitCheckParams(std::vector<std::string> keys, std::vector<bool> values);
+
     static bool IsCuttingEnabled();
     static bool IsCuttingNeedUpdate();
     static bool isRayCasting();

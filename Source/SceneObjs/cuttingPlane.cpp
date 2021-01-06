@@ -13,43 +13,24 @@
 using namespace glm;
 
 cuttingController::cuttingController(ID3D11Device* device) {
-    p_start_ = vec3(.0, .0, 0.6f);
-    p_norm_ = vec3(.0, .0, -1.0);
-    p_rotate_mat_ = rotMatFromDir(p_norm_);
     onReset(device);
 }
 cuttingController::cuttingController(ID3D11Device* device, DirectX::XMMATRIX model_mat) {
     mat4 vm_inv = transpose(inverse(xmmatrix2mat4(model_mat)));
     update_plane_(vm_inv, vec3MatNorm(vm_inv, float32vec3(Manager::camera->getViewDirection())));
-    onReset(device);
+    update_plane_(device);
 }
 cuttingController::cuttingController(ID3D11Device* device, DirectX::XMFLOAT3 ps, DirectX::XMFLOAT3 pn){
     p_start_ = glm::vec3(ps.x, ps.y, ps.z); p_norm_ = glm::vec3(pn.x, pn.y, pn.z);
     p_rotate_mat_ = rotMatFromDir(p_norm_);
-    onReset(device);
+    update_plane_(device);
 }
-void cuttingController::onReset(ID3D11Device* device) {
-    p_point_ = p_start_;
-    // p_point_world = glm::vec3(model_mat* glm::vec4(p_point_,1.0f));
-    p_scale = glm::vec3(DEFAULT_CUTTING_SCALE);
-    update_modelMat_o();
-    rc.point = p_point_; rc.scale = p_scale; rc.rotate_mat = p_rotate_mat_; rc.move_value = cmove_value;
-    baked_dirty = true;
-    if (plane_render_ == nullptr) init_plane_renderer(device);
 
-    if (d3dBlendState == nullptr) {
-        D3D11_BLEND_DESC omDesc;
-        ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
-        omDesc.RenderTarget[0].BlendEnable = TRUE;
-        omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-        omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-        omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-        omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-        omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-        device->CreateBlendState(&omDesc, &d3dBlendState);
-    }
+void cuttingController::onReset(ID3D11Device* device) {
+    p_start_ = vec3(.0, .0, 0.6f);
+    p_norm_ = vec3(.0, .0, -1.0);
+    p_rotate_mat_ = rotMatFromDir(p_norm_);
+    update_plane_(device);
 }
 void cuttingController::init_plane_renderer(ID3D11Device* device) {
     for (int a = 0, i = 0; a < 360; a += 360 / 20, i++) {
@@ -167,6 +148,29 @@ void cuttingController::update_modelMat_o() {
     if (!p_p2o_dirty) return;
     p_p2o_mat = glm::translate(glm::mat4(1.0), p_point_) * p_rotate_mat_ * glm::scale(glm::mat4(1.0), p_scale);
     p_p2o_dirty = false;
+}
+void cuttingController::update_plane_(ID3D11Device* device) {
+    p_point_ = p_start_;
+    // p_point_world = glm::vec3(model_mat* glm::vec4(p_point_,1.0f));
+    p_scale = glm::vec3(DEFAULT_CUTTING_SCALE);
+    update_modelMat_o();
+    rc.point = p_point_; rc.scale = p_scale; rc.rotate_mat = p_rotate_mat_; rc.move_value = cmove_value;
+    baked_dirty = true;
+    if (plane_render_ == nullptr) init_plane_renderer(device);
+
+    if (d3dBlendState == nullptr) {
+        D3D11_BLEND_DESC omDesc;
+        ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
+        omDesc.RenderTarget[0].BlendEnable = TRUE;
+        omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+        omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+        omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        device->CreateBlendState(&omDesc, &d3dBlendState);
+    }
 }
 void cuttingController::update_plane_(glm::mat4 rotMat) {
     p_rotate_mat_ = rotMat;

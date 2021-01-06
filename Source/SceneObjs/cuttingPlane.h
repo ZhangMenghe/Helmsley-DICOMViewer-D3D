@@ -73,6 +73,7 @@ private:
     void init_plane_renderer(ID3D11Device* device);
     bool keep_cutting_position();
     void update_modelMat_o();
+    void update_plane_(ID3D11Device* device);
     void update_plane_(glm::mat4 rotMat);
     void update_plane_(glm::mat4 vm_inv, glm::vec3 pNorm);
     void set_centerline_cutting(dvr::ORGAN_IDS oid, int& id, glm::vec3& pp, glm::vec3& pn);

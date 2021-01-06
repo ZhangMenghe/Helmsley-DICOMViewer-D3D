@@ -40,6 +40,7 @@ void vrController::onReset() {
 	cst_name = "";
 	addStatus("default_status");
 	setMVPStatus("default_status");
+	if (cutter_) cutter_->onReset(m_deviceResources->GetD3DDevice());
 }
 
 void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam) {
@@ -50,9 +51,12 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam
 	glm::mat4 mm = glm::translate(glm::mat4(1.0), pv)
 		* rm
 		* glm::scale(glm::mat4(1.0), sv);
-	addStatus("template", mm, rm, sv, pv, cam);
+	
+	if(cam == nullptr)addStatus("template", mm, rm, sv, pv, Manager::camera);
+	else addStatus("template", mm, rm, sv, pv, cam);
+	
 	setMVPStatus("template");
-
+	if (cutter_) cutter_->onReset(m_deviceResources->GetD3DDevice());
 	volume_model_dirty = false;
 }
 
@@ -207,7 +211,6 @@ void vrController::precompute() {
 	ID3D11ShaderResourceView* texview = tex_volume->GetTextureView();
 	context->CSSetShaderResources(0, 1, &texview);
 	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
-
 
 	if (m_compute_constbuff != nullptr) {
 		// Prepare the constant buffer to send it to the graphics device.

@@ -80,12 +80,6 @@
     <Filter Include="Library\arm64\debug">
       <UniqueIdentifier>{ec0107f7-4242-47ef-bc42-ab1a788573c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data\IRB01">
-      <UniqueIdentifier>{444d1a51-e0dd-4284-b5fc-9698071d08e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs">
-      <UniqueIdentifier>{9a167752-1e4a-4036-bd1c-fd914ae5fa70}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -293,15 +287,6 @@
     <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
     <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
       <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
-    </None>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
-    </None>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -576,5 +561,8 @@
     <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libprotobufd.dll">
       <Filter>Library\arm64\debug</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data" />
+    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask" />
+    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt" />
   </ItemGroup>
 </Project>

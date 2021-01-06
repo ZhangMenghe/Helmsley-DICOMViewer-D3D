@@ -51,13 +51,10 @@ void Manager::onViewChange(int w, int h){
     camera->setProjMat(w, h);
     screen_w = w; screen_h = h;
 }
-void Manager::InitCheckParams(int num, const char* keys[], bool values[]) {
-    param_checks.clear(); param_bool.clear();
-    for (int i = 0; i < num; i++) {
-        param_checks.push_back(std::string(keys[i]));
-        Manager::param_bool.push_back(values[i]);
-        //    LOGE("======SET INIT %s, %d\n", keys[i], values[i]);
-    }
+
+void Manager::InitCheckParams(std::vector<std::string> keys, std::vector<bool> values) {
+    if (keys.size() != values.size()) return;
+    param_checks = keys; param_bool = values;
 
     m_volset_data.u_show_organ = param_bool[dvr::CHECK_MASKON];
     m_volset_data.u_mask_recolor = param_bool[dvr::CHECK_MASK_RECOLOR];

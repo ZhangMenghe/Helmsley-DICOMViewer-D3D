@@ -44,8 +44,7 @@ void uiController::InitAllTuneParam(){
 }
 
 void uiController::InitCheckParam(){
-    const int pnum = 18;
-    const char* keys[pnum] = {
+    std::vector<std::string> keys{
         "Raycasting",
         "Overlays",
         "Cutting",
@@ -65,7 +64,7 @@ void uiController::InitCheckParam(){
         "Points",
         "Planes"
     };
-    bool values[pnum] = {
+    std::vector<bool> values{
     false, //"Raycasting",
     true, //"Overlays",
 
@@ -91,7 +90,7 @@ void uiController::InitCheckParam(){
     false, //"Points",
     false, //"Planes"
     };
-    Manager::instance()->InitCheckParams(pnum, keys, values);
+    Manager::instance()->InitCheckParams(keys, values);
 }
 
 void uiController::setMaskBits(int num, unsigned int mbits){

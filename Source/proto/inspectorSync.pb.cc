@@ -335,21 +335,22 @@ const char descriptor_table_protodef_inspectorSync_2eproto[] PROTOBUF_SECTION_VA
   "\022+\n\ndata_value\030\007 \001(\0132\027.helmsley.volumeCo"
   "ncise\"J\n\007MsgType\022\013\n\007GESTURE\020\000\022\010\n\004TUNE\020\001\022"
   "\t\n\005CHECK\020\002\022\010\n\004MASK\020\003\022\t\n\005RESET\020\004\022\010\n\004DATA\020"
-  "\005*\033\n\007ReqType\022\007\n\003SET\020\000\022\007\n\003GET\020\0012\236\004\n\rinspe"
+  "\005*\033\n\007ReqType\022\007\n\003SET\020\000\022\007\n\003GET\020\0012\322\004\n\rinspe"
   "ctorSync\022+\n\016startBroadcast\022\010.Request\032\017.c"
-  "ommonResponse\0220\n\014gsVolumePose\022\017.helmsley"
-  ".VPMsg\032\017.commonResponse\0223\n\rgetOperations"
-  "\022\010.Request\032\030.helmsley.OperationBatch\0220\n\n"
-  "getUpdates\022\010.Request\032\030.helmsley.FrameUpd"
-  "ateMsg\0222\n\013reqestReset\022\022.helmsley.ResetMs"
-  "g\032\017.commonResponse\0224\n\014setGestureOp\022\023.hel"
-  "msley.GestureOp\032\017.commonResponse\0223\n\rsetT"
-  "uneParams\022\021.helmsley.TuneMsg\032\017.commonRes"
-  "ponse\0225\n\016setCheckParams\022\022.helmsley.Check"
-  "Msg\032\017.commonResponse\0223\n\rsetMaskParams\022\021."
-  "helmsley.MaskMsg\032\017.commonResponse\022<\n\020set"
-  "DisplayVolume\022\027.helmsley.volumeConcise\032\017"
-  ".commonResponseb\006proto3"
+  "ommonResponse\0222\n\025startReceiveBroadcast\022\010"
+  ".Request\032\017.commonResponse\0220\n\014gsVolumePos"
+  "e\022\017.helmsley.VPMsg\032\017.commonResponse\0223\n\rg"
+  "etOperations\022\010.Request\032\030.helmsley.Operat"
+  "ionBatch\0220\n\ngetUpdates\022\010.Request\032\030.helms"
+  "ley.FrameUpdateMsg\0222\n\013reqestReset\022\022.helm"
+  "sley.ResetMsg\032\017.commonResponse\0224\n\014setGes"
+  "tureOp\022\023.helmsley.GestureOp\032\017.commonResp"
+  "onse\0223\n\rsetTuneParams\022\021.helmsley.TuneMsg"
+  "\032\017.commonResponse\0225\n\016setCheckParams\022\022.he"
+  "lmsley.CheckMsg\032\017.commonResponse\0223\n\rsetM"
+  "askParams\022\021.helmsley.MaskMsg\032\017.commonRes"
+  "ponse\022<\n\020setDisplayVolume\022\027.helmsley.vol"
+  "umeConcise\032\017.commonResponseb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_inspectorSync_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
@@ -367,7 +368,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ins
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_inspectorSync_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_inspectorSync_2eproto = {
-  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 1943,
+  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 1995,
   &descriptor_table_inspectorSync_2eproto_once, descriptor_table_inspectorSync_2eproto_sccs, descriptor_table_inspectorSync_2eproto_deps, 9, 1,
   schemas, file_default_instances, TableStruct_inspectorSync_2eproto::offsets,
   file_level_metadata_inspectorSync_2eproto, 9, file_level_enum_descriptors_inspectorSync_2eproto, file_level_service_descriptors_inspectorSync_2eproto,

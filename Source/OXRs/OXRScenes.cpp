@@ -6,7 +6,7 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 
-	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	if (dvr::CONNECT_TO_SERVER) {
 		m_rpcHandler = new rpcHandler("10.68.2.105:23333");
@@ -22,12 +22,12 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 	m_uiController.InitAll();
 }
 void OXRScenes::setup_volume_server() {
-	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);
+	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01", false);
 
 	if (vector.size() > 0) {
 		volumeResponse::volumeInfo sel_vol_info;// = vector[0];
 		for (auto vol : vector) {
-			if (vol.folder_name().compare("21_WATERPOSTCORLAVAFLEX20secs") == 0) {
+			if (vol.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0) {
 				sel_vol_info = vol;
 				break;
 			}
@@ -54,7 +54,7 @@ void OXRScenes::setup_volume_local() {
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 		//m_sceneRenderer.reset();
 	}
-	m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
+	//m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
 	m_dicom_loader.sendDataDone();
 }
 
@@ -65,7 +65,7 @@ void OXRScenes::Update() {
 	m_timer.Tick([&]()
 	{
 		m_sceneRenderer->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
+		//m_fpsTextRenderer->Update(m_timer);
 	});
 }
 bool OXRScenes::Render() {
@@ -74,7 +74,7 @@ bool OXRScenes::Render() {
 		return false;
 	}
 	m_sceneRenderer->Render();
-	m_fpsTextRenderer->Render();
+	//m_fpsTextRenderer->Render();
 
 	/*m_text_texture->Draw(L"asdfasd");
 

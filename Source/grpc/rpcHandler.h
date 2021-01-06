@@ -32,28 +32,27 @@ private:
     std::string DATA_PATH = "dicom-data/";
     std::unique_ptr<helmsley::inspectorSync::Stub> syncer_;
     std::unique_ptr<helmsley::dataTransfer::Stub> stub_;
-	  Request req;
-	  helmsley::FrameUpdateMsg update_msg;
+	Request req;
+	helmsley::FrameUpdateMsg update_msg;
+    bool initialized = false;
 
     Manager* manager_ = nullptr;
     vrController* vr_ = nullptr;
     dicomLoader* loader_ = nullptr;
     uiController* ui_ = nullptr;
 
-    helmsley::FrameUpdateMsg getUpdates();
-    /*void tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops);
-    void tack_tune_msg(helmsley::TuneMsg msg);*/
-    void tackle_volume_msg(helmsley::volumeConcise msg);
-    /*void tackle_reset_msg(helmsley::ResetMsg msg);*/
-
     std::vector<datasetResponse::datasetInfo> availableRemoteDatasets;
     std::vector<datasetResponse::datasetInfo> availableLocalDatasets;
+    
+    helmsley::FrameUpdateMsg getUpdates();
 
+    void tackle_volume_msg(helmsley::volumeConcise msg);
     void tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops);
     void tack_tune_msg(helmsley::TuneMsg msg);
     void tack_check_msg(helmsley::CheckMsg msg);
     void tack_mask_msg(helmsley::MaskMsg msg);
     void tackle_reset_msg(helmsley::ResetMsg msg);
+    void receiver_register();
 public:
     rpcHandler(const std::string& host);
     ~rpcHandler();

@@ -696,20 +696,20 @@
     <None Include="..\..\Source\proto_src\common.proto" />
     <None Include="..\..\Source\proto_src\inspectorSync.proto" />
     <None Include="..\..\Source\proto_src\transManager.proto" />
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
+    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
-    </None>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-    </None>
+    </CopyFileToFolders>
     <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
@@ -888,12 +888,12 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt">
+    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-    </None>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
