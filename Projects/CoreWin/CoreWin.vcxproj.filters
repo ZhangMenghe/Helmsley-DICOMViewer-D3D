@@ -160,6 +160,9 @@
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\BasicReaderWriter.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -257,6 +260,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h">
       <Filter>Source\SceneObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\BasicReaderWriter.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

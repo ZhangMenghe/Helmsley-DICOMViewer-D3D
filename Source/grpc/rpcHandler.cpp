@@ -121,6 +121,30 @@ vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string
     return ret;
 }
 
+std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles() {
+    std::vector<configResponse::configInfo> available_config_files;
+
+    configResponse response;
+    ClientContext context;
+
+    stub_->getAvailableConfigs(&context, req, &response);
+
+    for (configResponse::configInfo config : response.configs()) {
+        available_config_files.push_back(config);
+    }
+
+    return available_config_files;
+}
+void rpcHandler::exportConfigs(std::string content) {
+    if (content.empty()) return;
+
+    ClientContext context;
+    commonResponse response;
+    Request creq;
+    creq.set_client_id(CLIENT_ID); creq.set_req_msg(content);
+    stub_->exportConfigs(&context, creq, &response);
+}
+
 void rpcHandler::DownloadVolume(const string& folder_path){
     RequestWholeVolume req;
     req.set_client_id(CLIENT_ID);

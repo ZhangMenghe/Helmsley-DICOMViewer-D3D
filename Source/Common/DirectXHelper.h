@@ -12,19 +12,14 @@ namespace DX
 			throw Platform::Exception::CreateException(hr);
 		}
 	}
-
-	// Function that reads from a binary file asynchronously.
-	inline Concurrency::task<std::vector<byte>> ReadDataAsync(const std::wstring& filename)
-	{
+	inline Concurrency::task<std::vector<byte>> ReadDataAsync(const std::wstring& filename, Windows::Storage::StorageFolder^ folder) {
 		using namespace Windows::Storage;
 		using namespace Concurrency;
 
-		auto folder = Windows::ApplicationModel::Package::Current->InstalledLocation;
-
-		return create_task(folder->GetFileAsync(Platform::StringReference(filename.c_str()))).then([] (StorageFile^ file) 
+		return create_task(folder->GetFileAsync(Platform::StringReference(filename.c_str()))).then([](StorageFile^ file)
 		{
 			return FileIO::ReadBufferAsync(file);
-		}).then([] (Streams::IBuffer^ fileBuffer) -> std::vector<byte> 
+		}).then([](Streams::IBuffer^ fileBuffer) -> std::vector<byte>
 		{
 			std::vector<byte> returnBuffer;
 			returnBuffer.resize(fileBuffer->Length);
@@ -33,6 +28,24 @@ namespace DX
 		});
 	}
 
+	// Function that reads from a binary file asynchronously.
+	inline Concurrency::task<std::vector<byte>> ReadDataAsync(const std::wstring& filename)
+	{
+		return ReadDataAsync(filename, Windows::ApplicationModel::Package::Current->InstalledLocation);
+	}
+
+	inline Concurrency::task<void> WriteDataAsync(const std::wstring& filename, byte* fileData, int dsize){//const Platform::Array<byte>^ fileData) {
+		using namespace Windows::Storage;
+		using namespace Concurrency;
+
+		auto folder = ApplicationData::Current->LocalFolder;
+
+		return create_task(folder->CreateFileAsync(Platform::StringReference(filename.c_str()), CreationCollisionOption::ReplaceExisting)).then([=](StorageFile^ file)
+		{
+			Platform::Array<byte>^ data = ref new Platform::Array<byte>(fileData,dsize);
+			FileIO::WriteBytesAsync(file, data);
+		});
+	}
 	// Converts a length in device-independent pixels (DIPs) to a length in physical pixels.
 	inline float ConvertDipsToPixels(float dips, float dpi)
 	{

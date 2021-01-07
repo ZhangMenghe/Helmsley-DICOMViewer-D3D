@@ -24,6 +24,7 @@ template<class T>
 using RPCVector = google::protobuf::RepeatedPtrField<T>;
 using helmsley::datasetResponse;
 using helmsley::volumeResponse;
+using helmsley::configResponse;
 
 #define CLIENT_ID 6
 
@@ -66,11 +67,12 @@ public:
     void setDataPath(std::string path){DATA_PATH = path;}
 
     void Run();
-
-    //void getAvailableConfigs();
-    //void exportConfigs();
+    
     std::vector<datasetResponse::datasetInfo> getAvailableDatasets(bool isLocal);
     std::vector<volumeResponse::volumeInfo> getVolumeFromDataset(const std::string & dataset_name, bool isLocal);
+    std::vector<configResponse::configInfo> getAvailableConfigFiles();
+    void exportConfigs(std::string content);
+
     void DownloadVolume(const std::string & folder_path);
     void DownloadMasksAndCenterlines(const std::string & folder_name);
     void DownloadCenterlines(Request req);

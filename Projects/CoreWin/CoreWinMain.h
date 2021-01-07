@@ -55,6 +55,9 @@ namespace CoreWin{
 		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
 		//DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
 
+		std::string content = "hello world";
+		std::vector<char> mbytes;
+
 		void setup_volume_server();
 		void setup_volume_local();
 	};

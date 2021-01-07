@@ -37,6 +37,31 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
+/*
+
+	/// <summary>
+	/// debug only:write and read contents
+	/// </summary>
+	/// <param name="deviceResources"></param>
+	mbytes = std::vector<char>(content.begin(), content.end());
+	mbytes.push_back('\0');
+	byte* c = reinterpret_cast<byte*>(&mbytes[0]);
+
+	//auto cbytes = reinterpret_cast<const byte*>(content.c_str());
+	auto writeTestTask = DX::WriteDataAsync(L"guaguagua.txt", c, mbytes.size());
+
+	writeTestTask.then([]() {
+		auto readTestTask = DX::ReadDataAsync(L"guaguagua.txt", Windows::Storage::ApplicationData::Current->LocalFolder);
+		readTestTask.then([](const std::vector<byte>& fileData) {
+			//const char* p = reinterpret_cast<const char*>(&fileData[0]);
+			std::string s(reinterpret_cast<const char*>(&fileData[0]), fileData.size());
+			std::cout << "do sth";
+		});
+	});
+
+	*/
+
+
 }
 void CoreWinMain::setup_volume_server(){
 	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);
