@@ -35,8 +35,8 @@ void Manager::onReset(){
     baked_dirty_ = true;
 }
 
-void Manager::updateCamera(const XrPosef & pose, const XrFovf & fov) {
-  camera->update(pose, fov);
+void Manager::updateCamera(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj) {
+  camera->update(pose, proj);
 }
 
 void Manager::onViewChange(int w, int h){

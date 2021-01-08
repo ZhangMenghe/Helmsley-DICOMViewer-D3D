@@ -8,9 +8,6 @@
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
 #include <Renderers/textureBasedVolumeRenderer.h>
-#include <pbr/PbrModel.h>
-#include <pbr/PbrMaterial.h>
-#include <pbr/PbrModelObject.h>
 
 #include <Renderers/screenQuadRenderer.h>
 #include <SceneObjs/cuttingPlane.h>
@@ -55,30 +52,6 @@ struct computeConstantBuffer{
 	UINT u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
 };
 
-struct HandData {
-	std::shared_ptr<XrHandTrackerEXT> TrackerHandle;
-
-	// Data to display hand joints tracking
-	std::shared_ptr<PbrModelObject> JointModel;
-	std::array<Pbr::NodeIndex_t, XR_HAND_JOINT_COUNT_EXT> PbrNodeIndices{};
-	std::array<XrHandJointLocationEXT, XR_HAND_JOINT_COUNT_EXT> JointLocations{};
-
-	// Data to display hand mesh tracking
-	std::shared_ptr<XrSpace> MeshSpace;
-	std::shared_ptr<XrSpace> ReferenceMeshSpace;
-	std::vector<DirectX::XMFLOAT4> VertexColors;
-	std::shared_ptr<PbrModelObject> MeshObject;
-
-	// Data to process open-palm reference hand.
-	XrHandMeshMSFT meshState{ XR_TYPE_HAND_MESH_MSFT };
-	std::unique_ptr<uint32_t[]> IndexBuffer{};
-	std::unique_ptr<XrHandMeshVertexMSFT[]> VertexBuffer{};
-
-	HandData() = default;
-	HandData(HandData&&) = delete;
-	HandData(const HandData&) = delete;
-};
-
 class vrController{
 public:
 	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
@@ -92,7 +65,7 @@ public:
 	void CreateWindowSizeDependentResources();
 	void ReleaseDeviceDependentResources();
 	void Update(DX::StepTimer const& timer);
-	void Update(XrTime time);
+	//void Update(XrTime time);
 	void Render();
 	void StartTracking();
 	void TrackingUpdate(float positionX);
@@ -116,7 +89,7 @@ public:
 	void setMVPStatus(std::string status_name);
 	void setupCenterLine(int id, float* data);
 
-	void setSpaces(XrSpace * space, XrSpace * app_space);
+	//void setSpaces(XrSpace * space, XrSpace * app_space);
 
 	//getter
 	Texture* getVolumeTex() { return tex_volume; }
@@ -124,8 +97,8 @@ public:
 	bool isDirty();
 
 private:
-	XrSpace * space;
-	XrSpace * app_space;
+	//XrSpace * space;
+	//XrSpace * app_space;
 
 	static vrController* myPtr_;
 
@@ -150,7 +123,7 @@ private:
 
 	computeConstantBuffer m_cmpdata;
 
-	DirectX::XMMATRIX SpaceMat_;
+	glm::mat4 SpaceMat_;
 
 	glm::mat4 ModelMat_, RotateMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
@@ -160,18 +133,18 @@ private:
 	//UI
 	bool m_IsPressed = false;
 
-	DirectX::XMFLOAT2 Mouse_old;
+	//DirectX::XMFLOAT2 Mouse_old;
 
 	bool m_IsPressed_left = false;
 	bool m_IsPressed_right = false;
-	DirectX::XMFLOAT3 Mouse3D_old_left;
-	DirectX::XMFLOAT3 Mouse3D_old_right;
+	glm::vec3 Mouse3D_old_left;
+	glm::vec3 Mouse3D_old_right;
 
-	DirectX::XMFLOAT3 Mouse3D_old_mid;
+	glm::vec3 Mouse3D_old_mid;
 
 	float sens = 1.0f;// 0.1f;
 
-	XrVector3f vector_old;
+	glm::vec3 vector_old;
 	float distance_old = 0;
 	float uniScale = 0.5f;
 
@@ -184,20 +157,6 @@ private:
 
 	//uint32	m_indexCount;
 	//Texture* texture = nullptr;
-
-	// hand
-
-	Context context;
-	enum class HandDisplayMode { Mesh, Joints, Count };
-	HandDisplayMode m_mode{ HandDisplayMode::Mesh };
-
-	std::shared_ptr<Pbr::Material> m_meshMaterial, m_jointMaterial;
-
-	HandData m_leftHandData;
-	HandData m_rightHandData;
-
-	// Anchor
-	XrSpatialAnchorMSFT* xrSpatialAnchorMSFT;
 	
 	//texture
 	/*ID3D11SamplerState* m_sampleState;

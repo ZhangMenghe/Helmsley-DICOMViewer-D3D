@@ -3,6 +3,8 @@
 #include <thread> // sleep_for
 #include <Common/Manager.h>
 #include <Common/DirectXHelper.h>
+#include <Utils/XrMath.h>
+
 using namespace DX;
 OXRManager::OXRManager()
 :DeviceResources(true){
@@ -617,7 +619,8 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 			scene->onViewChanged();
 			Manager::instance()->onViewChange(m_outputSize.Width, m_outputSize.Height);
 		}
-		Manager::instance()->updateCamera(views[i].pose, views[i].fov);
+		xr::math::NearFar nearFar = { 0.01f, 100.0f };
+		Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
 		scene->Update(predictedTime);
 		scene->Render();

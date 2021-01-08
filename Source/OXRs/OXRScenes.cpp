@@ -52,7 +52,7 @@ void OXRScenes::onViewChanged() {
 void OXRScenes::setSpaces(XrSpace * space, XrSpace * app_space) {
 	this->space = space;
 	this->app_space = app_space;
-	this->m_sceneRenderer->setSpaces(space, app_space);
+	//this->m_sceneRenderer->setSpaces(space, app_space);
 }
 void OXRScenes::Update() {
 	m_timer.Tick([&]()
@@ -64,7 +64,7 @@ void OXRScenes::Update() {
 }
 
 void OXRScenes::Update(XrTime time) {
-	m_sceneRenderer->Update(time);
+	//m_sceneRenderer->Update(time);
 }
 
 bool OXRScenes::Render() {

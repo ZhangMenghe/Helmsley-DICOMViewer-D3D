@@ -148,10 +148,10 @@
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp">
+    <ClCompile Include="..\..\Source\Renderers\lineRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Renderers\lineRenderer.cpp">
+    <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -240,10 +240,10 @@
     <ClInclude Include="..\..\Source\Utils\TypeConvertUtils.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h">
+    <ClInclude Include="..\..\Source\Renderers\lineRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Renderers\lineRenderer.h">
+    <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
   </ItemGroup>

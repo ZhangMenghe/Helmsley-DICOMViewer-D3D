@@ -18,7 +18,7 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 
 	// After the vertex shader file is loaded, create the shader and input layout.
 	auto createVSTask = loadVSTask.then([this, device](const std::vector<byte>& fileData) {
-		create_vertex_shader(device, fileData);
+	  create_vertex_shader(device, fileData);
 	});
 
 

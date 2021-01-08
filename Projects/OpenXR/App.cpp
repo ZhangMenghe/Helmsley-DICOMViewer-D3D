@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "OXRs/OXRManager.h"
 #include <OXRs/OXRScenes.h>
+#include <Utils/XrMath.h>
 
 DX::OXRManager* oxr_manager = nullptr;
 std::unique_ptr<OXRScenes> m_oxr_scene;

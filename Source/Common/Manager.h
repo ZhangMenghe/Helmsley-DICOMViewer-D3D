@@ -25,7 +25,7 @@ public:
     ~Manager();
     void onReset();
     void onViewChange(int w, int h);
-    void updateCamera(const XrPosef& pose, const XrFovf& fov);
+    void updateCamera(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj);
     static bool IsCuttingEnabled();
     static bool IsCuttingNeedUpdate();
 private:

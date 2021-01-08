@@ -2,7 +2,6 @@
 #define D3DPIPELINE_CAMERA_H
 #include "pch.h"
 
-#include <Utils/XrMath.h>
 class Camera {
     const char* name_;
 
@@ -13,7 +12,6 @@ class Camera {
 
     const float NEAR_PLANE = 0.01f;//as close as possible
     const float FAR_PLANE = 100.0f;
-    xr::math::NearFar nearFar = { NEAR_PLANE, FAR_PLANE };
     DirectX::XMFLOAT3 ORI_CAM_POS = { 0.0f, .0f, 1.5f};
     DirectX::XMFLOAT3 ORI_UP = { 0.0f, 1.0f, 0.0f };
     DirectX::XMFLOAT3 ORI_FRONT = { 0.0f, 0.0f, -1.0f };
@@ -81,10 +79,10 @@ public:
         _projMat = DirectX::XMMatrixTranspose(_projMat * orientationMatrix);
     }
 
-    void update(const XrPosef& pose, const XrFovf& fov) {
-      _viewMat = DirectX::XMMatrixTranspose(xr::math::LoadInvertedXrPose(pose));
-      _projMat = DirectX::XMMatrixTranspose(xr::math::ComposeProjectionMatrix(fov, nearFar));
-      DirectX::XMVECTOR temp = DirectX::XMVector3Transform(XMLoadFloat3(&ORI_FRONT), DirectX::XMMatrixRotationQuaternion(xr::math::LoadXrQuaternion(pose.orientation)));
+    void update(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj) {
+      _viewMat = DirectX::XMMatrixTranspose(pose);
+      _projMat = DirectX::XMMatrixTranspose(proj);
+      DirectX::XMVECTOR temp = DirectX::XMVector3Transform(XMLoadFloat3(&ORI_FRONT), DirectX::XMMatrixRotationQuaternion(DirectX::XMQuaternionRotationMatrix(pose)));
       DirectX::XMStoreFloat3(
         &_front,
         temp);

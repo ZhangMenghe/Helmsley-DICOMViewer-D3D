@@ -112,7 +112,7 @@ bool dicomLoader::setupCenterLineData(vrController* controller, std::string file
     return true;
 }
 
-void dicomLoader::send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, char* data){
+void dicomLoader::send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, const char* data){
     //check initialization
     if(!g_VolumeTexData) return;
     UCHAR* buffer = g_VolumeTexData+n_data_offset[(int)target];

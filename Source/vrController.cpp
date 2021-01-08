@@ -32,7 +32,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	onReset();
 }
 void vrController::onReset() {
-	SpaceMat_ = xr::math::LoadXrPose(xr::math::Pose::Identity());
+	SpaceMat_ = glm::mat4();
 	PosVec3_.z = -1.0f;
 	Mouse_old = { .0f, .0f };
 	rStates_.clear();
@@ -107,101 +107,6 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	// Generate mipmaps for this texture.
 	tex_baked->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
 	init_texture();
-
-	Pbr::Resources * pbrResources = new Pbr::Resources(m_deviceResources->GetD3DDevice());
-
-	// Set up a light source (an image-based lighting environment map will also be loaded and contribute to the scene lighting).
-	pbrResources->SetLight({ 0.0f, 0.7071067811865475f, 0.7071067811865475f }, Pbr::RGB::White);
-
-	// Read the BRDF Lookup Table used by the PBR system into a DirectX texture.
-	std::vector<byte> brdfLutFileData = ReadFileBytes(FindFileInAppFolder(L"brdf_lut.png", { "", L"Pbr_uwp" }));
-	winrt::com_ptr<ID3D11ShaderResourceView> brdLutResourceView =
-		Pbr::Texture::LoadTextureImage(m_deviceResources->GetD3DDevice(), brdfLutFileData.data(), (uint32_t)brdfLutFileData.size());
-	pbrResources->SetBrdfLut(brdLutResourceView.get());
-
-	winrt::com_ptr<ID3D11ShaderResourceView> diffuseTextureView;
-	winrt::com_ptr<ID3D11ShaderResourceView> specularTextureView;
-
-	diffuseTextureView = Pbr::Texture::CreateFlatCubeTexture(m_deviceResources->GetD3DDevice(), Pbr::RGBA::White);
-	specularTextureView = Pbr::Texture::CreateFlatCubeTexture(m_deviceResources->GetD3DDevice(), Pbr::RGBA::White);
-
-	pbrResources->SetEnvironmentMap(specularTextureView.get(), diffuseTextureView.get());
-
-
-	context.PbrResources = pbrResources;
-	context.DeviceContext = m_deviceResources->GetD3DDeviceContext();
-
-	m_jointMaterial = Pbr::Material::CreateFlat(*context.PbrResources, Pbr::RGBA::White, 0.85f, 0.01f);
-	m_meshMaterial = Pbr::Material::CreateFlat(*context.PbrResources, Pbr::RGBA::White, 1, 0);
-
-	auto createJointObjects = [&](HandData& handData) {
-		auto jointModel = std::make_shared<Pbr::Model>();
-		Pbr::PrimitiveBuilder primitiveBuilder;
-
-		// Create a axis object attached to each joint location
-		for (uint32_t k = 0; k < std::size(handData.PbrNodeIndices); k++) {
-			handData.PbrNodeIndices[k] = jointModel->AddNode(DirectX::XMMatrixIdentity(), Pbr::RootNodeIndex, "joint");
-			primitiveBuilder.AddAxis(1.0f, 0.5f, handData.PbrNodeIndices[k]);
-		}
-
-		// Now that the axis have been added for each joint into the primitive builder,
-		// it can be baked into the model as a single primitive.
-		jointModel->AddPrimitive(Pbr::Primitive(*context.PbrResources, primitiveBuilder, m_jointMaterial));
-		//handData.JointModel = AddObject(std::make_shared<PbrModelObject>(std::move(jointModel)));
-		//handData.JointModel->SetVisible(false);
-	};
-
-	//// For each hand, initialize the joint objects, hand mesh buffers and corresponding spaces.
-	//const std::tuple<XrHandEXT, HandData&> hands[] = { {XrHandEXT::XR_HAND_LEFT_EXT, m_leftHandData},
-	//																									{XrHandEXT::XR_HAND_RIGHT_EXT, m_rightHandData} };
-	//for (const auto& [hand, handData] : hands) {
-	//	XrHandTrackerCreateInfoEXT createInfo{ XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT };
-	//	createInfo.hand = hand;
-	//	createInfo.handJointSet = XR_HAND_JOINT_SET_DEFAULT_EXT;
-	//	context.Extensions->xrCreateHandTrackerEXT(
-	//		,
-	//		&createInfo,
-	//		handData.TrackerHandle.get());
-
-	//	createJointObjects(handData);
-
-	//	// Initialize buffers to receive hand mesh indices and vertices
-	//	const XrSystemHandTrackingMeshPropertiesMSFT& handMeshSystemProperties = context.System.HandMeshProperties;
-	//	handData.IndexBuffer = std::make_unique<uint32_t[]>(handMeshSystemProperties.maxHandMeshIndexCount);
-	//	handData.VertexBuffer = std::make_unique<XrHandMeshVertexMSFT[]>(handMeshSystemProperties.maxHandMeshVertexCount);
-
-	//	handData.meshState.indexBuffer.indexCapacityInput = handMeshSystemProperties.maxHandMeshIndexCount;
-	//	handData.meshState.indexBuffer.indices = handData.IndexBuffer.get();
-	//	handData.meshState.vertexBuffer.vertexCapacityInput = handMeshSystemProperties.maxHandMeshVertexCount;
-	//	handData.meshState.vertexBuffer.vertices = handData.VertexBuffer.get();
-
-	//	XrHandMeshSpaceCreateInfoMSFT meshSpaceCreateInfo{ XR_TYPE_HAND_MESH_SPACE_CREATE_INFO_MSFT };
-	//	meshSpaceCreateInfo.poseInHandMeshSpace = xr::math::Pose::Identity();
-	//	meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_TRACKED_MSFT;
-	//	context.Extensions->xrCreateHandMeshSpaceMSFT(
-	//		*handData.TrackerHandle, &meshSpaceCreateInfo, handData.MeshSpace.get());
-
-	//	meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_REFERENCE_OPEN_PALM_MSFT;
-	//	context.Extensions->xrCreateHandMeshSpaceMSFT(
-	//		*handData.TrackerHandle, &meshSpaceCreateInfo, handData.ReferenceMeshSpace.get());
-	//}
-
-	//// Set a clap detector that will toggle the display mode.
-	//m_clapDetector = std::make_unique<StateChangeDetector>(
-	//	[this](XrTime time) {
-	//	const XrHandJointLocationEXT& leftPalmLocation = m_leftHandData.JointLocations[XR_HAND_JOINT_PALM_EXT];
-	//	const XrHandJointLocationEXT& rightPalmLocation = m_rightHandData.JointLocations[XR_HAND_JOINT_PALM_EXT];
-
-	//	if (xr::math::Pose::IsPoseValid(leftPalmLocation) && xr::math::Pose::IsPoseValid(rightPalmLocation)) {
-	//		const XMVECTOR leftPalmPosition = xr::math::LoadXrVector3(leftPalmLocation.pose.position);
-	//		const XMVECTOR rightPalmPosition = xr::math::LoadXrVector3(rightPalmLocation.pose.position);
-	//		const float distance = XMVectorGetX(XMVector3Length(XMVectorSubtract(leftPalmPosition, rightPalmPosition)));
-	//		return distance - leftPalmLocation.radius - rightPalmLocation.radius < 0.02 /*meter*/;
-	//	}
-
-	//	return false;
-	//},
-	//	[this]() { m_mode = (HandDisplayMode)(((uint32_t)m_mode + 1) % (uint32_t)HandDisplayMode::Count); });
 
 	Manager::baked_dirty_ = true;
 
@@ -329,11 +234,11 @@ void vrController::Update(DX::StepTimer const& timer) {
 	}
 }
 
-void vrController::Update(XrTime time) {
-	XrSpaceLocation origin{ XR_TYPE_SPACE_LOCATION };
+//void vrController::Update(XrTime time) {
+	//XrSpaceLocation origin{ XR_TYPE_SPACE_LOCATION };
 	//xrLocateSpace(*space, *app_space, time, &origin);
 	//SpaceMat_ = xr::math::LoadXrPose(origin.pose);
-}
+//}
 
 // Rotate the 3D cube model a set amount of radians.
 void vrController::Rotate(float radians){
@@ -532,8 +437,8 @@ void vrController::onSingle3DTouchDown(float x, float y, float z, int side) {
 		m_IsPressed_left = true;
 		if(m_IsPressed_right) {
 		  // record distance for scaling
-			XrVector3f delta = { x = Mouse3D_old_right.x , y - Mouse3D_old_right.y, z - Mouse3D_old_right.z };
-			distance_old = xr::math::Length(delta);
+			glm::vec3 delta = { x = Mouse3D_old_right.x , y - Mouse3D_old_right.y, z - Mouse3D_old_right.z };
+			distance_old = glm::length(delta);
 			vector_old = delta;
 
 		}
@@ -542,8 +447,8 @@ void vrController::onSingle3DTouchDown(float x, float y, float z, int side) {
 		m_IsPressed_right = true;
 		if (m_IsPressed_left) {
 			// record distance for scaling
-			XrVector3f delta = { x - Mouse3D_old_left.x , y - Mouse3D_old_left.y, z - Mouse3D_old_left.z };
-			distance_old = xr::math::Length(delta);
+			glm::vec3 delta = { x - Mouse3D_old_left.x , y - Mouse3D_old_left.y, z - Mouse3D_old_left.z };
+			distance_old = glm::length(delta);
 			vector_old = delta;
 		}
 	}
@@ -617,20 +522,20 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
     }
   }else {
     // both hand: scale
-		XrVector3f delta;
-		XrVector3f midpoint;
+		glm::vec3 delta;
+		glm::vec3 midpoint;
 		if (side == 0) {
 			delta.x = x - Mouse3D_old_right.x;
 			delta.y = y - Mouse3D_old_right.y;
 			delta.z = z - Mouse3D_old_right.z;
 
-			float distance = xr::math::Length(delta);
+			float distance = glm::length(delta);
 
 			// Scale
 			float ratio = distance / distance_old;
 
 			// Midpoint
-			midpoint = XrVector3f{ (x + Mouse3D_old_right.x) / 2.0f, (y + Mouse3D_old_right.y) / 2.0f, (z + Mouse3D_old_right.z) / 2.0f };
+			midpoint = glm::vec3{ (x + Mouse3D_old_right.x) / 2.0f, (y + Mouse3D_old_right.y) / 2.0f, (z + Mouse3D_old_right.z) / 2.0f };
 
 			if (ratio > 0.8f && ratio < 1.2f) {
 				uniScale *= ratio;
@@ -645,13 +550,13 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
 			delta.y = Mouse3D_old_left.y - y;
 			delta.z = Mouse3D_old_left.z - z;
 
-			float distance = xr::math::Length(delta);
+			float distance = glm::length(delta);
 
 			// Scale
 			float ratio = distance / distance_old;
 
 			// Midpoint
-			midpoint = XrVector3f{ (x + Mouse3D_old_left.x) / 2.0f, (y + Mouse3D_old_left.y) / 2.0f, (z + Mouse3D_old_left.z) / 2.0f };
+			midpoint = glm::vec3{ (x + Mouse3D_old_left.x) / 2.0f, (y + Mouse3D_old_left.y) / 2.0f, (z + Mouse3D_old_left.z) / 2.0f };
 
 			if (ratio > 0.8f && ratio < 1.2f) {
 				uniScale *= ratio;
@@ -663,8 +568,8 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
 		}
 
 		// move
-		XrVector3f mid_delta = XrVector3f{ midpoint.x - Mouse3D_old_mid.x, midpoint.y - Mouse3D_old_mid.y, midpoint.z - Mouse3D_old_mid.z };
-		if (xr::math::Length(mid_delta) < 0.01f) {
+		glm::vec3 mid_delta = glm::vec3{ midpoint.x - Mouse3D_old_mid.x, midpoint.y - Mouse3D_old_mid.y, midpoint.z - Mouse3D_old_mid.z };
+		if (glm::length(mid_delta) < 0.01f) {
 			PosVec3_.x += mid_delta.x;
 			PosVec3_.y += mid_delta.y;
 			PosVec3_.z += mid_delta.z;
@@ -673,15 +578,14 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
 		Mouse3D_old_mid = { midpoint.x , midpoint.y , midpoint.z };
 
 		// rotate
-		XrVector3f curr = xr::math::Normalize(XrVector3f{ delta.x, 0, delta.z });
-		XrVector3f old = xr::math::Normalize(XrVector3f{ vector_old.x, 0, vector_old.z });
-		XrVector3f axis = xr::math::Normalize(xr::math::Cross(old, curr));
-		float angle = std::acos(xr::math::Dot(old, curr));
+		glm::vec3 curr = glm::normalize(glm::vec3{ delta.x, 0, delta.z });
+		glm::vec3 old = glm::normalize(glm::vec3{ vector_old.x, 0, vector_old.z });
+		glm::vec3 axis = glm::normalize(glm::cross(old, curr));
+		float angle = std::acos(glm::dot(old, curr));
 
 
 		if (angle < 0.5f && angle > 0.01f) {
-			auto q = xr::math::Quaternion::RotationAxisAngle(axis, angle);
-			auto rot = XMMatrixRotationQuaternion(xr::math::LoadXrQuaternion(q));
+			glm::mat4 rot = glm::toMat4(glm::angleAxis(angle, axis));
 
 			//char debug[256];
 			//sprintf(debug, "Touch %f\n", angle);
@@ -689,7 +593,7 @@ void vrController::on3DTouchMove(float x, float y, float z, int side) {
 
 			RotateMat_ *= rot;
 		}
-		vector_old = xr::math::Normalize(delta);
+		vector_old = glm::normalize(delta);
   }
 
 }
@@ -728,7 +632,8 @@ void vrController::onPan(float x, float y) {
 void vrController::updateVolumeModelMat() {
 	ModelMat_ = glm::translate(glm::mat4(1.0), PosVec3_)
 		* RotateMat_
-		* glm::scale(glm::mat4(1.0), ScaleVec3_);
+		* glm::scale(glm::mat4(1.0), ScaleVec3_)
+    * glm::scale(glm::mat4(1.0), glm::vec3(uniScale, uniScale, uniScale));
 }
 
 bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam) {
@@ -778,10 +683,10 @@ void vrController::setupCenterLine(int id, float* data) {
 	//cutter_->setupCenterLine((dvr::ORGAN_IDS)oid, data);
 }
 
-void vrController::setSpaces(XrSpace * space, XrSpace * app_space) {
-  this->space = space;
-	this->app_space = app_space;
-}
+//void vrController::setSpaces(XrSpace * space, XrSpace * app_space) {
+//  this->space = space;
+//	this->app_space = app_space;
+//}
 
 void vrController::ReleaseDeviceDependentResources(){
 	raycast_renderer->Clear();
