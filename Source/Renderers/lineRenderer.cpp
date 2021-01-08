@@ -6,6 +6,8 @@ using namespace DirectX;
 lineRenderer::lineRenderer(ID3D11Device* device, int uid)
 :baseRenderer(device, L"Naive3DVertexShader.cso", L"NaiveColorPixelShader.cso"),
 m_uid(uid){
+	this->initialize();
+
 	D3D11_BLEND_DESC omDesc;
 	ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
 	omDesc.RenderTarget[0].BlendEnable = TRUE;

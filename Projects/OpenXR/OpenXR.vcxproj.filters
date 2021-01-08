@@ -414,10 +414,10 @@
     <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
@@ -727,8 +727,5 @@
     <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libprotobufd.dll">
       <Filter>Library\arm64\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data" />
-    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask" />
-    <CopyFileToFolders Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt" />
   </ItemGroup>
 </Project>

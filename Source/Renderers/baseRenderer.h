@@ -46,6 +46,13 @@ protected:
 	UINT m_vertex_stride = 0, m_vertex_offset = 0;
 	UINT m_vertice_count, m_index_count;
 
+	ID3D11Device* device;
+	const wchar_t* vname;
+	const wchar_t* pname;
+	const float* vdata;
+  const unsigned short* idata;
+
+	virtual void initialize();
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
 	void initialize_vertices(ID3D11Device* device, const float* vdata);

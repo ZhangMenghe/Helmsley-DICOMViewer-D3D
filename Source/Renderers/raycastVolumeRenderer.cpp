@@ -12,7 +12,7 @@ raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
 		48, 36
 	)
 {
-
+	this->initialize();
 }
 
 void raycastVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {

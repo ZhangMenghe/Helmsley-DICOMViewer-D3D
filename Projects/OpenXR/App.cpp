@@ -26,9 +26,9 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	XrSpace refSpace = oxr_manager->createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL, xr::math::Pose::Translation({ 0, 0, -1 }));
 
 	// Create anchor for volume origin
-	XrSpace volumeSpace = oxr_manager->createAnchorSpace(xr::math::Pose::Translation({ 0, 0, -1 }));
+	//XrSpace volumeSpace = oxr_manager->createAnchorSpace(xr::math::Pose::Translation({ 0, 0, -1 }));
 
-	m_oxr_scene->setSpaces(&volumeSpace, oxr_manager->getAppSpace());
+	//m_oxr_scene->setSpaces(&volumeSpace, oxr_manager->getAppSpace());
 
 	auto onSingle3DTouchDown = [&](float x, float y, float z, int side) {
 		m_oxr_scene->onSingle3DTouchDown(x, y, z, side);
