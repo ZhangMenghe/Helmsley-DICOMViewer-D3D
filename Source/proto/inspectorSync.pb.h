@@ -126,9 +126,10 @@ inline bool VPMsg_VPType_Parse(
 }
 enum GestureOp_OPType : int {
   GestureOp_OPType_TOUCH_DOWN = 0,
-  GestureOp_OPType_TOUCH_MOVE = 1,
-  GestureOp_OPType_SCALE = 2,
-  GestureOp_OPType_PAN = 3,
+  GestureOp_OPType_TOUCH_UP = 1,
+  GestureOp_OPType_TOUCH_MOVE = 2,
+  GestureOp_OPType_SCALE = 3,
+  GestureOp_OPType_PAN = 4,
   GestureOp_OPType_GestureOp_OPType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   GestureOp_OPType_GestureOp_OPType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
@@ -568,6 +569,8 @@ class GestureOp PROTOBUF_FINAL :
   typedef GestureOp_OPType OPType;
   static constexpr OPType TOUCH_DOWN =
     GestureOp_OPType_TOUCH_DOWN;
+  static constexpr OPType TOUCH_UP =
+    GestureOp_OPType_TOUCH_UP;
   static constexpr OPType TOUCH_MOVE =
     GestureOp_OPType_TOUCH_MOVE;
   static constexpr OPType SCALE =

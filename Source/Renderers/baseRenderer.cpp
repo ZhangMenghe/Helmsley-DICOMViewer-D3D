@@ -53,6 +53,25 @@ void baseRenderer::initialize_vertices(ID3D11Device* device, const float* vdata)
 		)
 	);
 }
+void baseRenderer::createDynamicVertexBuffer(ID3D11Device* device, int vertex_num) {
+	m_vertice_count = vertex_num;
+
+	D3D11_BUFFER_DESC vDesc;
+	vDesc.Usage = D3D11_USAGE_DYNAMIC;
+	vDesc.ByteWidth = sizeof(float) * m_vertice_count;
+	vDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vDesc.MiscFlags = 0;
+
+	winrt::check_hresult(
+		device->CreateBuffer(
+			&vDesc,
+			nullptr,
+			m_vertexBuffer.put()
+		)
+	);
+}
+
 void baseRenderer::initialize_indices(ID3D11Device* device, const unsigned short* idata) {
 	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
 	indexBufferData.pSysMem = idata;
@@ -76,7 +95,30 @@ void baseRenderer::createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER
 		)
 	);
 }
-
+void baseRenderer::updatePixelConstBuffer(ID3D11DeviceContext* context, const void* data) {
+	context->UpdateSubresource(
+		m_pixConstantBuffer.get(),
+		0,
+		nullptr,
+		data,
+		0,
+		0
+	);
+}
+void baseRenderer::updateVertexBuffer(ID3D11DeviceContext* context, const void* data) {
+	//context->UpdateSubresource(
+	//	m_vertexBuffer.get(),
+	//	0,
+	//	nullptr,
+	//	data,
+	//	0,
+	//	0
+	//);
+	D3D11_MAPPED_SUBRESOURCE resource;
+	context->Map(m_vertexBuffer.get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, data, m_vertice_count*sizeof(float));
+	context->Unmap(m_vertexBuffer.get(), 0);
+}
 // Renders one frame using the vertex and pixel shaders.
 void baseRenderer::Draw(ID3D11DeviceContext* context, D3D11_PRIMITIVE_TOPOLOGY topology) {
 	ID3D11Buffer* tmp_vertex_buff{ m_vertexBuffer.get() };

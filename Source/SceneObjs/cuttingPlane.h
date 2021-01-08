@@ -62,19 +62,21 @@ private:
     glm::vec4 plane_color_ = glm::vec4(1.0, .0, .0, 0.4f);
     const float CUTTING_FACTOR = 0.00002f;
     mTarget current_target = VOLUME;
-    std::unordered_map<dvr::ORGAN_IDS, float*> pmap;
+    std::unordered_map<dvr::ORGAN_IDS, std::vector<float>> pmap;
     float thick_scale;
     bool centerline_available;
+    float m_quad_vertices[63] = { .0f };
 
     quadRenderer* plane_render_ = nullptr;
     ID3D11BlendState* d3dBlendState = nullptr;
 
+    void init_plane_renderer(ID3D11Device* device);
     bool keep_cutting_position();
     void update_modelMat_o();
+    void update_plane_(ID3D11Device* device);
     void update_plane_(glm::mat4 rotMat);
     void update_plane_(glm::mat4 vm_inv, glm::vec3 pNorm);
     void set_centerline_cutting(dvr::ORGAN_IDS oid, int& id, glm::vec3& pp, glm::vec3& pn);
-
 public:
     cuttingController(ID3D11Device* device);
 
@@ -83,7 +85,8 @@ public:
     void setTarget(mTarget target) {current_target = target; }
     void Update(glm::mat4 model_mat);
     //void UpdateAndDraw(DirectX::XMMATRIX model_mat_m);
-    void Draw(ID3D11DeviceContext* context);
+    bool Draw(ID3D11DeviceContext* context);
+    bool Draw(ID3D11DeviceContext* context, bool is_front);
 
     void SwitchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
     void setupCenterLine(dvr::ORGAN_IDS id, float* data);
@@ -105,6 +108,7 @@ public:
     bool isPrecomputeDirty() { return baked_dirty; }
     void dirtyPrecompute() { baked_dirty = true; }
     void getCuttingPlane(glm::vec3& pp, glm::vec3& pn);
+    void getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn);
 };
 
 

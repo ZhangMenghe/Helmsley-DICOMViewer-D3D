@@ -2,16 +2,12 @@
 #define LINE_RENDERER_H
 
 #include <Renderers/baseRenderer.h>
-struct Pos3DInput
-{
-	DirectX::XMFLOAT3 pos;
-};
 class lineRenderer:public baseRenderer{
 public:
 	lineRenderer(ID3D11Device* device, int uid);
 	lineRenderer(ID3D11Device* device, int uid, int point_num, const float* data);
 	void updateVertices(ID3D11Device* device, int point_num, const float* data);
-	void Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
+	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

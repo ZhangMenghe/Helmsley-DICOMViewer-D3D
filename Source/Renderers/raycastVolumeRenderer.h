@@ -12,6 +12,7 @@ struct raycastConstantBuffer
 };
 struct raypixConstantBuffer {
 	alignas(16)bool u_cut;
+	alignas(16)bool u_cutplane_realsample;
 	alignas(16)DirectX::XMFLOAT4 u_pp;
 	alignas(16)DirectX::XMFLOAT4 u_pn;
 };
@@ -20,7 +21,7 @@ class raycastVolumeRenderer:public baseRenderer {
 public:
 	raycastVolumeRenderer(ID3D11Device* device);
 
-	void Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat);
+	bool Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

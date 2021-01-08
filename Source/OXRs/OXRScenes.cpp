@@ -1,79 +1,112 @@
 ﻿#include "pch.h"
 #include "OXRScenes.h"
-OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources)
-:m_deviceResources(deviceResources) {
-	m_manager = std::unique_ptr<Manager>(new Manager());
+OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources)
+		: m_deviceResources(deviceResources)
+{
+	m_manager = std::make_shared<Manager>();
 
-	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources));
-	
-	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 
-	//TextTextureInfo textInfo{ 256, 128 }; // pixels
-	//textInfo.Margin = 5; // pixels
-	//textInfo.TextAlignment = DWRITE_TEXT_ALIGNMENT_LEADING;
-	//textInfo.ParagraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
-	//m_text_texture = new TextTexture(m_deviceResources, textInfo);
+	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
-	//m_tex_quad = new quadRenderer(deviceResources->GetD3DDevice());
-	//m_tex_quad->setTexture(m_text_texture);
-
-	/*m_tex_quad->setQuadSize(deviceResources->GetD3DDevice(),
-		deviceResources->GetD3DDeviceContext(),
-		300, 150);*/
-
-	m_rpcHandler = new rpcHandler("localhost:23333");
-	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-	m_rpcHandler->setLoader(&m_dicom_loader);
-
-	m_dicom_loader.setupDCMIConfig(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
-
-	auto vector = m_rpcHandler->getVolumeFromDataset("Larry_Smarr_2017", false);
-
-	if (vector.size() > 0) {
-		std::string path = "Larry_Smarr_2017/" + vector[0].folder_name();//m_rpcHandler->target_ds.folder_name() + vector[0].folder_name();
-
-		m_rpcHandler->DownloadVolume(path);
-		m_rpcHandler->DownloadMasks(path);
-		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
-
+	if (dvr::CONNECT_TO_SERVER)
+	{
+		m_rpcHandler = new rpcHandler("10.68.2.105:23333");
+		m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+		m_rpcHandler->setDataLoader(&m_dicom_loader);
+		m_rpcHandler->setVRController(m_sceneRenderer.get());
+		m_rpcHandler->setManager(m_manager.get());
+		m_rpcHandler->setUIController(&m_uiController);
+		dvr::LOAD_DATA_FROM_SERVER ? setup_volume_server() : setup_volume_local();
 	}
-	else {
-		if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+	else
+	{
+		setup_volume_local();
+	}
+	m_uiController.InitAll();
+}
+void OXRScenes::setup_volume_server()
+{
+	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01", false);
+
+	if (vector.size() > 0)
+	{
+		volumeResponse::volumeInfo sel_vol_info; // = vector[0];
+		for (auto vol : vector)
+		{
+			if (vol.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0)
+			{
+				sel_vol_info = vol;
+				break;
+			}
+		}
+		auto vdims = sel_vol_info.dims();
+		auto spacing = sel_vol_info.resolution();
+		m_dicom_loader.sendDataPrepare(
+				vdims.Get(0), vdims.Get(1), vdims.Get(2),
+				spacing.Get(0) * vdims.Get(0), spacing.Get(1) * vdims.Get(1), spacing.Get(2) * vdims.Get(2),
+				sel_vol_info.with_mask());
+
+		std::string path = m_rpcHandler->target_ds.folder_name() + '/' + sel_vol_info.folder_name();
+		m_rpcHandler->DownloadVolume(path);
+		m_rpcHandler->DownloadMasksAndCenterlines(path);
+		m_dicom_loader.sendDataDone();
+	}
+	else
+	{
+		setup_volume_local();
+	}
+}
+void OXRScenes::setup_volume_local()
+{
+	m_dicom_loader.sendDataPrepare(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
+	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask"))
+	{
+		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
+	}
+	else
+	{
+		if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask"))
+		{
 			m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 			//m_sceneRenderer.reset();
 		}
 	}
-
-	
+	//m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
+	m_dicom_loader.sendDataDone();
 }
-void OXRScenes::onViewChanged() {
+
+void OXRScenes::onViewChanged()
+{
 	m_sceneRenderer->CreateWindowSizeDependentResources();
 }
-void OXRScenes::setSpaces(XrSpace * space, XrSpace * app_space) {
+void OXRScenes::setSpaces(XrSpace *space, XrSpace *app_space)
+{
 	this->space = space;
 	this->app_space = app_space;
 	//this->m_sceneRenderer->setSpaces(space, app_space);
 }
-void OXRScenes::Update() {
-	m_timer.Tick([&]()
-	{
-		// TODO: Replace this with your app's content update functions.
+void OXRScenes::Update()
+{
+	m_timer.Tick([&]() {
 		m_sceneRenderer->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
+		//m_fpsTextRenderer->Update(m_timer);
 	});
 }
 
-void OXRScenes::Update(XrTime time) {
+void OXRScenes::Update(XrTime time)
+{
 	//m_sceneRenderer->Update(time);
 }
 
-bool OXRScenes::Render() {
+bool OXRScenes::Render()
+{
 	if (m_timer.GetFrameCount() == 0)
 	{
 		return false;
 	}
 	m_sceneRenderer->Render();
-	m_fpsTextRenderer->Render();
+	//m_fpsTextRenderer->Render();
 
 	/*m_text_texture->Draw(L"asdfasd");
 

@@ -1,25 +1,27 @@
 #ifndef D3DPIPELINE_MESH_PRIMITIVE_H
 #define D3DPIPELINE_MESH_PRIMITIVE_H
 static const float quad_vertices_pos_w_tex_full[] = {
-   -1.0f,  1.0f,   0.0f, .0f,
-    1.0f,   1.0f,   1.0f, .0f,
-    1.0f,  -1.0f,   1.0f, 1.0f,
-    -1.0f, -1.0f,   0.0f, 1.0f,
+   -1.0f,  1.0f, .0f,  0.0f, .0f,.0f,
+    1.0f,   1.0f,.0f,   1.0f, .0f,.0f,
+    1.0f,  -1.0f, .0f,  1.0f, 1.0f,.0f,
+    -1.0f, -1.0f, .0f,  0.0f, 1.0f,.0f,
 };
 static const float quad_vertices_pos_w_tex[] = {
-   -0.5f,  0.5f,   0.0f, .0f,
-    0.5f,   0.5f,   1.0f, .0f,
-    0.5f,  -0.5f,   1.0f, 1.0f,
-    -0.5f, -0.5f,   0.0f, 1.0f,
+   -0.5f,  0.5f,  .0f,  0.0f, .0f, .0f,
+    0.5f,   0.5f, .0f,  1.0f, .0f, .0f,
+    0.5f,  -0.5f, .0f,  1.0f, 1.0f, .0f,
+    -0.5f, -0.5f, .0f,  0.0f, 1.0f, .0f,
 };
-static const float quad_vertices_2d[] = {
-        -0.5f, 0.5, .0,.0,
-        0.5,0.5, 1.0,.0,
-        0.5,-0.5, 1.0,1.0,
-        -0.5,-0.5, .0,1.0,
+
+static const float quad_vertices_3d[] = {
+        -0.5f,  0.5f, .0f,
+         0.5f,  0.5f, .0f,
+         0.5f, -0.5f, .0f,
+        -0.5f, -0.5f, .0f,
 };
 static const unsigned short quad_indices[] = {
-    0,1,3,1,2,3
+    //0,1,3,1,2,3
+    3,0,1,3,1,2
 };
 static const float cube_vertices_pos_w_tex[] =
 {

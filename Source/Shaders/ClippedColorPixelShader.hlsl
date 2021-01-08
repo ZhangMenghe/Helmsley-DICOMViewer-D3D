@@ -7,5 +7,7 @@ cbuffer ColorConstantBuffer : register(b0) {
 };
 // A pass-through function for the (interpolated) color data.
 float4 main(PixelShaderInput input) : SV_TARGET{
+	clip(0.5f - input.ori_pos.x );
+	clip(0.5f + input.ori_pos.x);
 	return u_color;
 }

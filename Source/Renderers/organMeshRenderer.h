@@ -17,7 +17,7 @@ class organMeshRenderer :public baseRenderer {
 public:
 	organMeshRenderer(ID3D11Device* device);
 	void Setup(ID3D11Device* device, UINT h, UINT w, UINT d);
-	void Draw(ID3D11DeviceContext* context, Texture* tex_vol, DirectX::XMMATRIX modelMat);
+	bool Draw(ID3D11DeviceContext* context, Texture* tex_vol, DirectX::XMMATRIX modelMat);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

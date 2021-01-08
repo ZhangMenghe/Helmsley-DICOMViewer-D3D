@@ -1,7 +1,7 @@
 Texture3D<uint> srcVolume : register(t0);
 RWTexture3D<float4> destVolume : register(u0);
 
-cbuffer computeConstantBuffer : register(b0){
+cbuffer volumeSetupConstBuffer : register(b0){
 	uint4 u_tex_size;
 
 	//opacity widget
@@ -17,10 +17,9 @@ cbuffer computeConstantBuffer : register(b0){
 	//mask
 	uint u_maskbits;
 	uint u_organ_num;
-	bool u_mask_color;
+	bool u_mask_recolor;
 	
 	//others
-	bool u_flipy;
 	bool u_show_organ;
 	uint u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
 };
@@ -91,15 +90,13 @@ float3 TransferColor(float intensity, int ORGAN_BIT) {
 	
 	if(u_color_scheme==1)color = transfer_scheme(intensity);
 	else if(u_color_scheme==2) color = bright_scheme(intensity);
-	if (u_show_organ && u_mask_color && ORGAN_BIT > int(0)) color = transfer_scheme(ORGAN_BIT, intensity);
+	if (u_show_organ && u_mask_recolor && ORGAN_BIT > int(0)) color = transfer_scheme(ORGAN_BIT, intensity);
 	
 	return color;
 }
 
 [numthreads(8,8,8)]
 void main(uint3 threadID : SV_DispatchThreadID){
-	if(u_flipy) threadID.y = u_tex_size.y - threadID.y;
-
 	uint value = srcVolume[threadID].r;
 	//mask
 	uint u_mask = value >> uint(16);
@@ -112,9 +109,8 @@ void main(uint3 threadID : SV_DispatchThreadID){
 	uint u_intensity = value & uint(0xffff);
 	float intensity = TransferIntensityStepOne(u_intensity);
 
-	float alpha = intensity;
+	float alpha = .0f;
 	for (int i = 0; i < u_widget_num; i++)
 		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity));
-	if (u_flipy) threadID.y = u_tex_size.y - threadID.y;
 	destVolume[threadID] = float4(TransferColor(intensity, ORGAN_BIT), alpha);
 }

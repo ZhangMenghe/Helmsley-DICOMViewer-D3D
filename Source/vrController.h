@@ -4,6 +4,7 @@
 #include <Renderers/raycastVolumeRenderer.h>
 #include <Renderers/quadRenderer.h>
 #include <Common/DeviceResources.h>
+#include <Common/Manager.h>
 #include <Common/StepTimer.h>
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
@@ -14,57 +15,41 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Renderers/organMeshRenderer.h>
 #include <Renderers/LineRenderer.h>
+#include <SceneObjs/dataVisualizer.h>
 
-struct reservedStatus {
+struct reservedStatus
+{
 	glm::mat4 model_mat, rot_mat;
 	glm::vec3 scale_vec, pos_vec;
-	Camera* vcam;
-	reservedStatus(glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam) {
-		model_mat = mm; rot_mat = rm; scale_vec = sv; pos_vec = pv; vcam = cam;
+	Camera *vcam;
+	reservedStatus(glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)
+	{
+		model_mat = mm;
+		rot_mat = rm;
+		scale_vec = sv;
+		pos_vec = pv;
+		vcam = cam;
 	}
-	reservedStatus() :rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS), vcam(new Camera) {
-		model_mat = glm::translate(glm::mat4(1.0), pos_vec)
-			* rot_mat
-			* glm::scale(glm::mat4(1.0), scale_vec);
+	reservedStatus() : rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS), vcam(new Camera)
+	{
+		model_mat = glm::translate(glm::mat4(1.0), pos_vec) * rot_mat * glm::scale(glm::mat4(1.0), scale_vec);
 	}
 };
-struct computeConstantBuffer{
-	DirectX::XMUINT4 u_tex_size;
 
-	//opacity widget
-	DirectX::XMFLOAT4 u_opacity[30];
-	int u_widget_num;
-	int u_visible_bits;
-
-	//contrast
-	float u_contrast_low;
-	float u_contrast_high;
-	float u_brightness;
-
-	//mask
-	UINT u_maskbits;
-	UINT u_organ_num;
-	int u_mask_color;
-
-	//
-	int u_flipy;
-	int u_show_organ;
-	UINT u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
-};
-
-class vrController{
+class vrController
+{
 public:
-	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources);
-	static vrController* instance();
-	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
+	vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager);
+	static vrController *instance();
+	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num = 4);
 
 	void onReset();
-	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam);
+	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam);
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
 	void ReleaseDeviceDependentResources();
-	void Update(DX::StepTimer const& timer);
+	void Update(DX::StepTimer const &timer);
 	//void Update(XrTime time);
 	void Render();
 	void StartTracking();
@@ -84,50 +69,56 @@ public:
 	void onPan(float x, float y);
 
 	//setter
-	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam);
+	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam);
 	bool addStatus(std::string name, bool use_current_status = false);
 	void setMVPStatus(std::string status_name);
-	void setupCenterLine(int id, float* data);
+	void setupCenterLine(int id, float *data);
+	void setCuttingPlane(float value);
+	void setCuttingPlane(int id, int delta);
+	void setCuttingPlane(glm::vec3 pp, glm::vec3 pn);
+	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
 
 	//void setSpaces(XrSpace * space, XrSpace * app_space);
 
 	//getter
-	Texture* getVolumeTex() { return tex_volume; }
-	Texture* getBakedTex() { return tex_baked; }
+	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
+	Texture *getVolumeTex() { return tex_volume; }
+	Texture *getBakedTex() { return tex_baked; }
 	bool isDirty();
+	ID3D11RasterizerState *m_render_state_front, *m_render_state_back;
 
 private:
 	//XrSpace * space;
 	//XrSpace * app_space;
 
-	static vrController* myPtr_;
+	static vrController *myPtr_;
 
-	screenQuadRenderer* screen_quad;
-	raycastVolumeRenderer* raycast_renderer;
-	textureBasedVolumeRenderer* texvrRenderer_;
-	cuttingController* cutter_;
-	organMeshRenderer* meshRenderer_;
-	std::unordered_map<int, lineRenderer*> line_renderers_;
+	screenQuadRenderer *screen_quad;
+	raycastVolumeRenderer *raycast_renderer;
+	textureBasedVolumeRenderer *texvrRenderer_;
+	cuttingController *cutter_;
+	dataBoard *data_board_;
+	organMeshRenderer *meshRenderer_;
+	std::unordered_map<int, lineRenderer *> line_renderers_;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
+	std::shared_ptr<Manager> m_manager;
 
 	//TEXTURES
 	Texture *tex_volume = nullptr, *tex_baked = nullptr;
 
 	//compute shader
-	ID3D11ComputeShader* bakeShader_;
-	ID3D11Texture3D* m_comp_tex_d3d = nullptr;
-	ID3D11UnorderedAccessView* m_textureUAV;
-	ID3D11Buffer* m_compute_constbuff = nullptr;
-
-	computeConstantBuffer m_cmpdata;
+	ID3D11ComputeShader *bakeShader_;
+	ID3D11Texture3D *m_comp_tex_d3d = nullptr;
+	ID3D11UnorderedAccessView *m_textureUAV;
+	ID3D11Buffer *m_compute_constbuff = nullptr;
 
 	glm::mat4 SpaceMat_;
 
 	glm::mat4 ModelMat_, RotateMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
-	dvr::allConstantBuffer	m_all_buff_Data;
+	dvr::allConstantBuffer m_all_buff_Data;
 	std::map<std::string, reservedStatus> rStates_;
 
 	//UI
@@ -142,7 +133,7 @@ private:
 
 	glm::vec3 Mouse3D_old_mid;
 
-	float sens = 1.0f;// 0.1f;
+	float sens = 1.0f; // 0.1f;
 
 	glm::vec3 vector_old;
 	float distance_old = 0;
@@ -157,28 +148,24 @@ private:
 
 	//uint32	m_indexCount;
 	//Texture* texture = nullptr;
-	
+
 	//texture
 	/*ID3D11SamplerState* m_sampleState;
 		
 	Texture* tex2d_srv_from_uav;
 	*/
-	bool	m_tracking;
-	float	m_degreesPerSecond = 1;
+	bool m_tracking;
+	float m_degreesPerSecond = 1;
 
 	//flags
-	bool volume_model_dirty;
-	bool pre_draw_ = false;
 	int frame_num = 0;
+	bool volume_model_dirty, m_scene_dirty;
+	bool pre_draw_ = true;
 	void Rotate(float radians);
 	void render_scene();
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
-	void getGraphPoints(float values[], float*& points);
-	static bool isRayCasting() {
-		return false;
-		//return Manager::param_bool[dvr::CHECK_RAYCAST]; 
-	}
+	void AlignModelMatToTraversalPlane();
 };
 #endif

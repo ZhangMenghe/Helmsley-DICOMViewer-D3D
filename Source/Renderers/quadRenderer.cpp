@@ -4,66 +4,45 @@
 #include <D3DPipeline/Primitive.h>
 #include <Common/Manager.h>
 using namespace DirectX;
-quadRenderer::quadRenderer(ID3D11Device* device, bool as_render_target)
+quadRenderer::quadRenderer(ID3D11Device* device)
 :baseRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso",
-	quad_vertices_pos_w_tex, quad_indices,16,6),
-	m_as_render_target(as_render_target){
+	quad_vertices_pos_w_tex, quad_indices, 24, 6),
+	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
 }
+quadRenderer::quadRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color, const float* vdata)
+:baseRenderer(device, L"Naive3DVertexShader.cso", L"NaiveColorPixelShader.cso", 
+	vdata, quad_indices, 12, 6),
+	m_input_layout_id(dvr::INPUT_POS_3D){
+
+	CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	dvr::ColorConstantBuffer tdata;
+	tdata.u_color = color;
+	D3D11_SUBRESOURCE_DATA color_resource;
+	color_resource.pSysMem = &tdata;
+	createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
+}
+quadRenderer::quadRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color)
+:quadRenderer(device, color, quad_vertices_3d){
+}
+
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname) 
 : baseRenderer(device, vname, pname,
-	quad_vertices_pos_w_tex, quad_indices, 16, 6){
-
+	quad_vertices_pos_w_tex, quad_indices, 24, 6),
+	m_input_layout_id(dvr::INPUT_POS_TEX_2D) {
 }
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata)
 	:baseRenderer(device, vname, pname,
-		vdata, quad_indices, 16, 6){
+		vdata, quad_indices, 24, 6),
+	m_input_layout_id(dvr::INPUT_POS_TEX_2D) {
 }
-bool quadRenderer::setQuadSize(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height){
-	texture = new Texture;
-	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = width;
-	texDesc.Height = height;
-	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.MipLevels = -1;
-	texDesc.ArraySize = 1;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;//D3D11_BIND_RENDER_TARGET |
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-
-	if (!m_as_render_target) if (!texture->Initialize(device, texDesc)) { delete texture; texture = nullptr; return false; }
-	else {
-		D3D11_RENDER_TARGET_VIEW_DESC view_desc{
-			texDesc.Format,
-			D3D11_RTV_DIMENSION_TEXTURE2D,
-		};
-		view_desc.Texture2D.MipSlice = 0;
-		if (!texture->Initialize(device, texDesc, view_desc)) { delete texture; texture = nullptr; return false; }
-	}
-
-	//debug only: fuse tex with naive data
-	/*auto imageSize = texDesc.Width * texDesc.Height * 4;
-	unsigned char* m_targaData = new unsigned char[imageSize];
-	for (int i = 0; i < imageSize; i += 4) {
-		m_targaData[i] = (unsigned char)255;
-		m_targaData[i + 1] = 0;
-		m_targaData[i + 2] = 0;
-		m_targaData[i + 3] = (unsigned char)255;
-	}
-	if (!texture->Initialize(device, context, texDesc, m_targaData)) { delete texture; texture = nullptr; return false; }
-	*/
-	
-	//D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//context->Map(texture->GetTexture2D(), 0, D3D11_MAP_READ, 0, &mappedResource);
-
-	return true;
+quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata, const unsigned short* idata, UINT vertice_num, UINT idx_num, dvr::INPUT_LAYOUT_IDS layout_id)
+	:baseRenderer(device, vname, pname,
+		vdata, idata, vertice_num, idx_num),
+	m_input_layout_id(layout_id){
 }
-
 // Renders one frame using the vertex and pixel shaders.
-void quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
-	if (!m_loadingComplete) return; 
+bool quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
+	if (!m_loadingComplete) return false; 
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
 		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(modelMat));
@@ -80,6 +59,7 @@ void quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMa
 	}
 
 	baseRenderer::Draw(context);
+	return true;
 }
 void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the vertex shader file is loaded, create the shader and input layout.
@@ -92,22 +72,30 @@ void quadRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<
 		)
 	);
 
-	static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-	DX::ThrowIfFailed(
-		device->CreateInputLayout(
-			vertexDesc,
-			ARRAYSIZE(vertexDesc),
-			&fileData[0],
-			fileData.size(),
-			m_inputLayout.put()
-		)
-	);
-	m_vertex_stride = sizeof(dvr::VertexPosTex2d);
+	if (m_input_layout_id == dvr::INPUT_POS_TEX_2D) {
+		DX::ThrowIfFailed(
+			device->CreateInputLayout(
+				dvr::g_vinput_pos_tex_desc,
+				ARRAYSIZE(dvr::g_vinput_pos_tex_desc),
+				&fileData[0],
+				fileData.size(),
+				m_inputLayout.put()
+			)
+		);
+		m_vertex_stride = sizeof(dvr::VertexPosTex2d);
+	}
+	else {
+		DX::ThrowIfFailed(
+			device->CreateInputLayout(
+				dvr::g_vinput_pos_3d_desc,
+				ARRAYSIZE(dvr::g_vinput_pos_3d_desc),
+				&fileData[0],
+				fileData.size(),
+				m_inputLayout.put()
+			)
+		);
+		m_vertex_stride = sizeof(dvr::VertexPos3d);
+	}
 	m_vertex_offset = 0;
 }
 void quadRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {

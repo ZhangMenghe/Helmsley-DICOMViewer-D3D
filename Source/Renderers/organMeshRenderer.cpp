@@ -288,8 +288,8 @@ void organMeshRenderer::create_fragment_shader(ID3D11Device* device, const std::
 	wfdesc.FrontCounterClockwise = TRUE;
 	device->CreateRasterizerState(&wfdesc, &m_render_state);*/
 }
-void organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, DirectX::XMMATRIX modelMat) {
-	if (!m_loadingComplete) return;
+bool organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, DirectX::XMMATRIX modelMat) {
+	if (!m_loadingComplete) return false;
 	if (m_baked_dirty) {
 		context->CSSetShader(m_computeShader, nullptr, 0);
 		ID3D11ShaderResourceView* srvs[3] = { 
@@ -351,4 +351,5 @@ void organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, Dir
 	context->RSSetState(m_RasterizerState);
 	baseRenderer::Draw(context);
 	context->RSSetState(nullptr);
+	return true;
 }
