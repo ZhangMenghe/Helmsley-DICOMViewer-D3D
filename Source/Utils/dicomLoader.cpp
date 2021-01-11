@@ -21,18 +21,7 @@ bool dicomLoader::loadData(std::string filename, int h, int w, int d){
     g_maskTexData = new UCHAR[h*w*d];
 
     char buffer[1024];
-    //
-    //#ifdef RESOURCE_DESKTOP_DIR
-    //std::ifstream inFile (PATH(filename), std::ios::in | std::ios::binary);
-    //#else
-    //std::ifstream inFile (filename, std::ios::in | std::ios::binary);
-    //#endif
-    /*std::wstring wfilename = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(filename);
 
-    std::wstring wpath = Windows::ApplicationModel::Package::Current->InstalledLocation->Path->Data();
-    wpath += L"\\Assets\\" + wfilename;
-
-    std::string path = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(wpath);*/
     std::ifstream inFile("Assets/" + filename, std::ios::in | std::ios::binary);
 
     if(!inFile.is_open()) 

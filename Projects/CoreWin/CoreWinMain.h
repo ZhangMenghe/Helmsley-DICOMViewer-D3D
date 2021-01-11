@@ -8,6 +8,7 @@
 #include <Common/Manager.h>
 #include <Renderers/FpsTextRenderer.h>
 #include <grpc/rpcHandler.h>
+#include <Utils/dataManager.h>
 
 namespace CoreWin{
 	class CoreWinMain : public DX::IDeviceNotify
@@ -39,6 +40,8 @@ namespace CoreWin{
 		dicomLoader m_dicom_loader;
 
 		uiController m_uiController;
+
+		//dataManager* m_data_manager;
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
 
@@ -49,16 +52,17 @@ namespace CoreWin{
 		std::thread * m_rpcThread;
 
 		///////debug data//////
-		std::string m_ds_path = "dicom-data/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
-		//std::string m_ds_path = "dicom-data/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
+		//std::string m_ds_path = "helmsley_cached/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
+		std::string m_ds_path = "helmsley_cached/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
 		//height, width, depth
-		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
-		//DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
+		//DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
+		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
 
 		std::string content = "hello world";
 		std::vector<char> mbytes;
 
 		void setup_volume_server();
 		void setup_volume_local();
+		void setup_resource();
 	};
 }

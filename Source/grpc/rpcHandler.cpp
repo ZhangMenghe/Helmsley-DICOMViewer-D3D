@@ -15,14 +15,6 @@ rpcHandler::rpcHandler(const std::string& host){
     stub_ = dataTransfer::NewStub(channel);
 
     req.set_client_id(CLIENT_ID);
-    //datasetResponse response;
-    //ClientContext context;
-
-    //stub_->getAvailableDatasets(&context, req, &response);
-    //
-    //for (datasetResponse::datasetInfo ds : response.datasets()) {
-    //  availableRemoteDatasets.push_back(ds);
-    //}
 }
 
 FrameUpdateMsg rpcHandler::getUpdates(){
@@ -87,8 +79,14 @@ void rpcHandler::Run(){
     }
 }
 
-vector<datasetResponse::datasetInfo> rpcHandler::getAvailableDatasets(bool isLocal){
-    return availableRemoteDatasets;
+void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets) {
+    datasetResponse response;
+    ClientContext context;
+    stub_->getAvailableDatasets(&context, req, &response);
+    datasets.clear();
+    datasets.reserve(response.datasets_size());
+    for (datasetResponse::datasetInfo ds : response.datasets())
+        datasets.push_back(ds);
 }
 
 vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string & dataset_name, bool isLocal){

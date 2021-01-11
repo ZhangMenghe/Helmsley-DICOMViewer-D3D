@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "CoreWinMain.h"
-#include "Common\DirectXHelper.h"
+#include <Common/DirectXHelper.h>
 
 using namespace CoreWin;
 using namespace Windows::Foundation;
@@ -13,9 +13,12 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
 
+	//m_data_manager = new dataManager;
+	setup_resource();
+
+
 	m_manager = std::make_shared<Manager>();
 
-	// TODO: Replace this with your app's content initialization.
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources, m_manager));
 
 	if (dvr::CONNECT_TO_SERVER) {
@@ -37,30 +40,47 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
-/*
+	
+	//auto copyTask = DX::CopyAssetDataAsync(
+	//	"helmsley_cached/pacs_local.txt",
+	//	L"pacs_local.txt", 
+	//	ApplicationData::Current->LocalFolder);
+	//copyTask.then([]() {
+	//	auto readTestTask = DX::ReadDataAsync(L"pacs_local.txt", Windows::Storage::ApplicationData::Current->LocalFolder);
+	//	readTestTask.then([](const std::vector<byte>& fileData) {
+	//		//const char* p = reinterpret_cast<const char*>(&fileData[0]);
+	//		if (!fileData.empty()) {
+	//			std::string s(reinterpret_cast<const char*>(&fileData[0]), fileData.size());
+	//			std::cout << "do sth";
+	//		}
+	//	});
+	//});
 
-	/// <summary>
-	/// debug only:write and read contents
-	/// </summary>
-	/// <param name="deviceResources"></param>
+	/*
+	std::vector<std::string> contents;
+	if(!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt"))
+		std::cerr << "Fail to copy";
+	else if (!DX::ReadAllLines("helmsley_cached\\pacs_local.txt", contents))
+		std::cerr << "File not exist";
+	for (auto line : contents)
+		std::cout << line << std::endl;
+		*/
+	/*
 	mbytes = std::vector<char>(content.begin(), content.end());
 	mbytes.push_back('\0');
 	byte* c = reinterpret_cast<byte*>(&mbytes[0]);
-
-	//auto cbytes = reinterpret_cast<const byte*>(content.c_str());
 	auto writeTestTask = DX::WriteDataAsync(L"guaguagua.txt", c, mbytes.size());
 
 	writeTestTask.then([]() {
 		auto readTestTask = DX::ReadDataAsync(L"guaguagua.txt", Windows::Storage::ApplicationData::Current->LocalFolder);
 		readTestTask.then([](const std::vector<byte>& fileData) {
 			//const char* p = reinterpret_cast<const char*>(&fileData[0]);
-			std::string s(reinterpret_cast<const char*>(&fileData[0]), fileData.size());
-			std::cout << "do sth";
+			if (!fileData.empty()) {
+				std::string s(reinterpret_cast<const char*>(&fileData[0]), fileData.size());
+				std::cout << "do sth";
+			}
 		});
-	});
-
-	*/
-
+	});*/
 
 }
 void CoreWinMain::setup_volume_server(){
@@ -96,8 +116,13 @@ void CoreWinMain::setup_volume_local() {
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 		//m_sceneRenderer.reset();
 	}
-	m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
+	//m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
 	m_dicom_loader.sendDataDone();
+}
+
+void CoreWinMain::setup_resource() {
+	//copy asset resource to local
+	
 }
 CoreWinMain::~CoreWinMain()
 {

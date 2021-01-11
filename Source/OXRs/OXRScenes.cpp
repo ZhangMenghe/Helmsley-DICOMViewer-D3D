@@ -1,12 +1,13 @@
 ﻿#include "pch.h"
 #include "OXRScenes.h"
+#include <Common/DirectXHelper.h>
 OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources)
 	:m_deviceResources(deviceResources) {
 	m_manager = std::make_shared<Manager>();
 
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 
-	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	if (dvr::CONNECT_TO_SERVER) {
 		m_rpcHandler = new rpcHandler("10.68.2.105:23333");
@@ -20,6 +21,16 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 		setup_volume_local();
 	}
 	m_uiController.InitAll();
+
+	/*
+	std::vector<std::string> contents;
+	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt"))
+		std::cerr << "Fail to copy";
+	else if (!DX::ReadAllLines("helmsley_cached\\pacs_local.txt", contents))
+		std::cerr << "File not exist";
+	for (auto line : contents)
+		std::cout << line << std::endl;
+		*/
 }
 void OXRScenes::setup_volume_server() {
 	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01", false);
@@ -65,7 +76,7 @@ void OXRScenes::Update() {
 	m_timer.Tick([&]()
 	{
 		m_sceneRenderer->Update(m_timer);
-		//m_fpsTextRenderer->Update(m_timer);
+		m_fpsTextRenderer->Update(m_timer);
 	});
 }
 bool OXRScenes::Render() {
@@ -74,7 +85,7 @@ bool OXRScenes::Render() {
 		return false;
 	}
 	m_sceneRenderer->Render();
-	//m_fpsTextRenderer->Render();
+	m_fpsTextRenderer->Render();
 
 	/*m_text_texture->Draw(L"asdfasd");
 

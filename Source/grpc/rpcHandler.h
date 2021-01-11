@@ -68,7 +68,7 @@ public:
 
     void Run();
     
-    std::vector<datasetResponse::datasetInfo> getAvailableDatasets(bool isLocal);
+    void getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets);
     std::vector<volumeResponse::volumeInfo> getVolumeFromDataset(const std::string & dataset_name, bool isLocal);
     std::vector<configResponse::configInfo> getAvailableConfigFiles();
     void exportConfigs(std::string content);

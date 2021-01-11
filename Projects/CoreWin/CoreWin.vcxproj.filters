@@ -41,23 +41,8 @@
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{61ac4094-c18c-4a47-910b-b3db374efb77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data">
-      <UniqueIdentifier>{497261e0-5ef3-46e2-8bc5-8f4640207403}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\Larry_Smarr_2016">
-      <UniqueIdentifier>{bd3222b7-f98f-48be-b10d-44d0af478e92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
-      <UniqueIdentifier>{05327bab-dc6c-4792-b98f-39853a145765}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\SceneObjs">
       <UniqueIdentifier>{03fceeb5-fd72-4246-b02d-5360130f2fe3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\IRB01">
-      <UniqueIdentifier>{dcbfdf4b-224a-4773-93b5-156c30eb645f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs">
-      <UniqueIdentifier>{dbb9fb5d-8302-4dea-9b0a-5a118869a9fe}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\proto_src">
       <UniqueIdentifier>{02171f6d-1b53-43a4-93cf-0dba2e87636f}</UniqueIdentifier>
@@ -82,6 +67,15 @@
     </Filter>
     <Filter Include="Library\arm64\debug">
       <UniqueIdentifier>{eebb8140-af65-4f55-b03e-ede732cf2f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\helmsley_cached">
+      <UniqueIdentifier>{9fcb058a-791d-4f7e-8ae6-4f9be1d10c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016">
+      <UniqueIdentifier>{1ace0f14-b2f7-4b8d-977a-9880cf328dc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
+      <UniqueIdentifier>{c85207f6-8f30-45e4-b472-6bdc78779548}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,7 +154,7 @@
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Utils\BasicReaderWriter.cpp">
+    <ClCompile Include="..\..\Source\Utils\dataManager.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -261,7 +255,7 @@
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h">
       <Filter>Source\SceneObjs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Utils\BasicReaderWriter.h">
+    <ClInclude Include="..\..\Source\Utils\dataManager.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -324,19 +318,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
-      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
-      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
     <None Include="packages.config" />
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\data">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
-    </None>
-    <None Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\mask">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
-    </None>
     <None Include="..\..\Source\proto_src\common.proto">
       <Filter>Source\proto_src</Filter>
     </None>
@@ -345,6 +327,12 @@
     </None>
     <None Include="..\..\Source\proto_src\transManager.proto">
       <Filter>Source\proto_src</Filter>
+    </None>
+    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
+      <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
+    </None>
+    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
+      <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -434,8 +422,8 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs\centerline.txt">
-      <Filter>Assets\dicom-data\IRB01\2100_FATPOSTCORLAVAFLEX20secs</Filter>
+    <Text Include="Assets\helmsley_cached\pacs_local.txt">
+      <Filter>Assets\helmsley_cached</Filter>
     </Text>
   </ItemGroup>
 </Project>
