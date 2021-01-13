@@ -74,7 +74,7 @@ void Manager::updateCamera(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX
 
 void Manager::onViewChange(int w, int h)
 {
-    //camera->setProjMat(w, h);
+    camera->setProjMat(w, h);
     screen_w = w;
     screen_h = h;
 }

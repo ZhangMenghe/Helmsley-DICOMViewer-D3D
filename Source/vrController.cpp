@@ -38,7 +38,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 void vrController::onReset()
 {
 	SpaceMat_ = glm::mat4();
-	PosVec3_.z = -1.0f;
+	PosVec3_.z = 0.0f;
 	Mouse_old = {.0f, .0f};
 	rStates_.clear();
 	cst_name = "";
@@ -118,9 +118,9 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			1,
 			DXGI_FORMAT_R32_UINT,
 			D3D11_USAGE_DEFAULT,
-			D3D11_BIND_SHADER_RESOURCE,
+			D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 			0,
-			0};
+			D3D11_RESOURCE_MISC_GENERATE_MIPS};
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data))
 	{
 		delete tex_volume;

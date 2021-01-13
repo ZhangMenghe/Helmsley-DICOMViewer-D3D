@@ -137,7 +137,7 @@ private:
 
 	glm::vec3 vector_old;
 	float distance_old = 0;
-	float uniScale = 0.5f;
+	float uniScale = 1.0f;
 
 	glm::fvec2 Mouse_old;
 	std::string cst_name;
