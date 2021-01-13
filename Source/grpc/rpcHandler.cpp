@@ -1,4 +1,5 @@
 #include "rpcHandler.h"
+#include <ppltasks.h>	// For create_task
 #include <glm/gtc/type_ptr.hpp>
 using grpc::Channel;
 using grpc::ClientContext;
@@ -8,6 +9,7 @@ using grpc::ClientWriter;
 using grpc::Status;
 using namespace helmsley;
 using namespace std;
+using namespace Concurrency;
 
 rpcHandler::rpcHandler(const std::string& host){
     auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
@@ -37,7 +39,7 @@ void rpcHandler::receiver_register() {
 
 void rpcHandler::Run(){
     while(true){
-        if(ui_ == nullptr || manager_==nullptr || vr_ == nullptr || loader_==nullptr) continue;
+        if(ui_ == nullptr || manager_==nullptr || vr_ == nullptr || m_dicom_loader ==nullptr) continue;
         //debug only: start to listen directly
         if (!initialized) {
             receiver_register();
@@ -89,15 +91,8 @@ void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& da
         datasets.push_back(ds);
 }
 
-vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string & dataset_name, bool isLocal){
+vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string & dataset_name){
     vector<volumeResponse::volumeInfo> ret;
-
-    for(datasetResponse::datasetInfo & ds: availableRemoteDatasets) {
-    if(!ds.folder_name().compare(dataset_name)) {
-        target_ds = ds;
-        break;
-    }
-    }
     Request req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(dataset_name);
@@ -157,14 +152,73 @@ void rpcHandler::DownloadVolume(const string& folder_path){
 
     int id = 0;
     while (data_reader->Read(&resData)) {
-    loader_->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
-    id++;
+        m_dicom_loader->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
+        id++;
     };
 
     Status status = data_reader->Finish();
     winrt::check_hresult(status.ok());
 }
+Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string& folder_path) {
+    using namespace Concurrency;
+    //return create_task([]() {return; });
+    Windows::Foundation::IAsyncAction^ Action = create_async([folder_path, this](){
+        RequestWholeVolume req;
+        req.set_client_id(CLIENT_ID);
+        req.set_req_msg(folder_path);
+        req.set_unit_size(2);
 
+        ClientContext context;
+        volumeWholeResponse resData;
+
+        std::unique_ptr<ClientReader<volumeWholeResponse>> data_reader(
+            stub_->DownloadVolume(&context, req));
+
+        int id = 0;
+        while (data_reader->Read(&resData)) {
+            m_dicom_loader->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
+            id++;
+        };
+        Status status = data_reader->Finish();
+        winrt::check_hresult(status.ok());
+    });
+    return create_task(Action);
+}
+Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::string& folder_path) {
+    using namespace Concurrency;
+    //return create_task([]() {return; });
+    Windows::Foundation::IAsyncAction^ Action = create_async([folder_path, this]() {
+        Request req;
+        req.set_client_id(CLIENT_ID);
+        req.set_req_msg(folder_path);
+
+        ClientContext context;
+        volumeWholeResponse resData;
+        std::unique_ptr<ClientReader<volumeWholeResponse>> data_reader(
+            stub_->DownloadMasksVolume(&context, req));
+
+        int id = 0;
+        while (data_reader->Read(&resData)) {
+            m_dicom_loader->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
+            id++;
+        };
+        Status status = data_reader->Finish();
+        winrt::check_hresult(status.ok());
+       
+        //todo: TRIGGER FAULT!!!!
+        ////center line
+        //centerlineData clData;
+        //std::unique_ptr<ClientReader<centerlineData>> cl_reader(
+        //    stub_->DownloadCenterLineData(&context, req));
+        //while (cl_reader->Read(&clData)) {
+        //    m_dicom_loader->sendDataFloats(0, clData.data().size(), std::vector<float>(clData.data().begin(), clData.data().end()));
+        //    //todo: save to local?
+        //};
+        //status = cl_reader->Finish();
+        //winrt::check_hresult(status.ok());
+    });
+    return create_task(Action);
+}
 void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name){
     Request req;
     req.set_client_id(CLIENT_ID);
@@ -177,7 +231,7 @@ void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name){
 
     int id = 0;
     while (data_reader->Read(&resData)) {
-    loader_->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
+        m_dicom_loader->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
     id++;
     };
     Status status = data_reader->Finish();
@@ -190,7 +244,7 @@ void rpcHandler::DownloadCenterlines(Request req) {
     std::unique_ptr<ClientReader<centerlineData>> cl_reader(
         stub_->DownloadCenterLineData(&context, req));
     while (cl_reader->Read(&clData)) {
-        loader_->sendDataFloats(0, clData.data().size(), std::vector<float>(clData.data().begin(), clData.data().end()));
+        m_dicom_loader->sendDataFloats(0, clData.data().size(), std::vector<float>(clData.data().begin(), clData.data().end()));
         //todo: save to local?
     };
     Status status = cl_reader->Finish();
@@ -277,10 +331,10 @@ void rpcHandler::tackle_volume_msg(helmsley::volumeConcise msg){
 	//reset data
 	auto dims = msg.dims();
 	auto ss = msg.size();
-	loader_->sendDataPrepare(dims[0], dims[1], dims[2],ss[0],ss[1],ss[2], msg.with_mask());
+    m_dicom_loader->sendDataPrepare(dims[0], dims[1], dims[2],ss[0],ss[1],ss[2], msg.with_mask());
 
 	std::cout<<"Try to load from "<<DATA_PATH + msg.vol_path()<<std::endl;
-	if(!loader_->loadData(DATA_PATH + msg.vol_path()+"/data", DATA_PATH + msg.vol_path()+"/mask")){
+	if(!m_dicom_loader->loadData(DATA_PATH + msg.vol_path()+"/data", DATA_PATH + msg.vol_path()+"/mask",false)){
 		std::cout<<"===ERROR==file not exist"<<std::endl;
 		return;
 	}

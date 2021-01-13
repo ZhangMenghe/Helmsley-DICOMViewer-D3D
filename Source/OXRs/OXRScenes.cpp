@@ -33,7 +33,7 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 		*/
 }
 void OXRScenes::setup_volume_server() {
-	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01", false);
+	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01");
 
 	if (vector.size() > 0) {
 		volumeResponse::volumeInfo sel_vol_info;// = vector[0];
@@ -61,7 +61,7 @@ void OXRScenes::setup_volume_server() {
 }
 void OXRScenes::setup_volume_local() {
 	m_dicom_loader.sendDataPrepare(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
-	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
+	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask", true)) {
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 		//m_sceneRenderer.reset();
 	}

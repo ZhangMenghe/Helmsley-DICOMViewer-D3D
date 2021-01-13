@@ -16,7 +16,23 @@ namespace DX
 			throw Platform::Exception::CreateException(hr);
 		}
 	}
-	inline std::string getFilePath(std::string fileName) {
+	inline void getSubDirs(std::string path, std::vector<std::wstring>& sub_folders) {
+		std::string substr;
+		std::stringstream ss(path);
+		while (ss.good()) {
+			std::getline(ss, substr, '\\');
+			sub_folders.push_back(std::wstring(substr.begin(), substr.end()));
+		}
+	}
+	////https://msdn.microsoft.com/en-us/library/mt299098.aspx
+	//Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path; //where program in installed. Have read only access
+	//Platform::String^ localfolder = Windows::Storage::ApplicationData::Current->LocalFolder->Path;	//for local saving for future
+	//Platform::String^ roamingFolder = Windows::Storage::ApplicationData::Current->RoamingFolder->Path;	//for sync between devices
+	//Platform::String^ temporaryFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;	//for temp saving. Cleared often by system
+	
+	inline std::string getFilePath(std::string fileName, bool from_asset = false) {
+		if (from_asset) return "Assets/" + fileName;
+
 		Platform::String^ localfolder = Windows::Storage::ApplicationData::Current->LocalFolder->Path;
 		std::wstring folderNameW(localfolder->Begin());
 		std::string folderNameA(folderNameW.begin(), folderNameW.end());
@@ -51,14 +67,60 @@ namespace DX
 		return ReadDataAsync(filename, Windows::ApplicationModel::Package::Current->InstalledLocation);
 	}
 
-	inline Concurrency::task<void> WriteDataAsync(const std::wstring& filename, byte* fileData, int dsize){//const Platform::Array<byte>^ fileData) {
-		auto folder = ApplicationData::Current->LocalFolder;
+	//inline Concurrency::task<void> WriteDataAsync(const std::wstring& filename, byte* fileData, int dsize){//const Platform::Array<byte>^ fileData) {
+	//	auto folder = ApplicationData::Current->LocalFolder;
 
-		return create_task(folder->CreateFileAsync(Platform::StringReference(filename.c_str()), CreationCollisionOption::ReplaceExisting)).then([=](StorageFile^ file)
-		{
-			Platform::Array<byte>^ data = ref new Platform::Array<byte>(fileData,dsize);
-			FileIO::WriteBytesAsync(file, data);
-		});
+	//	return create_task(folder->CreateFileAsync(Platform::StringReference(filename.c_str()), CreationCollisionOption::ReplaceExisting)).then([=](StorageFile^ file)
+	//	{
+	//		Platform::Array<byte>^ data = ref new Platform::Array<byte>(fileData,dsize);
+	//		FileIO::WriteBytesAsync(file, data);
+	//	});
+	//}
+	inline void WriteDataAsync(const std::string filepath, byte* fileData, int dsize) {
+		std::vector<std::wstring> sub_folders;
+		getSubDirs(filepath, sub_folders);
+
+		if (sub_folders.size() > 4) return; //create_task([]() {return; });
+
+		auto write_tsk = [=](StorageFolder^ folder) {
+			create_task(folder->CreateFileAsync(Platform::StringReference(sub_folders.back().c_str()),
+				CreationCollisionOption::ReplaceExisting)).then([=](StorageFile^ file)
+			{
+				Platform::Array<byte>^ data = ref new Platform::Array<byte>(fileData, dsize);
+				FileIO::WriteBytesAsync(file, data);
+			}).then([]() {return; });
+		};
+
+		Windows::Storage::StorageFolder^ dst_folder = Windows::Storage::ApplicationData::Current->LocalFolder;
+		//create folders if not exist
+		if (sub_folders.size() > 1) {
+			auto tsk0 = create_task(dst_folder->CreateFolderAsync(Platform::StringReference(sub_folders[0].c_str()), CreationCollisionOption::OpenIfExists));
+			if (sub_folders.size() > 2) {
+				tsk0.then([=](StorageFolder^ folder) {
+					auto tsk1 = create_task(folder->CreateFolderAsync(Platform::StringReference(sub_folders[1].c_str()), CreationCollisionOption::OpenIfExists));
+					if (sub_folders.size() > 3) {
+						tsk1.then([=](StorageFolder^ folder) {
+							auto tsk2 = create_task(folder->CreateFolderAsync(Platform::StringReference(sub_folders[2].c_str()), CreationCollisionOption::OpenIfExists));
+							tsk2.then([=](StorageFolder^ folder) {
+								write_tsk(folder);
+							});
+						});
+					}
+					else {
+						tsk1.then([=](StorageFolder^ folder) {
+							write_tsk(folder);
+						});
+					}
+				}
+				);
+			}
+			else {
+				tsk0.then([=](StorageFolder^ folder) {
+					write_tsk(folder);
+				});
+			}
+		}
+		else write_tsk(dst_folder);
 	}
 	inline Concurrency::task<void> CopyDataAsync(const std::wstring& src_name, Windows::Storage::StorageFolder^ src_folder, 
 		const std::wstring& dest_name, Windows::Storage::StorageFolder^ dst_folder) {
@@ -107,45 +169,30 @@ namespace DX
 		});
 		});
 	}
-	inline bool CopyAssetData(const std::string src_name, const std::string dest_name) {
-		auto copy_func = [src_name, dest_name]() {
-			std::ifstream inFile("Assets\\" + src_name, std::ios::in | std::ios::binary);
-			if (!inFile.is_open())
-				return false;
-			std::ofstream outFile(getFilePath(dest_name), std::ios::out | std::ios::binary);
-			if (!outFile.is_open())
-				return false;
-			outFile << inFile.rdbuf();
-			inFile.close();
-			outFile.close();
-		};
-
-		std::string substr;
+	inline Concurrency::task<void> removeDataAsync(const std::string dirPath) {
 		std::vector<std::wstring> sub_folders;
-		std::stringstream ss(dest_name);
-		while (ss.good()) {
-			std::getline(ss, substr, '\\');
-			sub_folders.push_back(std::wstring(substr.begin(), substr.end()));
-		}
-		if (sub_folders.size() > 4) return false;
+		getSubDirs(dirPath, sub_folders);
+		if (sub_folders.size() > 4) return create_task([]() {return; });
+
 		Windows::Storage::StorageFolder^ dst_folder = Windows::Storage::ApplicationData::Current->LocalFolder;
+
 		//create folders if not exist
 		if (sub_folders.size() > 1) {
 			auto tsk0 = create_task(dst_folder->CreateFolderAsync(Platform::StringReference(sub_folders[0].c_str()), CreationCollisionOption::OpenIfExists));
 			if (sub_folders.size() > 2) {
 				tsk0.then([=](StorageFolder^ folder) {
-					auto tsk1 = create_task(dst_folder->CreateFolderAsync(Platform::StringReference(sub_folders[1].c_str()), CreationCollisionOption::OpenIfExists));
+					auto tsk1 = create_task(folder->CreateFolderAsync(Platform::StringReference(sub_folders[1].c_str()), CreationCollisionOption::OpenIfExists));
 					if (sub_folders.size() > 3) {
 						tsk1.then([=](StorageFolder^ folder) {
-							auto tsk2 = create_task(dst_folder->CreateFolderAsync(Platform::StringReference(sub_folders[2].c_str()), CreationCollisionOption::OpenIfExists));
+							auto tsk2 = create_task(folder->CreateFolderAsync(Platform::StringReference(sub_folders[2].c_str()), CreationCollisionOption::OpenIfExists));
 							tsk2.then([=](StorageFolder^ folder) {
-								return copy_func();
+								return create_task(folder->DeleteAsync(StorageDeleteOption::PermanentDelete)).then([=]() {});
 							});
 						});
 					}
 					else {
 						tsk1.then([=](StorageFolder^ folder) {
-							return copy_func();
+							return create_task(folder->DeleteAsync(StorageDeleteOption::PermanentDelete)).then([=]() {});
 						});
 					}
 				}
@@ -153,12 +200,83 @@ namespace DX
 			}
 			else {
 				tsk0.then([=](StorageFolder^ folder) {
-					return copy_func();
+					return create_task(folder->DeleteAsync(StorageDeleteOption::PermanentDelete)).then([=]() {
+					});
+				});
+			}
+		}
+
+	}
+	inline bool WriteLinesSync(std::string dest_name, std::vector<std::string>& contents, bool overwrite = true) {
+		std::ofstream outFile(getFilePath(dest_name), overwrite?std::ios::out : std::ofstream::app);
+		if (!outFile.is_open())
+			return false;
+		for (auto line : contents) {
+			outFile << line << std::endl;
+		}
+		outFile.close();
+		return true;
+	}
+
+	inline bool CopyAssetData(const std::string src_name, const std::string dest_name, bool overwrite) {
+		std::vector<std::wstring> sub_folders;
+		getSubDirs(dest_name, sub_folders);
+
+		if (sub_folders.size() > 4) return false;
+		
+		auto copy_func = [=](StorageFolder^ folder) {
+			auto copy_data_func = [=]() {
+				std::ifstream inFile("Assets\\" + src_name, std::ios::in | std::ios::binary);
+				if (!inFile.is_open())
+					return false;
+				std::ofstream outFile(getFilePath(dest_name), std::ios::out | std::ios::binary);
+				if (!outFile.is_open())
+					return false;
+				outFile << inFile.rdbuf();
+				inFile.close();
+				outFile.close();
+				return true;
+			};
+			if (!overwrite) {
+				create_task(folder->TryGetItemAsync(Platform::StringReference(sub_folders.back().c_str()))).then([=](IStorageItem^ data) {
+					if (data != nullptr) return true;
+					return copy_data_func();
+				});
+			}
+			return copy_data_func();
+		};
+
+		Windows::Storage::StorageFolder^ dst_folder = Windows::Storage::ApplicationData::Current->LocalFolder;
+		//create folders if not exist
+		if (sub_folders.size() > 1) {
+			auto tsk0 = create_task(dst_folder->CreateFolderAsync(Platform::StringReference(sub_folders[0].c_str()), CreationCollisionOption::OpenIfExists));
+			if (sub_folders.size() > 2) {
+				tsk0.then([=](StorageFolder^ folder) {
+					auto tsk1 = create_task(folder->CreateFolderAsync(Platform::StringReference(sub_folders[1].c_str()), CreationCollisionOption::OpenIfExists));
+					if (sub_folders.size() > 3) {
+						tsk1.then([=](StorageFolder^ folder) {
+							auto tsk2 = create_task(folder->CreateFolderAsync(Platform::StringReference(sub_folders[2].c_str()), CreationCollisionOption::OpenIfExists));
+							tsk2.then([=](StorageFolder^ folder) {
+								return copy_func(folder);
+							});
+						});
+					}
+					else {
+						tsk1.then([=](StorageFolder^ folder) {
+							return copy_func(folder);
+						});
+					}
+				}
+				);
+			}
+			else {
+				tsk0.then([=](StorageFolder^ folder) {
+					return copy_func(folder);
 				});
 			}
 		}
 		
-		return copy_func();
+		else return copy_func(dst_folder);
 	}
 	inline bool ReadAllLines(const std::string filename, std::vector<std::string>& lines) {
 		std::ifstream inFile(getFilePath(filename), std::ios::in);

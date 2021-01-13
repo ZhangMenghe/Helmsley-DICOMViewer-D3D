@@ -6,6 +6,7 @@
 #include <locale>
 #include <string>
 #include <sstream> 
+#include <Common/DirectXHelper.h>
 void dicomLoader::sendDataPrepare(int height, int width, int dims, float sh, float sw, float sd, bool b_wmask){
     CHANEL_NUM = b_wmask? 4:2;
     g_img_h = height; g_img_w = width; g_img_d = dims;
@@ -16,42 +17,27 @@ void dicomLoader::sendDataPrepare(int height, int width, int dims, float sh, flo
     g_VolumeTexData = new UCHAR[g_vol_len];
     memset(g_VolumeTexData, 0x00, g_vol_len * sizeof(UCHAR));
 }
-bool dicomLoader::loadData(std::string filename, int h, int w, int d){
-    if(g_maskTexData!=nullptr){delete[]g_maskTexData;g_maskTexData=nullptr;}
-    g_maskTexData = new UCHAR[h*w*d];
 
-    char buffer[1024];
-
-    std::ifstream inFile("Assets/" + filename, std::ios::in | std::ios::binary);
-
-    if(!inFile.is_open()) 
-        return false;
-
-    auto offset = 0;
-
-    for(int id = 0; !inFile.eof(); id++){
-        inFile.read(buffer, 1024);
-        std::streamsize len = inFile.gcount();
-        if(len == 0) continue;
-
-        UCHAR* tb = g_maskTexData+offset;
-        memcpy(tb, buffer, len);
-        offset+=len;
+bool dicomLoader::loadData(std::string dicom_path, std::string mask_path, bool b_from_asset, int data_unit_size, int mask_unit_size){
+    return (loadData(dicom_path, LOAD_DICOM, b_from_asset, data_unit_size)
+    && loadData(mask_path, LOAD_MASK, b_from_asset, mask_unit_size));
+}
+bool dicomLoader::loadData(std::string dirpath, bool wmask, bool b_from_asset) {
+    if (!wmask) return loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2);
+    if (b_from_asset) {
+        return (loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2)
+            && loadData(dirpath + "mask", LOAD_MASK, b_from_asset, 2));
+    }
+    if (!loadData(dirpath + "data_w_mask", LOAD_BOTH, b_from_asset, 4)) {
+        return (loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2)
+            && loadData(dirpath + "mask", LOAD_MASK, b_from_asset, 2));
     }
     return true;
 }
-bool dicomLoader::loadData(std::string dicom_path, std::string mask_path, int data_unit_size, int mask_unit_size){
-    return (loadData(dicom_path, LOAD_DICOM, data_unit_size)
-    && loadData(mask_path, LOAD_MASK, mask_unit_size));
-}
-
-bool dicomLoader::loadData(std::string filename, mLoadTarget target, int unit_size){
+bool dicomLoader::loadData(std::string filename, mLoadTarget target, bool b_from_asset, int unit_size){
     char buffer[1024];
-    //#ifdef RESOURCE_DESKTOP_DIR
-    //std::ifstream inFile (PATH(filename), std::ios::in | std::ios::binary);
-    //#else
-    std::ifstream inFile ("Assets/" + filename, std::ios::in | std::ios::binary);
-    //#endif
+    
+    std::ifstream inFile(DX::getFilePath(filename, b_from_asset), std::ios::in | std::ios::binary);
 
     if(!inFile.is_open()) 
         return false;
@@ -62,7 +48,20 @@ bool dicomLoader::loadData(std::string filename, mLoadTarget target, int unit_si
         if(len == 0) continue;
         send_dicom_data(target, id, len, unit_size, buffer);
     }
-    n_data_offset[(int)target] = 0;
+    //n_data_offset[(int)target] = 0;
+    inFile.close();
+    return true;
+}
+bool dicomLoader::saveData(std::string vlpath) {
+    DX::WriteDataAsync(vlpath, g_VolumeTexData, g_vol_len);
+    //auto writeTestTask = DX::WriteDataAsync(vlpath, g_VolumeTexData, g_vol_len);
+    //writeTestTask.then([vlpath]() {
+    //    std::ifstream inFile(DX::getFilePath(vlpath, false), std::ios::in | std::ios::binary);
+    //    if (!inFile.is_open())
+    //        return false;
+    //    inFile.close();
+    //    return true;
+    //});
     return true;
 }
 bool dicomLoader::setupCenterLineData(vrController* controller, std::string filename){

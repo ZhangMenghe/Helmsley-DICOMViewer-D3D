@@ -36,17 +36,18 @@ namespace CoreWin{
 		std::shared_ptr<Manager> m_manager;
 
 		std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
-		
-		dicomLoader m_dicom_loader;
 
 		uiController m_uiController;
 
-		//dataManager* m_data_manager;
+		dataManager* m_data_manager;
+
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
 
+		std::shared_ptr<dicomLoader> m_dicom_loader;
+
 		// RPC instance
-		rpcHandler * m_rpcHandler;
+		std::shared_ptr<rpcHandler> m_rpcHandler = nullptr;
 
 		// RPC thread
 		std::thread * m_rpcThread;
