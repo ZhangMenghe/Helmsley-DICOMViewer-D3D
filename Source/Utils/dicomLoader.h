@@ -23,7 +23,7 @@ public:
     bool loadData(std::string dicom_path, std::string mask_path, bool b_from_asset, int data_unit_size=2, int mask_unit_size=2);
     bool loadData(std::string dirpath, bool wmask, bool b_from_asset);
 
-    bool setupCenterLineData(vrController* controller, std::string filename);
+    bool setupCenterLineData(std::string filename, bool b_from_asset);
     bool saveData(std::string vlpath);
 
     //setter
@@ -36,6 +36,7 @@ public:
     }
     void send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, const char* data);
     void sendDataFloats(int target, int chunk_size, std::vector<float> data);
+    void saveAndUseCenterLineData(std::string filepath);
     void sendDataDone();
 
 private:

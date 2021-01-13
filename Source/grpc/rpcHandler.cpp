@@ -204,7 +204,7 @@ Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::
         };
         Status status = data_reader->Finish();
         winrt::check_hresult(status.ok());
-       
+        DownloadCenterlines(req);
         //todo: TRIGGER FAULT!!!!
         ////center line
         //centerlineData clData;
@@ -245,11 +245,9 @@ void rpcHandler::DownloadCenterlines(Request req) {
         stub_->DownloadCenterLineData(&context, req));
     while (cl_reader->Read(&clData)) {
         m_dicom_loader->sendDataFloats(0, clData.data().size(), std::vector<float>(clData.data().begin(), clData.data().end()));
-        //todo: save to local?
     };
     Status status = cl_reader->Finish();
     winrt::check_hresult(status.ok());
-
 }
 
 ////////////////////////////

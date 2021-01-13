@@ -28,11 +28,22 @@ bool dicomLoader::loadData(std::string dirpath, bool wmask, bool b_from_asset) {
         return (loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2)
             && loadData(dirpath + "mask", LOAD_MASK, b_from_asset, 2));
     }
+    bool result = true;
     if (!loadData(dirpath + "data_w_mask", LOAD_BOTH, b_from_asset, 4)) {
-        return (loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2)
+        result = (loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2)
             && loadData(dirpath + "mask", LOAD_MASK, b_from_asset, 2));
     }
-    return true;
+
+    //try to load centerline data
+    if (setupCenterLineData(dirpath + "centerline.txt", b_from_asset)) {
+        for (auto inst : centerline_map) {
+            vrController::instance()->setupCenterLine(inst.first, inst.second);
+            delete inst.second;
+            inst.second = nullptr;
+        }
+        centerline_map.clear();
+    }
+    return result;
 }
 bool dicomLoader::loadData(std::string filename, mLoadTarget target, bool b_from_asset, int unit_size){
     char buffer[1024];
@@ -64,13 +75,11 @@ bool dicomLoader::saveData(std::string vlpath) {
     //});
     return true;
 }
-bool dicomLoader::setupCenterLineData(vrController* controller, std::string filename){
-    //std::vector<int>ids;
-    //std::vector<float*> cline_data;
-
+bool dicomLoader::setupCenterLineData(std::string filename, bool b_from_asset){
     int cidx = 0;
     float* data = nullptr;
-    std::ifstream inFile("Assets/" + filename, std::ios::in);
+    std::ifstream inFile(DX::getFilePath(filename, b_from_asset), std::ios::in);
+
     if (!inFile.is_open())
         return false;
 
@@ -121,7 +130,7 @@ void dicomLoader::sendDataFloats(int target, int chunk_size, std::vector<float> 
     memcpy(cdata, &data[1], (chunk_size - 1) * sizeof(float));
     centerline_map[(int)data[0]] = cdata;
 }
-void dicomLoader::sendDataDone(){
+void dicomLoader::sendDataDone() {
     for (int i = 0; i < 3; i++) {
         if (n_data_offset[i] != 0) {
             vrController::instance()->assembleTexture(i, g_img_h, g_img_w, g_img_d, g_vol_h, g_vol_w, g_vol_depth, g_VolumeTexData, CHANEL_NUM);
@@ -129,12 +138,24 @@ void dicomLoader::sendDataDone(){
             break;
         }
     }
-    if (!centerline_map.empty()) {
-        for (auto inst : centerline_map) {
-            vrController::instance()->setupCenterLine(inst.first, inst.second);
-            delete inst.second;
-            inst.second = nullptr;
-        }
-        centerline_map.clear();
+}
+void dicomLoader::saveAndUseCenterLineData(std::string filepath) {
+    if (centerline_map.empty()) return;
+    
+    std::vector<std::string> out_content;
+    out_content.reserve((4001 * centerline_map.size()));
+
+    for (auto inst : centerline_map) {
+        vrController::instance()->setupCenterLine(inst.first, inst.second);
+        out_content.push_back(std::to_string(inst.first));
+        for (int i = 0; i < 4000; i++)
+            out_content.push_back(std::to_string(inst.second[3 * i]) + " "
+                + std::to_string(inst.second[3 * i + 1]) + " " 
+                + std::to_string(inst.second[3 * i + 2]));
+        delete inst.second;
+        inst.second = nullptr;
     }
+    centerline_map.clear();
+
+    DX::WriteLinesSync(filepath, out_content, true);
 }

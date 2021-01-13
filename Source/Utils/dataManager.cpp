@@ -58,20 +58,22 @@ bool dataManager::removeLocalData(std::string dsName, volumeResponse::volumeInfo
 bool dataManager::loadData(std::string dsName, volumeResponse::volumeInfo vInfo, bool isLocal) {
 	if (dsName.compare(m_target_ds.folder_name()) != 0)return false;
 	m_target_vl = vInfo;
+	std::string vl_path = dvr::CACHE_FOLDER_NAME + "\\" + dsName + "\\" + vInfo.folder_name() + "\\";
+
 	if (isLocal) {
 		bool b_asset = dsName.compare(ASSET_RESERVE_DS) == 0 && vInfo.folder_name().compare(ASSET_RESERVE_VL) == 0;
-		std::string vl_path = dvr::CACHE_FOLDER_NAME + "\\" + dsName + "\\" + vInfo.folder_name() + "\\";
 		if (!m_dicom_loader->loadData(vl_path, vInfo.with_mask(), b_asset)) return false;
 		m_dicom_loader->sendDataDone();
 	}
 	else {
 		if (m_rpc_handler == nullptr) return false;
 		std::string path = dsName + "/" + vInfo.folder_name();
-		 m_rpc_handler->DownloadVolumeAsync(path).then([this, path, vInfo]() {
+		 m_rpc_handler->DownloadVolumeAsync(path).then([this, path, vInfo, vl_path]() {
 			if (vInfo.with_mask()) {
-				m_rpc_handler->DownloadMasksAndCenterlinesAsync(path).then([this]() {
+				m_rpc_handler->DownloadMasksAndCenterlinesAsync(path).then([this, vl_path]() {
 					save_target_dcmi();
 					m_dicom_loader->sendDataDone();
+					m_dicom_loader->saveAndUseCenterLineData(vl_path + "centerline.txt");
 				});
 			}else {
 				save_target_dcmi();
@@ -91,7 +93,7 @@ std::vector<volumeResponse::volumeInfo> dataManager::getAvailableVolumes(std::st
 				m_target_ds = tInfo; break;
 			}
 		}
-		return std::vector<volumeResponse::volumeInfo>(m_local_dv_map[dsname].begin(), m_local_dv_map[dsname].end());
+		return m_local_dv_map[dsname];
 	}
 	if (m_rpc_handler == nullptr)return std::vector<volumeResponse::volumeInfo>();
 	
@@ -176,7 +178,12 @@ void dataManager::setup_local_datasets() {
 void dataManager::update_local_info(datasetResponse::datasetInfo tInfo, volumeResponse::volumeInfo vInfo) {
 	std::string dsname = tInfo.folder_name();
 	if (m_local_dv_map.count(dsname) == 0) m_local_datasets.push_back(tInfo);
-	m_local_dv_map[dsname].insert(vInfo);
+	
+	auto itr = std::find_if(m_local_dv_map[dsname].begin(),
+		m_local_dv_map[dsname].end(), 
+		[vInfo](const volumeResponse::volumeInfo& s) { return s.folder_name().compare(vInfo.folder_name()) == 0; });
+	if (itr == m_local_dv_map[dsname].end()) m_local_dv_map[dsname].push_back(vInfo);
+	else *itr = vInfo;
 }
 void dataManager::save_target_dcmi() {
 	update_local_info(m_target_ds, m_target_vl);

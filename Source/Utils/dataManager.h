@@ -30,7 +30,7 @@ private:
 	datasetResponse::datasetInfo m_target_ds;
 	volumeResponse::volumeInfo m_target_vl;
 	std::vector<datasetResponse::datasetInfo> m_remote_datasets, m_local_datasets;
-	std::unordered_map<std::string, std::set<volumeResponse::volumeInfo, vInfoCmp>> m_local_dv_map;
+	std::unordered_map<std::string, std::vector<volumeResponse::volumeInfo>> m_local_dv_map;
 
 	bool m_local_initialized = false;
 	void setup_local_datasets();
