@@ -37,7 +37,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 }
 void vrController::onReset()
 {
-	SpaceMat_ = glm::mat4();
+	SpaceMat_ = glm::mat4(1.0f);
 	PosVec3_.z = 0.0f;
 	Mouse_old = {.0f, .0f};
 	rStates_.clear();

@@ -41,15 +41,6 @@
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{61ac4094-c18c-4a47-910b-b3db374efb77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data">
-      <UniqueIdentifier>{497261e0-5ef3-46e2-8bc5-8f4640207403}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\Larry_Smarr_2016">
-      <UniqueIdentifier>{bd3222b7-f98f-48be-b10d-44d0af478e92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
-      <UniqueIdentifier>{05327bab-dc6c-4792-b98f-39853a145765}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\proto">
       <UniqueIdentifier>{e7f39dcc-3d92-44be-a9ce-3ed4e394c715}</UniqueIdentifier>
     </Filter>
@@ -393,12 +384,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
-      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
-      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
     <None Include="..\..\Source\proto_src\inspectorSync.proto">
       <Filter>Source\proto_src</Filter>
     </None>

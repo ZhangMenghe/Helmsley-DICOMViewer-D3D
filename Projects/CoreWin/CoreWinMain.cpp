@@ -91,7 +91,7 @@ void CoreWinMain::setup_volume_server(){
 void CoreWinMain::setup_volume_local() {
 	//test asset demo
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
-	auto dsName = ds[1].folder_name();
+	auto dsName = ds[0].folder_name();
 	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes(dsName, true);
 
 	auto vInfo = vl[0];
