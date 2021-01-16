@@ -2,6 +2,8 @@
 #define RPCHANDLER_H
 
 #include <string>
+#include <vector>
+#include <ppltasks.h>
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
 #include <grpcpp/client_context.h>
@@ -18,10 +20,10 @@
 #include <utils/dicomLoader.h>
 #include <vrController.h>
 #include <Common/Manager.h>
-#include <vector>
 
 template <class T>
 using RPCVector = google::protobuf::RepeatedPtrField<T>;
+using helmsley::configResponse;
 using helmsley::datasetResponse;
 using helmsley::volumeResponse;
 
@@ -39,7 +41,7 @@ private:
 
     Manager *manager_ = nullptr;
     vrController *vr_ = nullptr;
-    dicomLoader *loader_ = nullptr;
+    std::shared_ptr<dicomLoader> m_dicom_loader;
     uiController *ui_ = nullptr;
 
     std::vector<datasetResponse::datasetInfo> availableRemoteDatasets;
@@ -57,26 +59,27 @@ private:
 
 public:
     rpcHandler(const std::string &host);
-    ~rpcHandler();
     const RPCVector<helmsley::GestureOp> getOperations();
 
     /*void setUIController(uiController* ui){ui_ = ui;}*/
     void setManager(Manager *manager) { manager_ = manager; }
     void setVRController(vrController *vr) { vr_ = vr; }
-    void setDataLoader(dicomLoader *loader) { loader_ = loader; }
+    void setDataLoader(const std::shared_ptr<dicomLoader> &loader) { m_dicom_loader = loader; }
     void setUIController(uiController *ui) { ui_ = ui; }
     void setDataPath(std::string path) { DATA_PATH = path; }
 
     void Run();
 
-    //void getAvailableConfigs();
-    //void exportConfigs();
-    std::vector<datasetResponse::datasetInfo> getAvailableDatasets(bool isLocal);
-    std::vector<volumeResponse::volumeInfo> getVolumeFromDataset(const std::string &dataset_name, bool isLocal);
+    void getRemoteDatasets(std::vector<datasetResponse::datasetInfo> &datasets);
+    std::vector<volumeResponse::volumeInfo> getVolumeFromDataset(const std::string &dataset_name);
+    std::vector<configResponse::configInfo> getAvailableConfigFiles();
+    void exportConfigs(std::string content);
+
     void DownloadVolume(const std::string &folder_path);
+    Concurrency::task<void> DownloadVolumeAsync(const std::string &folder_path);
+    Concurrency::task<void> DownloadMasksAndCenterlinesAsync(const std::string &folder_path);
+
     void DownloadMasksAndCenterlines(const std::string &folder_name);
     void DownloadCenterlines(Request req);
-
-    datasetResponse::datasetInfo target_ds;
 };
 #endif

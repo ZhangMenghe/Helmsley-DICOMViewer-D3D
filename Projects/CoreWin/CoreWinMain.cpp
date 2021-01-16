@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "CoreWinMain.h"
-#include "Common\DirectXHelper.h"
+#include <Common/DirectXHelper.h>
 
 using namespace CoreWin;
 using namespace Windows::Foundation;
@@ -13,69 +13,102 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
 
+	setup_resource();
+
 	m_manager = std::make_shared<Manager>();
 
-	// TODO: Replace this with your app's content initialization.
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources, m_manager));
+	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+
+	m_dicom_loader = std::make_shared<dicomLoader>();
 
 	if (dvr::CONNECT_TO_SERVER) {
-		m_rpcHandler = new rpcHandler("localhost:23333");
+		m_rpcHandler = std::make_shared<rpcHandler>("localhost:23333");
 		m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-		m_rpcHandler->setDataLoader(&m_dicom_loader);
+		m_rpcHandler->setDataLoader(m_dicom_loader);
 		m_rpcHandler->setVRController(m_sceneRenderer.get());
 		m_rpcHandler->setManager(m_manager.get());
 		m_rpcHandler->setUIController(&m_uiController);
-
-		dvr::LOAD_DATA_FROM_SERVER ? setup_volume_server() : setup_volume_local();
+		m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
 	}
 	else {
-		setup_volume_local();
-	}
+		m_data_manager = new dataManager(m_dicom_loader);
 
-	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	}
 
 	Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
+
+	setup_volume_local();
+	//setup_volume_server();
 }
 void CoreWinMain::setup_volume_server(){
-	auto vector = m_rpcHandler->getVolumeFromDataset("IRB02", false);
+	//test remote
+	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
+	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes("IRB01", false);
 
-	if (vector.size() > 0) {
-		volumeResponse::volumeInfo sel_vol_info;// = vector[0];
-		for (auto vol : vector) {
-			if (vol.folder_name().compare("21_WATERPOSTCORLAVAFLEX20secs") == 0) {
-				sel_vol_info = vol;
-				break;
-			}
+	volumeResponse::volumeInfo vInfo;
+	for (auto vli : vl) {
+		if (vli.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0) {
+			vInfo = vli; break;
 		}
-		auto vdims = sel_vol_info.dims();
-		auto spacing = sel_vol_info.resolution();
-		m_dicom_loader.sendDataPrepare(
-			vdims.Get(0), vdims.Get(1), vdims.Get(2),
-			spacing.Get(0) * vdims.Get(0), spacing.Get(1) * vdims.Get(1), spacing.Get(2) * vdims.Get(2),
-			sel_vol_info.with_mask());
+	}
+	auto dims = vInfo.dims();
+	auto spacing = vInfo.resolution();
+	m_dicom_loader->sendDataPrepare(
+		dims[0], dims[1], dims[2],
+		spacing[0] * dims[0], spacing[1] * dims[1], vInfo.volume_loc_range(),
+		vInfo.with_mask());
+	m_data_manager->loadData("IRB01", vInfo, false);
 
-		std::string path = m_rpcHandler->target_ds.folder_name() +'/'+ sel_vol_info.folder_name();
-		m_rpcHandler->DownloadVolume(path);
-		m_rpcHandler->DownloadMasksAndCenterlines(path);
-		m_dicom_loader.sendDataDone();
-	}
-	else {
-		setup_volume_local();
-	}
+	//auto vector = m_rpcHandler->getVolumeFromDataset("IRB02");
+
+	//if (vector.size() > 0) {
+	//	volumeResponse::volumeInfo sel_vol_info;// = vector[0];
+	//	for (auto vol : vector) {
+	//		if (vol.folder_name().compare("21_WATERPOSTCORLAVAFLEX20secs") == 0) {
+	//			sel_vol_info = vol;
+	//			break;
+	//		}
+	//	}
+	//	auto vdims = sel_vol_info.dims();
+	//	auto spacing = sel_vol_info.resolution();
+	//	m_dicom_loader->sendDataPrepare(
+	//		vdims.Get(0), vdims.Get(1), vdims.Get(2),
+	//		spacing.Get(0) * vdims.Get(0), spacing.Get(1) * vdims.Get(1), spacing.Get(2) * vdims.Get(2),
+	//		sel_vol_info.with_mask());
+
+	//	std::string path;// = m_rpcHandler->target_ds.folder_name() + '/' + sel_vol_info.folder_name();
+	//	m_rpcHandler->DownloadVolume(path);
+	//	m_rpcHandler->DownloadMasksAndCenterlines(path);
+	//	m_dicom_loader.sendDataDone();
+	//}
+	//else {
+	//	setup_volume_local();
+	//}
 }
 void CoreWinMain::setup_volume_local() {
-	m_dicom_loader.sendDataPrepare(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
-	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask")) {
-		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
-		//m_sceneRenderer.reset();
-	}
-	m_dicom_loader.setupCenterLineData(m_sceneRenderer.get(), m_ds_path + "centerline.txt");
-	m_dicom_loader.sendDataDone();
+	//test asset demo
+	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
+	auto dsName = ds[1].folder_name();
+	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes(dsName, true);
+
+	auto vInfo = vl[0];
+	auto dims = vInfo.dims();
+	auto spacing = vInfo.resolution();
+	m_dicom_loader->sendDataPrepare(
+		dims[0], dims[1], dims[2], 
+		spacing[0] * dims[0], spacing[1] * dims[1], vInfo.volume_loc_range(), 
+		vInfo.with_mask());
+	m_data_manager->loadData(dsName, vInfo, true);
 }
-CoreWinMain::~CoreWinMain()
-{
+
+void CoreWinMain::setup_resource() {
+	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false))
+		std::cerr << "Fail to copy";
+}
+CoreWinMain::~CoreWinMain(){
 	// Deregister device notification
 	m_deviceResources->RegisterDeviceNotify(nullptr);
 }

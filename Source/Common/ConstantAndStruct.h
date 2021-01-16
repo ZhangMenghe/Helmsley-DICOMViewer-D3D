@@ -121,6 +121,11 @@ namespace dvr{
     const bool CONNECT_TO_SERVER = true;
     const bool LOAD_DATA_FROM_SERVER = false;
     static const ORGAN_IDS DEFAULT_TRAVERSAL_ORGAN = ORGAN_COLON;
+
+    //Names
+    const static std::string CACHE_FOLDER_NAME = "helmsley_cached", CONFIG_NAME = "pacs_local.txt";
+    const static std::string DCM_FILE_NAME="data", DCM_MASK_FILE_NAME="mask", DCM_WMASK_FILE_NAME="data_w_mask", DCM_CENTERLINE_FILE_NAME="center_line";
+
     //TRS
     //const DirectX::XMFLOAT4X4 DEFAULT_ROTATE(
     //    1.0f, .0f,.0f,.0f,

@@ -360,6 +360,7 @@
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
+    <ClInclude Include="..\..\Source\Utils\dataManager.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
     <ClInclude Include="..\..\Source\Utils\uiController.h" />
@@ -421,6 +422,7 @@
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp" />
+    <ClCompile Include="..\..\Source\Utils\dataManager.cpp" />
     <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp" />
     <ClCompile Include="..\..\Source\Utils\uiController.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>
@@ -720,19 +722,21 @@
     <None Include="..\..\Source\proto_src\common.proto" />
     <None Include="..\..\Source\proto_src\inspectorSync.proto" />
     <None Include="..\..\Source\proto_src\transManager.proto" />
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
+    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</DeploymentContent>
+      <FileType>Document</FileType>
     </None>
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
+    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</DeploymentContent>
+      <FileType>Document</FileType>
     </None>
     <None Include="OpenXR_TemporaryKey.pfx" />
     <None Include="packages.config" />
@@ -1041,6 +1045,14 @@
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\helmsley_cached\pacs_local.txt">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

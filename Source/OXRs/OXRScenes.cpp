@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "OXRScenes.h"
+#include <Common/DirectXHelper.h>
 OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources)
 		: m_deviceResources(deviceResources)
 {
@@ -7,7 +8,7 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources
 
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 
-	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	if (dvr::CONNECT_TO_SERVER)
 	{
@@ -24,10 +25,20 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources
 		setup_volume_local();
 	}
 	m_uiController.InitAll();
+
+	/*
+	std::vector<std::string> contents;
+	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt"))
+		std::cerr << "Fail to copy";
+	else if (!DX::ReadAllLines("helmsley_cached\\pacs_local.txt", contents))
+		std::cerr << "File not exist";
+	for (auto line : contents)
+		std::cout << line << std::endl;
+		*/
 }
 void OXRScenes::setup_volume_server()
 {
-	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01", false);
+	auto vector = m_rpcHandler->getVolumeFromDataset("IRB01");
 
 	if (vector.size() > 0)
 	{
@@ -60,7 +71,7 @@ void OXRScenes::setup_volume_server()
 void OXRScenes::setup_volume_local()
 {
 	m_dicom_loader.sendDataPrepare(vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, true);
-	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask"))
+	if (m_dicom_loader.loadData(m_ds_path + "data", m_ds_path + "mask", true))
 	{
 		m_sceneRenderer->assembleTexture(2, vol_dims.x, vol_dims.y, vol_dims.z, -1, -1, -1, m_dicom_loader.getVolumeData(), m_dicom_loader.getChannelNum());
 	}
@@ -90,7 +101,7 @@ void OXRScenes::Update()
 {
 	m_timer.Tick([&]() {
 		m_sceneRenderer->Update(m_timer);
-		//m_fpsTextRenderer->Update(m_timer);
+		m_fpsTextRenderer->Update(m_timer);
 	});
 }
 
@@ -106,7 +117,7 @@ bool OXRScenes::Render()
 		return false;
 	}
 	m_sceneRenderer->Render();
-	//m_fpsTextRenderer->Render();
+	m_fpsTextRenderer->Render();
 
 	/*m_text_texture->Draw(L"asdfasd");
 

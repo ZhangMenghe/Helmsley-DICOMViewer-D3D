@@ -41,9 +41,6 @@
     <Filter Include="Source\Renderers">
       <UniqueIdentifier>{9a7c7c64-f15d-487c-839f-5a85ebff2e41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data">
-      <UniqueIdentifier>{31313c94-4fce-4bbd-b873-e63b6a529403}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{9b6d6c2a-afa4-4ca6-854e-82042768a0da}</UniqueIdentifier>
     </Filter>
@@ -103,6 +100,15 @@
     </Filter>
     <Filter Include="Library\arm64\debug">
       <UniqueIdentifier>{ec0107f7-4242-47ef-bc42-ab1a788573c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\helmsley_cached">
+      <UniqueIdentifier>{39e17afe-9026-4b5c-ab81-7b092d602de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016">
+      <UniqueIdentifier>{23835130-672c-4103-8cd0-87fb1176a912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
+      <UniqueIdentifier>{8154b040-7503-4f79-bfe9-f03332ef34ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp">
       <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Utils\dataManager.cpp">
+      <Filter>Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,28 +343,15 @@
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h">
       <Filter>Source\SceneObjs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Utils\dataManager.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
-      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
-    <None Include="..\..\Source\proto_src\inspectorSync.proto">
-      <Filter>Source\proto_src</Filter>
-    </None>
-    <None Include="..\..\Source\proto_src\transManager.proto">
-      <Filter>Source\proto_src</Filter>
-    </None>
-    <None Include="..\..\Source\proto_src\common.proto">
-      <Filter>Source\proto_src</Filter>
-    </None>
-    <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
-    <None Include="..\..\Source\pbr\Shaders\HighlightShared.hlsl" />
-    <None Include="..\..\Source\pbr\Shaders\PbrShared.hlsl" />
-    <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
     <None Include="OpenXR_TemporaryKey.pfx" />
     <None Include="..\..\Source\proto_src\inspectorSync.proto">
       <Filter>Source\proto_src</Filter>
@@ -367,8 +363,14 @@
       <Filter>Source\proto_src</Filter>
     </None>
     <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
-    <None Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
-      <Filter>Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
+    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
+      <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
+    </None>
+    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
+      <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
+    </None>
+    <None Include="Assets\helmsley_cached\pacs_local.txt">
+      <Filter>Assets\helmsley_cached</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
