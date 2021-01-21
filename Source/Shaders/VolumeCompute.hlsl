@@ -72,14 +72,18 @@ int getMaskBit(uint mask_value) {
 }
 
 //applied contrast, brightness, 12bit->8bit, return value 0-1
-float TransferIntensityStepOne(uint intensity) {
-	//max value 4095
-	float intensity_01 = float(intensity) * 0.0002442002442002442;
-	if (intensity_01 > u_contrast_high || intensity_01 < u_contrast_low) intensity_01 = .0;
-	intensity_01 = smoothstep(u_contrast_low, u_contrast_high, intensity_01);
-	//    intensity_01 = (intensity_01 - u_contrast_low) / (u_contrast_high - u_contrast_low) * u_contrast_level;
-	intensity_01 = clamp(u_brightness + intensity_01 - 0.5, .0, 1.0);
-	return intensity_01;
+float TransferIntensityStepOne(float intensity) {
+	intensity = (intensity - u_contrast_low) / (u_contrast_high - u_contrast_low);
+	intensity = max(.0, min(1.0, intensity));
+	intensity = clamp(intensity + u_brightness * 2.0 - 1.0, .0, 1.0);
+	return intensity;
+	////max value 4095
+	//float intensity_01 = float(intensity) * 0.0002442002442002442;
+	//if (intensity_01 > u_contrast_high || intensity_01 < u_contrast_low) intensity_01 = .0;
+	//intensity_01 = smoothstep(u_contrast_low, u_contrast_high, intensity_01);
+	////    intensity_01 = (intensity_01 - u_contrast_low) / (u_contrast_high - u_contrast_low) * u_contrast_level;
+	//intensity_01 = clamp(u_brightness + intensity_01 - 0.5, .0, 1.0);
+	//return intensity_01;
 }
 
 float3 TransferColor(float intensity, int ORGAN_BIT) {
@@ -107,10 +111,10 @@ void main(uint3 threadID : SV_DispatchThreadID){
 	}
 
 	uint u_intensity = value & uint(0xffff);
-	float intensity = TransferIntensityStepOne(u_intensity);
+	float intensity_01 = float(value.x) * 0.0002442002442002442;
 
 	float alpha = .0f;
 	for (int i = 0; i < u_widget_num; i++)
-		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity));
-	destVolume[threadID] = float4(TransferColor(intensity, ORGAN_BIT), alpha);
+		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity_01));
+	destVolume[threadID] = float4(TransferColor(TransferIntensityStepOne(intensity_01), ORGAN_BIT), alpha);
 }
