@@ -2,10 +2,6 @@
 #include "CoreWinMain.h"
 #include <Common/DirectXHelper.h>
 
-using namespace CoreWin;
-using namespace Windows::Foundation;
-using namespace Windows::System::Threading;
-using namespace Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
@@ -36,7 +32,7 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 
 	}
 
-	Size outputSize = m_deviceResources->GetOutputSize();
+	Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
 
@@ -105,7 +101,7 @@ void CoreWinMain::setup_volume_local() {
 }
 
 void CoreWinMain::setup_resource() {
-	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false))
+	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", true))
 		std::cerr << "Fail to copy";
 }
 CoreWinMain::~CoreWinMain(){
@@ -118,7 +114,7 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
 	m_sceneRenderer->CreateWindowSizeDependentResources();
-	Size outputSize = m_deviceResources->GetOutputSize();
+	Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 }
 

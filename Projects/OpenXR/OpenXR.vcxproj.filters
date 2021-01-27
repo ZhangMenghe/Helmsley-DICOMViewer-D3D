@@ -68,9 +68,6 @@
     <Filter Include="Library\arm64\debug">
       <UniqueIdentifier>{ec0107f7-4242-47ef-bc42-ab1a788573c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data\Larry_Smarr_2016">
-      <UniqueIdentifier>{71289dd9-a41a-447e-98b1-114ca90a73fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
       <UniqueIdentifier>{1233eb50-6233-4905-9736-e6cda659fcd6}</UniqueIdentifier>
     </Filter>
@@ -372,6 +369,9 @@
     <None Include="Assets\helmsley_cached\pacs_local.txt">
       <Filter>Assets\helmsley_cached</Filter>
     </None>
+    <None Include="..\..\Source\pbr\Shaders\HighlightShared.hlsl" />
+    <None Include="..\..\Source\pbr\Shaders\PbrShared.hlsl" />
+    <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">

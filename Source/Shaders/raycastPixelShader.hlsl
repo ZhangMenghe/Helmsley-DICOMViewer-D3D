@@ -61,33 +61,30 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	float pd = .0;
 	uint steps = 0;
 	float usample_step_inverse = 0.003f;
+	float high_bound = 0.01;
+	float step_size = usample_step_inverse;
+	bool last_succeeded = true;
 
-	
 	for (float t = head; t < tail && steps<128; steps++ ) {
 		if (sum.a >= 0.98f) break;
 		float3 p = ro + rd * t;
 		float4 val_color = Sample(p);
 		if (val_color.a > 0.01) {
-			if (pd < 0.01) {
-				float t0 = t - usample_step_inverse * 3;
-				float t1 = t;
-				float tm;
-#define BINARY_SUBDIV tm = (t0 + t1) * .5; p = ro + rd * tm; if (Sample(p).a) t1 = tm; else t0 = tm;
-				BINARY_SUBDIV
-					BINARY_SUBDIV
-					BINARY_SUBDIV
-#undef BINARY_SUBDIV
-					t = tm;
-				val_color = Sample(p);
+			pd = (1.0 - sum.a) * val_color.a;
+			if (pd > high_bound) {
+				step_size /= 2.0; high_bound = min(high_bound * 2.0, 1.0); last_succeeded = false;
 			}
-			/*sum.rgb += (1.0 - sum.a) * val_color.a * val_color.rgb;
-			sum.a += (1.0 - sum.a) * val_color.a;*/
-			
-			val_color.rgb *= val_color.a;
-			sum += val_color * (1 - sum.a);
+			else {
+				sum.rgb += pd * val_color.rgb;
+				sum.a += pd;
+				t += step_size;
+				if (last_succeeded) { step_size *= 2.0; high_bound /= 2.0; }
+				else last_succeeded = true;
+			}
 		}
-		t += val_color.a > 0.01 ? usample_step_inverse : usample_step_inverse * 4.0;
-		pd = sum.a;
+		else {
+			t += 4.0 * usample_step_inverse;
+		}
 	}
 	return float4(sum.rgb, saturate(sum.a));
 }
