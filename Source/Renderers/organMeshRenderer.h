@@ -22,7 +22,7 @@ protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 private:
-	const float grid_factor = 0.25f;
+	const float grid_factor = 0.3f;
 	const size_t max_triangles_per_cell = 5;
 	const size_t max_vertices_per_triangle = 3;
 

@@ -3,8 +3,15 @@ SamplerState uSampler;
 
 struct v2f {
 	float4 pos : SV_POSITION;
+	float3 norm : NORMAL;
+	float3 col : COLOR;
 };
 
 float4 main(v2f input) : SV_TARGET{
-	return 1.0;
+	float3 norm = normalize(input.norm);
+	norm.x = norm.x / 2.0f + 1.0f;
+	norm.y = norm.y / 2.0f + 1.0f;
+	norm.z = norm.z / 2.0f + 1.0f;
+	float3 col = input.col;
+	return float4(norm.xyz, 1.0);
 }

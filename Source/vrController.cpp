@@ -28,7 +28,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	texvrRenderer_ = new textureBasedVolumeRenderer(device);
 	cutter_ = new cuttingController(device);
 	data_board_ = new dataBoard(device);
-	//meshRenderer_ = new organMeshRenderer(device);
+	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
 	CreateDeviceDependentResources();
@@ -139,7 +139,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 	Manager::baked_dirty_ = true;
 
-	//meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
 }
 
 void vrController::init_texture()
@@ -339,10 +339,10 @@ void vrController::render_scene()
 	}
 
 	///// MESH  ////
-	/*if (m_manager->isDrawMesh())
+	if (m_manager->isDrawMesh())
 	{
 		render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	}*/
+	}
 
 	///// CENTER LINE/////
 	if (m_manager->isDrawCenterLine())
