@@ -15,12 +15,16 @@ struct VertexShaderInput{
 // Per-pixel color data passed through the pixel shader.
 struct v2f{
 	float4 pos : SV_POSITION;
+	float3 norm : NORMAL;
+	float3 col : COLOR;
 };
 
 // Simple shader to do vertex processing on the GPU.
 v2f main(VertexShaderInput input){
 	v2f output;
+	output.col = input.pos.xyz * 2.0f;
 	output.pos = mul(float4(-input.pos.y, input.pos.x, input.pos.z, 1.0f), model);
 	output.pos = mul(output.pos, uViewProjMat);
+	output.norm = input.norm;
 	return output;
 }

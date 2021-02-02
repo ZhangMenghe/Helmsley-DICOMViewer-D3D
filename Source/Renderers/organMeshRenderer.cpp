@@ -12,8 +12,8 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	//setup rasterization state
 	D3D11_RASTERIZER_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
-	desc.FillMode = D3D11_FILL_WIREFRAME;// D3D11_FILL_SOLID;//D3D11_FILL_WIREFRAME;//
-	desc.CullMode = D3D11_CULL_NONE;
+	desc.FillMode = D3D11_FILL_SOLID;// D3D11_FILL_SOLID;//D3D11_FILL_WIREFRAME;//
+	desc.CullMode = D3D11_CULL_FRONT; // D3D11_CULL_NONE // D3D11_CULL_BACK // D3D11_CULL_FRONT
 	//desc.CullMode = D3D11_CULL_BACK;
 	desc.FrontCounterClockwise = FALSE;
 	desc.DepthBias = 0;
@@ -318,9 +318,9 @@ bool organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, Dir
 		}
 		//run compute shader
 		context->Dispatch(
-			(m_computeConstData.u_grid_size.x + 7) / 8, 
-			(m_computeConstData.u_grid_size.y + 7) / 8, 
-			(m_computeConstData.u_grid_size.z + 7) / 8
+			(m_computeConstData.u_grid_size.x + 7) / 8,// / 8, 
+			(m_computeConstData.u_grid_size.y + 7) / 8,// / 8, 
+			(m_computeConstData.u_grid_size.z + 7) / 8// / 8
 		);
 		//debug
 		//context->Dispatch((tex_vol->Width() + 7) / 6, (tex_vol->Height() + 7) / 6, (tex_vol->Depth() + 7) / 6);

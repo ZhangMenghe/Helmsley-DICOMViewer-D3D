@@ -252,7 +252,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)/../../Library/x64/include;$(ProjectDir)/../../Source;$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_DEBUG;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAsWinRT>true</CompileAsWinRT>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
