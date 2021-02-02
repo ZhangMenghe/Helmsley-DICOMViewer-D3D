@@ -13,8 +13,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 
 	m_manager = std::make_shared<Manager>();
 
-	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(m_deviceResources, m_manager));
-	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	m_sceneRenderer = std::make_unique<vrController>(m_deviceResources, m_manager);
+	m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 

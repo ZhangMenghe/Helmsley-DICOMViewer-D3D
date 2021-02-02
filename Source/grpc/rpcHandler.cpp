@@ -389,7 +389,7 @@ void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg)
     //checks
     auto f = msg.check_keys();
     auto cvs = msg.check_values();
-    Manager::instance()->InitCheckParams(std::vector<std::string>(f.begin(), f.end()), std::vector<bool>(cvs.begin(), cvs.end()));
+    manager_->InitCheckParams(std::vector<std::string>(f.begin(), f.end()), std::vector<bool>(cvs.begin(), cvs.end()));
 
     auto vps = msg.volume_pose();
     auto cps = msg.camera_pose();

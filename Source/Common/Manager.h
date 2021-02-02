@@ -67,6 +67,8 @@ public:
     int getDirtyOpacityId() { return m_dirty_wid; }
     float *getDefaultWidgetPoints() { return default_widget_points_; }
     float *getDirtyWidgetPoints() { return dirty_widget_points_; }
+    std::vector<bool>* getOpacityWidgetVisibility() { return &widget_visibilities_; }
+
     //adder
     void addOpacityWidget(float *values, int value_num);
     void removeOpacityWidget(int wid);

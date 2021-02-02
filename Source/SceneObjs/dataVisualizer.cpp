@@ -179,8 +179,12 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
 
     render_complete &= m_board_quad->Draw(context, model_mat);
     render_complete &= m_color_bar->Draw(context, model_mat);
-    for (auto render : m_opacity_graphs) 
-        render_complete &= render->Draw(context, model_mat);
+
+    auto visibles = Manager::instance()->getOpacityWidgetVisibility();
+    for (int i = 0; i < visibles->size(); i++) {
+        if (!visibles->at(i)) continue;
+        render_complete &= m_opacity_graphs[i]->Draw(context, model_mat);
+    }
 
     context->OMSetDepthStencilState(nullptr, 0);
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
