@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Manager.h"
+#include <D3DPipeline/Primitive.h>
 Camera* Manager::camera = nullptr;
 std::vector<bool> Manager::param_bool;
 std::vector<std::string> Manager::shader_contents;

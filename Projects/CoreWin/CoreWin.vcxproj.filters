@@ -316,6 +316,9 @@
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -333,6 +336,9 @@
     </None>
     <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
       <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
+    </None>
+    <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
+      <Filter>Source\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
