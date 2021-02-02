@@ -3,6 +3,7 @@
 #include <Common/Manager.h>
 #include <D3DPipeline/Primitive.h>
 #include <vrController.h>
+#include <Common/DirectXHelper.h>
 using namespace dvr;
 
 dataBoard::dataBoard(ID3D11Device* device){
@@ -75,10 +76,70 @@ void dataBoard::onReset(ID3D11Device* device){
             m_color_vertices[6 * i + 2] = quad_vertices_pos_w_tex[6 * i + 2] * scale.y + offset.z;
         }
 
-        m_color_bar = new quadRenderer(device, L"QuadVertexShader.cso", L"colorVizPixelShader.cso", m_color_vertices);
+        m_color_bar = new quadRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso", m_color_vertices);
 
-        CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(DirectX::XMFLOAT4X4) * 12 , D3D11_BIND_CONSTANT_BUFFER);
-        m_color_bar->createPixelConstantBuffer(device, pixconstBufferDesc, nullptr);
+        //compute shader
+
+        auto loadCSTask = DX::ReadDataAsync(L"colorTransferCompute.cso");
+        // After the vertex shader file is loaded, create the shader and input layout.
+        auto createCSTask = loadCSTask.then([this, device](const std::vector<byte>& fileData) {
+            DX::ThrowIfFailed(
+                device->CreateComputeShader(
+                    &fileData[0],
+                    fileData.size(),
+                    nullptr,
+                    &m_color_comp_shader
+                )
+            );
+
+            CD3D11_BUFFER_DESC constantBufferDesc(sizeof(DirectX::XMFLOAT4X4) * 12, D3D11_BIND_CONSTANT_BUFFER);
+            winrt::check_hresult(
+                device->CreateBuffer(
+                    &constantBufferDesc,
+                    nullptr,
+                    &m_compute_constbuff
+                )
+            );
+        });
+
+        D3D11_TEXTURE2D_DESC texDesc;
+        texDesc.Width = 256;
+        texDesc.Height = 120;
+        texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        texDesc.Usage = D3D11_USAGE_DEFAULT;
+        texDesc.MipLevels = 1;
+        texDesc.ArraySize = 1;
+        texDesc.SampleDesc.Count = 1;
+        texDesc.SampleDesc.Quality = 0;
+        texDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+        texDesc.CPUAccessFlags = 0;
+        texDesc.MiscFlags = 0;
+
+        DX::ThrowIfFailed(
+            device->CreateTexture2D(&texDesc, nullptr, &m_comp_tex)
+        );
+        D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+        uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+        uavDesc.Format = texDesc.Format;
+        uavDesc.Texture2D.MipSlice = 0;
+        DX::ThrowIfFailed(
+            device->CreateUnorderedAccessView(m_comp_tex, &uavDesc, &m_textureUAV)
+        );
+
+
+        texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+        texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+        D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+            texDesc.Format,
+            D3D11_RTV_DIMENSION_TEXTURE2D,
+        };
+        view_desc.Texture2D.MipSlice = 0;
+
+        m_color_tex = new Texture;
+        m_color_tex->Initialize(device, texDesc, view_desc);
+
+        m_color_bar->setTexture(m_color_tex);
         m_initialized = true;
     }
 }
@@ -103,9 +164,6 @@ void dataBoard::onViewChange(int width, int height){
 
 void dataBoard::Update(ID3D11Device* device, ID3D11DeviceContext* context) {
     volumeSetupConstBuffer* vol_setup = Manager::instance()->getVolumeSetupConstData();
-    //color bar viz
-    m_color_bar->updatePixelConstBuffer(context, vol_setup);
-
     if (vol_setup->u_widget_num == 0) {
         for (auto renderer : m_opacity_graphs) delete renderer;
         for (auto data : m_opacity_vertices) { delete[]data; data = nullptr; }
@@ -178,6 +236,35 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
     bool render_complete = true;
 
     render_complete &= m_board_quad->Draw(context, model_mat);
+    
+    //color bar texture
+    context->CSSetShader(m_color_comp_shader, nullptr, 0);
+    ID3D11ShaderResourceView* texview = m_color_tex->GetTextureView();
+    context->CSSetShaderResources(0, 1, &texview);
+    context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
+
+    if (m_compute_constbuff != nullptr) {
+        // Prepare the constant buffer to send it to the graphics device.
+        context->UpdateSubresource(
+            m_compute_constbuff,
+            0,
+            nullptr,
+            Manager::instance()->getVolumeSetupConstData(),
+            0,
+            0
+        );
+        context->CSSetConstantBuffers(0, 1, &m_compute_constbuff);
+    }
+
+    context->Dispatch((256 + 7) / 8, 1, 1);
+    context->CopyResource(m_color_tex->GetTexture2D(), m_comp_tex);
+
+    //unbind UAV
+    ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+    context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+    // Disable Compute Shader
+    context->CSSetShader(nullptr, nullptr, 0);
+    
     render_complete &= m_color_bar->Draw(context, model_mat);
 
     auto visibles = Manager::instance()->getOpacityWidgetVisibility();

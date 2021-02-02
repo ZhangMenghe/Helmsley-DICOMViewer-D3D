@@ -297,6 +297,9 @@
     <None Include="Assets\helmsley_cached\pacs_local.txt">
       <Filter>Assets\helmsley_cached</Filter>
     </None>
+    <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
+      <Filter>Source\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
@@ -344,7 +347,7 @@
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -310,9 +310,6 @@
     <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>

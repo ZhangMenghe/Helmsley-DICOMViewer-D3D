@@ -30,9 +30,17 @@ private:
 
     //background quad
     quadRenderer* m_board_quad;
+
     //colorbar
     quadRenderer* m_color_bar;
     float* m_color_vertices;
+    //compute shader
+    ID3D11ComputeShader* m_color_comp_shader;
+    ID3D11Texture2D* m_comp_tex = nullptr;
+    Texture* m_color_tex;
+    ID3D11UnorderedAccessView* m_textureUAV;
+    ID3D11Buffer* m_compute_constbuff = nullptr;
+
 
     //opacity polygons
     std::vector<quadRenderer*> m_opacity_graphs;
