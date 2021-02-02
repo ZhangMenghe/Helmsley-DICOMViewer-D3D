@@ -38,7 +38,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 void vrController::onReset()
 {
 	SpaceMat_ = glm::mat4(1.0f);
-	PosVec3_.z = 0.0f;
+	
 	Mouse_old = {.0f, .0f};
 	rStates_.clear();
 	cst_name = "";
@@ -67,6 +67,12 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 	if (cutter_)
 		cutter_->onReset(m_deviceResources->GetD3DDevice());
 	volume_model_dirty = false;
+}
+
+void vrController::InitOXRScene()
+{
+	PosVec3_.z = -1.0f;
+  volume_model_dirty = true;
 }
 
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num)
@@ -710,7 +716,6 @@ bool vrController::addStatus(std::string name, bool use_current_status)
 	else
 	{
 		rStates_[name] = reservedStatus();
-		rStates_[name].pos_vec = PosVec3_;
 	}
 
 	if (Manager::screen_w != 0)
