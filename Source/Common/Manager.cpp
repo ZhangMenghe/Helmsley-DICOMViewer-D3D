@@ -178,8 +178,7 @@ void Manager::setOpacityValue(int pid, float value) {
 
     baked_dirty_ = true;
 }
-void Manager::setOpacityWidgetVisibility(int wid, bool visible) {
-    m_dirty_wid = wid;
+void Manager::setOpacityWidgetVisibility(int wid, bool visible){
     widget_visibilities_[wid] = visible;
     if (visible) m_volset_data.u_visible_bits |= 1 << wid;
     else m_volset_data.u_visible_bits &= ~(1 << wid);
