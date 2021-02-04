@@ -125,8 +125,8 @@ void CoreWinMain::setup_resource() {
 		std::wstring index_file_name(dvr::CONFIG_NAME.begin(), dvr::CONFIG_NAME.end());
 		if (!m_overwrite_index_file) {
 			create_task(folder->TryGetItemAsync(Platform::StringReference(index_file_name.c_str()))).then([this, copy_func, post_copy_func](IStorageItem^ data) {
-				if (data != nullptr) return true;
-				if(copy_func())post_copy_func();
+				if (data != nullptr) post_copy_func();
+				else if(copy_func()) post_copy_func();
 			});
 		}
 		else {

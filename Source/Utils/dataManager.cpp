@@ -196,7 +196,6 @@ void dataManager::save_target_dcmi() {
 		+ "#" + m_target_vl.folder_name()
 		+ "#";
 
-
 	//dims
 	for (auto dim : m_target_vl.dims()) vs += std::to_string(dim) + ",";
 	vs[vs.size() - 1] = '#';

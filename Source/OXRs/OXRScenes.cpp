@@ -67,7 +67,7 @@ void OXRScenes::setup_resource() {
 	};
 	auto post_copy_func = [this]() {
 		if (dvr::CONNECT_TO_SERVER) {
-			m_rpcHandler = std::make_shared<rpcHandler>("localhost:23333");
+			m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
 			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
 			m_rpcHandler->setDataLoader(m_dicom_loader);
 			m_rpcHandler->setVRController(m_sceneRenderer.get());
@@ -86,8 +86,8 @@ void OXRScenes::setup_resource() {
 		std::wstring index_file_name(dvr::CONFIG_NAME.begin(), dvr::CONFIG_NAME.end());
 		if (!m_overwrite_index_file) {
 			create_task(folder->TryGetItemAsync(Platform::StringReference(index_file_name.c_str()))).then([this, copy_func, post_copy_func](IStorageItem^ data) {
-				if (data != nullptr) return true;
-				if (copy_func())post_copy_func();
+				if (data != nullptr) post_copy_func();
+				else if (copy_func()) post_copy_func();
 			});
 		}
 		else {
