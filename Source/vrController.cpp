@@ -188,7 +188,7 @@ void vrController::StopTracking(){
 
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render() {
-	if (!tex_volume) return;
+	if (tex_volume == nullptr || tex_baked == nullptr) return;
 	if (!pre_draw_) { render_scene(); return; }
 
 	auto context = m_deviceResources->GetD3DDeviceContext();

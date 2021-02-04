@@ -52,16 +52,7 @@ namespace CoreWin{
 		// RPC thread
 		std::thread * m_rpcThread;
 
-		///////debug data//////
-		//std::string m_ds_path = "helmsley_cached/IRB01/2100_FATPOSTCORLAVAFLEX20secs/";
-		std::string m_ds_path = "helmsley_cached/Larry_Smarr_2016/series_23_Cor_LAVA_PRE-Amira/";
-		//height, width, depth
-		//DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 164);
-		DirectX::XMINT3 vol_dims = DirectX::XMINT3(512, 512, 144);
-
-		std::string content = "hello world";
-		std::vector<char> mbytes;
-
+		const bool m_overwrite_index_file = true;
 		void setup_volume_server();
 		void setup_volume_local();
 		void setup_resource();
