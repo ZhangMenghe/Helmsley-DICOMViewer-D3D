@@ -34,8 +34,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 		m_oxr_scene->onSingle3DTouchDown(x, y, z, side);
 	};
 
-	auto on3DTouchMove = [&](float x, float y, float z, int side) {
-		m_oxr_scene->on3DTouchMove(x, y, z, side);
+	auto on3DTouchMove = [&](float x, float y, float z, glm::mat4 rot, int side) {
+		m_oxr_scene->on3DTouchMove(x, y, z, rot, side);
 	};
 
 	auto on3DTouchReleased = [&](int side) {

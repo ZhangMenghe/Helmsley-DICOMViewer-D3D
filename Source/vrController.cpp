@@ -31,6 +31,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
+
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 	onReset();
@@ -71,6 +72,7 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 
 void vrController::InitOXRScene()
 {
+	uniScale = 0.5f;
 	PosVec3_.z = -1.0f;
   volume_model_dirty = true;
 }
@@ -244,6 +246,10 @@ void vrController::StopTracking()
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render()
 {
+	// TODO: Debug
+	//Manager::param_bool[dvr::CHECK_CUTTING] = true;
+  //Manager::param_bool[dvr::CHECK_RAYCAST] = true;
+
 	if (!tex_volume)
 		return;
 	if (!pre_draw_)
@@ -253,7 +259,7 @@ void vrController::Render()
 	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	if (isDirty())
+	if (isDirty()) //(true) // TODO: debug
 	{
 		screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
 		render_scene();
@@ -479,8 +485,20 @@ void vrController::onTouchMove(float x, float y)
 	volume_model_dirty = true;
 }
 
-void vrController::on3DTouchMove(float x, float y, float z, int side)
+void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side)
 {
+
+	if (side == 1)
+	{
+		// Update cutting plane
+		glm::vec3 normal = glm::vec3(1, 0, 0);
+		auto inv_model_mat = glm::inverse(SpaceMat_ * ModelMat_ * vol_dim_scale_mat_);
+		normal = glm::mat3(inv_model_mat) * glm::mat3(rot) * normal;
+
+		glm::vec3 pos = glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));//glm::vec3(x, y, z);//glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));
+
+		setCuttingPlane(pos, normal);
+	}
 
 	if (m_IsPressed_left)
 	{

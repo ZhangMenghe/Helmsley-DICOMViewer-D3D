@@ -4,6 +4,7 @@
 #include <Common/Manager.h>
 #include <Common/DirectXHelper.h>
 #include <Utils/XrMath.h>
+#include <glm/gtc/quaternion.hpp>
 
 using namespace DX;
 OXRManager::OXRManager()
@@ -484,7 +485,12 @@ void OXRManager::openxr_poll_actions() {
 				float y = space_location.pose.position.y;
 				float z = space_location.pose.position.z;
 
-				
+				glm::quat rot;
+				rot.x = space_location.pose.orientation.x;
+				rot.y = space_location.pose.orientation.y;
+				rot.z = space_location.pose.orientation.z;
+				rot.w = space_location.pose.orientation.w;
+				glm::mat4 rotMat = glm::mat4_cast(rot);
 
 				if(xr_input.handSelect[hand]) {
 					// If we have a select event, send onSingle3DTouchDown
@@ -494,7 +500,7 @@ void OXRManager::openxr_poll_actions() {
 					on3DTouchReleased(hand);
 				}else{
 				  // Send on3DTouchMove
-					on3DTouchMove(x, y, z, hand);
+					on3DTouchMove(x, y, z, rotMat, hand);
 				}
 
 			}

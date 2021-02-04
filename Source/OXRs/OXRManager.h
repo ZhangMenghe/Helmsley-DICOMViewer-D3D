@@ -47,7 +47,7 @@ namespace DX {
 		XrSpace * getAppSpace();
 
 		std::function<void(float, float, float, int)> onSingle3DTouchDown;
-		std::function<void(float, float, float, int)> on3DTouchMove;
+		std::function<void(float, float, float, glm::mat4, int)> on3DTouchMove;
 		std::function<void(int)> on3DTouchReleased;
 
 	private:

@@ -62,7 +62,7 @@ public:
 	void onSingleTouchDown(float x, float y);
 	void onSingle3DTouchDown(float x, float y, float z, int side);
 	void onTouchMove(float x, float y);
-	void on3DTouchMove(float x, float y, float z, int side);
+	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side);
 	void onTouchReleased();
 	void on3DTouchReleased(int side);
 	void onScale(float sx, float sy);
