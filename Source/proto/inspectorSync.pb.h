@@ -60,6 +60,9 @@ namespace helmsley {
 class CheckMsg;
 class CheckMsgDefaultTypeInternal;
 extern CheckMsgDefaultTypeInternal _CheckMsg_default_instance_;
+class DataMsg;
+class DataMsgDefaultTypeInternal;
+extern DataMsgDefaultTypeInternal _DataMsg_default_instance_;
 class FrameUpdateMsg;
 class FrameUpdateMsgDefaultTypeInternal;
 extern FrameUpdateMsgDefaultTypeInternal _FrameUpdateMsg_default_instance_;
@@ -81,12 +84,10 @@ extern TuneMsgDefaultTypeInternal _TuneMsg_default_instance_;
 class VPMsg;
 class VPMsgDefaultTypeInternal;
 extern VPMsgDefaultTypeInternal _VPMsg_default_instance_;
-class volumeConcise;
-class volumeConciseDefaultTypeInternal;
-extern volumeConciseDefaultTypeInternal _volumeConcise_default_instance_;
 }  // namespace helmsley
 PROTOBUF_NAMESPACE_OPEN
 template<> ::helmsley::CheckMsg* Arena::CreateMaybeMessage<::helmsley::CheckMsg>(Arena*);
+template<> ::helmsley::DataMsg* Arena::CreateMaybeMessage<::helmsley::DataMsg>(Arena*);
 template<> ::helmsley::FrameUpdateMsg* Arena::CreateMaybeMessage<::helmsley::FrameUpdateMsg>(Arena*);
 template<> ::helmsley::GestureOp* Arena::CreateMaybeMessage<::helmsley::GestureOp>(Arena*);
 template<> ::helmsley::MaskMsg* Arena::CreateMaybeMessage<::helmsley::MaskMsg>(Arena*);
@@ -94,7 +95,6 @@ template<> ::helmsley::OperationBatch* Arena::CreateMaybeMessage<::helmsley::Ope
 template<> ::helmsley::ResetMsg* Arena::CreateMaybeMessage<::helmsley::ResetMsg>(Arena*);
 template<> ::helmsley::TuneMsg* Arena::CreateMaybeMessage<::helmsley::TuneMsg>(Arena*);
 template<> ::helmsley::VPMsg* Arena::CreateMaybeMessage<::helmsley::VPMsg>(Arena*);
-template<> ::helmsley::volumeConcise* Arena::CreateMaybeMessage<::helmsley::volumeConcise>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace helmsley {
 
@@ -1588,23 +1588,23 @@ class MaskMsg PROTOBUF_FINAL :
 };
 // -------------------------------------------------------------------
 
-class volumeConcise PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.volumeConcise) */ {
+class DataMsg PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.DataMsg) */ {
  public:
-  inline volumeConcise() : volumeConcise(nullptr) {}
-  virtual ~volumeConcise();
+  inline DataMsg() : DataMsg(nullptr) {}
+  virtual ~DataMsg();
 
-  volumeConcise(const volumeConcise& from);
-  volumeConcise(volumeConcise&& from) noexcept
-    : volumeConcise() {
+  DataMsg(const DataMsg& from);
+  DataMsg(DataMsg&& from) noexcept
+    : DataMsg() {
     *this = ::std::move(from);
   }
 
-  inline volumeConcise& operator=(const volumeConcise& from) {
+  inline DataMsg& operator=(const DataMsg& from) {
     CopyFrom(from);
     return *this;
   }
-  inline volumeConcise& operator=(volumeConcise&& from) noexcept {
+  inline DataMsg& operator=(DataMsg&& from) noexcept {
     if (GetArena() == from.GetArena()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -1622,20 +1622,20 @@ class volumeConcise PROTOBUF_FINAL :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const volumeConcise& default_instance();
+  static const DataMsg& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const volumeConcise* internal_default_instance() {
-    return reinterpret_cast<const volumeConcise*>(
-               &_volumeConcise_default_instance_);
+  static inline const DataMsg* internal_default_instance() {
+    return reinterpret_cast<const DataMsg*>(
+               &_DataMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     7;
 
-  friend void swap(volumeConcise& a, volumeConcise& b) {
+  friend void swap(DataMsg& a, DataMsg& b) {
     a.Swap(&b);
   }
-  inline void Swap(volumeConcise* other) {
+  inline void Swap(DataMsg* other) {
     if (other == this) return;
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
@@ -1643,7 +1643,7 @@ class volumeConcise PROTOBUF_FINAL :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(volumeConcise* other) {
+  void UnsafeArenaSwap(DataMsg* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -1651,17 +1651,17 @@ class volumeConcise PROTOBUF_FINAL :
 
   // implements Message ----------------------------------------------
 
-  inline volumeConcise* New() const final {
-    return CreateMaybeMessage<volumeConcise>(nullptr);
+  inline DataMsg* New() const final {
+    return CreateMaybeMessage<DataMsg>(nullptr);
   }
 
-  volumeConcise* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<volumeConcise>(arena);
+  DataMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<DataMsg>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const volumeConcise& from);
-  void MergeFrom(const volumeConcise& from);
+  void CopyFrom(const DataMsg& from);
+  void MergeFrom(const DataMsg& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -1675,13 +1675,13 @@ class volumeConcise PROTOBUF_FINAL :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(volumeConcise* other);
+  void InternalSwap(DataMsg* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "helmsley.volumeConcise";
+    return "helmsley.DataMsg";
   }
   protected:
-  explicit volumeConcise(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  explicit DataMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   private:
   static void ArenaDtor(void* object);
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -1701,93 +1701,50 @@ class volumeConcise PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kDimsFieldNumber = 2,
-    kSizeFieldNumber = 3,
-    kVolPathFieldNumber = 1,
-    kWithMaskFieldNumber = 4,
+    kDsNameFieldNumber = 1,
+    kVolumeNameFieldNumber = 2,
   };
-  // repeated int32 dims = 2;
-  int dims_size() const;
+  // string ds_name = 1;
+  void clear_ds_name();
+  const std::string& ds_name() const;
+  void set_ds_name(const std::string& value);
+  void set_ds_name(std::string&& value);
+  void set_ds_name(const char* value);
+  void set_ds_name(const char* value, size_t size);
+  std::string* mutable_ds_name();
+  std::string* release_ds_name();
+  void set_allocated_ds_name(std::string* ds_name);
   private:
-  int _internal_dims_size() const;
-  public:
-  void clear_dims();
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_dims(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-      _internal_dims() const;
-  void _internal_add_dims(::PROTOBUF_NAMESPACE_ID::int32 value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-      _internal_mutable_dims();
-  public:
-  ::PROTOBUF_NAMESPACE_ID::int32 dims(int index) const;
-  void set_dims(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
-  void add_dims(::PROTOBUF_NAMESPACE_ID::int32 value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-      dims() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-      mutable_dims();
-
-  // repeated float size = 3;
-  int size_size() const;
-  private:
-  int _internal_size_size() const;
-  public:
-  void clear_size();
-  private:
-  float _internal_size(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_size() const;
-  void _internal_add_size(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_size();
-  public:
-  float size(int index) const;
-  void set_size(int index, float value);
-  void add_size(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      size() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_size();
-
-  // string vol_path = 1;
-  void clear_vol_path();
-  const std::string& vol_path() const;
-  void set_vol_path(const std::string& value);
-  void set_vol_path(std::string&& value);
-  void set_vol_path(const char* value);
-  void set_vol_path(const char* value, size_t size);
-  std::string* mutable_vol_path();
-  std::string* release_vol_path();
-  void set_allocated_vol_path(std::string* vol_path);
-  private:
-  const std::string& _internal_vol_path() const;
-  void _internal_set_vol_path(const std::string& value);
-  std::string* _internal_mutable_vol_path();
+  const std::string& _internal_ds_name() const;
+  void _internal_set_ds_name(const std::string& value);
+  std::string* _internal_mutable_ds_name();
   public:
 
-  // bool with_mask = 4;
-  void clear_with_mask();
-  bool with_mask() const;
-  void set_with_mask(bool value);
+  // string volume_name = 2;
+  void clear_volume_name();
+  const std::string& volume_name() const;
+  void set_volume_name(const std::string& value);
+  void set_volume_name(std::string&& value);
+  void set_volume_name(const char* value);
+  void set_volume_name(const char* value, size_t size);
+  std::string* mutable_volume_name();
+  std::string* release_volume_name();
+  void set_allocated_volume_name(std::string* volume_name);
   private:
-  bool _internal_with_mask() const;
-  void _internal_set_with_mask(bool value);
+  const std::string& _internal_volume_name() const;
+  void _internal_set_volume_name(const std::string& value);
+  std::string* _internal_mutable_volume_name();
   public:
 
-  // @@protoc_insertion_point(class_scope:helmsley.volumeConcise)
+  // @@protoc_insertion_point(class_scope:helmsley.DataMsg)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > dims_;
-  mutable std::atomic<int> _dims_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > size_;
-  mutable std::atomic<int> _size_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr vol_path_;
-  bool with_mask_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ds_name_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr volume_name_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
 };
@@ -2059,23 +2016,23 @@ class FrameUpdateMsg PROTOBUF_FINAL :
       ::helmsley::ResetMsg* reset_value);
   ::helmsley::ResetMsg* unsafe_arena_release_reset_value();
 
-  // .helmsley.volumeConcise data_value = 7;
+  // .helmsley.DataMsg data_value = 7;
   bool has_data_value() const;
   private:
   bool _internal_has_data_value() const;
   public:
   void clear_data_value();
-  const ::helmsley::volumeConcise& data_value() const;
-  ::helmsley::volumeConcise* release_data_value();
-  ::helmsley::volumeConcise* mutable_data_value();
-  void set_allocated_data_value(::helmsley::volumeConcise* data_value);
+  const ::helmsley::DataMsg& data_value() const;
+  ::helmsley::DataMsg* release_data_value();
+  ::helmsley::DataMsg* mutable_data_value();
+  void set_allocated_data_value(::helmsley::DataMsg* data_value);
   private:
-  const ::helmsley::volumeConcise& _internal_data_value() const;
-  ::helmsley::volumeConcise* _internal_mutable_data_value();
+  const ::helmsley::DataMsg& _internal_data_value() const;
+  ::helmsley::DataMsg* _internal_mutable_data_value();
   public:
   void unsafe_arena_set_allocated_data_value(
-      ::helmsley::volumeConcise* data_value);
-  ::helmsley::volumeConcise* unsafe_arena_release_data_value();
+      ::helmsley::DataMsg* data_value);
+  ::helmsley::DataMsg* unsafe_arena_release_data_value();
 
   // @@protoc_insertion_point(class_scope:helmsley.FrameUpdateMsg)
  private:
@@ -2091,7 +2048,7 @@ class FrameUpdateMsg PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::CheckMsg > checks_;
   ::helmsley::MaskMsg* mask_value_;
   ::helmsley::ResetMsg* reset_value_;
-  ::helmsley::volumeConcise* data_value_;
+  ::helmsley::DataMsg* data_value_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
 };
@@ -2842,182 +2799,130 @@ inline void MaskMsg::set_mbits(::PROTOBUF_NAMESPACE_ID::int32 value) {
 
 // -------------------------------------------------------------------
 
-// volumeConcise
+// DataMsg
 
-// string vol_path = 1;
-inline void volumeConcise::clear_vol_path() {
-  vol_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+// string ds_name = 1;
+inline void DataMsg::clear_ds_name() {
+  ds_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline const std::string& volumeConcise::vol_path() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeConcise.vol_path)
-  return _internal_vol_path();
+inline const std::string& DataMsg::ds_name() const {
+  // @@protoc_insertion_point(field_get:helmsley.DataMsg.ds_name)
+  return _internal_ds_name();
 }
-inline void volumeConcise::set_vol_path(const std::string& value) {
-  _internal_set_vol_path(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeConcise.vol_path)
+inline void DataMsg::set_ds_name(const std::string& value) {
+  _internal_set_ds_name(value);
+  // @@protoc_insertion_point(field_set:helmsley.DataMsg.ds_name)
 }
-inline std::string* volumeConcise::mutable_vol_path() {
-  // @@protoc_insertion_point(field_mutable:helmsley.volumeConcise.vol_path)
-  return _internal_mutable_vol_path();
+inline std::string* DataMsg::mutable_ds_name() {
+  // @@protoc_insertion_point(field_mutable:helmsley.DataMsg.ds_name)
+  return _internal_mutable_ds_name();
 }
-inline const std::string& volumeConcise::_internal_vol_path() const {
-  return vol_path_.Get();
+inline const std::string& DataMsg::_internal_ds_name() const {
+  return ds_name_.Get();
 }
-inline void volumeConcise::_internal_set_vol_path(const std::string& value) {
+inline void DataMsg::_internal_set_ds_name(const std::string& value) {
   
-  vol_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+  ds_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
 }
-inline void volumeConcise::set_vol_path(std::string&& value) {
+inline void DataMsg::set_ds_name(std::string&& value) {
   
-  vol_path_.Set(
+  ds_name_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeConcise.vol_path)
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.DataMsg.ds_name)
 }
-inline void volumeConcise::set_vol_path(const char* value) {
+inline void DataMsg::set_ds_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  vol_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+  ds_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:helmsley.volumeConcise.vol_path)
+  // @@protoc_insertion_point(field_set_char:helmsley.DataMsg.ds_name)
 }
-inline void volumeConcise::set_vol_path(const char* value,
+inline void DataMsg::set_ds_name(const char* value,
     size_t size) {
   
-  vol_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+  ds_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeConcise.vol_path)
+  // @@protoc_insertion_point(field_set_pointer:helmsley.DataMsg.ds_name)
 }
-inline std::string* volumeConcise::_internal_mutable_vol_path() {
+inline std::string* DataMsg::_internal_mutable_ds_name() {
   
-  return vol_path_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  return ds_name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline std::string* volumeConcise::release_vol_path() {
-  // @@protoc_insertion_point(field_release:helmsley.volumeConcise.vol_path)
-  return vol_path_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+inline std::string* DataMsg::release_ds_name() {
+  // @@protoc_insertion_point(field_release:helmsley.DataMsg.ds_name)
+  return ds_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline void volumeConcise::set_allocated_vol_path(std::string* vol_path) {
-  if (vol_path != nullptr) {
+inline void DataMsg::set_allocated_ds_name(std::string* ds_name) {
+  if (ds_name != nullptr) {
     
   } else {
     
   }
-  vol_path_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), vol_path,
+  ds_name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ds_name,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeConcise.vol_path)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.DataMsg.ds_name)
 }
 
-// repeated int32 dims = 2;
-inline int volumeConcise::_internal_dims_size() const {
-  return dims_.size();
+// string volume_name = 2;
+inline void DataMsg::clear_volume_name() {
+  volume_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
-inline int volumeConcise::dims_size() const {
-  return _internal_dims_size();
+inline const std::string& DataMsg::volume_name() const {
+  // @@protoc_insertion_point(field_get:helmsley.DataMsg.volume_name)
+  return _internal_volume_name();
 }
-inline void volumeConcise::clear_dims() {
-  dims_.Clear();
+inline void DataMsg::set_volume_name(const std::string& value) {
+  _internal_set_volume_name(value);
+  // @@protoc_insertion_point(field_set:helmsley.DataMsg.volume_name)
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeConcise::_internal_dims(int index) const {
-  return dims_.Get(index);
+inline std::string* DataMsg::mutable_volume_name() {
+  // @@protoc_insertion_point(field_mutable:helmsley.DataMsg.volume_name)
+  return _internal_mutable_volume_name();
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeConcise::dims(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeConcise.dims)
-  return _internal_dims(index);
+inline const std::string& DataMsg::_internal_volume_name() const {
+  return volume_name_.Get();
 }
-inline void volumeConcise::set_dims(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
-  dims_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeConcise.dims)
-}
-inline void volumeConcise::_internal_add_dims(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  dims_.Add(value);
-}
-inline void volumeConcise::add_dims(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_add_dims(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeConcise.dims)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-volumeConcise::_internal_dims() const {
-  return dims_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-volumeConcise::dims() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeConcise.dims)
-  return _internal_dims();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-volumeConcise::_internal_mutable_dims() {
-  return &dims_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-volumeConcise::mutable_dims() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeConcise.dims)
-  return _internal_mutable_dims();
-}
-
-// repeated float size = 3;
-inline int volumeConcise::_internal_size_size() const {
-  return size_.size();
-}
-inline int volumeConcise::size_size() const {
-  return _internal_size_size();
-}
-inline void volumeConcise::clear_size() {
-  size_.Clear();
-}
-inline float volumeConcise::_internal_size(int index) const {
-  return size_.Get(index);
-}
-inline float volumeConcise::size(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeConcise.size)
-  return _internal_size(index);
-}
-inline void volumeConcise::set_size(int index, float value) {
-  size_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeConcise.size)
-}
-inline void volumeConcise::_internal_add_size(float value) {
-  size_.Add(value);
-}
-inline void volumeConcise::add_size(float value) {
-  _internal_add_size(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeConcise.size)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeConcise::_internal_size() const {
-  return size_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeConcise::size() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeConcise.size)
-  return _internal_size();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeConcise::_internal_mutable_size() {
-  return &size_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeConcise::mutable_size() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeConcise.size)
-  return _internal_mutable_size();
-}
-
-// bool with_mask = 4;
-inline void volumeConcise::clear_with_mask() {
-  with_mask_ = false;
-}
-inline bool volumeConcise::_internal_with_mask() const {
-  return with_mask_;
-}
-inline bool volumeConcise::with_mask() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeConcise.with_mask)
-  return _internal_with_mask();
-}
-inline void volumeConcise::_internal_set_with_mask(bool value) {
+inline void DataMsg::_internal_set_volume_name(const std::string& value) {
   
-  with_mask_ = value;
+  volume_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
 }
-inline void volumeConcise::set_with_mask(bool value) {
-  _internal_set_with_mask(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeConcise.with_mask)
+inline void DataMsg::set_volume_name(std::string&& value) {
+  
+  volume_name_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.DataMsg.volume_name)
+}
+inline void DataMsg::set_volume_name(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  volume_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:helmsley.DataMsg.volume_name)
+}
+inline void DataMsg::set_volume_name(const char* value,
+    size_t size) {
+  
+  volume_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:helmsley.DataMsg.volume_name)
+}
+inline std::string* DataMsg::_internal_mutable_volume_name() {
+  
+  return volume_name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* DataMsg::release_volume_name() {
+  // @@protoc_insertion_point(field_release:helmsley.DataMsg.volume_name)
+  return volume_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void DataMsg::set_allocated_volume_name(std::string* volume_name) {
+  if (volume_name != nullptr) {
+    
+  } else {
+    
+  }
+  volume_name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), volume_name,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:helmsley.DataMsg.volume_name)
 }
 
 // -------------------------------------------------------------------
@@ -3350,7 +3255,7 @@ inline void FrameUpdateMsg::set_allocated_reset_value(::helmsley::ResetMsg* rese
   // @@protoc_insertion_point(field_set_allocated:helmsley.FrameUpdateMsg.reset_value)
 }
 
-// .helmsley.volumeConcise data_value = 7;
+// .helmsley.DataMsg data_value = 7;
 inline bool FrameUpdateMsg::_internal_has_data_value() const {
   return this != internal_default_instance() && data_value_ != nullptr;
 }
@@ -3363,17 +3268,17 @@ inline void FrameUpdateMsg::clear_data_value() {
   }
   data_value_ = nullptr;
 }
-inline const ::helmsley::volumeConcise& FrameUpdateMsg::_internal_data_value() const {
-  const ::helmsley::volumeConcise* p = data_value_;
-  return p != nullptr ? *p : *reinterpret_cast<const ::helmsley::volumeConcise*>(
-      &::helmsley::_volumeConcise_default_instance_);
+inline const ::helmsley::DataMsg& FrameUpdateMsg::_internal_data_value() const {
+  const ::helmsley::DataMsg* p = data_value_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::helmsley::DataMsg*>(
+      &::helmsley::_DataMsg_default_instance_);
 }
-inline const ::helmsley::volumeConcise& FrameUpdateMsg::data_value() const {
+inline const ::helmsley::DataMsg& FrameUpdateMsg::data_value() const {
   // @@protoc_insertion_point(field_get:helmsley.FrameUpdateMsg.data_value)
   return _internal_data_value();
 }
 inline void FrameUpdateMsg::unsafe_arena_set_allocated_data_value(
-    ::helmsley::volumeConcise* data_value) {
+    ::helmsley::DataMsg* data_value) {
   if (GetArena() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(data_value_);
   }
@@ -3385,35 +3290,35 @@ inline void FrameUpdateMsg::unsafe_arena_set_allocated_data_value(
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:helmsley.FrameUpdateMsg.data_value)
 }
-inline ::helmsley::volumeConcise* FrameUpdateMsg::release_data_value() {
+inline ::helmsley::DataMsg* FrameUpdateMsg::release_data_value() {
   
-  ::helmsley::volumeConcise* temp = data_value_;
+  ::helmsley::DataMsg* temp = data_value_;
   data_value_ = nullptr;
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::helmsley::volumeConcise* FrameUpdateMsg::unsafe_arena_release_data_value() {
+inline ::helmsley::DataMsg* FrameUpdateMsg::unsafe_arena_release_data_value() {
   // @@protoc_insertion_point(field_release:helmsley.FrameUpdateMsg.data_value)
   
-  ::helmsley::volumeConcise* temp = data_value_;
+  ::helmsley::DataMsg* temp = data_value_;
   data_value_ = nullptr;
   return temp;
 }
-inline ::helmsley::volumeConcise* FrameUpdateMsg::_internal_mutable_data_value() {
+inline ::helmsley::DataMsg* FrameUpdateMsg::_internal_mutable_data_value() {
   
   if (data_value_ == nullptr) {
-    auto* p = CreateMaybeMessage<::helmsley::volumeConcise>(GetArena());
+    auto* p = CreateMaybeMessage<::helmsley::DataMsg>(GetArena());
     data_value_ = p;
   }
   return data_value_;
 }
-inline ::helmsley::volumeConcise* FrameUpdateMsg::mutable_data_value() {
+inline ::helmsley::DataMsg* FrameUpdateMsg::mutable_data_value() {
   // @@protoc_insertion_point(field_mutable:helmsley.FrameUpdateMsg.data_value)
   return _internal_mutable_data_value();
 }
-inline void FrameUpdateMsg::set_allocated_data_value(::helmsley::volumeConcise* data_value) {
+inline void FrameUpdateMsg::set_allocated_data_value(::helmsley::DataMsg* data_value) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
     delete data_value_;

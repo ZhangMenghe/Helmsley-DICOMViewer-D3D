@@ -40,12 +40,12 @@ public:
     void sendDataDone();
 
 private:
-    int CHANEL_NUM = 4;
+    int CHANEL_NUM;
     UCHAR* g_VolumeTexData = nullptr;
     int g_img_h=0, g_img_w=0, g_img_d=0;
     float g_vol_h, g_vol_w, g_vol_depth = 0;
     size_t g_ssize = 0, g_vol_len;
-    size_t n_data_offset[3] = {0};
+    size_t n_data_offset[3];
     std::unordered_map<int, float*> centerline_map;
 };
 #endif

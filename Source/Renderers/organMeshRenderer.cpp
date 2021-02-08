@@ -174,9 +174,9 @@ void organMeshRenderer::Setup(ID3D11Device* device, UINT h, UINT w, UINT d) {
 	//m_vertice_count = 6;
 
 	//setup the RW buffer
-	if (m_computeOutBuff != nullptr) { delete m_computeOutBuff; m_computeOutBuff = nullptr; }
-	if (m_vertexBuffer != nullptr) { delete m_vertexBuffer.get(); m_vertexBuffer = nullptr; }
-	if (m_computeUAV != nullptr) { delete m_computeUAV; m_computeUAV = nullptr; }
+	if (m_computeOutBuff != nullptr) { m_computeOutBuff->Release(); m_computeOutBuff = nullptr; }
+	if (m_vertexBuffer != nullptr) { m_vertexBuffer = nullptr; }
+	if (m_computeUAV != nullptr) { m_computeUAV->Release(); m_computeUAV = nullptr; }
 
 	D3D11_BUFFER_DESC outputDesc;
 	outputDesc.Usage = D3D11_USAGE_DEFAULT;

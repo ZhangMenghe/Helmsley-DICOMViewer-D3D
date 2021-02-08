@@ -27,7 +27,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources>& deviceRes
 	texvrRenderer_ = new textureBasedVolumeRenderer(device);
 	cutter_ = new cuttingController(device);
 	data_board_ = new dataBoard(device);
-	meshRenderer_ = new organMeshRenderer(device);
+	//meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
 	CreateDeviceDependentResources();
@@ -99,6 +99,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		0,
 		D3D11_RESOURCE_MISC_GENERATE_MIPS
 	};
+
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
 	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
 
@@ -111,12 +112,20 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	init_texture();
 	Manager::baked_dirty_ = true;
 
-	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+	//meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
 }
 
 void vrController::init_texture() {
-	if (m_comp_tex_d3d != nullptr) { delete m_comp_tex_d3d; m_comp_tex_d3d = nullptr; }
-	if (m_textureUAV != nullptr) { delete m_textureUAV; m_textureUAV = nullptr; }
+	if (m_comp_tex_d3d != nullptr) { 
+		m_comp_tex_d3d->Release();
+		//delete m_comp_tex_d3d; 
+		m_comp_tex_d3d = nullptr; 
+	}
+	if (m_textureUAV != nullptr) { 
+		//delete m_textureUAV;
+		m_textureUAV->Release();
+		m_textureUAV = nullptr; 
+	}
 
 	D3D11_TEXTURE3D_DESC texDesc{
 		vol_dimension_.x,vol_dimension_.y,vol_dimension_.z,
@@ -267,9 +276,9 @@ void vrController::render_scene(){
 	}
 
 	///// MESH  ////
-	if (m_manager->isDrawMesh()) {
-		render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	}
+	//if (m_manager->isDrawMesh()) {
+	//	render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+	//}
 
 	///// CENTER LINE/////
 	if (m_manager->isDrawCenterLine()) {

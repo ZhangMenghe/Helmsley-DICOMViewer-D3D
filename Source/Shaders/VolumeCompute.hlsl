@@ -52,6 +52,7 @@ void main(uint3 threadID : SV_DispatchThreadID){
 	}
 
 	uint u_intensity = value & uint(0xffff);
+	//float intensity_01 = clamp(float(value.x) * 0.0002442002442002442, .0, 1.0);
 	float intensity_01 = float(value.x) * 0.0002442002442002442;
 
 	float alpha = .0f;

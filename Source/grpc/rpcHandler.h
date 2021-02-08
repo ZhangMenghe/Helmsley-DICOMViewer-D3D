@@ -36,6 +36,8 @@ private:
     std::unique_ptr<helmsley::dataTransfer::Stub> stub_;
 	Request req;
 	helmsley::FrameUpdateMsg update_msg;
+    helmsley::DataMsg m_req_data;
+
     bool initialized = false;
 
     Manager* manager_ = nullptr;
@@ -48,7 +50,7 @@ private:
     
     helmsley::FrameUpdateMsg getUpdates();
 
-    void tackle_volume_msg(helmsley::volumeConcise msg);
+    void tackle_volume_msg(helmsley::DataMsg msg);
     void tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops);
     void tack_tune_msg(helmsley::TuneMsg msg);
     void tack_check_msg(helmsley::CheckMsg msg);
@@ -56,6 +58,7 @@ private:
     void tackle_reset_msg(helmsley::ResetMsg msg);
     void receiver_register();
 public:
+    static bool new_data_request;
     rpcHandler(const std::string& host);
     const RPCVector<helmsley::GestureOp> getOperations();
     
@@ -65,11 +68,10 @@ public:
     void setDataLoader(const std::shared_ptr<dicomLoader>& loader){ m_dicom_loader = loader;}
     void setUIController(uiController* ui) { ui_ = ui; }
     void setDataPath(std::string path){DATA_PATH = path;}
-
     void Run();
     
     void getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets);
-    std::vector<volumeResponse::volumeInfo> getVolumeFromDataset(const std::string & dataset_name);
+    void getVolumeFromDataset(const std::string& dataset_name, std::vector<volumeInfo>& ret);
     std::vector<configResponse::configInfo> getAvailableConfigFiles();
     void exportConfigs(std::string content);
 
@@ -79,5 +81,6 @@ public:
 
     void DownloadMasksAndCenterlines(const std::string & folder_name);
     void DownloadCenterlines(Request req);
+    helmsley::DataMsg GetNewDataRequest() { return m_req_data; }
 };
 #endif

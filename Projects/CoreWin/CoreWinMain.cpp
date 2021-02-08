@@ -29,11 +29,12 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 void CoreWinMain::setup_volume_server(){
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
-	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes("IRB01", false);
+	std::vector<volumeInfo> vl;
+	m_data_manager->getAvailableVolumes("Larry-2012-01-17-MRI", vl, false);
 
-	volumeResponse::volumeInfo vInfo;
+	volumeInfo vInfo;
 	for (auto vli : vl) {
-		if (vli.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0) {
+		if (vli.folder_name().compare("series_3_optional__trufi_1_cine") == 0) {
 			vInfo = vli; break;
 		}
 	}
@@ -43,12 +44,12 @@ void CoreWinMain::setup_volume_server(){
 		dims[0], dims[1], dims[2],
 		spacing[0] * dims[0], spacing[1] * dims[1], vInfo.volume_loc_range(),
 		vInfo.with_mask());
-	m_data_manager->loadData("IRB01", vInfo, false);
+	m_data_manager->loadData("Larry-2012-01-17-MRI", vInfo, false);
 
 	//auto vector = m_rpcHandler->getVolumeFromDataset("IRB02");
 
 	//if (vector.size() > 0) {
-	//	volumeResponse::volumeInfo sel_vol_info;// = vector[0];
+	//	volumeInfo sel_vol_info;// = vector[0];
 	//	for (auto vol : vector) {
 	//		if (vol.folder_name().compare("21_WATERPOSTCORLAVAFLEX20secs") == 0) {
 	//			sel_vol_info = vol;
@@ -75,7 +76,8 @@ void CoreWinMain::setup_volume_local() {
 	//test asset demo
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
 	auto dsName = ds[0].folder_name();
-	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes(dsName, true);
+	std::vector<volumeInfo> vl;
+	m_data_manager->getAvailableVolumes(dsName, vl, true);
 
 	auto vInfo = vl[0];
 	auto dims = vInfo.dims();
@@ -149,8 +151,12 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 }
 
 // Updates the application state once per frame.
-void CoreWinMain::Update()
-{
+void CoreWinMain::Update() {
+	if (rpcHandler::new_data_request) {
+		auto dmsg = m_rpcHandler->GetNewDataRequest();
+		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
+		rpcHandler::new_data_request = false;
+	}
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{

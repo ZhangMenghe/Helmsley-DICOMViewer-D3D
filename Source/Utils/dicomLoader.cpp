@@ -8,11 +8,13 @@
 #include <sstream> 
 #include <Common/DirectXHelper.h>
 void dicomLoader::sendDataPrepare(int height, int width, int dims, float sh, float sw, float sd, bool b_wmask){
-    CHANEL_NUM = b_wmask? 4:2;
+    //CHANEL_NUM = b_wmask? 4:2;
+    CHANEL_NUM = 4;
     g_img_h = height; g_img_w = width; g_img_d = dims;
     g_ssize = CHANEL_NUM * width * height;
     g_vol_len = g_ssize* dims;
     g_vol_h=sh; g_vol_w=sw; g_vol_depth=sd;
+    for (auto& off : n_data_offset) off = 0;
     if(g_VolumeTexData!= nullptr){delete[]g_VolumeTexData; g_VolumeTexData = nullptr;}
     g_VolumeTexData = new UCHAR[g_vol_len];
     memset(g_VolumeTexData, 0x00, g_vol_len * sizeof(UCHAR));
@@ -23,7 +25,7 @@ bool dicomLoader::loadData(std::string dicom_path, std::string mask_path, bool b
     && loadData(mask_path, LOAD_MASK, b_from_asset, mask_unit_size));
 }
 bool dicomLoader::loadData(std::string dirpath, bool wmask, bool b_from_asset) {
-    if (!wmask) return loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2);
+    //if (!wmask) return loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2);
     if (b_from_asset) {
         return (loadData(dirpath + "data", LOAD_DICOM, b_from_asset, 2)
             && loadData(dirpath + "mask", LOAD_MASK, b_from_asset, 2));
@@ -108,7 +110,7 @@ void dicomLoader::send_dicom_data(mLoadTarget target, int id, int chunk_size, in
     //check initialization
     if(!g_VolumeTexData) return;
     UCHAR* buffer = g_VolumeTexData+n_data_offset[(int)target];
-    if(chunk_size !=0 && unit_size == 4) memcpy(buffer, data, chunk_size);
+    if(chunk_size != 0 && unit_size == CHANEL_NUM) memcpy(buffer, data, chunk_size);
     else{
         int num = (chunk_size==0)? (g_img_h*g_img_w) : chunk_size / unit_size;
         if(target == LOAD_DICOM){

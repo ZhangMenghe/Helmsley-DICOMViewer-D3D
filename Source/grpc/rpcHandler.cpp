@@ -1,6 +1,7 @@
 #include "rpcHandler.h"
 #include <ppltasks.h>	// For create_task
 #include <glm/gtc/type_ptr.hpp>
+#include <Utils/dataManager.h>
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::ClientReader;
@@ -10,6 +11,8 @@ using grpc::Status;
 using namespace helmsley;
 using namespace std;
 using namespace Concurrency;
+
+bool rpcHandler::new_data_request = false;
 
 rpcHandler::rpcHandler(const std::string& host){
     auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
@@ -92,8 +95,8 @@ void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo> &da
         datasets.push_back(ds);
 }
 
-vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string &dataset_name){
-    vector<volumeResponse::volumeInfo> ret;
+void rpcHandler::getVolumeFromDataset(const std::string &dataset_name, std::vector<volumeInfo> &ret){
+    ret.clear();
     Request req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(dataset_name);
@@ -112,7 +115,6 @@ vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string
     }
     Status status = volume_reader->Finish();
     winrt::check_hresult(status.ok());
-    return ret;
 }
 
 std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles(){
@@ -327,19 +329,9 @@ void rpcHandler::tack_mask_msg(helmsley::MaskMsg msg){
     ui_->setMaskBits(msg.num(), (unsigned int)msg.mbits());
 }
 
-void rpcHandler::tackle_volume_msg(helmsley::volumeConcise msg){
-    //reset data
-    auto dims = msg.dims();
-    auto ss = msg.size();
-    m_dicom_loader->sendDataPrepare(dims[0], dims[1], dims[2], ss[0], ss[1], ss[2], msg.with_mask());
-
-    std::cout << "Try to load from " << DATA_PATH + msg.vol_path() << std::endl;
-    if (!m_dicom_loader->loadData(DATA_PATH + msg.vol_path() + "/data", DATA_PATH + msg.vol_path() + "/mask", false)){
-        std::cout << "===ERROR==file not exist" << std::endl;
-        return;
-    }
-    //todo: request from server
-    //Manager::new_data_available = true;
+void rpcHandler::tackle_volume_msg(helmsley::DataMsg msg){
+    m_req_data = msg;
+    new_data_request = true;
 }
 
 void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg){

@@ -124,6 +124,7 @@ namespace dvr{
 
     //Names
     const static std::string CACHE_FOLDER_NAME = "helmsley_cached", CONFIG_NAME = "pacs_local.txt";
+    const static std::string ASSET_RESERVE_DS = "Larry_Smarr_2016", ASSET_RESERVE_VL = "series_23_Cor_LAVA_PRE-Amira";
     const static std::string DCM_FILE_NAME="data", DCM_MASK_FILE_NAME="mask", DCM_WMASK_FILE_NAME="data_w_mask", DCM_CENTERLINE_FILE_NAME="center_line";
 
     //TRS

@@ -81,7 +81,7 @@ private:
 	textureBasedVolumeRenderer* texvrRenderer_;
 	cuttingController* cutter_;
 	dataBoard* data_board_;
-	organMeshRenderer* meshRenderer_;
+	//organMeshRenderer* meshRenderer_;
 	std::unordered_map<int, lineRenderer*> line_renderers_;
 
 	// Cached pointer to device resources.
