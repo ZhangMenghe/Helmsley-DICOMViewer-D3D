@@ -45,6 +45,7 @@ public:
 
 	void onReset();
 	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam);
+	void InitOXRScene();
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
@@ -61,7 +62,7 @@ public:
 	void onSingleTouchDown(float x, float y);
 	void onSingle3DTouchDown(float x, float y, float z, int side);
 	void onTouchMove(float x, float y);
-	void on3DTouchMove(float x, float y, float z, int side);
+	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side);
 	void onTouchReleased();
 	void on3DTouchReleased(int side);
 	void onScale(float sx, float sy);
@@ -137,7 +138,7 @@ private:
 
 	glm::vec3 vector_old;
 	float distance_old = 0;
-	float uniScale = 2.0f;
+	float uniScale = 1.0f;
 
 	glm::fvec2 Mouse_old;
 	std::string cst_name;
