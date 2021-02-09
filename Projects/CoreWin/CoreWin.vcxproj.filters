@@ -382,6 +382,9 @@
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Source\proto_src\inspectorSync.proto">
@@ -392,6 +395,9 @@
     </None>
     <None Include="..\..\Source\proto_src\common.proto">
       <Filter>Source\proto_src</Filter>
+    </None>
+    <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
+      <Filter>Source\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -68,9 +68,6 @@
     <Filter Include="Library\arm64\debug">
       <UniqueIdentifier>{ec0107f7-4242-47ef-bc42-ab1a788573c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\dicom-data\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
-      <UniqueIdentifier>{1233eb50-6233-4905-9736-e6cda659fcd6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\SceneObjs">
       <UniqueIdentifier>{65290514-d3a2-48ab-a1eb-0f237314ba51}</UniqueIdentifier>
     </Filter>
@@ -372,6 +369,9 @@
     <None Include="..\..\Source\pbr\Shaders\HighlightShared.hlsl" />
     <None Include="..\..\Source\pbr\Shaders\PbrShared.hlsl" />
     <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
+    <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
+      <Filter>Source\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
@@ -420,6 +420,9 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
