@@ -48,6 +48,8 @@ private:
 	// Rendering loop timer.
 	DX::StepTimer m_timer;
 
+	bool m_overwrite_index_file = false;
+
 	void setup_volume_server();
 	void setup_volume_local();
 	void setup_resource();
