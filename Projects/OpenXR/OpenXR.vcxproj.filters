@@ -383,9 +383,6 @@
     <FxCompile Include="..\..\Source\Shaders\QuadVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
@@ -423,6 +420,9 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
