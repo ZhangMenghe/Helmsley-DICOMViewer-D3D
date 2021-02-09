@@ -1,6 +1,7 @@
 #include "rpcHandler.h"
 #include <ppltasks.h> // For create_task
 #include <glm/gtc/type_ptr.hpp>
+#include <Utils/dataManager.h>
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::ClientReader;
@@ -11,8 +12,9 @@ using namespace helmsley;
 using namespace std;
 using namespace Concurrency;
 
-rpcHandler::rpcHandler(const std::string &host)
-{
+bool rpcHandler::new_data_request = false;
+
+rpcHandler::rpcHandler(const std::string& host) {
     auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
     syncer_ = inspectorSync::NewStub(channel);
     stub_ = dataTransfer::NewStub(channel);
@@ -20,36 +22,30 @@ rpcHandler::rpcHandler(const std::string &host)
     req.set_client_id(CLIENT_ID);
 }
 
-FrameUpdateMsg rpcHandler::getUpdates()
-{
+FrameUpdateMsg rpcHandler::getUpdates() {
     ClientContext context;
     syncer_->getUpdates(&context, req, &update_msg);
     return update_msg;
 }
-const RPCVector<GestureOp> rpcHandler::getOperations()
-{
+const RPCVector<GestureOp> rpcHandler::getOperations() {
     ClientContext context;
     std::vector<GestureOp> op_pool;
     OperationBatch op_batch;
     syncer_->getOperations(&context, req, &op_batch);
     return op_batch.gesture_op();
 }
-void rpcHandler::receiver_register()
-{
+void rpcHandler::receiver_register() {
     commonResponse resp;
     ClientContext context;
     syncer_->startReceiveBroadcast(&context, req, &resp);
 }
 
-void rpcHandler::Run()
-{
-    while (true)
-    {
+void rpcHandler::Run() {
+    while (true) {
         if (ui_ == nullptr || manager_ == nullptr || vr_ == nullptr || m_dicom_loader == nullptr)
             continue;
         //debug only: start to listen directly
-        if (!initialized)
-        {
+        if (!initialized) {
             receiver_register();
             initialized = true;
         }
@@ -58,13 +54,10 @@ void rpcHandler::Run()
         int gid = 0, tid = 0, cid = 0;
         bool gesture_finished = false;
 
-        for (auto type : msg.types())
-        {
-            switch (type)
-            {
+        for (auto type : msg.types()) {
+            switch (type) {
             case FrameUpdateMsg_MsgType_GESTURE:
-                if (!gesture_finished)
-                {
+                if (!gesture_finished) {
                     tackle_gesture_msg(msg.gestures());
                     gesture_finished = true;
                 }
@@ -92,8 +85,7 @@ void rpcHandler::Run()
     }
 }
 
-void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo> &datasets)
-{
+void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets) {
     datasetResponse response;
     ClientContext context;
     stub_->getAvailableDatasets(&context, req, &response);
@@ -103,9 +95,8 @@ void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo> &da
         datasets.push_back(ds);
 }
 
-vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string &dataset_name)
-{
-    vector<volumeResponse::volumeInfo> ret;
+void rpcHandler::getVolumeFromDataset(const std::string& dataset_name, std::vector<volumeInfo>& ret) {
+    ret.clear();
     Request req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(dataset_name);
@@ -115,22 +106,18 @@ vector<volumeResponse::volumeInfo> rpcHandler::getVolumeFromDataset(const string
 
     std::unique_ptr<ClientReader<volumeResponse>> volume_reader(
         stub_->getVolumeFromDataset(&context, req));
-    while (volume_reader->Read(&volume))
-    {
+    while (volume_reader->Read(&volume)) {
         std::cout << volume.volumes_size() << std::endl;
 
-        for (auto vol : volume.volumes())
-        {
+        for (auto vol : volume.volumes()) {
             ret.push_back(vol);
         }
     }
     Status status = volume_reader->Finish();
     winrt::check_hresult(status.ok());
-    return ret;
 }
 
-std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles()
-{
+std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles() {
     std::vector<configResponse::configInfo> available_config_files;
 
     configResponse response;
@@ -138,17 +125,14 @@ std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles()
 
     stub_->getAvailableConfigs(&context, req, &response);
 
-    for (configResponse::configInfo config : response.configs())
-    {
+    for (configResponse::configInfo config : response.configs()) {
         available_config_files.push_back(config);
     }
 
     return available_config_files;
 }
-void rpcHandler::exportConfigs(std::string content)
-{
-    if (content.empty())
-        return;
+void rpcHandler::exportConfigs(std::string content) {
+    if (content.empty()) return;
 
     ClientContext context;
     commonResponse response;
@@ -158,8 +142,7 @@ void rpcHandler::exportConfigs(std::string content)
     stub_->exportConfigs(&context, creq, &response);
 }
 
-void rpcHandler::DownloadVolume(const string &folder_path)
-{
+void rpcHandler::DownloadVolume(const string& folder_path) {
     RequestWholeVolume req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(folder_path);
@@ -172,8 +155,7 @@ void rpcHandler::DownloadVolume(const string &folder_path)
         stub_->DownloadVolume(&context, req));
 
     int id = 0;
-    while (data_reader->Read(&resData))
-    {
+    while (data_reader->Read(&resData)) {
         m_dicom_loader->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
         id++;
     };
@@ -181,11 +163,10 @@ void rpcHandler::DownloadVolume(const string &folder_path)
     Status status = data_reader->Finish();
     winrt::check_hresult(status.ok());
 }
-Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string &folder_path)
-{
+Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string& folder_path) {
     using namespace Concurrency;
     //return create_task([]() {return; });
-    Windows::Foundation::IAsyncAction ^ Action = create_async([folder_path, this]() {
+    Windows::Foundation::IAsyncAction^ Action = create_async([folder_path, this]() {
         RequestWholeVolume req;
         req.set_client_id(CLIENT_ID);
         req.set_req_msg(folder_path);
@@ -198,8 +179,7 @@ Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string &folde
             stub_->DownloadVolume(&context, req));
 
         int id = 0;
-        while (data_reader->Read(&resData))
-        {
+        while (data_reader->Read(&resData)) {
             m_dicom_loader->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
             id++;
         };
@@ -208,11 +188,10 @@ Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string &folde
     });
     return create_task(Action);
 }
-Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::string &folder_path)
-{
+Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::string& folder_path) {
     using namespace Concurrency;
     //return create_task([]() {return; });
-    Windows::Foundation::IAsyncAction ^ Action = create_async([folder_path, this]() {
+    Windows::Foundation::IAsyncAction^ Action = create_async([folder_path, this]() {
         Request req;
         req.set_client_id(CLIENT_ID);
         req.set_req_msg(folder_path);
@@ -223,8 +202,7 @@ Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::
             stub_->DownloadMasksVolume(&context, req));
 
         int id = 0;
-        while (data_reader->Read(&resData))
-        {
+        while (data_reader->Read(&resData)) {
             m_dicom_loader->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
             id++;
         };
@@ -245,8 +223,7 @@ Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::
     });
     return create_task(Action);
 }
-void rpcHandler::DownloadMasksAndCenterlines(const std::string &folder_name)
-{
+void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name) {
     Request req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(folder_name);
@@ -257,8 +234,7 @@ void rpcHandler::DownloadMasksAndCenterlines(const std::string &folder_name)
         stub_->DownloadMasksVolume(&context, req));
 
     int id = 0;
-    while (data_reader->Read(&resData))
-    {
+    while (data_reader->Read(&resData)) {
         m_dicom_loader->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
         id++;
     };
@@ -266,14 +242,12 @@ void rpcHandler::DownloadMasksAndCenterlines(const std::string &folder_name)
     winrt::check_hresult(status.ok());
     DownloadCenterlines(req);
 }
-void rpcHandler::DownloadCenterlines(Request req)
-{
+void rpcHandler::DownloadCenterlines(Request req) {
     ClientContext context;
     centerlineData clData;
     std::unique_ptr<ClientReader<centerlineData>> cl_reader(
         stub_->DownloadCenterLineData(&context, req));
-    while (cl_reader->Read(&clData))
-    {
+    while (cl_reader->Read(&clData)) {
         m_dicom_loader->sendDataFloats(0, clData.data().size(), std::vector<float>(clData.data().begin(), clData.data().end()));
     };
     Status status = cl_reader->Finish();
@@ -283,12 +257,9 @@ void rpcHandler::DownloadCenterlines(Request req)
 ////////////////////////////
 ////////Inspectator/////////
 ///////////////////////////
-void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops)
-{
-    for (auto op : ops)
-    {
-        switch (op.type())
-        {
+void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops) {
+    for (auto op : ops) {
+        switch (op.type()) {
         case GestureOp_OPType_TOUCH_DOWN:
             vr_->onSingleTouchDown(op.x(), op.y());
             // sp.notify();
@@ -313,11 +284,9 @@ void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops)
         }
     }
 }
-void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg)
-{
+void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg) {
     google::protobuf::RepeatedField<float> f;
-    switch (msg.type())
-    {
+    switch (msg.type()) {
     case TuneMsg_TuneType_ADD_ONE:
         f = msg.values();
         ui_->addTuneParams(f.mutable_data(), f.size());
@@ -339,12 +308,9 @@ void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg)
         ui_->setTuneWidgetVisibility(msg.target(), (msg.value() > 0) ? true : false);
         break;
     case TuneMsg_TuneType_SET_TARGET:
-        if (msg.sub_target() == 0)
-            ui_->setTuneWidgetById(msg.target());
-        else if (msg.sub_target() == 1)
-            vr_->switchCuttingPlane((dvr::PARAM_CUT_ID)msg.target());
-        else if (msg.sub_target() == 2)
-            Manager::setTraversalTargetId(msg.target());
+        if (msg.sub_target() == 0) ui_->setTuneWidgetById(msg.target());
+        else if (msg.sub_target() == 1) vr_->switchCuttingPlane((dvr::PARAM_CUT_ID)msg.target());
+        else if (msg.sub_target() == 2) Manager::setTraversalTargetId(msg.target());
         break;
     case TuneMsg_TuneType_CUT_PLANE:
         ui_->setCuttingPlane(msg.target(), msg.value());
@@ -356,34 +322,19 @@ void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg)
         break;
     }
 }
-void rpcHandler::tack_check_msg(helmsley::CheckMsg msg)
-{
+void rpcHandler::tack_check_msg(helmsley::CheckMsg msg) {
     ui_->setCheck(msg.key(), msg.value());
 }
-void rpcHandler::tack_mask_msg(helmsley::MaskMsg msg)
-{
+void rpcHandler::tack_mask_msg(helmsley::MaskMsg msg) {
     ui_->setMaskBits(msg.num(), (unsigned int)msg.mbits());
 }
 
-void rpcHandler::tackle_volume_msg(helmsley::volumeConcise msg)
-{
-    //reset data
-    auto dims = msg.dims();
-    auto ss = msg.size();
-    m_dicom_loader->sendDataPrepare(dims[0], dims[1], dims[2], ss[0], ss[1], ss[2], msg.with_mask());
-
-    std::cout << "Try to load from " << DATA_PATH + msg.vol_path() << std::endl;
-    if (!m_dicom_loader->loadData(DATA_PATH + msg.vol_path() + "/data", DATA_PATH + msg.vol_path() + "/mask", false))
-    {
-        std::cout << "===ERROR==file not exist" << std::endl;
-        return;
-    }
-    //todo: request from server
-    //Manager::new_data_available = true;
+void rpcHandler::tackle_volume_msg(helmsley::DataMsg msg) {
+    m_req_data = msg;
+    new_data_request = true;
 }
 
-void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg)
-{
+void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     //manager_->onReset();
 
     //checks

@@ -37,9 +37,10 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources
 void OXRScenes::setup_volume_server(){	
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
-	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes("IRB01", false);
+	std::vector<volumeInfo> vl;
+	m_data_manager->getAvailableVolumes("IRB01", vl, false);
 
-	volumeResponse::volumeInfo vInfo;
+	volumeInfo vInfo;
 	for (auto vli : vl) {
 		if (vli.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0) {
 			vInfo = vli; break;
@@ -56,7 +57,8 @@ void OXRScenes::setup_volume_server(){
 void OXRScenes::setup_volume_local(){
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
 	auto dsName = ds[0].folder_name();
-	std::vector<volumeResponse::volumeInfo> vl = m_data_manager->getAvailableVolumes(dsName, true);
+	std::vector<volumeInfo> vl;
+	m_data_manager->getAvailableVolumes(dsName, vl, true);
 
 	auto vInfo = vl[0];
 	auto dims = vInfo.dims();

@@ -154,12 +154,12 @@ void vrController::init_texture()
 {
 	if (m_comp_tex_d3d != nullptr)
 	{
-		delete m_comp_tex_d3d;
+		m_comp_tex_d3d->Release();
 		m_comp_tex_d3d = nullptr;
 	}
 	if (m_textureUAV != nullptr)
 	{
-		delete m_textureUAV;
+		m_textureUAV->Release();
 		m_textureUAV = nullptr;
 	}
 
@@ -244,19 +244,9 @@ void vrController::StopTracking()
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void vrController::Render()
-{
-	// TODO: Debug
-	//Manager::param_bool[dvr::CHECK_CUTTING] = true;
-  //Manager::param_bool[dvr::CHECK_RAYCAST] = true;
-
-	if (!tex_volume)
-		return;
-	if (!pre_draw_)
-	{
-		render_scene();
-		return;
-	}
+void vrController::Render(){
+	if (tex_volume == nullptr || tex_baked == nullptr) return;
+	if (!pre_draw_) { render_scene(); return; }
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	if (isDirty()) //(true) // TODO: debug

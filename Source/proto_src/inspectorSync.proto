@@ -71,11 +71,9 @@ message MaskMsg{
     int32 num = 1;
     int32 mbits = 2;
 }
-message volumeConcise{
-    string vol_path = 1;
-    repeated int32 dims = 2;
-    repeated float size = 3;
-    bool with_mask = 4;
+message DataMsg{
+    string ds_name = 1;
+    string volume_name = 2;
 }
 message FrameUpdateMsg{
     enum MsgType{
@@ -92,7 +90,7 @@ message FrameUpdateMsg{
     repeated CheckMsg checks = 4;
     MaskMsg mask_value = 5;
     ResetMsg reset_value = 6;
-    volumeConcise data_value = 7;
+    DataMsg data_value = 7;
 }
 service inspectorSync{
     rpc startBroadcast(Request) returns(commonResponse);
@@ -106,5 +104,5 @@ service inspectorSync{
     rpc setTuneParams(TuneMsg) returns(commonResponse);
     rpc setCheckParams(CheckMsg) returns(commonResponse);
     rpc setMaskParams(MaskMsg) returns(commonResponse);
-    rpc setDisplayVolume(volumeConcise) returns(commonResponse);
+    rpc setDisplayVolume(DataMsg) returns(commonResponse);
 }

@@ -16,8 +16,7 @@
 #include <google/protobuf/port_def.inc>
 extern PROTOBUF_INTERNAL_EXPORT_transManager_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_configResponse_configInfo_transManager_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_transManager_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_datasetResponse_datasetInfo_transManager_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_transManager_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_volumeResponse_scoreInfo_transManager_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_transManager_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_volumeResponse_volumeInfo_transManager_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_common_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_volumeInfo_common_2eproto;
 namespace helmsley {
 class configResponse_configInfoDefaultTypeInternal {
  public:
@@ -35,14 +34,6 @@ class datasetResponseDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<datasetResponse> _instance;
 } _datasetResponse_default_instance_;
-class volumeResponse_scoreInfoDefaultTypeInternal {
- public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<volumeResponse_scoreInfo> _instance;
-} _volumeResponse_scoreInfo_default_instance_;
-class volumeResponse_volumeInfoDefaultTypeInternal {
- public:
-  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<volumeResponse_volumeInfo> _instance;
-} _volumeResponse_volumeInfo_default_instance_;
 class volumeResponseDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<volumeResponse> _instance;
@@ -177,36 +168,7 @@ static void InitDefaultsscc_info_volumeResponse_transManager_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_volumeResponse_transManager_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_volumeResponse_transManager_2eproto}, {
-      &scc_info_volumeResponse_volumeInfo_transManager_2eproto.base,}};
-
-static void InitDefaultsscc_info_volumeResponse_scoreInfo_transManager_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::helmsley::_volumeResponse_scoreInfo_default_instance_;
-    new (ptr) ::helmsley::volumeResponse_scoreInfo();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::helmsley::volumeResponse_scoreInfo::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_volumeResponse_scoreInfo_transManager_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_volumeResponse_scoreInfo_transManager_2eproto}, {}};
-
-static void InitDefaultsscc_info_volumeResponse_volumeInfo_transManager_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::helmsley::_volumeResponse_volumeInfo_default_instance_;
-    new (ptr) ::helmsley::volumeResponse_volumeInfo();
-    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::helmsley::volumeResponse_volumeInfo::InitAsDefaultInstance();
-}
-
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_volumeResponse_volumeInfo_transManager_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_volumeResponse_volumeInfo_transManager_2eproto}, {
-      &scc_info_volumeResponse_scoreInfo_transManager_2eproto.base,}};
+      &scc_info_volumeInfo_common_2eproto.base,}};
 
 static void InitDefaultsscc_info_volumeWholeResponse_transManager_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -222,8 +184,8 @@ static void InitDefaultsscc_info_volumeWholeResponse_transManager_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_volumeWholeResponse_transManager_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_volumeWholeResponse_transManager_2eproto}, {}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_transManager_2eproto[11];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_transManager_2eproto[1];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_transManager_2eproto[9];
+static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_transManager_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_transManager_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_transManager_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -256,31 +218,6 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_transManager_2eproto::offsets[
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::helmsley::datasetResponse, datasets_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_scoreInfo, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_scoreInfo, rgroup_id_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_scoreInfo, rank_id_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_scoreInfo, rank_score_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_scoreInfo, raw_score_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_scoreInfo, vol_score_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, folder_name_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, folder_path_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, dims_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, orientation_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, resolution_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, volume_loc_range_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, with_mask_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, data_source_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, sample_img_),
-  PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse_volumeInfo, scores_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::helmsley::volumeResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -321,13 +258,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 7, -1, sizeof(::helmsley::configResponse)},
   { 13, -1, sizeof(::helmsley::datasetResponse_datasetInfo)},
   { 23, -1, sizeof(::helmsley::datasetResponse)},
-  { 29, -1, sizeof(::helmsley::volumeResponse_scoreInfo)},
-  { 39, -1, sizeof(::helmsley::volumeResponse_volumeInfo)},
-  { 54, -1, sizeof(::helmsley::volumeResponse)},
-  { 60, -1, sizeof(::helmsley::volumeWholeResponse)},
-  { 66, -1, sizeof(::helmsley::centerlineData)},
-  { 72, -1, sizeof(::helmsley::dcmImage)},
-  { 80, -1, sizeof(::helmsley::RequestWholeVolume)},
+  { 29, -1, sizeof(::helmsley::volumeResponse)},
+  { 35, -1, sizeof(::helmsley::volumeWholeResponse)},
+  { 41, -1, sizeof(::helmsley::centerlineData)},
+  { 47, -1, sizeof(::helmsley::dcmImage)},
+  { 55, -1, sizeof(::helmsley::RequestWholeVolume)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -335,8 +270,6 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_configResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_datasetResponse_datasetInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_datasetResponse_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_volumeResponse_scoreInfo_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_volumeResponse_volumeInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_volumeResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_volumeWholeResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_centerlineData_default_instance_),
@@ -354,44 +287,32 @@ const char descriptor_table_protodef_transManager_2eproto[] PROTOBUF_SECTION_VAR
   "nfo\032s\n\013datasetInfo\022\023\n\013folder_name\030\001 \001(\t\022"
   "\024\n\014patient_name\030\002 \001(\t\022\014\n\004date\030\003 \001(\t\022\025\n\rp"
   "hysican_name\030\004 \001(\t\022\024\n\014mask_folders\030\005 \003(\t"
-  "\"\214\004\n\016volumeResponse\0224\n\007volumes\030\001 \003(\0132#.h"
-  "elmsley.volumeResponse.volumeInfo\032i\n\tsco"
-  "reInfo\022\021\n\trgroup_id\030\001 \001(\005\022\017\n\007rank_id\030\002 \001"
-  "(\005\022\022\n\nrank_score\030\003 \001(\002\022\021\n\traw_score\030\004 \003("
-  "\002\022\021\n\tvol_score\030\005 \003(\002\032\330\002\n\nvolumeInfo\022\023\n\013f"
-  "older_name\030\001 \001(\t\022\023\n\013folder_path\030\002 \001(\t\022\014\n"
-  "\004dims\030\003 \003(\005\022\023\n\013orientation\030\004 \003(\002\022\022\n\nreso"
-  "lution\030\005 \003(\002\022\030\n\020volume_loc_range\030\006 \001(\002\022\021"
-  "\n\twith_mask\030\007 \001(\010\022C\n\013data_source\030\010 \001(\0162."
-  ".helmsley.volumeResponse.volumeInfo.Data"
-  "Source\022\022\n\nsample_img\030\t \001(\014\0222\n\006scores\030\n \001"
-  "(\0132\".helmsley.volumeResponse.scoreInfo\"/"
-  "\n\nDataSource\022\t\n\005LOCAL\020\000\022\n\n\006SERVER\020\001\022\n\n\006D"
-  "EVICE\020\002\"#\n\023volumeWholeResponse\022\014\n\004data\030\001"
-  " \001(\014\"\036\n\016centerlineData\022\014\n\004data\030\001 \003(\002\"9\n\010"
-  "dcmImage\022\r\n\005dcmID\030\001 \001(\005\022\020\n\010position\030\002 \001("
-  "\002\022\014\n\004data\030\003 \001(\014\"K\n\022RequestWholeVolume\022\021\n"
-  "\tclient_id\030\001 \001(\005\022\017\n\007req_msg\030\002 \001(\t\022\021\n\tuni"
-  "t_size\030\003 \001(\0052\240\004\n\014dataTransfer\0229\n\023getAvai"
-  "lableConfigs\022\010.Request\032\030.helmsley.config"
-  "Response\022*\n\rexportConfigs\022\010.Request\032\017.co"
-  "mmonResponse\022;\n\024getAvailableDatasets\022\010.R"
-  "equest\032\031.helmsley.datasetResponse\022<\n\024get"
-  "VolumeFromDataset\022\010.Request\032\030.helmsley.v"
-  "olumeResponse0\001\022*\n\010Download\022\010.Request\032\022."
-  "helmsley.dcmImage0\001\022O\n\016DownloadVolume\022\034."
-  "helmsley.RequestWholeVolume\032\035.helmsley.v"
-  "olumeWholeResponse0\001\022/\n\rDownloadMasks\022\010."
-  "Request\032\022.helmsley.dcmImage0\001\022@\n\023Downloa"
-  "dMasksVolume\022\010.Request\032\035.helmsley.volume"
-  "WholeResponse0\001\022>\n\026DownloadCenterLineDat"
-  "a\022\010.Request\032\030.helmsley.centerlineData0\001b"
-  "\006proto3"
+  "\".\n\016volumeResponse\022\034\n\007volumes\030\001 \003(\0132\013.vo"
+  "lumeInfo\"#\n\023volumeWholeResponse\022\014\n\004data\030"
+  "\001 \001(\014\"\036\n\016centerlineData\022\014\n\004data\030\001 \003(\002\"9\n"
+  "\010dcmImage\022\r\n\005dcmID\030\001 \001(\005\022\020\n\010position\030\002 \001"
+  "(\002\022\014\n\004data\030\003 \001(\014\"K\n\022RequestWholeVolume\022\021"
+  "\n\tclient_id\030\001 \001(\005\022\017\n\007req_msg\030\002 \001(\t\022\021\n\tun"
+  "it_size\030\003 \001(\0052\240\004\n\014dataTransfer\0229\n\023getAva"
+  "ilableConfigs\022\010.Request\032\030.helmsley.confi"
+  "gResponse\022*\n\rexportConfigs\022\010.Request\032\017.c"
+  "ommonResponse\022;\n\024getAvailableDatasets\022\010."
+  "Request\032\031.helmsley.datasetResponse\022<\n\024ge"
+  "tVolumeFromDataset\022\010.Request\032\030.helmsley."
+  "volumeResponse0\001\022*\n\010Download\022\010.Request\032\022"
+  ".helmsley.dcmImage0\001\022O\n\016DownloadVolume\022\034"
+  ".helmsley.RequestWholeVolume\032\035.helmsley."
+  "volumeWholeResponse0\001\022/\n\rDownloadMasks\022\010"
+  ".Request\032\022.helmsley.dcmImage0\001\022@\n\023Downlo"
+  "adMasksVolume\022\010.Request\032\035.helmsley.volum"
+  "eWholeResponse0\001\022>\n\026DownloadCenterLineDa"
+  "ta\022\010.Request\032\030.helmsley.centerlineData0\001"
+  "b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_transManager_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_transManager_2eproto_sccs[11] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_transManager_2eproto_sccs[9] = {
   &scc_info_RequestWholeVolume_transManager_2eproto.base,
   &scc_info_centerlineData_transManager_2eproto.base,
   &scc_info_configResponse_transManager_2eproto.base,
@@ -400,44 +321,19 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_tra
   &scc_info_datasetResponse_datasetInfo_transManager_2eproto.base,
   &scc_info_dcmImage_transManager_2eproto.base,
   &scc_info_volumeResponse_transManager_2eproto.base,
-  &scc_info_volumeResponse_scoreInfo_transManager_2eproto.base,
-  &scc_info_volumeResponse_volumeInfo_transManager_2eproto.base,
   &scc_info_volumeWholeResponse_transManager_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_transManager_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_transManager_2eproto = {
-  false, false, descriptor_table_protodef_transManager_2eproto, "transManager.proto", 1647,
-  &descriptor_table_transManager_2eproto_once, descriptor_table_transManager_2eproto_sccs, descriptor_table_transManager_2eproto_deps, 11, 1,
+  false, false, descriptor_table_protodef_transManager_2eproto, "transManager.proto", 1168,
+  &descriptor_table_transManager_2eproto_once, descriptor_table_transManager_2eproto_sccs, descriptor_table_transManager_2eproto_deps, 9, 1,
   schemas, file_default_instances, TableStruct_transManager_2eproto::offsets,
-  file_level_metadata_transManager_2eproto, 11, file_level_enum_descriptors_transManager_2eproto, file_level_service_descriptors_transManager_2eproto,
+  file_level_metadata_transManager_2eproto, 9, file_level_enum_descriptors_transManager_2eproto, file_level_service_descriptors_transManager_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
 static bool dynamic_init_dummy_transManager_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_transManager_2eproto)), true);
 namespace helmsley {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* volumeResponse_volumeInfo_DataSource_descriptor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_transManager_2eproto);
-  return file_level_enum_descriptors_transManager_2eproto[0];
-}
-bool volumeResponse_volumeInfo_DataSource_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 1:
-    case 2:
-      return true;
-    default:
-      return false;
-  }
-}
-
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::LOCAL;
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::SERVER;
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::DEVICE;
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::DataSource_MIN;
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::DataSource_MAX;
-constexpr int volumeResponse_volumeInfo::DataSource_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
 
 // ===================================================================
 
@@ -1454,846 +1350,15 @@ void datasetResponse::InternalSwap(datasetResponse* other) {
 
 // ===================================================================
 
-void volumeResponse_scoreInfo::InitAsDefaultInstance() {
-}
-class volumeResponse_scoreInfo::_Internal {
- public:
-};
-
-volumeResponse_scoreInfo::volumeResponse_scoreInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
-  raw_score_(arena),
-  vol_score_(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:helmsley.volumeResponse.scoreInfo)
-}
-volumeResponse_scoreInfo::volumeResponse_scoreInfo(const volumeResponse_scoreInfo& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      raw_score_(from.raw_score_),
-      vol_score_(from.vol_score_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&rgroup_id_, &from.rgroup_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&rank_score_) -
-    reinterpret_cast<char*>(&rgroup_id_)) + sizeof(rank_score_));
-  // @@protoc_insertion_point(copy_constructor:helmsley.volumeResponse.scoreInfo)
-}
-
-void volumeResponse_scoreInfo::SharedCtor() {
-  ::memset(&rgroup_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&rank_score_) -
-      reinterpret_cast<char*>(&rgroup_id_)) + sizeof(rank_score_));
-}
-
-volumeResponse_scoreInfo::~volumeResponse_scoreInfo() {
-  // @@protoc_insertion_point(destructor:helmsley.volumeResponse.scoreInfo)
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-void volumeResponse_scoreInfo::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
-}
-
-void volumeResponse_scoreInfo::ArenaDtor(void* object) {
-  volumeResponse_scoreInfo* _this = reinterpret_cast< volumeResponse_scoreInfo* >(object);
-  (void)_this;
-}
-void volumeResponse_scoreInfo::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void volumeResponse_scoreInfo::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const volumeResponse_scoreInfo& volumeResponse_scoreInfo::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_volumeResponse_scoreInfo_transManager_2eproto.base);
-  return *internal_default_instance();
-}
-
-
-void volumeResponse_scoreInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:helmsley.volumeResponse.scoreInfo)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  raw_score_.Clear();
-  vol_score_.Clear();
-  ::memset(&rgroup_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&rank_score_) -
-      reinterpret_cast<char*>(&rgroup_id_)) + sizeof(rank_score_));
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* volumeResponse_scoreInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
-    switch (tag >> 3) {
-      // int32 rgroup_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          rgroup_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // int32 rank_id = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
-          rank_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // float rank_score = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29)) {
-          rank_score_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else goto handle_unusual;
-        continue;
-      // repeated float raw_score = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_raw_score(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37) {
-          _internal_add_raw_score(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
-          ptr += sizeof(float);
-        } else goto handle_unusual;
-        continue;
-      // repeated float vol_score = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_vol_score(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45) {
-          _internal_add_vol_score(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
-          ptr += sizeof(float);
-        } else goto handle_unusual;
-        continue;
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-    }  // switch
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* volumeResponse_scoreInfo::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:helmsley.volumeResponse.scoreInfo)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // int32 rgroup_id = 1;
-  if (this->rgroup_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_rgroup_id(), target);
-  }
-
-  // int32 rank_id = 2;
-  if (this->rank_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_rank_id(), target);
-  }
-
-  // float rank_score = 3;
-  if (!(this->rank_score() <= 0 && this->rank_score() >= 0)) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(3, this->_internal_rank_score(), target);
-  }
-
-  // repeated float raw_score = 4;
-  if (this->_internal_raw_score_size() > 0) {
-    target = stream->WriteFixedPacked(4, _internal_raw_score(), target);
-  }
-
-  // repeated float vol_score = 5;
-  if (this->_internal_vol_score_size() > 0) {
-    target = stream->WriteFixedPacked(5, _internal_vol_score(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:helmsley.volumeResponse.scoreInfo)
-  return target;
-}
-
-size_t volumeResponse_scoreInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:helmsley.volumeResponse.scoreInfo)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated float raw_score = 4;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_raw_score_size());
-    size_t data_size = 4UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
-    }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _raw_score_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // repeated float vol_score = 5;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_vol_score_size());
-    size_t data_size = 4UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
-    }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _vol_score_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // int32 rgroup_id = 1;
-  if (this->rgroup_id() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_rgroup_id());
-  }
-
-  // int32 rank_id = 2;
-  if (this->rank_id() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_rank_id());
-  }
-
-  // float rank_score = 3;
-  if (!(this->rank_score() <= 0 && this->rank_score() >= 0)) {
-    total_size += 1 + 4;
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void volumeResponse_scoreInfo::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:helmsley.volumeResponse.scoreInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  const volumeResponse_scoreInfo* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<volumeResponse_scoreInfo>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.volumeResponse.scoreInfo)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.volumeResponse.scoreInfo)
-    MergeFrom(*source);
-  }
-}
-
-void volumeResponse_scoreInfo::MergeFrom(const volumeResponse_scoreInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.volumeResponse.scoreInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  raw_score_.MergeFrom(from.raw_score_);
-  vol_score_.MergeFrom(from.vol_score_);
-  if (from.rgroup_id() != 0) {
-    _internal_set_rgroup_id(from._internal_rgroup_id());
-  }
-  if (from.rank_id() != 0) {
-    _internal_set_rank_id(from._internal_rank_id());
-  }
-  if (!(from.rank_score() <= 0 && from.rank_score() >= 0)) {
-    _internal_set_rank_score(from._internal_rank_score());
-  }
-}
-
-void volumeResponse_scoreInfo::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:helmsley.volumeResponse.scoreInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void volumeResponse_scoreInfo::CopyFrom(const volumeResponse_scoreInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.volumeResponse.scoreInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool volumeResponse_scoreInfo::IsInitialized() const {
-  return true;
-}
-
-void volumeResponse_scoreInfo::InternalSwap(volumeResponse_scoreInfo* other) {
-  using std::swap;
-  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  raw_score_.InternalSwap(&other->raw_score_);
-  vol_score_.InternalSwap(&other->vol_score_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(volumeResponse_scoreInfo, rank_score_)
-      + sizeof(volumeResponse_scoreInfo::rank_score_)
-      - PROTOBUF_FIELD_OFFSET(volumeResponse_scoreInfo, rgroup_id_)>(
-          reinterpret_cast<char*>(&rgroup_id_),
-          reinterpret_cast<char*>(&other->rgroup_id_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata volumeResponse_scoreInfo::GetMetadata() const {
-  return GetMetadataStatic();
-}
-
-
-// ===================================================================
-
-void volumeResponse_volumeInfo::InitAsDefaultInstance() {
-  ::helmsley::_volumeResponse_volumeInfo_default_instance_._instance.get_mutable()->scores_ = const_cast< ::helmsley::volumeResponse_scoreInfo*>(
-      ::helmsley::volumeResponse_scoreInfo::internal_default_instance());
-}
-class volumeResponse_volumeInfo::_Internal {
- public:
-  static const ::helmsley::volumeResponse_scoreInfo& scores(const volumeResponse_volumeInfo* msg);
-};
-
-const ::helmsley::volumeResponse_scoreInfo&
-volumeResponse_volumeInfo::_Internal::scores(const volumeResponse_volumeInfo* msg) {
-  return *msg->scores_;
-}
-volumeResponse_volumeInfo::volumeResponse_volumeInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
-  dims_(arena),
-  orientation_(arena),
-  resolution_(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:helmsley.volumeResponse.volumeInfo)
-}
-volumeResponse_volumeInfo::volumeResponse_volumeInfo(const volumeResponse_volumeInfo& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      dims_(from.dims_),
-      orientation_(from.orientation_),
-      resolution_(from.resolution_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  folder_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_folder_name().empty()) {
-    folder_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_folder_name(),
-      GetArena());
-  }
-  folder_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_folder_path().empty()) {
-    folder_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_folder_path(),
-      GetArena());
-  }
-  sample_img_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (!from._internal_sample_img().empty()) {
-    sample_img_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_sample_img(),
-      GetArena());
-  }
-  if (from._internal_has_scores()) {
-    scores_ = new ::helmsley::volumeResponse_scoreInfo(*from.scores_);
-  } else {
-    scores_ = nullptr;
-  }
-  ::memcpy(&volume_loc_range_, &from.volume_loc_range_,
-    static_cast<size_t>(reinterpret_cast<char*>(&data_source_) -
-    reinterpret_cast<char*>(&volume_loc_range_)) + sizeof(data_source_));
-  // @@protoc_insertion_point(copy_constructor:helmsley.volumeResponse.volumeInfo)
-}
-
-void volumeResponse_volumeInfo::SharedCtor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_volumeResponse_volumeInfo_transManager_2eproto.base);
-  folder_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  folder_path_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  sample_img_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  ::memset(&scores_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&data_source_) -
-      reinterpret_cast<char*>(&scores_)) + sizeof(data_source_));
-}
-
-volumeResponse_volumeInfo::~volumeResponse_volumeInfo() {
-  // @@protoc_insertion_point(destructor:helmsley.volumeResponse.volumeInfo)
-  SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-void volumeResponse_volumeInfo::SharedDtor() {
-  GOOGLE_DCHECK(GetArena() == nullptr);
-  folder_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  folder_path_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  sample_img_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete scores_;
-}
-
-void volumeResponse_volumeInfo::ArenaDtor(void* object) {
-  volumeResponse_volumeInfo* _this = reinterpret_cast< volumeResponse_volumeInfo* >(object);
-  (void)_this;
-}
-void volumeResponse_volumeInfo::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
-void volumeResponse_volumeInfo::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const volumeResponse_volumeInfo& volumeResponse_volumeInfo::default_instance() {
-  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_volumeResponse_volumeInfo_transManager_2eproto.base);
-  return *internal_default_instance();
-}
-
-
-void volumeResponse_volumeInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:helmsley.volumeResponse.volumeInfo)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  dims_.Clear();
-  orientation_.Clear();
-  resolution_.Clear();
-  folder_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  folder_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  sample_img_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  if (GetArena() == nullptr && scores_ != nullptr) {
-    delete scores_;
-  }
-  scores_ = nullptr;
-  ::memset(&volume_loc_range_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&data_source_) -
-      reinterpret_cast<char*>(&volume_loc_range_)) + sizeof(data_source_));
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* volumeResponse_volumeInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
-  while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
-    CHK_(ptr);
-    switch (tag >> 3) {
-      // string folder_name = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
-          auto str = _internal_mutable_folder_name();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.volumeResponse.volumeInfo.folder_name"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // string folder_path = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          auto str = _internal_mutable_folder_path();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.volumeResponse.volumeInfo.folder_path"));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // repeated int32 dims = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(_internal_mutable_dims(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24) {
-          _internal_add_dims(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // repeated float orientation = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_orientation(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37) {
-          _internal_add_orientation(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
-          ptr += sizeof(float);
-        } else goto handle_unusual;
-        continue;
-      // repeated float resolution = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_resolution(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45) {
-          _internal_add_resolution(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
-          ptr += sizeof(float);
-        } else goto handle_unusual;
-        continue;
-      // float volume_loc_range = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 53)) {
-          volume_loc_range_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else goto handle_unusual;
-        continue;
-      // bool with_mask = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
-          with_mask_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // .helmsley.volumeResponse.volumeInfo.DataSource data_source = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-          _internal_set_data_source(static_cast<::helmsley::volumeResponse_volumeInfo_DataSource>(val));
-        } else goto handle_unusual;
-        continue;
-      // bytes sample_img = 9;
-      case 9:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 74)) {
-          auto str = _internal_mutable_sample_img();
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // .helmsley.volumeResponse.scoreInfo scores = 10;
-      case 10:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
-          ptr = ctx->ParseMessage(_internal_mutable_scores(), ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-    }  // switch
-  }  // while
-success:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto success;
-#undef CHK_
-}
-
-::PROTOBUF_NAMESPACE_ID::uint8* volumeResponse_volumeInfo::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:helmsley.volumeResponse.volumeInfo)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string folder_name = 1;
-  if (this->folder_name().size() > 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_folder_name().data(), static_cast<int>(this->_internal_folder_name().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "helmsley.volumeResponse.volumeInfo.folder_name");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_folder_name(), target);
-  }
-
-  // string folder_path = 2;
-  if (this->folder_path().size() > 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_folder_path().data(), static_cast<int>(this->_internal_folder_path().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "helmsley.volumeResponse.volumeInfo.folder_path");
-    target = stream->WriteStringMaybeAliased(
-        2, this->_internal_folder_path(), target);
-  }
-
-  // repeated int32 dims = 3;
-  {
-    int byte_size = _dims_cached_byte_size_.load(std::memory_order_relaxed);
-    if (byte_size > 0) {
-      target = stream->WriteInt32Packed(
-          3, _internal_dims(), byte_size, target);
-    }
-  }
-
-  // repeated float orientation = 4;
-  if (this->_internal_orientation_size() > 0) {
-    target = stream->WriteFixedPacked(4, _internal_orientation(), target);
-  }
-
-  // repeated float resolution = 5;
-  if (this->_internal_resolution_size() > 0) {
-    target = stream->WriteFixedPacked(5, _internal_resolution(), target);
-  }
-
-  // float volume_loc_range = 6;
-  if (!(this->volume_loc_range() <= 0 && this->volume_loc_range() >= 0)) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(6, this->_internal_volume_loc_range(), target);
-  }
-
-  // bool with_mask = 7;
-  if (this->with_mask() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(7, this->_internal_with_mask(), target);
-  }
-
-  // .helmsley.volumeResponse.volumeInfo.DataSource data_source = 8;
-  if (this->data_source() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      8, this->_internal_data_source(), target);
-  }
-
-  // bytes sample_img = 9;
-  if (this->sample_img().size() > 0) {
-    target = stream->WriteBytesMaybeAliased(
-        9, this->_internal_sample_img(), target);
-  }
-
-  // .helmsley.volumeResponse.scoreInfo scores = 10;
-  if (this->has_scores()) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(
-        10, _Internal::scores(this), target, stream);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:helmsley.volumeResponse.volumeInfo)
-  return target;
-}
-
-size_t volumeResponse_volumeInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:helmsley.volumeResponse.volumeInfo)
-  size_t total_size = 0;
-
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated int32 dims = 3;
-  {
-    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      Int32Size(this->dims_);
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
-    }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _dims_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // repeated float orientation = 4;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_orientation_size());
-    size_t data_size = 4UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
-    }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _orientation_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // repeated float resolution = 5;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_resolution_size());
-    size_t data_size = 4UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
-    }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _resolution_cached_byte_size_.store(cached_size,
-                                    std::memory_order_relaxed);
-    total_size += data_size;
-  }
-
-  // string folder_name = 1;
-  if (this->folder_name().size() > 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_folder_name());
-  }
-
-  // string folder_path = 2;
-  if (this->folder_path().size() > 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_folder_path());
-  }
-
-  // bytes sample_img = 9;
-  if (this->sample_img().size() > 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
-        this->_internal_sample_img());
-  }
-
-  // .helmsley.volumeResponse.scoreInfo scores = 10;
-  if (this->has_scores()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *scores_);
-  }
-
-  // float volume_loc_range = 6;
-  if (!(this->volume_loc_range() <= 0 && this->volume_loc_range() >= 0)) {
-    total_size += 1 + 4;
-  }
-
-  // bool with_mask = 7;
-  if (this->with_mask() != 0) {
-    total_size += 1 + 1;
-  }
-
-  // .helmsley.volumeResponse.volumeInfo.DataSource data_source = 8;
-  if (this->data_source() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_data_source());
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void volumeResponse_volumeInfo::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:helmsley.volumeResponse.volumeInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  const volumeResponse_volumeInfo* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<volumeResponse_volumeInfo>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.volumeResponse.volumeInfo)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.volumeResponse.volumeInfo)
-    MergeFrom(*source);
-  }
-}
-
-void volumeResponse_volumeInfo::MergeFrom(const volumeResponse_volumeInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.volumeResponse.volumeInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  dims_.MergeFrom(from.dims_);
-  orientation_.MergeFrom(from.orientation_);
-  resolution_.MergeFrom(from.resolution_);
-  if (from.folder_name().size() > 0) {
-    _internal_set_folder_name(from._internal_folder_name());
-  }
-  if (from.folder_path().size() > 0) {
-    _internal_set_folder_path(from._internal_folder_path());
-  }
-  if (from.sample_img().size() > 0) {
-    _internal_set_sample_img(from._internal_sample_img());
-  }
-  if (from.has_scores()) {
-    _internal_mutable_scores()->::helmsley::volumeResponse_scoreInfo::MergeFrom(from._internal_scores());
-  }
-  if (!(from.volume_loc_range() <= 0 && from.volume_loc_range() >= 0)) {
-    _internal_set_volume_loc_range(from._internal_volume_loc_range());
-  }
-  if (from.with_mask() != 0) {
-    _internal_set_with_mask(from._internal_with_mask());
-  }
-  if (from.data_source() != 0) {
-    _internal_set_data_source(from._internal_data_source());
-  }
-}
-
-void volumeResponse_volumeInfo::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:helmsley.volumeResponse.volumeInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void volumeResponse_volumeInfo::CopyFrom(const volumeResponse_volumeInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.volumeResponse.volumeInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool volumeResponse_volumeInfo::IsInitialized() const {
-  return true;
-}
-
-void volumeResponse_volumeInfo::InternalSwap(volumeResponse_volumeInfo* other) {
-  using std::swap;
-  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  dims_.InternalSwap(&other->dims_);
-  orientation_.InternalSwap(&other->orientation_);
-  resolution_.InternalSwap(&other->resolution_);
-  folder_name_.Swap(&other->folder_name_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  folder_path_.Swap(&other->folder_path_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  sample_img_.Swap(&other->sample_img_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(volumeResponse_volumeInfo, data_source_)
-      + sizeof(volumeResponse_volumeInfo::data_source_)
-      - PROTOBUF_FIELD_OFFSET(volumeResponse_volumeInfo, scores_)>(
-          reinterpret_cast<char*>(&scores_),
-          reinterpret_cast<char*>(&other->scores_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata volumeResponse_volumeInfo::GetMetadata() const {
-  return GetMetadataStatic();
-}
-
-
-// ===================================================================
-
 void volumeResponse::InitAsDefaultInstance() {
 }
 class volumeResponse::_Internal {
  public:
 };
 
+void volumeResponse::clear_volumes() {
+  volumes_.Clear();
+}
 volumeResponse::volumeResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena),
   volumes_(arena) {
@@ -2355,7 +1420,7 @@ const char* volumeResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // repeated .helmsley.volumeResponse.volumeInfo volumes = 1;
+      // repeated .volumeInfo volumes = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr -= 1;
@@ -2395,7 +1460,7 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .helmsley.volumeResponse.volumeInfo volumes = 1;
+  // repeated .volumeInfo volumes = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->_internal_volumes_size()); i < n; i++) {
     target = stream->EnsureSpace(target);
@@ -2419,7 +1484,7 @@ size_t volumeResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .helmsley.volumeResponse.volumeInfo volumes = 1;
+  // repeated .volumeInfo volumes = 1;
   total_size += 1UL * this->_internal_volumes_size();
   for (const auto& msg : this->volumes_) {
     total_size +=
@@ -3445,12 +2510,6 @@ template<> PROTOBUF_NOINLINE ::helmsley::datasetResponse_datasetInfo* Arena::Cre
 }
 template<> PROTOBUF_NOINLINE ::helmsley::datasetResponse* Arena::CreateMaybeMessage< ::helmsley::datasetResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::helmsley::datasetResponse >(arena);
-}
-template<> PROTOBUF_NOINLINE ::helmsley::volumeResponse_scoreInfo* Arena::CreateMaybeMessage< ::helmsley::volumeResponse_scoreInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::helmsley::volumeResponse_scoreInfo >(arena);
-}
-template<> PROTOBUF_NOINLINE ::helmsley::volumeResponse_volumeInfo* Arena::CreateMaybeMessage< ::helmsley::volumeResponse_volumeInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::helmsley::volumeResponse_volumeInfo >(arena);
 }
 template<> PROTOBUF_NOINLINE ::helmsley::volumeResponse* Arena::CreateMaybeMessage< ::helmsley::volumeResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::helmsley::volumeResponse >(arena);
