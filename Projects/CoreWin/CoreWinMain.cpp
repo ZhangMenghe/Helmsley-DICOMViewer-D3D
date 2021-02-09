@@ -2,6 +2,10 @@
 #include "CoreWinMain.h"
 #include <Common/DirectXHelper.h>
 
+using namespace CoreWin;
+using namespace Windows::Foundation;
+using namespace Windows::System::Threading;
+using namespace Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
