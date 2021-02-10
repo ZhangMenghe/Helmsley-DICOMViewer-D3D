@@ -37,6 +37,9 @@ protected:
     IResearchModeSensor* m_pMagSensor = nullptr;
 
     std::shared_ptr<SlateCameraRenderer> m_LFCameraRenderer;
-    std::shared_ptr<SlateCameraRenderer> m_LTCameraRenderer;
+    std::shared_ptr<SlateCameraRenderer> m_RFCameraRenderer;
+
+
+    //std::shared_ptr<SlateCameraRenderer> m_LTCameraRenderer;
 };
 #endif // !SENSOR_VIZ_SCENARIO_H

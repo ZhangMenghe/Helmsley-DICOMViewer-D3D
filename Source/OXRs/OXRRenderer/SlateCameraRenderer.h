@@ -14,7 +14,7 @@ public:
     SlateCameraRenderer(ID3D11Device* device, IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
 
 	bool Draw(ID3D11DeviceContext* context, glm::mat4 model_mat);
-	void setTexture(Texture* tex) { texture = tex; }
+    void setPosition(glm::vec3 pos);
 protected:
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

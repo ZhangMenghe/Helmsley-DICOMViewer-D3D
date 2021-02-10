@@ -131,7 +131,9 @@ SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,
 	m_pCameraUpdateThread = new std::thread(CameraUpdateThread, this, hasData, pCamAccessConsent);
 }
 
-
+void SlateCameraRenderer::setPosition(glm::vec3 pos) {
+	m_quad_matrix = glm::translate(glm::mat4(1.0), pos) * m_quad_matrix;
+}
 void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 	if (m_pSensorFrame == nullptr) return;
 	if (texture == nullptr) {
@@ -148,9 +150,17 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 			m_slateWidth = resolution.Width;
 		}
 		m_slateHeight = resolution.Height;
-		
-		m_quad_matrix = glm::scale(glm::mat4(1.0), glm::vec3(m_slateHeight / m_slateWidth, 1.0, 1.0))
-			* glm::rotate(glm::mat4(1.0), -glm::half_pi<float>() , glm::vec3(.0,.0,1.0)) ;
+		if (m_pRMCameraSensor->GetSensorType() == LEFT_FRONT) {
+			m_quad_matrix = m_quad_matrix
+				* glm::scale(glm::mat4(1.0), glm::vec3(m_slateHeight / m_slateWidth, 1.0, 1.0))
+				* glm::rotate(glm::mat4(1.0), -glm::half_pi<float>(), glm::vec3(.0, .0, 1.0));
+		}
+		else {
+			m_quad_matrix = m_quad_matrix
+				* glm::scale(glm::mat4(1.0), glm::vec3(m_slateHeight / m_slateWidth, 1.0, 1.0))
+				* glm::rotate(glm::mat4(1.0), glm::half_pi<float>(), glm::vec3(.0, .0, 1.0));
+		}
+
 		D3D11_TEXTURE2D_DESC texDesc;
 		texDesc.Width = m_slateWidth;
 		texDesc.Height = m_slateHeight;
