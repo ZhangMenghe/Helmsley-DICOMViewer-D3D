@@ -348,6 +348,9 @@
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\grpc\rpcHandler.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.h" />
+    <ClInclude Include="..\..\Source\OXRs\Scenario.h" />
+    <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h" />
     <ClInclude Include="..\..\Source\proto\common.grpc.pb.h" />
     <ClInclude Include="..\..\Source\proto\common.pb.h" />
     <ClInclude Include="..\..\Source\proto\inspectorSync.grpc.pb.h" />
@@ -363,6 +366,7 @@
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h" />
+    <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
     <ClInclude Include="..\..\Source\Utils\dataManager.h" />
@@ -386,6 +390,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp" />
     <ClCompile Include="..\..\Source\proto\common.grpc.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>

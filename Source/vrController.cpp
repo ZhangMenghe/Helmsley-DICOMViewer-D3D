@@ -74,7 +74,7 @@ void vrController::InitOXRScene()
 {
 	uniScale = 0.5f;
 	PosVec3_.z = -1.0f;
-  volume_model_dirty = true;
+	volume_model_dirty = true;
 }
 
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num)
@@ -314,8 +314,8 @@ void vrController::render_scene(){
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
 	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
-
-	auto model_mat = SpaceMat_ * ModelMat_ * vol_dim_scale_mat_;
+	Frame_model_mat = SpaceMat_ * ModelMat_;
+	auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
 	//cutter_->Update(model_mat);
 	//if (Manager::IsCuttingNeedUpdate())
@@ -330,15 +330,15 @@ void vrController::render_scene(){
 	//}
 
 	//////   VOLUME   //////
-	if (m_manager->isDrawVolume())
-	{
-		//precompute();
-		if (Manager::isRayCasting())
-			render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
-		else
-			render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
-		m_deviceResources->ClearCurrentDepthBuffer();
-	}
+	//if (m_manager->isDrawVolume())
+	//{
+	//	//precompute();
+	//	if (Manager::isRayCasting())
+	//		render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+	//	else
+	//		render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
+	//	m_deviceResources->ClearCurrentDepthBuffer();
+	//}
 
 	///// MESH  ////
 	//if (m_manager->isDrawMesh())

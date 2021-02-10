@@ -86,6 +86,7 @@ public:
 	Texture *getVolumeTex() { return tex_volume; }
 	Texture *getBakedTex() { return tex_baked; }
 	bool isDirty();
+	glm::mat4 getFrameModelMat() { return Frame_model_mat; }
 	ID3D11RasterizerState *m_render_state_front, *m_render_state_back;
 
 private:
@@ -115,6 +116,7 @@ private:
 	ID3D11UnorderedAccessView *m_textureUAV;
 	ID3D11Buffer *m_compute_constbuff = nullptr;
 
+	glm::mat4 Frame_model_mat;
 	glm::mat4 SpaceMat_;
 
 	glm::mat4 ModelMat_, RotateMat_;

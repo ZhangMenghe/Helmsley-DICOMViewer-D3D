@@ -7,7 +7,7 @@
 #include <Utils/uiController.h>
 #include <Utils/dataManager.h>
 #include <grpc/rpcHandler.h>
-
+#include <OXRs/SensorVizScenario.h>
 class OXRScenes{
 public:
 	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
@@ -26,6 +26,7 @@ private:
 
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
+	std::unique_ptr<SensorVizScenario> m_scenario;
 
 	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 	
