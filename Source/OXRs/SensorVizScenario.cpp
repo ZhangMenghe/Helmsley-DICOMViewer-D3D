@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "SensorVizScenario.h"
-#include <Utils/TypeConvertUtils.h>
 #include <vrController.h>
 
 static ResearchModeSensorConsent camAccessCheck;
@@ -121,15 +120,13 @@ void SensorVizScenario::IntializeSensors() {
 
 void SensorVizScenario::IntializeScene() {
     m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
-
-    //m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice());
 }
 void SensorVizScenario::Update(DX::StepTimer& timer) {
 
 }
 void SensorVizScenario::Render() {
     auto model_mat = vrController::instance()->getFrameModelMat();
-    m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));
+    m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
 }
 void SensorVizScenario::OnDeviceLost() {
 

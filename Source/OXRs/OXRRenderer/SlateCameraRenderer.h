@@ -13,7 +13,7 @@ public:
 	SlateCameraRenderer(ID3D11Device* device);
     SlateCameraRenderer(ID3D11Device* device, IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
 
-	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
+	bool Draw(ID3D11DeviceContext* context, glm::mat4 model_mat);
 	void setTexture(Texture* tex) { texture = tex; }
 protected:
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
@@ -37,6 +37,7 @@ private:
 
 	dvr::ModelViewProjectionConstantBuffer m_constantBufferData;
 	dvr::INPUT_LAYOUT_IDS m_input_layout_id;
+    glm::mat4 m_quad_matrix = glm::mat4(1.0);
 
     static void CameraUpdateThread(SlateCameraRenderer* pSlateCameraRenderer, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
     void update_cam_texture(ID3D11DeviceContext* context);

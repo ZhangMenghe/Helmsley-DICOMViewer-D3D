@@ -3,7 +3,8 @@
 #include <Common/DirectXHelper.h>
 #include <D3DPipeline/Primitive.h>
 #include <Common/Manager.h>
-
+#include <glm/gtx/transform.hpp>
+#include <Utils/TypeConvertUtils.h>
 using namespace DirectX;
 
 
@@ -135,7 +136,7 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 	if (m_pSensorFrame == nullptr) return;
 	if (texture == nullptr) {
 
-		ResearchModeSensorResolution resolution;
+		ResearchModeSensorResolution resolution;//640*480
 		m_pSensorFrame->GetResolution(&resolution);
 
 		if (m_pRMCameraSensor->GetSensorType() == DEPTH_LONG_THROW)
@@ -147,6 +148,9 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 			m_slateWidth = resolution.Width;
 		}
 		m_slateHeight = resolution.Height;
+		
+		m_quad_matrix = glm::scale(glm::mat4(1.0), glm::vec3(m_slateHeight / m_slateWidth, 1.0, 1.0))
+			* glm::rotate(glm::mat4(1.0), -glm::half_pi<float>() , glm::vec3(.0,.0,1.0)) ;
 		D3D11_TEXTURE2D_DESC texDesc;
 		texDesc.Width = m_slateWidth;
 		texDesc.Height = m_slateHeight;
@@ -188,13 +192,14 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 	texture->setTexData(context, pImage, row_pitch, 0);
 }
 // Renders one frame using the vertex and pixel shaders.
-bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
+bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat){
+	modelMat = m_quad_matrix * modelMat;
 	if (!m_loadingComplete) return false;
 	std::lock_guard<std::mutex> guard(m_mutex);
 	update_cam_texture(context);
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
-		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(modelMat));
+		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(mat42xmmatrix(modelMat)));
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
