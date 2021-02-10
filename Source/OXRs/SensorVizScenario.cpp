@@ -15,6 +15,7 @@ HMODULE LoadLibraryA(
 
 SensorVizScenario::SensorVizScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources)
 :Scenario(deviceResources){
+    IntializeSensors();
     IntializeScene();
 }
 
@@ -117,8 +118,11 @@ void SensorVizScenario::IntializeSensors() {
         }
     }
 }
+
 void SensorVizScenario::IntializeScene() {
-    m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice());
+    m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
+
+    //m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice());
 }
 void SensorVizScenario::Update(DX::StepTimer& timer) {
 
@@ -134,8 +138,10 @@ void SensorVizScenario::OnDeviceRestored() {
 
 }
 void SensorVizScenario::CamAccessOnComplete(ResearchModeSensorConsent consent) {
-
+    camAccessCheck = consent;
+    SetEvent(camConsentGiven);
 }
 void SensorVizScenario::ImuAccessOnComplete(ResearchModeSensorConsent consent) {
-
+    imuAccessCheck = consent;
+    SetEvent(imuConsentGiven);
 }

@@ -6,17 +6,192 @@
 
 using namespace DirectX;
 
+
+void SlateCameraRenderer::CameraUpdateThread(SlateCameraRenderer* pSlateCameraRenderer, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent){
+	HRESULT hr = S_OK;
+	LARGE_INTEGER qpf;
+	uint64_t lastQpcNow = 0;
+
+	QueryPerformanceFrequency(&qpf);
+
+	if (hasData != nullptr)
+	{
+		DWORD waitResult = WaitForSingleObject(hasData, INFINITE);
+
+		if (waitResult == WAIT_OBJECT_0)
+		{
+			switch (*pCamAccessConsent)
+			{
+			case ResearchModeSensorConsent::Allowed:
+				OutputDebugString(L"Access is granted");
+				break;
+			case ResearchModeSensorConsent::DeniedBySystem:
+				OutputDebugString(L"Access is denied by the system");
+				hr = E_ACCESSDENIED;
+				break;
+			case ResearchModeSensorConsent::DeniedByUser:
+				OutputDebugString(L"Access is denied by the user");
+				hr = E_ACCESSDENIED;
+				break;
+			case ResearchModeSensorConsent::NotDeclaredByApp:
+				OutputDebugString(L"Capability is not declared in the app manifest");
+				hr = E_ACCESSDENIED;
+				break;
+			case ResearchModeSensorConsent::UserPromptRequired:
+				OutputDebugString(L"Capability user prompt required");
+				hr = E_ACCESSDENIED;
+				break;
+			default:
+				OutputDebugString(L"Access is denied by the system");
+				hr = E_ACCESSDENIED;
+				break;
+			}
+		}
+		else
+		{
+			hr = E_UNEXPECTED;
+		}
+	}
+
+	if (FAILED(hr))
+	{
+		return;
+	}
+
+	winrt::check_hresult(pSlateCameraRenderer->m_pRMCameraSensor->OpenStream());
+
+	while (!pSlateCameraRenderer->m_fExit && pSlateCameraRenderer->m_pRMCameraSensor)
+	{
+		static int gFrameCount = 0;
+		HRESULT hr = S_OK;
+		IResearchModeSensorFrame* pSensorFrame = nullptr;
+		LARGE_INTEGER qpcNow;
+		uint64_t uqpcNow;
+		QueryPerformanceCounter(&qpcNow);
+		uqpcNow = qpcNow.QuadPart;
+		ResearchModeSensorTimestamp timeStamp;
+
+		winrt::check_hresult(pSlateCameraRenderer->m_pRMCameraSensor->GetNextBuffer(&pSensorFrame));
+
+		pSensorFrame->GetTimeStamp(&timeStamp);
+
+		{
+			if (lastQpcNow != 0)
+			{
+				pSlateCameraRenderer->m_refreshTimeInMilliseconds =
+					(1000 *
+						(uqpcNow - lastQpcNow)) /
+					qpf.QuadPart;
+			}
+
+			if (pSlateCameraRenderer->m_lastHostTicks != 0)
+			{
+				pSlateCameraRenderer->m_sensorRefreshTime = timeStamp.HostTicks - pSlateCameraRenderer->m_lastHostTicks;
+			}
+
+			std::lock_guard<std::mutex> guard(pSlateCameraRenderer->m_mutex);
+
+			if (pSlateCameraRenderer->m_frameCallback)
+			{
+				pSlateCameraRenderer->m_frameCallback(pSensorFrame, pSlateCameraRenderer->m_frameCtx);
+			}
+
+			if (pSlateCameraRenderer->m_pSensorFrame)
+			{
+				pSlateCameraRenderer->m_pSensorFrame->Release();
+			}
+
+			pSlateCameraRenderer->m_pSensorFrame = pSensorFrame;
+			lastQpcNow = uqpcNow;
+			pSlateCameraRenderer->m_lastHostTicks = timeStamp.HostTicks;
+		}
+	}
+
+	if (pSlateCameraRenderer->m_pRMCameraSensor)
+	{
+		pSlateCameraRenderer->m_pRMCameraSensor->CloseStream();
+	}
+}
+
 SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device)
 :baseRenderer(device, L"QuadVertexShader.cso", L"NaiveColorPixelShader.cso",
 	quad_vertices_pos_w_tex, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
 	this->initialize();
+}
+SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,
+	IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent)
+:SlateCameraRenderer(device){
+	m_pRMCameraSensor = pLLSensor;
+	m_pRMCameraSensor->AddRef();
+	m_pSensorFrame = nullptr;
+	m_frameCallback = nullptr;
 
+	m_pCameraUpdateThread = new std::thread(CameraUpdateThread, this, hasData, pCamAccessConsent);
 }
 
+
+void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
+	if (m_pSensorFrame == nullptr) return;
+	if (texture == nullptr) {
+
+		ResearchModeSensorResolution resolution;
+		m_pSensorFrame->GetResolution(&resolution);
+
+		if (m_pRMCameraSensor->GetSensorType() == DEPTH_LONG_THROW)
+		{
+			m_slateWidth = resolution.Width * 2;
+		}
+		else
+		{
+			m_slateWidth = resolution.Width;
+		}
+		m_slateHeight = resolution.Height;
+		D3D11_TEXTURE2D_DESC texDesc;
+		texDesc.Width = m_slateWidth;
+		texDesc.Height = m_slateHeight;
+		texDesc.Format = DXGI_FORMAT_R8_UNORM;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+		D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+		texDesc.Format,
+		D3D11_RTV_DIMENSION_TEXTURE2D,
+		};
+		view_desc.Texture2D.MipSlice = 0;
+		texture = new Texture;
+		texture->Initialize(device, texDesc, view_desc);
+	}
+
+	ResearchModeSensorResolution resolution;
+	IResearchModeSensorVLCFrame* pVLCFrame = nullptr;
+	const BYTE* pImage = nullptr;
+	size_t outBufferCount = 0;
+	m_pSensorFrame->GetResolution(&resolution);
+
+	DX::ThrowIfFailed(m_pSensorFrame->QueryInterface(IID_PPV_ARGS(&pVLCFrame)));
+	pVLCFrame->GetBuffer(&pImage, &outBufferCount);
+
+	//pVLCFrame->GetGain(&gain);
+	//pVLCFrame->GetExposure(&exposure);
+
+	//sprintf(printString, "####CameraGain %d %I64d\n", gain, exposure);
+	//OutputDebugStringA(printString);
+
+	auto row_pitch = (m_slateWidth) * sizeof(BYTE);
+	texture->setTexData(context, pImage, row_pitch, 0);
+}
 // Renders one frame using the vertex and pixel shaders.
 bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
-	if (!m_loadingComplete) return false; 
+	if (!m_loadingComplete) return false;
+	std::lock_guard<std::mutex> guard(m_mutex);
+	update_cam_texture(context);
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
 		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(modelMat));

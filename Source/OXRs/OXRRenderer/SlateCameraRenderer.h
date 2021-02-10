@@ -5,19 +5,41 @@
 #include <Common/StepTimer.h>
 #include <D3DPipeline/Texture.h>
 #include <Renderers/baseRenderer.h>
-
+#include <ResearchModeApi/ResearchModeApi.h>
+#include <functional>
+#include <mutex>
 class SlateCameraRenderer:public baseRenderer {
 public:
 	SlateCameraRenderer(ID3D11Device* device);
+    SlateCameraRenderer(ID3D11Device* device, IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
+
 	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
 	void setTexture(Texture* tex) { texture = tex; }
 protected:
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 private:
+    IResearchModeSensor* m_pRMCameraSensor = nullptr;
+    IResearchModeSensorFrame* m_pSensorFrame = nullptr;
+    uint64_t m_refreshTimeInMilliseconds = 0;
+    uint64_t m_sensorRefreshTime = 0;
+    uint64_t m_lastHostTicks = 0;
+
+    float m_slateWidth, m_slateHeight;
+
+    std::function<void(IResearchModeSensorFrame*, PVOID frameCtx)> m_frameCallback;
+    PVOID m_frameCtx;
+
+    std::thread* m_pCameraUpdateThread;
+    bool m_fExit = { false };
+
+    std::mutex m_mutex;
+
 	dvr::ModelViewProjectionConstantBuffer m_constantBufferData;
-	bool m_as_render_target;
 	dvr::INPUT_LAYOUT_IDS m_input_layout_id;
+
+    static void CameraUpdateThread(SlateCameraRenderer* pSlateCameraRenderer, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
+    void update_cam_texture(ID3D11DeviceContext* context);
 };
 #endif // !SLATE_CAMERA_RENDERER_H
 

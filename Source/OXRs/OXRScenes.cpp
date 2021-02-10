@@ -10,7 +10,6 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 	m_sceneRenderer->InitOXRScene();
 
 	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(deviceResources));
-	m_scenario->IntializeSensors();
 
 	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
