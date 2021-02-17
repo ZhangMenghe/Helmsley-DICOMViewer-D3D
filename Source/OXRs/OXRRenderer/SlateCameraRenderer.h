@@ -11,10 +11,16 @@
 class SlateCameraRenderer:public baseRenderer {
 public:
 	SlateCameraRenderer(ID3D11Device* device);
-    SlateCameraRenderer(ID3D11Device* device, IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
+    SlateCameraRenderer(ID3D11Device* device, IResearchModeSensor* pLLSensor, 
+        HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
 
 	bool Draw(ID3D11DeviceContext* context, glm::mat4 model_mat);
     void setPosition(glm::vec3 pos);
+    void SetFrameCallBack(std::function<void(IResearchModeSensorFrame*, PVOID frameCtx)> frameCallback, PVOID frameCtx)
+    {
+        m_frameCallback = frameCallback;
+        m_frameCtx = frameCtx;
+    }
 protected:
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

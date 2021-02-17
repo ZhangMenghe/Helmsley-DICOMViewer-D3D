@@ -3,6 +3,9 @@
 #include "Scenario.h"
 #include <ResearchModeApi/ResearchModeApi.h>
 #include <OXRs/OXRRenderer/SlateCameraRenderer.h>
+#include <OXRs/OXRRenderer/RGBFrameProcessor.h>
+#include <winrt/Windows.Foundation.h>
+#include <Renderers/quadRenderer.h>
 
 class SensorVizScenario : public Scenario {
 public:
@@ -28,18 +31,20 @@ protected:
     IResearchModeSensorDevice* m_pSensorDevice;
     IResearchModeSensorDeviceConsent* m_pSensorDeviceConsent;
     std::vector<ResearchModeSensorDescriptor> m_sensorDescriptors;
+    
     IResearchModeSensor* m_pLFCameraSensor = nullptr;
     IResearchModeSensor* m_pRFCameraSensor = nullptr;
-    IResearchModeSensor* m_pLTSensor = nullptr;
-    IResearchModeSensor* m_pAHATSensor = nullptr;
-    IResearchModeSensor* m_pAccelSensor = nullptr;
-    IResearchModeSensor* m_pGyroSensor = nullptr;
-    IResearchModeSensor* m_pMagSensor = nullptr;
 
     std::shared_ptr<SlateCameraRenderer> m_LFCameraRenderer;
     std::shared_ptr<SlateCameraRenderer> m_RFCameraRenderer;
 
+    glm::mat4 m_LFCameraPose, m_RFCameraPose;
+    quadRenderer* m_rgbRender;
+    std::shared_ptr <Texture> m_rgbTex;
 
-    //std::shared_ptr<SlateCameraRenderer> m_LTCameraRenderer;
+    std::unique_ptr<RGBFrameProcessor> m_videoFrameProcessor = nullptr;
+    winrt::Windows::Foundation::IAsyncAction m_videoFrameProcessorOperation = nullptr;
+
+    winrt::Windows::Foundation::IAsyncAction InitializeVideoFrameProcessorAsync();
 };
 #endif // !SENSOR_VIZ_SCENARIO_H

@@ -78,6 +78,8 @@ public:
 	void setCuttingPlane(int id, int delta);
 	void setCuttingPlane(glm::vec3 pp, glm::vec3 pn);
 	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
+	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); m_present = true; }
+	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; m_present = true; }
 
 	//void setSpaces(XrSpace * space, XrSpace * app_space);
 
@@ -160,6 +162,7 @@ private:
 	bool m_tracking;
 	float m_degreesPerSecond = 1;
 
+	bool m_present = false;
 	//flags
 	int frame_num = 0;
 	bool volume_model_dirty, m_scene_dirty;

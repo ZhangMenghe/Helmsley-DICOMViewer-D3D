@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "SensorVizScenario.h"
 #include <vrController.h>
+#include <Utils/TypeConvertUtils.h>
 
 static ResearchModeSensorConsent camAccessCheck;
 static HANDLE camConsentGiven;
@@ -16,6 +17,8 @@ SensorVizScenario::SensorVizScenario(std::shared_ptr<DX::DeviceResources> const&
 :Scenario(deviceResources){
     IntializeSensors();
     IntializeScene();
+
+    m_videoFrameProcessorOperation = InitializeVideoFrameProcessorAsync();
 }
 
 SensorVizScenario::~SensorVizScenario(){
@@ -26,14 +29,6 @@ SensorVizScenario::~SensorVizScenario(){
     if (m_pRFCameraSensor)
     {
         m_pRFCameraSensor->Release();
-    }
-    if (m_pLTSensor)
-    {
-        m_pLTSensor->Release();
-    }
-    if (m_pLTSensor)
-    {
-        m_pLTSensor->Release();
     }
 
     if (m_pSensorDevice)
@@ -88,33 +83,6 @@ void SensorVizScenario::IntializeSensors() {
         {
             winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pRFCameraSensor));
         }
-
-        // Long throw and AHAT modes can not be used at the same time.
-#define DEPTH_USE_LONG_THROW
-
-#ifdef DEPTH_USE_LONG_THROW
-        if (sensorDescriptor.sensorType == DEPTH_LONG_THROW)
-        {
-            winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pLTSensor));
-        }
-#else
-        if (sensorDescriptor.sensorType == DEPTH_AHAT)
-        {
-            winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pAHATSensor));
-        }
-#endif
-        if (sensorDescriptor.sensorType == IMU_ACCEL)
-        {
-            winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pAccelSensor));
-        }
-        if (sensorDescriptor.sensorType == IMU_GYRO)
-        {
-            winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pGyroSensor));
-        }
-        if (sensorDescriptor.sensorType == IMU_MAG)
-        {
-            winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pMagSensor));
-        }
     }
 }
 
@@ -124,14 +92,39 @@ void SensorVizScenario::IntializeScene() {
 
     m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
     m_RFCameraRenderer->setPosition(glm::vec3(0.2, .0, .0));
+
+    D3D11_TEXTURE2D_DESC texDesc;
+    texDesc.Width = 760;
+    texDesc.Height = 428;
+    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.Usage = D3D11_USAGE_DEFAULT;
+    texDesc.MipLevels = 1;
+    texDesc.ArraySize = 1;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.SampleDesc.Quality = 0;
+    texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    texDesc.CPUAccessFlags = 0;
+    texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+    D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+    texDesc.Format,
+    D3D11_RTV_DIMENSION_TEXTURE2D,
+    };
+    view_desc.Texture2D.MipSlice = 0;
+    m_rgbTex = std::make_shared<Texture>();
+    m_rgbTex->Initialize(m_deviceResources->GetD3DDevice(), texDesc, view_desc);
+
+    m_rgbRender = new quadRenderer(m_deviceResources->GetD3DDevice());
+    m_rgbRender->setTexture(m_rgbTex.get());
 }
 void SensorVizScenario::Update(DX::StepTimer& timer) {
 
 }
 void SensorVizScenario::Render() {
     auto model_mat = vrController::instance()->getFrameModelMat();
-    m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
-    m_RFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
+    //m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
+    //m_RFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
+    m_rgbRender->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));
 }
 void SensorVizScenario::OnDeviceLost() {
 
@@ -146,4 +139,21 @@ void SensorVizScenario::CamAccessOnComplete(ResearchModeSensorConsent consent) {
 void SensorVizScenario::ImuAccessOnComplete(ResearchModeSensorConsent consent) {
     imuAccessCheck = consent;
     SetEvent(imuConsentGiven);
+}
+winrt::Windows::Foundation::IAsyncAction SensorVizScenario::InitializeVideoFrameProcessorAsync()
+{
+    if (m_videoFrameProcessorOperation &&
+        m_videoFrameProcessorOperation.Status() == winrt::Windows::Foundation::AsyncStatus::Completed)
+    {
+        return;
+    }
+
+    m_videoFrameProcessor = std::make_unique<RGBFrameProcessor>(m_deviceResources);
+    m_videoFrameProcessor->setTargetTexture(m_rgbTex);
+    if (!m_videoFrameProcessor.get())
+    {
+        throw winrt::hresult(E_POINTER);
+    }
+
+    co_await m_videoFrameProcessor->InitializeAsync();
 }

@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "OXRScenes.h"
 #include <Common/DirectXHelper.h>
-
+#include "OXRRenderer/OpenCVFrameProcessing.h"
 OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources)
 	: m_deviceResources(deviceResources) {
 	m_manager = std::make_shared<Manager>();
@@ -136,6 +136,7 @@ void OXRScenes::Update() {
 		rpcHandler::new_data_request = false;
 	}
 	m_timer.Tick([&]() {
+		//m_scenario->Update(m_timer);
 		m_sceneRenderer->Update(m_timer);
 		//m_fpsTextRenderer->Update(m_timer);
 	});

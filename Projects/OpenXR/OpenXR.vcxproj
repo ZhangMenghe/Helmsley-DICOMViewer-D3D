@@ -194,8 +194,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Link>
-      <AdditionalDependencies>kernel32.lib; d2d1.lib; d3d11.lib; dxgi.lib; windowscodecs.lib; dwrite.lib;$(ProjectDir)/../../Library/arm64/debug/lib/*.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)/../../Library/arm64/debug/lib;%(AdditionalLibraryDirectories); $(VCInstallDir)\lib\store\arm64; $(VCInstallDir)\lib\arm64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(ProjectDir)/../../Library/arm64/debug/lib/*.lib;opencv_world412d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenCvInstallArm64-412d\x64\vc15\staticlib;$(ProjectDir)/../../Library/arm64/debug/lib;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\arm64;$(VCInstallDir)\lib\arm64</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -204,7 +204,7 @@
       <DisableSpecificWarnings>4453;28204;4996</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)/../../Library/arm64/include;$(ProjectDir)/../../Source;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenCvInstallArm64-412d\include;$(ProjectDir)/../../Library/arm64/include;$(ProjectDir)/../../Source;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -347,10 +347,15 @@
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\grpc\rpcHandler.h" />
+    <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.h" />
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.h" />
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.h" />
     <ClInclude Include="..\..\Source\OXRs\Scenario.h" />
     <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h" />
+    <ClInclude Include="..\..\Source\OXRs\TimeConverter.h" />
     <ClInclude Include="..\..\Source\proto\common.grpc.pb.h" />
     <ClInclude Include="..\..\Source\proto\common.pb.h" />
     <ClInclude Include="..\..\Source\proto\inspectorSync.grpc.pb.h" />
@@ -389,7 +394,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp" />
     <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp" />
     <ClCompile Include="..\..\Source\proto\common.grpc.pb.cc">

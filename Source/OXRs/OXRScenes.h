@@ -7,6 +7,7 @@
 #include <Utils/uiController.h>
 #include <Utils/dataManager.h>
 #include <grpc/rpcHandler.h>
+//#include <OXRs/ArucoMarkerTrackingScenario.h>
 #include <OXRs/SensorVizScenario.h>
 class OXRScenes{
 public:

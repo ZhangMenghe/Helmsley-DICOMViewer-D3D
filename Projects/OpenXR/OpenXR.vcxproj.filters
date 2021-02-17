@@ -222,6 +222,18 @@
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp">
       <Filter>Source\OXRs\OXRRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -363,6 +375,21 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.h">
       <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\TimeConverter.h">
+      <Filter>Source\OXRs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
