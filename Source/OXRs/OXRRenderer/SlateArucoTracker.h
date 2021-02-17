@@ -17,8 +17,8 @@ public:
 
     static void FrameReadyCallback(IResearchModeSensorFrame* pSensorFrame, PVOID frameCtx);
 
-    //bool GetFirstCenter(float *px, float *py, ResearchModeSensorTimestamp *pTimeStamp);
-    bool GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec);
+    bool GetFirstCenter(float *px, float *py, ResearchModeSensorTimestamp *pTimeStamp);
+    //bool GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec);
 protected:
 
     //void GetModelVertices(std::vector<VertexPositionColor> &returnedModelVertices);
@@ -41,9 +41,9 @@ protected:
 
     cv::Mat m_cameraMatrix, m_distCoeffs;
 
-    //std::vector<std::vector<cv::Point2f>> m_corners;
-    //std::vector<cv::Point2f> m_centers;
-    //std::vector<int> m_ids;
+    std::vector<std::vector<cv::Point2f>> m_corners;
+    std::vector<cv::Point2f> m_centers;
+    std::vector<int> m_ids;
 
     std::vector<cv::Vec3d> rvecs, tvecs;
 

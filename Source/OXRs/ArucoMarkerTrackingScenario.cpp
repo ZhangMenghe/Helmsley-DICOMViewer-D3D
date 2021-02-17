@@ -131,7 +131,7 @@ glm::vec3 get_3d_line_intersection(Line L1, Line L2)
 void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
     ResearchModeSensorTimestamp timeStamp;
 
-    cv::Vec3d rvec, tvec;
+   /* cv::Vec3d rvec, tvec;
     if (!m_LFTracker->GetFirstTransformation(rvec, tvec)) return;
     cv::Mat R;
     Rodrigues(rvec, R);
@@ -149,8 +149,8 @@ void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
         //rot_mat *
         glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], tvec[1], tvec[2]));
 
-    vrController::instance()->setPosition(model_mat);
-    /*float uv_left[2], uv_right[2];
+    vrController::instance()->setPosition(model_mat);*/
+    float uv_left[2], uv_right[2];
     float xy_left[2], xy_right[2];
 
     IResearchModeCameraSensor* pCameraSensor_left = nullptr, *pCameraSensor_right=nullptr;
@@ -161,11 +161,6 @@ void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
     winrt::check_hresult(m_pLFCameraSensor->QueryInterface(IID_PPV_ARGS(&pCameraSensor_left)));
     pCameraSensor_left->MapImagePointToCameraUnitPlane(uv_left, xy_left);
 
-
-    //
-    //
-
-    //
 
     winrt::check_hresult(m_pRFCameraSensor->QueryInterface(IID_PPV_ARGS(&pCameraSensor_right)));
     pCameraSensor_right->MapImagePointToCameraUnitPlane(uv_right, xy_right);
@@ -206,8 +201,7 @@ void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
     DirectX::XMFLOAT3 pw;
     DirectX::XMStoreFloat3(&pw, pos_world);
 
-    vrController::instance()->setPosition(glm::vec3(pw.x, pw.y, -1.0f));*/
-
+    vrController::instance()->setPosition(glm::vec3(pw.x, pw.y, -1.0f));
 }
 void ArucoMarkerTrackingScenario::Render() {
     auto model_mat = vrController::instance()->getFrameModelMat();

@@ -263,32 +263,32 @@ void SlateArucoTracker::FrameProcessing(){
             {
                 std::lock_guard<std::mutex> guard(m_cornerMutex);
 
-                //m_corners.clear();
-                //m_ids.clear();
+                m_corners.clear();
+                m_ids.clear();
                 rvecs.clear(); tvecs.clear();
 
-                //ProcessRmFrameWithAruco(m_pSensorFrame, m_cvResultMat, m_ids, m_corners);
-                TrackAruco(m_pSensorFrame, 0.16, m_cameraMatrix, m_distCoeffs, rvecs, tvecs);
+                ProcessRmFrameWithAruco(m_pSensorFrame, m_cvResultMat, m_ids, m_corners);
+                //TrackAruco(m_pSensorFrame, 0.16, m_cameraMatrix, m_distCoeffs, rvecs, tvecs);
 
-                //m_centers.clear();
+                m_centers.clear();
 
-                //for (int i = 0; i < m_corners.size(); i++)
-                //{
-                //    float sumx = 0.0f;
-                //    float sumy = 0.0f;
-                //    cv::Point2f center;
+                for (int i = 0; i < m_corners.size(); i++)
+                {
+                    float sumx = 0.0f;
+                    float sumy = 0.0f;
+                    cv::Point2f center;
 
-                //    for (int j = 0; j < m_corners[i].size(); j++)
-                //    {
-                //        sumx += m_corners[i][j].x;
-                //        sumy += m_corners[i][j].y;
-                //    }
+                    for (int j = 0; j < m_corners[i].size(); j++)
+                    {
+                        sumx += m_corners[i][j].x;
+                        sumy += m_corners[i][j].y;
+                    }
 
-                //    center.x = sumx / 4.0f;
-                //    center.y = sumy / 4.0f;
+                    center.x = sumx / 4.0f;
+                    center.y = sumy / 4.0f;
 
-                //    m_centers.push_back(center);
-                //}
+                    m_centers.push_back(center);
+                }
 
                 m_pSensorFrame->GetTimeStamp(&m_timeStamp);
             }
@@ -299,27 +299,27 @@ void SlateArucoTracker::FrameProcessing(){
     }
 }
 
-//bool SlateArucoTracker::GetFirstCenter(float *px, float *py, ResearchModeSensorTimestamp *pTimeStamp){
-//    std::lock_guard<std::mutex> guard(m_cornerMutex);
-//
-//    if (m_centers.size() >= 1)
-//    {
-//        *px = m_centers[0].x;
-//        *py = m_centers[0].y;
-//
-//        return true;
-//    }
-//
-//    return false;
-//}
-bool SlateArucoTracker::GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec) {
+bool SlateArucoTracker::GetFirstCenter(float *px, float *py, ResearchModeSensorTimestamp *pTimeStamp){
     std::lock_guard<std::mutex> guard(m_cornerMutex);
-    if (rvecs.size() > 0) {
-        rvec = rvecs[0]; tvec = tvecs[0];
+
+    if (m_centers.size() >= 1)
+    {
+        *px = m_centers[0].x;
+        *py = m_centers[0].y;
+
         return true;
     }
+
     return false;
 }
+//bool SlateArucoTracker::GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec) {
+//    std::lock_guard<std::mutex> guard(m_cornerMutex);
+//    if (rvecs.size() > 0) {
+//        rvec = rvecs[0]; tvec = tvecs[0];
+//        return true;
+//    }
+//    return false;
+//}
 void SlateArucoTracker::FrameProcessingThread(SlateArucoTracker* tracker){
     tracker->FrameProcessing();
 }
