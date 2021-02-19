@@ -114,7 +114,7 @@ namespace dvr {
     };
     //UIs
     const float MOUSE_ROTATE_SENSITIVITY = 0.005f;
-    const float MOUSE_SCALE_SENSITIVITY = 0.8f;
+    const float MOUSE_SCALE_SENSITIVITY = 0.5f;
     const float MOUSE_PAN_SENSITIVITY = 1.2f;
 
     //setting

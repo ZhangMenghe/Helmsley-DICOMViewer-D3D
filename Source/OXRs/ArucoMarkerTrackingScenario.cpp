@@ -89,15 +89,15 @@ void ArucoMarkerTrackingScenario::IntializeSensors() {
 
 void ArucoMarkerTrackingScenario::IntializeScene() {
     m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
-    m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
+    //m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
 
     m_LFTracker = std::make_shared<SlateArucoTracker>(m_deviceResources);
     m_LFTracker->StartCVProcessing(0xff);
     m_LFCameraRenderer->SetFrameCallBack(SlateArucoTracker::FrameReadyCallback, m_LFTracker.get());
 
-    m_RFTracker = std::make_shared<SlateArucoTracker>(m_deviceResources);
-    m_RFTracker->StartCVProcessing(0xff);
-    m_RFCameraRenderer->SetFrameCallBack(SlateArucoTracker::FrameReadyCallback, m_RFTracker.get());
+    //m_RFTracker = std::make_shared<SlateArucoTracker>(m_deviceResources);
+    //m_RFTracker->StartCVProcessing(0xff);
+    //m_RFCameraRenderer->SetFrameCallBack(SlateArucoTracker::FrameReadyCallback, m_RFTracker.get());
 }
 glm::vec3 get_3d_line_intersection(Line L1, Line L2)
 {
@@ -131,7 +131,7 @@ glm::vec3 get_3d_line_intersection(Line L1, Line L2)
 void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
     ResearchModeSensorTimestamp timeStamp;
 
-   /* cv::Vec3d rvec, tvec;
+    cv::Vec3d rvec, tvec;
     if (!m_LFTracker->GetFirstTransformation(rvec, tvec)) return;
     cv::Mat R;
     Rodrigues(rvec, R);
@@ -146,11 +146,11 @@ void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
     }
     
     glm::mat4 model_mat = 
-        //rot_mat *
+        rot_mat *
         glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], tvec[1], tvec[2]));
 
-    vrController::instance()->setPosition(model_mat);*/
-    float uv_left[2], uv_right[2];
+    vrController::instance()->setPosition(model_mat);
+    /*float uv_left[2], uv_right[2];
     float xy_left[2], xy_right[2];
 
     IResearchModeCameraSensor* pCameraSensor_left = nullptr, *pCameraSensor_right=nullptr;
@@ -201,10 +201,10 @@ void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
     DirectX::XMFLOAT3 pw;
     DirectX::XMStoreFloat3(&pw, pos_world);
 
-    vrController::instance()->setPosition(glm::vec3(pw.x, pw.y, -1.0f));
+    vrController::instance()->setPosition(glm::vec3(pw.x, pw.y, -1.0f));*/
 }
 void ArucoMarkerTrackingScenario::Render() {
-    auto model_mat = vrController::instance()->getFrameModelMat();
+    //auto model_mat = vrController::instance()->getFrameModelMat();
 }
 void ArucoMarkerTrackingScenario::OnDeviceLost() {
 

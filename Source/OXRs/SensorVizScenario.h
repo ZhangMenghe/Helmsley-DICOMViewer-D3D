@@ -6,7 +6,12 @@
 #include <OXRs/OXRRenderer/RGBFrameProcessor.h>
 #include <winrt/Windows.Foundation.h>
 #include <Renderers/quadRenderer.h>
-
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Media.Devices.Core.h>
+#include <winrt/Windows.Media.Capture.Frames.h>
+#include <winrt/Windows.Perception.Spatial.h>
+#include <winrt/Windows.Graphics.Imaging.h>
+#include <winrt/Windows.Storage.h>
 class SensorVizScenario : public Scenario {
 public:
     SensorVizScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources);
@@ -26,7 +31,7 @@ public:
     void OnDeviceRestored();
     static void CamAccessOnComplete(ResearchModeSensorConsent consent);
     static void ImuAccessOnComplete(ResearchModeSensorConsent consent);
-
+    void onSingle3DTouchDown(float x, float y, float z, int side);
 protected:
     IResearchModeSensorDevice* m_pSensorDevice;
     IResearchModeSensorDeviceConsent* m_pSensorDeviceConsent;
@@ -44,6 +49,14 @@ protected:
 
     std::unique_ptr<RGBFrameProcessor> m_videoFrameProcessor = nullptr;
     winrt::Windows::Foundation::IAsyncAction m_videoFrameProcessorOperation = nullptr;
+
+
+    winrt::Windows::Storage::StorageFolder m_archiveFolder = nullptr;
+    int frame_num = 0;
+    std::vector<const char*> m_save_frames;
+    int m_size;
+
+    winrt::Windows::Foundation::IAsyncAction InitFileSysAsync();
 
     winrt::Windows::Foundation::IAsyncAction InitializeVideoFrameProcessorAsync();
 };

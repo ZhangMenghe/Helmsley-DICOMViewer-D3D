@@ -55,8 +55,6 @@ void OXRScenes::setup_volume_local() {
 	m_data_manager->loadData(dsName, vInfo, true);
 }
 void OXRScenes::setup_resource() {
-
-
 	std::wstring dir_name(dvr::CACHE_FOLDER_NAME.begin(), dvr::CACHE_FOLDER_NAME.end());
 	Windows::Storage::StorageFolder^ dst_folder = Windows::Storage::ApplicationData::Current->LocalFolder;
 
@@ -136,7 +134,7 @@ void OXRScenes::Update() {
 		rpcHandler::new_data_request = false;
 	}
 	m_timer.Tick([&]() {
-		//m_scenario->Update(m_timer);
+		m_scenario->Update(m_timer);
 		m_sceneRenderer->Update(m_timer);
 		//m_fpsTextRenderer->Update(m_timer);
 	});
@@ -153,8 +151,9 @@ bool OXRScenes::Render()
 	{
 		return false;
 	}
-	m_sceneRenderer->Render();
 	m_scenario->Render();
+
+	m_sceneRenderer->Render();
 
 	//m_fpsTextRenderer->Render();
 

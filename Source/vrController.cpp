@@ -314,15 +314,15 @@ void vrController::render_scene(){
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
 	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
-	Frame_model_mat = SpaceMat_ * ModelMat_;
-	//auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
+	Frame_model_mat = SpaceMat_* ModelMat_;
+	auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
 	//auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
 	//cutter_->Update(model_mat);
 	//if (Manager::IsCuttingNeedUpdate())
 	//	cutter_->Update(model_mat);
 
-	//bool render_complete = true;
+	bool render_complete = true;
 	//////  CUTTING PLANE  //////
 	//if (Manager::param_bool[dvr::CHECK_CUTTING])
 	//{
@@ -335,7 +335,7 @@ void vrController::render_scene(){
 	//{
 	//	//precompute();
 	//	if (Manager::isRayCasting())
-			//render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+			render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
 	//	else
 	//		render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
 		//m_deviceResources->ClearCurrentDepthBuffer();
@@ -695,7 +695,7 @@ void vrController::onPan(float x, float y)
 void vrController::updateVolumeModelMat()
 {
 	ModelMat_ = 
-		glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ * 
+		//glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ * 
 		glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale, uniScale, uniScale));
 }
 

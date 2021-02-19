@@ -5,6 +5,14 @@
 #include <Common/Manager.h>
 #include <glm/gtx/transform.hpp>
 #include <Utils/TypeConvertUtils.h>
+
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>  // cv::Canny()
+#include <opencv2/aruco.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/calib3d.hpp>
+
+#include <vrController.h>
 using namespace DirectX;
 
 
@@ -134,8 +142,16 @@ SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,
 void SlateCameraRenderer::setPosition(glm::vec3 pos) {
 	m_quad_matrix = glm::translate(glm::mat4(1.0), pos) * m_quad_matrix;
 }
-void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
-	if (m_pSensorFrame == nullptr) return;
+bool SlateCameraRenderer::GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec) {
+	//std::lock_guard<std::mutex> guard(m_cornerMutex);
+	if (m_rvecs.size() > 0) {
+		rvec = m_rvecs[0]; tvec = m_tvecs[0];
+		return true;
+	}
+	return false;
+}
+bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
+	if (m_pSensorFrame == nullptr) return false;
 	if (texture == nullptr) {
 
 		ResearchModeSensorResolution resolution;//640*480
@@ -152,8 +168,8 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 		m_slateHeight = resolution.Height;
 		if (m_pRMCameraSensor->GetSensorType() == LEFT_FRONT) {
 			m_quad_matrix = m_quad_matrix
-				* glm::scale(glm::mat4(1.0), glm::vec3(m_slateHeight / m_slateWidth, 1.0, 1.0))
-				* glm::rotate(glm::mat4(1.0), -glm::half_pi<float>(), glm::vec3(.0, .0, 1.0));
+				* glm::scale(glm::mat4(1.0), glm::vec3( m_slateWidth/ m_slateHeight, 1.0, 1.0));
+				//* glm::rotate(glm::mat4(1.0), -glm::half_pi<float>(), glm::vec3(.0, .0, 1.0));
 		}
 		else {
 			m_quad_matrix = m_quad_matrix
@@ -181,16 +197,39 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 		view_desc.Texture2D.MipSlice = 0;
 		texture = new Texture;
 		texture->Initialize(device, texDesc, view_desc);
+
+		m_tex_size = m_slateWidth * m_slateHeight;
+
+		//setup camera matrix
+		//float camera_data[9] = {
+		//	375.11117222,   0.,         325.94678612,
+		//	0.,         376.667932,   229.69762885,
+		//	0.,           0.,           1.
+		//};
+		m_cameraMatrix = (cv::Mat1d(3, 3) << 375.11117222, 0, 325.94678612, 0, 376.667932, 229.69762885, 0, 0, 1);
+
+		//m_cameraMatrix = cv::Mat(3, 3, CV_32F, camera_data);
+		//float distor_data[5] = { -0.04310492,  0.22544408, -0.00800435,  0.00223716, -0.25756141 };
+		//m_distCoeffs = cv::Mat(1, 5, CV_32F, distor_data);
+		m_distCoeffs = (cv::Mat1d(1, 5) << -0.04310492, 0.22544408, -0.00800435, 0.00223716, -0.25756141);
+		float inverse_mat_arr[16] = {1.0, 1.0, 1.0, 1.0,
+							   -1.0,-1.0,-1.0,-1.0,
+							   -1.0,-1.0,-1.0,-1.0,
+							   1.0, 1.0, 1.0, 1.0 };
+		m_inverse_mat = glm::transpose(glm::make_mat4(inverse_mat_arr));
 	}
 
 	ResearchModeSensorResolution resolution;
 	IResearchModeSensorVLCFrame* pVLCFrame = nullptr;
-	const BYTE* pImage = nullptr;
+	//const BYTE* pImage = nullptr;
+	if (m_texture_data != nullptr) {m_texture_data = nullptr;}
+	
 	size_t outBufferCount = 0;
 	m_pSensorFrame->GetResolution(&resolution);
 
-	DX::ThrowIfFailed(m_pSensorFrame->QueryInterface(IID_PPV_ARGS(&pVLCFrame)));
-	pVLCFrame->GetBuffer(&pImage, &outBufferCount);
+	//DX::ThrowIfFailed();
+	if (FAILED(m_pSensorFrame->QueryInterface(IID_PPV_ARGS(&pVLCFrame)))) return false;
+	pVLCFrame->GetBuffer(&m_texture_data, &outBufferCount);
 
 	//pVLCFrame->GetGain(&gain);
 	//pVLCFrame->GetExposure(&exposure);
@@ -199,14 +238,55 @@ void SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 	//OutputDebugStringA(printString);
 
 	auto row_pitch = (m_slateWidth) * sizeof(BYTE);
-	texture->setTexData(context, pImage, row_pitch, 0);
+	texture->setTexData(context, m_texture_data, row_pitch, 0);
+	return true;
+}
+void SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
+	if (!update_cam_texture(context)) return;
+	//try estimate marker
+	static cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+
+
+	cv::Mat processed(m_slateHeight, m_slateWidth, CV_8U, (void*)m_texture_data);
+	std::vector<int> ids;
+	std::vector<std::vector<cv::Point2f>> corners;
+	cv::aruco::detectMarkers(processed, dictionary, corners, ids);
+	// if at least one marker detected
+	if (ids.size() > 0) {
+		cv::aruco::estimatePoseSingleMarkers(corners, 0.16, m_cameraMatrix, m_distCoeffs, m_rvecs, m_tvecs);
+	
+		cv::Mat R;
+		Rodrigues(m_rvecs[0], R);
+
+		glm::mat4 view_mat(1.0f);
+
+		for (int i = 0; i < 3; i++) {
+			const float* Ri = R.ptr<float>(i);
+			for (int j = 0; j < 3; j++) {
+				view_mat[i][j] = Ri[j];
+			}
+		}
+		auto tvec = m_tvecs[0];
+		view_mat[0][3] = tvec[0]; view_mat[1][3] = tvec[1]; view_mat[2][3] = tvec[2];
+		view_mat = view_mat * m_inverse_mat;
+
+		glm::vec3 ttc = glm::vec3(tvec[0], -tvec[1], -tvec[2]);
+		
+		//glm::vec3 tvec = glm::vec3(m_tvecs[0][0], -m_tvecs[0][1], -m_tvecs[0][2]);
+		glm::mat4 model_mat =
+			//rot_mat *
+			glm::translate(glm::mat4(1.0), glm::vec3(ttc.y, -ttc.x, ttc.z));
+
+		vrController::instance()->setPosition(model_mat);
+	}
 }
 // Renders one frame using the vertex and pixel shaders.
 bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat){
 	modelMat = m_quad_matrix * modelMat;
 	if (!m_loadingComplete) return false;
 	std::lock_guard<std::mutex> guard(m_mutex);
-	update_cam_texture(context);
+	Update(context);
+
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());
 		XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(mat42xmmatrix(modelMat)));

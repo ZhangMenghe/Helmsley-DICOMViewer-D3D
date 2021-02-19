@@ -2,6 +2,7 @@
 #include "SensorVizScenario.h"
 #include <vrController.h>
 #include <Utils/TypeConvertUtils.h>
+#include <fstream>
 
 static ResearchModeSensorConsent camAccessCheck;
 static HANDLE camConsentGiven;
@@ -18,7 +19,8 @@ SensorVizScenario::SensorVizScenario(std::shared_ptr<DX::DeviceResources> const&
     IntializeSensors();
     IntializeScene();
 
-    m_videoFrameProcessorOperation = InitializeVideoFrameProcessorAsync();
+    //m_videoFrameProcessorOperation = InitializeVideoFrameProcessorAsync();
+    InitFileSysAsync();
 }
 
 SensorVizScenario::~SensorVizScenario(){
@@ -36,6 +38,14 @@ SensorVizScenario::~SensorVizScenario(){
         m_pSensorDevice->EnableEyeSelection();
         m_pSensorDevice->Release();
     }
+}
+winrt::Windows::Foundation::IAsyncAction SensorVizScenario::InitFileSysAsync(){
+    using namespace winrt::Windows::Storage;
+
+    winrt::Windows::Storage::StorageFolder localFolder = ApplicationData::Current().LocalFolder();
+    m_archiveFolder = co_await localFolder.CreateFolderAsync(
+        L"FrameCaptured",
+        CreationCollisionOption::ReplaceExisting);
 }
 
 void SensorVizScenario::IntializeSensors() {
@@ -118,13 +128,15 @@ void SensorVizScenario::IntializeScene() {
     m_rgbRender->setTexture(m_rgbTex.get());
 }
 void SensorVizScenario::Update(DX::StepTimer& timer) {
-
+    //m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext());
 }
 void SensorVizScenario::Render() {
     auto model_mat = vrController::instance()->getFrameModelMat();
+    m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext());
+
     //m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_RFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
-    m_rgbRender->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));
+    //m_rgbRender->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));
 }
 void SensorVizScenario::OnDeviceLost() {
 
@@ -156,4 +168,28 @@ winrt::Windows::Foundation::IAsyncAction SensorVizScenario::InitializeVideoFrame
     }
 
     co_await m_videoFrameProcessor->InitializeAsync();
+}
+void SensorVizScenario::onSingle3DTouchDown(float x, float y, float z, int side) {
+    //save current frame
+    //auto frame = 
+
+    const char* data;
+    int size;
+    m_LFCameraRenderer->getLatestFrame(data, size);
+    m_size = size;
+    char* sdata = new char[size];
+    memcpy(sdata, data, sizeof(BYTE) * size);
+    m_save_frames.push_back(sdata);
+    if (m_save_frames.size() > 20) {
+        std::wstring path(m_archiveFolder.Path().data());
+        std::string test_fn = "\\chess";
+
+        path += std::wstring(test_fn.begin(), test_fn.end());
+        std::ofstream file(path, std::ios::out | std::ios::binary | std::ofstream::app);
+        if (!file)
+            return;
+        for(auto mdata : m_save_frames)
+            file.write(mdata, m_size);
+        file.close();
+    }
 }

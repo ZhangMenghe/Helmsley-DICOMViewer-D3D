@@ -14,10 +14,14 @@ SlateArucoTracker::SlateArucoTracker(std::shared_ptr<DX::DeviceResources> const&
     m_fExit = false;
     m_hFrameEvent = CreateEvent(NULL, true, false, NULL);
     //setup camera matrix
-    float camera_data[9] = { 458.654, 0.0, 367.215, 0.0, 457.296, 248.375, 0.0, 0.0, 1.0 };
+    float camera_data[9] = { 
+        375.11117222,   0.,         325.94678612, 
+        0.,         376.667932,   229.69762885,
+        0.,           0.,           1.
+    };
     m_cameraMatrix = cv::Mat(3, 3, CV_32F, camera_data);
-    float distor_data[4] = { -0.002602963842533594, -0.008751170499511022, -0.0022398259556777236, -5.941804169976817e-05 };
-    m_distCoeffs = cv::Mat(1, 4, CV_32F, distor_data);
+    float distor_data[5] = { -0.04310492,  0.22544408, - 0.00800435,  0.00223716, - 0.25756141 };
+    m_distCoeffs = cv::Mat(1, 5, CV_32F, distor_data);
 }
 SlateArucoTracker::~SlateArucoTracker(){
     m_fExit = true;
@@ -259,8 +263,9 @@ void SlateArucoTracker::FrameProcessing(){
                 m_pSensorFrame = m_pSensorFrameIn;
                 m_pSensorFrameIn = nullptr;
             }
-
-            {
+            if (use_camera_matrix) {
+                TrackAruco(m_pSensorFrame, 0.16, m_cameraMatrix, m_distCoeffs, rvecs, tvecs);
+            }else{
                 std::lock_guard<std::mutex> guard(m_cornerMutex);
 
                 m_corners.clear();
@@ -268,7 +273,6 @@ void SlateArucoTracker::FrameProcessing(){
                 rvecs.clear(); tvecs.clear();
 
                 ProcessRmFrameWithAruco(m_pSensorFrame, m_cvResultMat, m_ids, m_corners);
-                //TrackAruco(m_pSensorFrame, 0.16, m_cameraMatrix, m_distCoeffs, rvecs, tvecs);
 
                 m_centers.clear();
 
@@ -289,9 +293,8 @@ void SlateArucoTracker::FrameProcessing(){
 
                     m_centers.push_back(center);
                 }
-
-                m_pSensorFrame->GetTimeStamp(&m_timeStamp);
             }
+            m_pSensorFrame->GetTimeStamp(&m_timeStamp);
 
 
             ResetEvent(m_hFrameEvent);
@@ -301,7 +304,6 @@ void SlateArucoTracker::FrameProcessing(){
 
 bool SlateArucoTracker::GetFirstCenter(float *px, float *py, ResearchModeSensorTimestamp *pTimeStamp){
     std::lock_guard<std::mutex> guard(m_cornerMutex);
-
     if (m_centers.size() >= 1)
     {
         *px = m_centers[0].x;
@@ -309,17 +311,16 @@ bool SlateArucoTracker::GetFirstCenter(float *px, float *py, ResearchModeSensorT
 
         return true;
     }
-
     return false;
 }
-//bool SlateArucoTracker::GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec) {
-//    std::lock_guard<std::mutex> guard(m_cornerMutex);
-//    if (rvecs.size() > 0) {
-//        rvec = rvecs[0]; tvec = tvecs[0];
-//        return true;
-//    }
-//    return false;
-//}
+bool SlateArucoTracker::GetFirstTransformation(cv::Vec3d& rvec, cv::Vec3d& tvec) {
+    std::lock_guard<std::mutex> guard(m_cornerMutex);
+    if (rvecs.size() > 0) {
+        rvec = rvecs[0]; tvec = tvecs[0];
+        return true;
+    }
+    return false;
+}
 void SlateArucoTracker::FrameProcessingThread(SlateArucoTracker* tracker){
     tracker->FrameProcessing();
 }
