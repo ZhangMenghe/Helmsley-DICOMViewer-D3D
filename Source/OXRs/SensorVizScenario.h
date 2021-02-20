@@ -26,7 +26,7 @@ public:
     //{
         //return m_modelRenderers[0]->GetPosition();
     //}
-    void Render();
+    bool Render();
     void OnDeviceLost();
     void OnDeviceRestored();
     static void CamAccessOnComplete(ResearchModeSensorConsent consent);

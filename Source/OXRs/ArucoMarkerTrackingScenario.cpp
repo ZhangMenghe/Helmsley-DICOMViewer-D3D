@@ -203,8 +203,9 @@ void ArucoMarkerTrackingScenario::Update(DX::StepTimer& timer) {
 
     vrController::instance()->setPosition(glm::vec3(pw.x, pw.y, -1.0f));*/
 }
-void ArucoMarkerTrackingScenario::Render() {
+bool ArucoMarkerTrackingScenario::Render() {
     //auto model_mat = vrController::instance()->getFrameModelMat();
+    return true;
 }
 void ArucoMarkerTrackingScenario::OnDeviceLost() {
 

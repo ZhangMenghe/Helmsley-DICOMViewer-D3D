@@ -24,7 +24,7 @@ public:
     //virtual void PositionHologramNoSmoothing(winrt::Windows::UI::Input::Spatial::SpatialPointerPose const& pointerPose) = 0;
     virtual void Update(DX::StepTimer& timer) = 0;
     //virtual winrt::Windows::Foundation::Numerics::float3 const& GetPosition() = 0;
-    virtual void Render() = 0;
+    virtual bool Render() = 0;
 
     virtual void Update()
     {

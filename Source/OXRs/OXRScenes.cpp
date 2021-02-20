@@ -145,15 +145,15 @@ void OXRScenes::Update(XrTime time)
 	//m_sceneRenderer->Update(time);
 }
 
-bool OXRScenes::Render()
-{
+bool OXRScenes::Render(int view_id){
 	if (m_timer.GetFrameCount() == 0)
 	{
 		return false;
 	}
-	m_scenario->Render();
-
-	m_sceneRenderer->Render();
+	if (view_id == 0) {
+		m_render_scene = m_scenario->Render();
+	}
+	if(m_render_scene) m_sceneRenderer->Render(view_id);
 
 	//m_fpsTextRenderer->Render();
 

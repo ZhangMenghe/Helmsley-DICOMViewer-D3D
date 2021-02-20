@@ -241,8 +241,8 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 	texture->setTexData(context, m_texture_data, row_pitch, 0);
 	return true;
 }
-void SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
-	if (!update_cam_texture(context)) return;
+bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
+	if (!update_cam_texture(context)) return false;
 	//try estimate marker
 	static cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
 
@@ -251,34 +251,64 @@ void SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 	std::vector<int> ids;
 	std::vector<std::vector<cv::Point2f>> corners;
 	cv::aruco::detectMarkers(processed, dictionary, corners, ids);
+	if (ids.empty()) return false;
+
 	// if at least one marker detected
-	if (ids.size() > 0) {
-		cv::aruco::estimatePoseSingleMarkers(corners, 0.16, m_cameraMatrix, m_distCoeffs, m_rvecs, m_tvecs);
+	cv::aruco::estimatePoseSingleMarkers(corners, 0.16, m_cameraMatrix, m_distCoeffs, m_rvecs, m_tvecs);
 	
-		cv::Mat R;
-		Rodrigues(m_rvecs[0], R);
+	cv::Mat R;
+	Rodrigues(m_rvecs[0], R);
 
-		glm::mat4 view_mat(1.0f);
+	glm::mat4 view_mat(1.0f);
 
-		for (int i = 0; i < 3; i++) {
-			const float* Ri = R.ptr<float>(i);
-			for (int j = 0; j < 3; j++) {
-				view_mat[i][j] = Ri[j];
-			}
+	for (int i = 0; i < 3; i++) {
+		const float* Ri = R.ptr<float>(i);
+		for (int j = 0; j < 3; j++) {
+			view_mat[i][j] = Ri[j];
 		}
-		auto tvec = m_tvecs[0];
-		view_mat[0][3] = tvec[0]; view_mat[1][3] = tvec[1]; view_mat[2][3] = tvec[2];
-		view_mat = view_mat * m_inverse_mat;
-
-		glm::vec3 ttc = glm::vec3(tvec[0], -tvec[1], -tvec[2]);
-		
-		//glm::vec3 tvec = glm::vec3(m_tvecs[0][0], -m_tvecs[0][1], -m_tvecs[0][2]);
-		glm::mat4 model_mat =
-			//rot_mat *
-			glm::translate(glm::mat4(1.0), glm::vec3(ttc.y, -ttc.x, ttc.z));
-
-		vrController::instance()->setPosition(model_mat);
 	}
+	auto tvec = m_tvecs[0];
+	view_mat[0][3] = tvec[0]; view_mat[1][3] = tvec[1]; view_mat[2][3] = tvec[2];
+	view_mat = view_mat * m_inverse_mat;
+
+	glm::vec3 ttc = glm::vec3(tvec[0], -tvec[1], -tvec[2]);
+		
+	//glm::vec3 tvec = glm::vec3(m_tvecs[0][0], -m_tvecs[0][1], -m_tvecs[0][2]);
+	glm::mat4 model_mat =
+		//rot_mat *
+		glm::translate(glm::mat4(1.0), glm::vec3(ttc.y, -ttc.x, ttc.z));
+
+	vrController::instance()->setPosition(model_mat);
+	UpdateExtrinsicsMatrix();
+	return true;
+}
+void SlateCameraRenderer::UpdateExtrinsicsMatrix() {
+	IResearchModeCameraSensor* pCameraSensor = nullptr;
+	winrt::check_hresult(m_pRMCameraSensor->QueryInterface(IID_PPV_ARGS(&pCameraSensor)));
+
+	DirectX::XMFLOAT4X4 CameraPose;
+	winrt::check_hresult(pCameraSensor->GetCameraExtrinsicsMatrix(&CameraPose));
+
+	DirectX::XMMATRIX cameraNodeToRigPoseInverted;
+	DirectX::XMMATRIX cameraNodeToRigPose;
+	DirectX::XMVECTOR det;
+
+	cameraNodeToRigPose = DirectX::XMLoadFloat4x4(&CameraPose);
+
+	det = XMMatrixDeterminant(cameraNodeToRigPose);
+	cameraNodeToRigPoseInverted = DirectX::XMMatrixInverse(&det, cameraNodeToRigPose);
+
+	DirectX::XMVECTOR outScale, outRotQuat, outTrans;
+	XMMatrixDecompose(&outScale, &outRotQuat, &outTrans, cameraNodeToRigPoseInverted);
+	
+	DirectX::XMFLOAT3 tvec;
+	DirectX::XMStoreFloat3(&tvec, outTrans);
+	
+	glm::vec3 ttc = glm::vec3(tvec.y, tvec.x, tvec.z);
+
+
+
+	vrController::instance()->setCameraExtrinsicsMat(m_pRMCameraSensor->GetSensorType() == LEFT_FRONT?0:1, glm::translate(glm::mat4(1.0), ttc));
 }
 // Renders one frame using the vertex and pixel shaders.
 bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat){

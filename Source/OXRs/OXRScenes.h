@@ -14,7 +14,7 @@ public:
 	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
 	void Update();
 	void Update(XrTime time);
-	bool Render();
+	bool Render(int view_id);
 	void onViewChanged();
 	void setSpaces(XrSpace *space, XrSpace *app_space);
 
@@ -54,6 +54,7 @@ private:
 	DX::StepTimer m_timer;
 
 	bool m_overwrite_index_file = false;
+	bool m_render_scene = true;
 
 	void setup_volume_server();
 	void setup_volume_local();

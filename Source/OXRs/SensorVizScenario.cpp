@@ -130,10 +130,13 @@ void SensorVizScenario::IntializeScene() {
 void SensorVizScenario::Update(DX::StepTimer& timer) {
     //m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext());
 }
-void SensorVizScenario::Render() {
+bool SensorVizScenario::Render() {
     auto model_mat = vrController::instance()->getFrameModelMat();
-    m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext());
-
+    if (m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext()))
+        m_RFCameraRenderer->UpdateExtrinsicsMatrix();
+    else
+        return false;
+    return true;
     //m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_RFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_rgbRender->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));

@@ -16,7 +16,8 @@ public:
         HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
 
 	bool Draw(ID3D11DeviceContext* context, glm::mat4 model_mat);
-    void Update(ID3D11DeviceContext* context);
+    bool Update(ID3D11DeviceContext* context);
+    void UpdateExtrinsicsMatrix();
     void setPosition(glm::vec3 pos);
     void SetFrameCallBack(std::function<void(IResearchModeSensorFrame*, PVOID frameCtx)> frameCallback, PVOID frameCtx)
     {
@@ -57,6 +58,7 @@ private:
     cv::Mat m_cameraMatrix, m_distCoeffs;
     glm::mat4 m_inverse_mat;
     std::vector<cv::Vec3d> m_rvecs, m_tvecs;
+    glm::mat4 m_extrinsics_mat = glm::mat4(1.0);
 
     static void CameraUpdateThread(SlateCameraRenderer* pSlateCameraRenderer, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
     bool update_cam_texture(ID3D11DeviceContext* context);

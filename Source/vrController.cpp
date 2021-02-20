@@ -244,7 +244,7 @@ void vrController::StopTracking()
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void vrController::Render(){
+void vrController::Render(int view_id){
 	//if (tex_volume == nullptr || tex_baked == nullptr) return;
 	//if (!pre_draw_) { render_scene(); return; }
 
@@ -257,7 +257,7 @@ void vrController::Render(){
 	//m_deviceResources->SetBackBufferRenderTarget();
 	//screen_quad->Draw(context);
 	//m_deviceResources->ClearCurrentDepthBuffer();
-	render_scene();
+	render_scene(view_id);
 }
 
 void vrController::precompute()
@@ -299,7 +299,7 @@ void vrController::precompute()
 	Manager::baked_dirty_ = false;
 }
 
-void vrController::render_scene(){
+void vrController::render_scene(int view_id){
 	//if (!m_present)return;
 	if (volume_model_dirty){
 		updateVolumeModelMat();
@@ -314,7 +314,8 @@ void vrController::render_scene(){
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
 	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
-	Frame_model_mat = SpaceMat_* ModelMat_;
+	Frame_model_mat = SpaceMat_* m_extrinsics_mats[view_id] * ModelMat_;
+
 	auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
 	//auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));

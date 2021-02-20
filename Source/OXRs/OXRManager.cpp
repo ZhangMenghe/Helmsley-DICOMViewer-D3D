@@ -629,7 +629,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 		Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
 		scene->Update(predictedTime);
-		scene->Render();
+		scene->Render(i);
 
 		// And tell OpenXR we're done with rendering to this one!
 		XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };
