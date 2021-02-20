@@ -56,7 +56,11 @@ private:
 
 
     cv::Mat m_cameraMatrix, m_distCoeffs;
-    glm::mat4 m_inverse_mat;
+    const float m_inverse_[16] = {
+                   1.0, -1.0, -1.0, 1.0,
+                   1.0,-1.0,-1.0,1.0,
+                   1.0,-1.0,-1.0,1.0,
+                   1.0, -1.0, -1.0, 1.0 };
     std::vector<cv::Vec3d> m_rvecs, m_tvecs;
     glm::mat4 m_extrinsics_mat = glm::mat4(1.0);
 

@@ -11,8 +11,9 @@
 #include <opencv2/aruco.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/calib3d.hpp>
-
+#include <glm/gtx/rotate_vector.hpp> 
 #include <vrController.h>
+#include <glm/gtx/component_wise.hpp>
 using namespace DirectX;
 
 
@@ -212,11 +213,6 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 		//float distor_data[5] = { -0.04310492,  0.22544408, -0.00800435,  0.00223716, -0.25756141 };
 		//m_distCoeffs = cv::Mat(1, 5, CV_32F, distor_data);
 		m_distCoeffs = (cv::Mat1d(1, 5) << -0.04310492, 0.22544408, -0.00800435, 0.00223716, -0.25756141);
-		float inverse_mat_arr[16] = {1.0, 1.0, 1.0, 1.0,
-							   -1.0,-1.0,-1.0,-1.0,
-							   -1.0,-1.0,-1.0,-1.0,
-							   1.0, 1.0, 1.0, 1.0 };
-		m_inverse_mat = glm::transpose(glm::make_mat4(inverse_mat_arr));
 	}
 
 	ResearchModeSensorResolution resolution;
@@ -259,24 +255,28 @@ bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 	cv::Mat R;
 	Rodrigues(m_rvecs[0], R);
 
-	glm::mat4 view_mat(1.0f);
+	glm::mat4 rot_mat(1.0f);
 
 	for (int i = 0; i < 3; i++) {
 		const float* Ri = R.ptr<float>(i);
 		for (int j = 0; j < 3; j++) {
-			view_mat[i][j] = Ri[j];
+			rot_mat[i][j] = Ri[j];
 		}
 	}
 	auto tvec = m_tvecs[0];
-	view_mat[0][3] = tvec[0]; view_mat[1][3] = tvec[1]; view_mat[2][3] = tvec[2];
-	view_mat = view_mat * m_inverse_mat;
 
-	glm::vec3 ttc = glm::vec3(tvec[0], -tvec[1], -tvec[2]);
-		
-	//glm::vec3 tvec = glm::vec3(m_tvecs[0][0], -m_tvecs[0][1], -m_tvecs[0][2]);
-	glm::mat4 model_mat =
+	glm::mat4 model_mat = 
 		//rot_mat *
-		glm::translate(glm::mat4(1.0), glm::vec3(ttc.y, -ttc.x, ttc.z));
+		glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], tvec[1], tvec[2]));
+
+	//opencv coordinates -> opengl coord, (x,y,z)->(x, -y, -z)
+	//glm is column major
+	float* pSource = (float*)glm::value_ptr(model_mat);
+	for (int i = 0; i < 16; i++)pSource[i] *= m_inverse_[i];
+
+	//Rotate the original image 90 degree clockwise(x,y,z)->(y, -x, z)
+	float tmp = model_mat[3][0];
+	model_mat[3][0] = model_mat[3][1];  model_mat[3][1] = -tmp;
 
 	vrController::instance()->setPosition(model_mat);
 	UpdateExtrinsicsMatrix();
