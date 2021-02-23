@@ -3,6 +3,7 @@
 #include <Common/Manager.h>
 #include <D3DPipeline/Primitive.h>
 #include <vrController.h>
+#include <Common/DirectXHelper.h>
 using namespace dvr;
 
 dataBoard::dataBoard(ID3D11Device* device){
@@ -59,7 +60,7 @@ void getVerticesWithScaleOff(float*& qvertices, DirectX::XMFLOAT3 scale, DirectX
 }
 void dataBoard::onReset(ID3D11Device* device){
     //CREATE NEW
-    if (!m_initialized) {   
+    if (!m_initialized) {
         m_board_quad = new quadRenderer(device, { 0.086f, 0.098f, 0.23f, 1.0f });
 
         //color bar
@@ -75,10 +76,70 @@ void dataBoard::onReset(ID3D11Device* device){
             m_color_vertices[6 * i + 2] = quad_vertices_pos_w_tex[6 * i + 2] * scale.y + offset.z;
         }
 
-        m_color_bar = new quadRenderer(device, L"QuadVertexShader.cso", L"colorVizPixelShader.cso", m_color_vertices);
+        m_color_bar = new quadRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso", m_color_vertices);
 
-        CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(DirectX::XMFLOAT4X4) * 12 , D3D11_BIND_CONSTANT_BUFFER);
-        m_color_bar->createPixelConstantBuffer(device, pixconstBufferDesc, nullptr);
+        //compute shader
+
+        auto loadCSTask = DX::ReadDataAsync(L"colorTransferCompute.cso");
+        // After the vertex shader file is loaded, create the shader and input layout.
+        auto createCSTask = loadCSTask.then([this, device](const std::vector<byte>& fileData) {
+            DX::ThrowIfFailed(
+                device->CreateComputeShader(
+                    &fileData[0],
+                    fileData.size(),
+                    nullptr,
+                    &m_color_comp_shader
+                )
+            );
+
+            CD3D11_BUFFER_DESC constantBufferDesc(sizeof(DirectX::XMFLOAT4X4) * 12, D3D11_BIND_CONSTANT_BUFFER);
+            winrt::check_hresult(
+                device->CreateBuffer(
+                    &constantBufferDesc,
+                    nullptr,
+                    &m_compute_constbuff
+                )
+            );
+        });
+
+        D3D11_TEXTURE2D_DESC texDesc;
+        texDesc.Width = 256;
+        texDesc.Height = 120;
+        texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        texDesc.Usage = D3D11_USAGE_DEFAULT;
+        texDesc.MipLevels = 1;
+        texDesc.ArraySize = 1;
+        texDesc.SampleDesc.Count = 1;
+        texDesc.SampleDesc.Quality = 0;
+        texDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+        texDesc.CPUAccessFlags = 0;
+        texDesc.MiscFlags = 0;
+
+        DX::ThrowIfFailed(
+            device->CreateTexture2D(&texDesc, nullptr, &m_comp_tex)
+        );
+        D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+        uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+        uavDesc.Format = texDesc.Format;
+        uavDesc.Texture2D.MipSlice = 0;
+        DX::ThrowIfFailed(
+            device->CreateUnorderedAccessView(m_comp_tex, &uavDesc, &m_textureUAV)
+        );
+
+
+        texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+        texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+
+        D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+            texDesc.Format,
+            D3D11_RTV_DIMENSION_TEXTURE2D,
+        };
+        view_desc.Texture2D.MipSlice = 0;
+
+        m_color_tex = new Texture;
+        m_color_tex->Initialize(device, texDesc, view_desc);
+
+        m_color_bar->setTexture(m_color_tex);
         m_initialized = true;
     }
 }
@@ -103,9 +164,6 @@ void dataBoard::onViewChange(int width, int height){
 
 void dataBoard::Update(ID3D11Device* device, ID3D11DeviceContext* context) {
     volumeSetupConstBuffer* vol_setup = Manager::instance()->getVolumeSetupConstData();
-    //color bar viz
-    m_color_bar->updatePixelConstBuffer(context, vol_setup);
-
     if (vol_setup->u_widget_num == 0) {
         for (auto renderer : m_opacity_graphs) delete renderer;
         for (auto data : m_opacity_vertices) { delete[]data; data = nullptr; }
@@ -115,44 +173,44 @@ void dataBoard::Update(ID3D11Device* device, ID3D11DeviceContext* context) {
         if (dirty_wid < 0)return;
         switch (vol_setup->u_widget_num - m_opacity_graphs.size()) {
             //remove graph at dirty wid
-            case -1:
-                m_opacity_graphs.erase(m_opacity_graphs.begin() + dirty_wid); 
-                m_opacity_vertices.erase(m_opacity_vertices.begin() + dirty_wid);
-                break;
+        case -1:
+            m_opacity_graphs.erase(m_opacity_graphs.begin() + dirty_wid);
+            m_opacity_vertices.erase(m_opacity_vertices.begin() + dirty_wid);
+            break;
             //change data
-            case 0:
+        case 0:
+            setup_opacity_widget_vertcies(
+                Manager::instance()->getDirtyWidgetPoints(),
+                m_opacity_vertices[dirty_wid],
+                dirty_wid+1
+            );
+            m_opacity_graphs[dirty_wid]->updateVertexBuffer(context, m_opacity_vertices[dirty_wid]);
+            break;
+        case 1:
+            m_opacity_graphs.push_back(new quadRenderer(device,
+                L"Naive3DVertexShader.cso", L"ClippedColorPixelShader.cso",
+                nullptr, m_opacity_indices, 0, 12, dvr::INPUT_POS_3D
+            ));
+
+            m_opacity_vertices.push_back(new float[18]);
+            if (m_default_opacity_data == nullptr)
                 setup_opacity_widget_vertcies(
-                    Manager::instance()->getDirtyWidgetPoints(),
-                    m_opacity_vertices[dirty_wid],
-                    dirty_wid+1
+                    Manager::instance()->getDefaultWidgetPoints(),
+                    m_default_opacity_data,
+                    m_opacity_vertices.size()
                 );
-                m_opacity_graphs[dirty_wid]->updateVertexBuffer(context, m_opacity_vertices[dirty_wid]);
-                break;
-            case 1:
-                m_opacity_graphs.push_back(new quadRenderer(device,
-                    L"Naive3DVertexShader.cso", L"ClippedColorPixelShader.cso",
-                    nullptr, m_opacity_indices, 0, 12, dvr::INPUT_POS_3D
-                ));
+            memcpy(m_opacity_vertices.back(), m_default_opacity_data, 18 * sizeof(float));
 
-                m_opacity_vertices.push_back(new float[18]);
-                if (m_default_opacity_data == nullptr)
-                    setup_opacity_widget_vertcies(
-                        Manager::instance()->getDefaultWidgetPoints(), 
-                        m_default_opacity_data,
-                        m_opacity_vertices.size()
-                    );
-                memcpy(m_opacity_vertices.back(), m_default_opacity_data, 18 * sizeof(float));
+            //create a dynamic vertex buffer
+            m_opacity_graphs.back()->createDynamicVertexBuffer(device, 18);
+            m_opacity_graphs.back()->updateVertexBuffer(context, m_default_opacity_data);
 
-                //create a dynamic vertex buffer
-                m_opacity_graphs.back()->createDynamicVertexBuffer(device, 18);
-                m_opacity_graphs.back()->updateVertexBuffer(context, m_default_opacity_data);
-
-                CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-                dvr::ColorConstantBuffer tdata;
-                tdata.u_color = { 0.678f, 0.839f, 0.969f, 0.5f };
-                D3D11_SUBRESOURCE_DATA color_resource;
-                color_resource.pSysMem = &tdata;
-                m_opacity_graphs.back()->createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
+            CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+            dvr::ColorConstantBuffer tdata;
+            tdata.u_color = { 0.678f, 0.839f, 0.969f, 0.5f };
+            D3D11_SUBRESOURCE_DATA color_resource;
+            color_resource.pSysMem = &tdata;
+            m_opacity_graphs.back()->createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
         }
     }
     Manager::instance()->resetDirtyOpacityId();
@@ -178,9 +236,42 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
     bool render_complete = true;
 
     render_complete &= m_board_quad->Draw(context, model_mat);
+
+    //color bar texture
+    context->CSSetShader(m_color_comp_shader, nullptr, 0);
+    ID3D11ShaderResourceView* texview = m_color_tex->GetTextureView();
+    context->CSSetShaderResources(0, 1, &texview);
+    context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
+
+    if (m_compute_constbuff != nullptr) {
+        // Prepare the constant buffer to send it to the graphics device.
+        context->UpdateSubresource(
+            m_compute_constbuff,
+            0,
+            nullptr,
+            Manager::instance()->getVolumeSetupConstData(),
+            0,
+            0
+        );
+        context->CSSetConstantBuffers(0, 1, &m_compute_constbuff);
+    }
+
+    context->Dispatch((256 + 7) / 8, 1, 1);
+    context->CopyResource(m_color_tex->GetTexture2D(), m_comp_tex);
+
+    //unbind UAV
+    ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+    context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+    // Disable Compute Shader
+    context->CSSetShader(nullptr, nullptr, 0);
+
     render_complete &= m_color_bar->Draw(context, model_mat);
-    for (auto render : m_opacity_graphs) 
-        render_complete &= render->Draw(context, model_mat);
+
+    auto visibles = Manager::instance()->getOpacityWidgetVisibility();
+    for (int i = 0; i < visibles->size(); i++) {
+        if (!visibles->at(i)) continue;
+        render_complete &= m_opacity_graphs[i]->Draw(context, model_mat);
+    }
 
     context->OMSetDepthStencilState(nullptr, 0);
     context->OMSetBlendState(nullptr, 0, 0xffffffff);

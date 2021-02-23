@@ -31,7 +31,6 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
-#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 #include "common.pb.h"
 // @@protoc_insertion_point(includes)
@@ -49,7 +48,7 @@ struct TableStruct_transManager_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -81,12 +80,6 @@ extern dcmImageDefaultTypeInternal _dcmImage_default_instance_;
 class volumeResponse;
 class volumeResponseDefaultTypeInternal;
 extern volumeResponseDefaultTypeInternal _volumeResponse_default_instance_;
-class volumeResponse_scoreInfo;
-class volumeResponse_scoreInfoDefaultTypeInternal;
-extern volumeResponse_scoreInfoDefaultTypeInternal _volumeResponse_scoreInfo_default_instance_;
-class volumeResponse_volumeInfo;
-class volumeResponse_volumeInfoDefaultTypeInternal;
-extern volumeResponse_volumeInfoDefaultTypeInternal _volumeResponse_volumeInfo_default_instance_;
 class volumeWholeResponse;
 class volumeWholeResponseDefaultTypeInternal;
 extern volumeWholeResponseDefaultTypeInternal _volumeWholeResponse_default_instance_;
@@ -100,38 +93,10 @@ template<> ::helmsley::datasetResponse* Arena::CreateMaybeMessage<::helmsley::da
 template<> ::helmsley::datasetResponse_datasetInfo* Arena::CreateMaybeMessage<::helmsley::datasetResponse_datasetInfo>(Arena*);
 template<> ::helmsley::dcmImage* Arena::CreateMaybeMessage<::helmsley::dcmImage>(Arena*);
 template<> ::helmsley::volumeResponse* Arena::CreateMaybeMessage<::helmsley::volumeResponse>(Arena*);
-template<> ::helmsley::volumeResponse_scoreInfo* Arena::CreateMaybeMessage<::helmsley::volumeResponse_scoreInfo>(Arena*);
-template<> ::helmsley::volumeResponse_volumeInfo* Arena::CreateMaybeMessage<::helmsley::volumeResponse_volumeInfo>(Arena*);
 template<> ::helmsley::volumeWholeResponse* Arena::CreateMaybeMessage<::helmsley::volumeWholeResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace helmsley {
 
-enum volumeResponse_volumeInfo_DataSource : int {
-  volumeResponse_volumeInfo_DataSource_LOCAL = 0,
-  volumeResponse_volumeInfo_DataSource_SERVER = 1,
-  volumeResponse_volumeInfo_DataSource_DEVICE = 2,
-  volumeResponse_volumeInfo_DataSource_volumeResponse_volumeInfo_DataSource_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  volumeResponse_volumeInfo_DataSource_volumeResponse_volumeInfo_DataSource_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
-};
-bool volumeResponse_volumeInfo_DataSource_IsValid(int value);
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo_DataSource_DataSource_MIN = volumeResponse_volumeInfo_DataSource_LOCAL;
-constexpr volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo_DataSource_DataSource_MAX = volumeResponse_volumeInfo_DataSource_DEVICE;
-constexpr int volumeResponse_volumeInfo_DataSource_DataSource_ARRAYSIZE = volumeResponse_volumeInfo_DataSource_DataSource_MAX + 1;
-
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* volumeResponse_volumeInfo_DataSource_descriptor();
-template<typename T>
-inline const std::string& volumeResponse_volumeInfo_DataSource_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, volumeResponse_volumeInfo_DataSource>::value ||
-    ::std::is_integral<T>::value,
-    "Incorrect type passed to function volumeResponse_volumeInfo_DataSource_Name.");
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    volumeResponse_volumeInfo_DataSource_descriptor(), enum_t_value);
-}
-inline bool volumeResponse_volumeInfo_DataSource_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, volumeResponse_volumeInfo_DataSource* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<volumeResponse_volumeInfo_DataSource>(
-    volumeResponse_volumeInfo_DataSource_descriptor(), name, value);
-}
 // ===================================================================
 
 class configResponse_configInfo PROTOBUF_FINAL :
@@ -816,555 +781,6 @@ class datasetResponse PROTOBUF_FINAL :
 };
 // -------------------------------------------------------------------
 
-class volumeResponse_scoreInfo PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.volumeResponse.scoreInfo) */ {
- public:
-  inline volumeResponse_scoreInfo() : volumeResponse_scoreInfo(nullptr) {}
-  virtual ~volumeResponse_scoreInfo();
-
-  volumeResponse_scoreInfo(const volumeResponse_scoreInfo& from);
-  volumeResponse_scoreInfo(volumeResponse_scoreInfo&& from) noexcept
-    : volumeResponse_scoreInfo() {
-    *this = ::std::move(from);
-  }
-
-  inline volumeResponse_scoreInfo& operator=(const volumeResponse_scoreInfo& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline volumeResponse_scoreInfo& operator=(volumeResponse_scoreInfo&& from) noexcept {
-    if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const volumeResponse_scoreInfo& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const volumeResponse_scoreInfo* internal_default_instance() {
-    return reinterpret_cast<const volumeResponse_scoreInfo*>(
-               &_volumeResponse_scoreInfo_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    4;
-
-  friend void swap(volumeResponse_scoreInfo& a, volumeResponse_scoreInfo& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(volumeResponse_scoreInfo* other) {
-    if (other == this) return;
-    if (GetArena() == other->GetArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(volumeResponse_scoreInfo* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline volumeResponse_scoreInfo* New() const final {
-    return CreateMaybeMessage<volumeResponse_scoreInfo>(nullptr);
-  }
-
-  volumeResponse_scoreInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<volumeResponse_scoreInfo>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const volumeResponse_scoreInfo& from);
-  void MergeFrom(const volumeResponse_scoreInfo& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(volumeResponse_scoreInfo* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "helmsley.volumeResponse.scoreInfo";
-  }
-  protected:
-  explicit volumeResponse_scoreInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_transManager_2eproto);
-    return ::descriptor_table_transManager_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kRawScoreFieldNumber = 4,
-    kVolScoreFieldNumber = 5,
-    kRgroupIdFieldNumber = 1,
-    kRankIdFieldNumber = 2,
-    kRankScoreFieldNumber = 3,
-  };
-  // repeated float raw_score = 4;
-  int raw_score_size() const;
-  private:
-  int _internal_raw_score_size() const;
-  public:
-  void clear_raw_score();
-  private:
-  float _internal_raw_score(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_raw_score() const;
-  void _internal_add_raw_score(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_raw_score();
-  public:
-  float raw_score(int index) const;
-  void set_raw_score(int index, float value);
-  void add_raw_score(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      raw_score() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_raw_score();
-
-  // repeated float vol_score = 5;
-  int vol_score_size() const;
-  private:
-  int _internal_vol_score_size() const;
-  public:
-  void clear_vol_score();
-  private:
-  float _internal_vol_score(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_vol_score() const;
-  void _internal_add_vol_score(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_vol_score();
-  public:
-  float vol_score(int index) const;
-  void set_vol_score(int index, float value);
-  void add_vol_score(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      vol_score() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_vol_score();
-
-  // int32 rgroup_id = 1;
-  void clear_rgroup_id();
-  ::PROTOBUF_NAMESPACE_ID::int32 rgroup_id() const;
-  void set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_rgroup_id() const;
-  void _internal_set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 value);
-  public:
-
-  // int32 rank_id = 2;
-  void clear_rank_id();
-  ::PROTOBUF_NAMESPACE_ID::int32 rank_id() const;
-  void set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_rank_id() const;
-  void _internal_set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 value);
-  public:
-
-  // float rank_score = 3;
-  void clear_rank_score();
-  float rank_score() const;
-  void set_rank_score(float value);
-  private:
-  float _internal_rank_score() const;
-  void _internal_set_rank_score(float value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:helmsley.volumeResponse.scoreInfo)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > raw_score_;
-  mutable std::atomic<int> _raw_score_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > vol_score_;
-  mutable std::atomic<int> _vol_score_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::int32 rgroup_id_;
-  ::PROTOBUF_NAMESPACE_ID::int32 rank_id_;
-  float rank_score_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_transManager_2eproto;
-};
-// -------------------------------------------------------------------
-
-class volumeResponse_volumeInfo PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.volumeResponse.volumeInfo) */ {
- public:
-  inline volumeResponse_volumeInfo() : volumeResponse_volumeInfo(nullptr) {}
-  virtual ~volumeResponse_volumeInfo();
-
-  volumeResponse_volumeInfo(const volumeResponse_volumeInfo& from);
-  volumeResponse_volumeInfo(volumeResponse_volumeInfo&& from) noexcept
-    : volumeResponse_volumeInfo() {
-    *this = ::std::move(from);
-  }
-
-  inline volumeResponse_volumeInfo& operator=(const volumeResponse_volumeInfo& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline volumeResponse_volumeInfo& operator=(volumeResponse_volumeInfo&& from) noexcept {
-    if (GetArena() == from.GetArena()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const volumeResponse_volumeInfo& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const volumeResponse_volumeInfo* internal_default_instance() {
-    return reinterpret_cast<const volumeResponse_volumeInfo*>(
-               &_volumeResponse_volumeInfo_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    5;
-
-  friend void swap(volumeResponse_volumeInfo& a, volumeResponse_volumeInfo& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(volumeResponse_volumeInfo* other) {
-    if (other == this) return;
-    if (GetArena() == other->GetArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(volumeResponse_volumeInfo* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline volumeResponse_volumeInfo* New() const final {
-    return CreateMaybeMessage<volumeResponse_volumeInfo>(nullptr);
-  }
-
-  volumeResponse_volumeInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<volumeResponse_volumeInfo>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const volumeResponse_volumeInfo& from);
-  void MergeFrom(const volumeResponse_volumeInfo& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(volumeResponse_volumeInfo* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "helmsley.volumeResponse.volumeInfo";
-  }
-  protected:
-  explicit volumeResponse_volumeInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_transManager_2eproto);
-    return ::descriptor_table_transManager_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  typedef volumeResponse_volumeInfo_DataSource DataSource;
-  static constexpr DataSource LOCAL =
-    volumeResponse_volumeInfo_DataSource_LOCAL;
-  static constexpr DataSource SERVER =
-    volumeResponse_volumeInfo_DataSource_SERVER;
-  static constexpr DataSource DEVICE =
-    volumeResponse_volumeInfo_DataSource_DEVICE;
-  static inline bool DataSource_IsValid(int value) {
-    return volumeResponse_volumeInfo_DataSource_IsValid(value);
-  }
-  static constexpr DataSource DataSource_MIN =
-    volumeResponse_volumeInfo_DataSource_DataSource_MIN;
-  static constexpr DataSource DataSource_MAX =
-    volumeResponse_volumeInfo_DataSource_DataSource_MAX;
-  static constexpr int DataSource_ARRAYSIZE =
-    volumeResponse_volumeInfo_DataSource_DataSource_ARRAYSIZE;
-  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-  DataSource_descriptor() {
-    return volumeResponse_volumeInfo_DataSource_descriptor();
-  }
-  template<typename T>
-  static inline const std::string& DataSource_Name(T enum_t_value) {
-    static_assert(::std::is_same<T, DataSource>::value ||
-      ::std::is_integral<T>::value,
-      "Incorrect type passed to function DataSource_Name.");
-    return volumeResponse_volumeInfo_DataSource_Name(enum_t_value);
-  }
-  static inline bool DataSource_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
-      DataSource* value) {
-    return volumeResponse_volumeInfo_DataSource_Parse(name, value);
-  }
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kDimsFieldNumber = 3,
-    kOrientationFieldNumber = 4,
-    kResolutionFieldNumber = 5,
-    kFolderNameFieldNumber = 1,
-    kFolderPathFieldNumber = 2,
-    kSampleImgFieldNumber = 9,
-    kScoresFieldNumber = 10,
-    kVolumeLocRangeFieldNumber = 6,
-    kWithMaskFieldNumber = 7,
-    kDataSourceFieldNumber = 8,
-  };
-  // repeated int32 dims = 3;
-  int dims_size() const;
-  private:
-  int _internal_dims_size() const;
-  public:
-  void clear_dims();
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_dims(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-      _internal_dims() const;
-  void _internal_add_dims(::PROTOBUF_NAMESPACE_ID::int32 value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-      _internal_mutable_dims();
-  public:
-  ::PROTOBUF_NAMESPACE_ID::int32 dims(int index) const;
-  void set_dims(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
-  void add_dims(::PROTOBUF_NAMESPACE_ID::int32 value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-      dims() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-      mutable_dims();
-
-  // repeated float orientation = 4;
-  int orientation_size() const;
-  private:
-  int _internal_orientation_size() const;
-  public:
-  void clear_orientation();
-  private:
-  float _internal_orientation(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_orientation() const;
-  void _internal_add_orientation(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_orientation();
-  public:
-  float orientation(int index) const;
-  void set_orientation(int index, float value);
-  void add_orientation(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      orientation() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_orientation();
-
-  // repeated float resolution = 5;
-  int resolution_size() const;
-  private:
-  int _internal_resolution_size() const;
-  public:
-  void clear_resolution();
-  private:
-  float _internal_resolution(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      _internal_resolution() const;
-  void _internal_add_resolution(float value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      _internal_mutable_resolution();
-  public:
-  float resolution(int index) const;
-  void set_resolution(int index, float value);
-  void add_resolution(float value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-      resolution() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-      mutable_resolution();
-
-  // string folder_name = 1;
-  void clear_folder_name();
-  const std::string& folder_name() const;
-  void set_folder_name(const std::string& value);
-  void set_folder_name(std::string&& value);
-  void set_folder_name(const char* value);
-  void set_folder_name(const char* value, size_t size);
-  std::string* mutable_folder_name();
-  std::string* release_folder_name();
-  void set_allocated_folder_name(std::string* folder_name);
-  private:
-  const std::string& _internal_folder_name() const;
-  void _internal_set_folder_name(const std::string& value);
-  std::string* _internal_mutable_folder_name();
-  public:
-
-  // string folder_path = 2;
-  void clear_folder_path();
-  const std::string& folder_path() const;
-  void set_folder_path(const std::string& value);
-  void set_folder_path(std::string&& value);
-  void set_folder_path(const char* value);
-  void set_folder_path(const char* value, size_t size);
-  std::string* mutable_folder_path();
-  std::string* release_folder_path();
-  void set_allocated_folder_path(std::string* folder_path);
-  private:
-  const std::string& _internal_folder_path() const;
-  void _internal_set_folder_path(const std::string& value);
-  std::string* _internal_mutable_folder_path();
-  public:
-
-  // bytes sample_img = 9;
-  void clear_sample_img();
-  const std::string& sample_img() const;
-  void set_sample_img(const std::string& value);
-  void set_sample_img(std::string&& value);
-  void set_sample_img(const char* value);
-  void set_sample_img(const void* value, size_t size);
-  std::string* mutable_sample_img();
-  std::string* release_sample_img();
-  void set_allocated_sample_img(std::string* sample_img);
-  private:
-  const std::string& _internal_sample_img() const;
-  void _internal_set_sample_img(const std::string& value);
-  std::string* _internal_mutable_sample_img();
-  public:
-
-  // .helmsley.volumeResponse.scoreInfo scores = 10;
-  bool has_scores() const;
-  private:
-  bool _internal_has_scores() const;
-  public:
-  void clear_scores();
-  const ::helmsley::volumeResponse_scoreInfo& scores() const;
-  ::helmsley::volumeResponse_scoreInfo* release_scores();
-  ::helmsley::volumeResponse_scoreInfo* mutable_scores();
-  void set_allocated_scores(::helmsley::volumeResponse_scoreInfo* scores);
-  private:
-  const ::helmsley::volumeResponse_scoreInfo& _internal_scores() const;
-  ::helmsley::volumeResponse_scoreInfo* _internal_mutable_scores();
-  public:
-  void unsafe_arena_set_allocated_scores(
-      ::helmsley::volumeResponse_scoreInfo* scores);
-  ::helmsley::volumeResponse_scoreInfo* unsafe_arena_release_scores();
-
-  // float volume_loc_range = 6;
-  void clear_volume_loc_range();
-  float volume_loc_range() const;
-  void set_volume_loc_range(float value);
-  private:
-  float _internal_volume_loc_range() const;
-  void _internal_set_volume_loc_range(float value);
-  public:
-
-  // bool with_mask = 7;
-  void clear_with_mask();
-  bool with_mask() const;
-  void set_with_mask(bool value);
-  private:
-  bool _internal_with_mask() const;
-  void _internal_set_with_mask(bool value);
-  public:
-
-  // .helmsley.volumeResponse.volumeInfo.DataSource data_source = 8;
-  void clear_data_source();
-  ::helmsley::volumeResponse_volumeInfo_DataSource data_source() const;
-  void set_data_source(::helmsley::volumeResponse_volumeInfo_DataSource value);
-  private:
-  ::helmsley::volumeResponse_volumeInfo_DataSource _internal_data_source() const;
-  void _internal_set_data_source(::helmsley::volumeResponse_volumeInfo_DataSource value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:helmsley.volumeResponse.volumeInfo)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > dims_;
-  mutable std::atomic<int> _dims_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > orientation_;
-  mutable std::atomic<int> _orientation_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > resolution_;
-  mutable std::atomic<int> _resolution_cached_byte_size_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr folder_name_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr folder_path_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sample_img_;
-  ::helmsley::volumeResponse_scoreInfo* scores_;
-  float volume_loc_range_;
-  bool with_mask_;
-  int data_source_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_transManager_2eproto;
-};
-// -------------------------------------------------------------------
-
 class volumeResponse PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.volumeResponse) */ {
  public:
@@ -1407,7 +823,7 @@ class volumeResponse PROTOBUF_FINAL :
                &_volumeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    4;
 
   friend void swap(volumeResponse& a, volumeResponse& b) {
     a.Swap(&b);
@@ -1475,30 +891,27 @@ class volumeResponse PROTOBUF_FINAL :
 
   // nested types ----------------------------------------------------
 
-  typedef volumeResponse_scoreInfo scoreInfo;
-  typedef volumeResponse_volumeInfo volumeInfo;
-
   // accessors -------------------------------------------------------
 
   enum : int {
     kVolumesFieldNumber = 1,
   };
-  // repeated .helmsley.volumeResponse.volumeInfo volumes = 1;
+  // repeated .volumeInfo volumes = 1;
   int volumes_size() const;
   private:
   int _internal_volumes_size() const;
   public:
   void clear_volumes();
-  ::helmsley::volumeResponse_volumeInfo* mutable_volumes(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeResponse_volumeInfo >*
+  ::volumeInfo* mutable_volumes(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >*
       mutable_volumes();
   private:
-  const ::helmsley::volumeResponse_volumeInfo& _internal_volumes(int index) const;
-  ::helmsley::volumeResponse_volumeInfo* _internal_add_volumes();
+  const ::volumeInfo& _internal_volumes(int index) const;
+  ::volumeInfo* _internal_add_volumes();
   public:
-  const ::helmsley::volumeResponse_volumeInfo& volumes(int index) const;
-  ::helmsley::volumeResponse_volumeInfo* add_volumes();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeResponse_volumeInfo >&
+  const ::volumeInfo& volumes(int index) const;
+  ::volumeInfo* add_volumes();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >&
       volumes() const;
 
   // @@protoc_insertion_point(class_scope:helmsley.volumeResponse)
@@ -1508,7 +921,7 @@ class volumeResponse PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeResponse_volumeInfo > volumes_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo > volumes_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_transManager_2eproto;
 };
@@ -1556,7 +969,7 @@ class volumeWholeResponse PROTOBUF_FINAL :
                &_volumeWholeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    5;
 
   friend void swap(volumeWholeResponse& a, volumeWholeResponse& b) {
     a.Swap(&b);
@@ -1700,7 +1113,7 @@ class centerlineData PROTOBUF_FINAL :
                &_centerlineData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    6;
 
   friend void swap(centerlineData& a, centerlineData& b) {
     a.Swap(&b);
@@ -1851,7 +1264,7 @@ class dcmImage PROTOBUF_FINAL :
                &_dcmImage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    7;
 
   friend void swap(dcmImage& a, dcmImage& b) {
     a.Swap(&b);
@@ -2017,7 +1430,7 @@ class RequestWholeVolume PROTOBUF_FINAL :
                &_RequestWholeVolume_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    8;
 
   friend void swap(RequestWholeVolume& a, RequestWholeVolume& b) {
     a.Swap(&b);
@@ -2688,674 +2101,39 @@ datasetResponse::datasets() const {
 
 // -------------------------------------------------------------------
 
-// volumeResponse_scoreInfo
-
-// int32 rgroup_id = 1;
-inline void volumeResponse_scoreInfo::clear_rgroup_id() {
-  rgroup_id_ = 0;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeResponse_scoreInfo::_internal_rgroup_id() const {
-  return rgroup_id_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeResponse_scoreInfo::rgroup_id() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.scoreInfo.rgroup_id)
-  return _internal_rgroup_id();
-}
-inline void volumeResponse_scoreInfo::_internal_set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  
-  rgroup_id_ = value;
-}
-inline void volumeResponse_scoreInfo::set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_rgroup_id(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.scoreInfo.rgroup_id)
-}
-
-// int32 rank_id = 2;
-inline void volumeResponse_scoreInfo::clear_rank_id() {
-  rank_id_ = 0;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeResponse_scoreInfo::_internal_rank_id() const {
-  return rank_id_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeResponse_scoreInfo::rank_id() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.scoreInfo.rank_id)
-  return _internal_rank_id();
-}
-inline void volumeResponse_scoreInfo::_internal_set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  
-  rank_id_ = value;
-}
-inline void volumeResponse_scoreInfo::set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_rank_id(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.scoreInfo.rank_id)
-}
-
-// float rank_score = 3;
-inline void volumeResponse_scoreInfo::clear_rank_score() {
-  rank_score_ = 0;
-}
-inline float volumeResponse_scoreInfo::_internal_rank_score() const {
-  return rank_score_;
-}
-inline float volumeResponse_scoreInfo::rank_score() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.scoreInfo.rank_score)
-  return _internal_rank_score();
-}
-inline void volumeResponse_scoreInfo::_internal_set_rank_score(float value) {
-  
-  rank_score_ = value;
-}
-inline void volumeResponse_scoreInfo::set_rank_score(float value) {
-  _internal_set_rank_score(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.scoreInfo.rank_score)
-}
-
-// repeated float raw_score = 4;
-inline int volumeResponse_scoreInfo::_internal_raw_score_size() const {
-  return raw_score_.size();
-}
-inline int volumeResponse_scoreInfo::raw_score_size() const {
-  return _internal_raw_score_size();
-}
-inline void volumeResponse_scoreInfo::clear_raw_score() {
-  raw_score_.Clear();
-}
-inline float volumeResponse_scoreInfo::_internal_raw_score(int index) const {
-  return raw_score_.Get(index);
-}
-inline float volumeResponse_scoreInfo::raw_score(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.scoreInfo.raw_score)
-  return _internal_raw_score(index);
-}
-inline void volumeResponse_scoreInfo::set_raw_score(int index, float value) {
-  raw_score_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.scoreInfo.raw_score)
-}
-inline void volumeResponse_scoreInfo::_internal_add_raw_score(float value) {
-  raw_score_.Add(value);
-}
-inline void volumeResponse_scoreInfo::add_raw_score(float value) {
-  _internal_add_raw_score(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeResponse.scoreInfo.raw_score)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_scoreInfo::_internal_raw_score() const {
-  return raw_score_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_scoreInfo::raw_score() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeResponse.scoreInfo.raw_score)
-  return _internal_raw_score();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_scoreInfo::_internal_mutable_raw_score() {
-  return &raw_score_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_scoreInfo::mutable_raw_score() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.scoreInfo.raw_score)
-  return _internal_mutable_raw_score();
-}
-
-// repeated float vol_score = 5;
-inline int volumeResponse_scoreInfo::_internal_vol_score_size() const {
-  return vol_score_.size();
-}
-inline int volumeResponse_scoreInfo::vol_score_size() const {
-  return _internal_vol_score_size();
-}
-inline void volumeResponse_scoreInfo::clear_vol_score() {
-  vol_score_.Clear();
-}
-inline float volumeResponse_scoreInfo::_internal_vol_score(int index) const {
-  return vol_score_.Get(index);
-}
-inline float volumeResponse_scoreInfo::vol_score(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.scoreInfo.vol_score)
-  return _internal_vol_score(index);
-}
-inline void volumeResponse_scoreInfo::set_vol_score(int index, float value) {
-  vol_score_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.scoreInfo.vol_score)
-}
-inline void volumeResponse_scoreInfo::_internal_add_vol_score(float value) {
-  vol_score_.Add(value);
-}
-inline void volumeResponse_scoreInfo::add_vol_score(float value) {
-  _internal_add_vol_score(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeResponse.scoreInfo.vol_score)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_scoreInfo::_internal_vol_score() const {
-  return vol_score_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_scoreInfo::vol_score() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeResponse.scoreInfo.vol_score)
-  return _internal_vol_score();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_scoreInfo::_internal_mutable_vol_score() {
-  return &vol_score_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_scoreInfo::mutable_vol_score() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.scoreInfo.vol_score)
-  return _internal_mutable_vol_score();
-}
-
-// -------------------------------------------------------------------
-
-// volumeResponse_volumeInfo
-
-// string folder_name = 1;
-inline void volumeResponse_volumeInfo::clear_folder_name() {
-  folder_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline const std::string& volumeResponse_volumeInfo::folder_name() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.folder_name)
-  return _internal_folder_name();
-}
-inline void volumeResponse_volumeInfo::set_folder_name(const std::string& value) {
-  _internal_set_folder_name(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.folder_name)
-}
-inline std::string* volumeResponse_volumeInfo::mutable_folder_name() {
-  // @@protoc_insertion_point(field_mutable:helmsley.volumeResponse.volumeInfo.folder_name)
-  return _internal_mutable_folder_name();
-}
-inline const std::string& volumeResponse_volumeInfo::_internal_folder_name() const {
-  return folder_name_.Get();
-}
-inline void volumeResponse_volumeInfo::_internal_set_folder_name(const std::string& value) {
-  
-  folder_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
-}
-inline void volumeResponse_volumeInfo::set_folder_name(std::string&& value) {
-  
-  folder_name_.Set(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeResponse.volumeInfo.folder_name)
-}
-inline void volumeResponse_volumeInfo::set_folder_name(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  folder_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArena());
-  // @@protoc_insertion_point(field_set_char:helmsley.volumeResponse.volumeInfo.folder_name)
-}
-inline void volumeResponse_volumeInfo::set_folder_name(const char* value,
-    size_t size) {
-  
-  folder_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeResponse.volumeInfo.folder_name)
-}
-inline std::string* volumeResponse_volumeInfo::_internal_mutable_folder_name() {
-  
-  return folder_name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline std::string* volumeResponse_volumeInfo::release_folder_name() {
-  // @@protoc_insertion_point(field_release:helmsley.volumeResponse.volumeInfo.folder_name)
-  return folder_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline void volumeResponse_volumeInfo::set_allocated_folder_name(std::string* folder_name) {
-  if (folder_name != nullptr) {
-    
-  } else {
-    
-  }
-  folder_name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), folder_name,
-      GetArena());
-  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeResponse.volumeInfo.folder_name)
-}
-
-// string folder_path = 2;
-inline void volumeResponse_volumeInfo::clear_folder_path() {
-  folder_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline const std::string& volumeResponse_volumeInfo::folder_path() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.folder_path)
-  return _internal_folder_path();
-}
-inline void volumeResponse_volumeInfo::set_folder_path(const std::string& value) {
-  _internal_set_folder_path(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.folder_path)
-}
-inline std::string* volumeResponse_volumeInfo::mutable_folder_path() {
-  // @@protoc_insertion_point(field_mutable:helmsley.volumeResponse.volumeInfo.folder_path)
-  return _internal_mutable_folder_path();
-}
-inline const std::string& volumeResponse_volumeInfo::_internal_folder_path() const {
-  return folder_path_.Get();
-}
-inline void volumeResponse_volumeInfo::_internal_set_folder_path(const std::string& value) {
-  
-  folder_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
-}
-inline void volumeResponse_volumeInfo::set_folder_path(std::string&& value) {
-  
-  folder_path_.Set(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeResponse.volumeInfo.folder_path)
-}
-inline void volumeResponse_volumeInfo::set_folder_path(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  folder_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArena());
-  // @@protoc_insertion_point(field_set_char:helmsley.volumeResponse.volumeInfo.folder_path)
-}
-inline void volumeResponse_volumeInfo::set_folder_path(const char* value,
-    size_t size) {
-  
-  folder_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeResponse.volumeInfo.folder_path)
-}
-inline std::string* volumeResponse_volumeInfo::_internal_mutable_folder_path() {
-  
-  return folder_path_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline std::string* volumeResponse_volumeInfo::release_folder_path() {
-  // @@protoc_insertion_point(field_release:helmsley.volumeResponse.volumeInfo.folder_path)
-  return folder_path_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline void volumeResponse_volumeInfo::set_allocated_folder_path(std::string* folder_path) {
-  if (folder_path != nullptr) {
-    
-  } else {
-    
-  }
-  folder_path_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), folder_path,
-      GetArena());
-  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeResponse.volumeInfo.folder_path)
-}
-
-// repeated int32 dims = 3;
-inline int volumeResponse_volumeInfo::_internal_dims_size() const {
-  return dims_.size();
-}
-inline int volumeResponse_volumeInfo::dims_size() const {
-  return _internal_dims_size();
-}
-inline void volumeResponse_volumeInfo::clear_dims() {
-  dims_.Clear();
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeResponse_volumeInfo::_internal_dims(int index) const {
-  return dims_.Get(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 volumeResponse_volumeInfo::dims(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.dims)
-  return _internal_dims(index);
-}
-inline void volumeResponse_volumeInfo::set_dims(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
-  dims_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.dims)
-}
-inline void volumeResponse_volumeInfo::_internal_add_dims(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  dims_.Add(value);
-}
-inline void volumeResponse_volumeInfo::add_dims(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_add_dims(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeResponse.volumeInfo.dims)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-volumeResponse_volumeInfo::_internal_dims() const {
-  return dims_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-volumeResponse_volumeInfo::dims() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeResponse.volumeInfo.dims)
-  return _internal_dims();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-volumeResponse_volumeInfo::_internal_mutable_dims() {
-  return &dims_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-volumeResponse_volumeInfo::mutable_dims() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.volumeInfo.dims)
-  return _internal_mutable_dims();
-}
-
-// repeated float orientation = 4;
-inline int volumeResponse_volumeInfo::_internal_orientation_size() const {
-  return orientation_.size();
-}
-inline int volumeResponse_volumeInfo::orientation_size() const {
-  return _internal_orientation_size();
-}
-inline void volumeResponse_volumeInfo::clear_orientation() {
-  orientation_.Clear();
-}
-inline float volumeResponse_volumeInfo::_internal_orientation(int index) const {
-  return orientation_.Get(index);
-}
-inline float volumeResponse_volumeInfo::orientation(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.orientation)
-  return _internal_orientation(index);
-}
-inline void volumeResponse_volumeInfo::set_orientation(int index, float value) {
-  orientation_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.orientation)
-}
-inline void volumeResponse_volumeInfo::_internal_add_orientation(float value) {
-  orientation_.Add(value);
-}
-inline void volumeResponse_volumeInfo::add_orientation(float value) {
-  _internal_add_orientation(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeResponse.volumeInfo.orientation)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_volumeInfo::_internal_orientation() const {
-  return orientation_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_volumeInfo::orientation() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeResponse.volumeInfo.orientation)
-  return _internal_orientation();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_volumeInfo::_internal_mutable_orientation() {
-  return &orientation_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_volumeInfo::mutable_orientation() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.volumeInfo.orientation)
-  return _internal_mutable_orientation();
-}
-
-// repeated float resolution = 5;
-inline int volumeResponse_volumeInfo::_internal_resolution_size() const {
-  return resolution_.size();
-}
-inline int volumeResponse_volumeInfo::resolution_size() const {
-  return _internal_resolution_size();
-}
-inline void volumeResponse_volumeInfo::clear_resolution() {
-  resolution_.Clear();
-}
-inline float volumeResponse_volumeInfo::_internal_resolution(int index) const {
-  return resolution_.Get(index);
-}
-inline float volumeResponse_volumeInfo::resolution(int index) const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.resolution)
-  return _internal_resolution(index);
-}
-inline void volumeResponse_volumeInfo::set_resolution(int index, float value) {
-  resolution_.Set(index, value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.resolution)
-}
-inline void volumeResponse_volumeInfo::_internal_add_resolution(float value) {
-  resolution_.Add(value);
-}
-inline void volumeResponse_volumeInfo::add_resolution(float value) {
-  _internal_add_resolution(value);
-  // @@protoc_insertion_point(field_add:helmsley.volumeResponse.volumeInfo.resolution)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_volumeInfo::_internal_resolution() const {
-  return resolution_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
-volumeResponse_volumeInfo::resolution() const {
-  // @@protoc_insertion_point(field_list:helmsley.volumeResponse.volumeInfo.resolution)
-  return _internal_resolution();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_volumeInfo::_internal_mutable_resolution() {
-  return &resolution_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
-volumeResponse_volumeInfo::mutable_resolution() {
-  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.volumeInfo.resolution)
-  return _internal_mutable_resolution();
-}
-
-// float volume_loc_range = 6;
-inline void volumeResponse_volumeInfo::clear_volume_loc_range() {
-  volume_loc_range_ = 0;
-}
-inline float volumeResponse_volumeInfo::_internal_volume_loc_range() const {
-  return volume_loc_range_;
-}
-inline float volumeResponse_volumeInfo::volume_loc_range() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.volume_loc_range)
-  return _internal_volume_loc_range();
-}
-inline void volumeResponse_volumeInfo::_internal_set_volume_loc_range(float value) {
-  
-  volume_loc_range_ = value;
-}
-inline void volumeResponse_volumeInfo::set_volume_loc_range(float value) {
-  _internal_set_volume_loc_range(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.volume_loc_range)
-}
-
-// bool with_mask = 7;
-inline void volumeResponse_volumeInfo::clear_with_mask() {
-  with_mask_ = false;
-}
-inline bool volumeResponse_volumeInfo::_internal_with_mask() const {
-  return with_mask_;
-}
-inline bool volumeResponse_volumeInfo::with_mask() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.with_mask)
-  return _internal_with_mask();
-}
-inline void volumeResponse_volumeInfo::_internal_set_with_mask(bool value) {
-  
-  with_mask_ = value;
-}
-inline void volumeResponse_volumeInfo::set_with_mask(bool value) {
-  _internal_set_with_mask(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.with_mask)
-}
-
-// .helmsley.volumeResponse.volumeInfo.DataSource data_source = 8;
-inline void volumeResponse_volumeInfo::clear_data_source() {
-  data_source_ = 0;
-}
-inline ::helmsley::volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::_internal_data_source() const {
-  return static_cast< ::helmsley::volumeResponse_volumeInfo_DataSource >(data_source_);
-}
-inline ::helmsley::volumeResponse_volumeInfo_DataSource volumeResponse_volumeInfo::data_source() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.data_source)
-  return _internal_data_source();
-}
-inline void volumeResponse_volumeInfo::_internal_set_data_source(::helmsley::volumeResponse_volumeInfo_DataSource value) {
-  
-  data_source_ = value;
-}
-inline void volumeResponse_volumeInfo::set_data_source(::helmsley::volumeResponse_volumeInfo_DataSource value) {
-  _internal_set_data_source(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.data_source)
-}
-
-// bytes sample_img = 9;
-inline void volumeResponse_volumeInfo::clear_sample_img() {
-  sample_img_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline const std::string& volumeResponse_volumeInfo::sample_img() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.sample_img)
-  return _internal_sample_img();
-}
-inline void volumeResponse_volumeInfo::set_sample_img(const std::string& value) {
-  _internal_set_sample_img(value);
-  // @@protoc_insertion_point(field_set:helmsley.volumeResponse.volumeInfo.sample_img)
-}
-inline std::string* volumeResponse_volumeInfo::mutable_sample_img() {
-  // @@protoc_insertion_point(field_mutable:helmsley.volumeResponse.volumeInfo.sample_img)
-  return _internal_mutable_sample_img();
-}
-inline const std::string& volumeResponse_volumeInfo::_internal_sample_img() const {
-  return sample_img_.Get();
-}
-inline void volumeResponse_volumeInfo::_internal_set_sample_img(const std::string& value) {
-  
-  sample_img_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
-}
-inline void volumeResponse_volumeInfo::set_sample_img(std::string&& value) {
-  
-  sample_img_.Set(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeResponse.volumeInfo.sample_img)
-}
-inline void volumeResponse_volumeInfo::set_sample_img(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  sample_img_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArena());
-  // @@protoc_insertion_point(field_set_char:helmsley.volumeResponse.volumeInfo.sample_img)
-}
-inline void volumeResponse_volumeInfo::set_sample_img(const void* value,
-    size_t size) {
-  
-  sample_img_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeResponse.volumeInfo.sample_img)
-}
-inline std::string* volumeResponse_volumeInfo::_internal_mutable_sample_img() {
-  
-  return sample_img_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline std::string* volumeResponse_volumeInfo::release_sample_img() {
-  // @@protoc_insertion_point(field_release:helmsley.volumeResponse.volumeInfo.sample_img)
-  return sample_img_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-}
-inline void volumeResponse_volumeInfo::set_allocated_sample_img(std::string* sample_img) {
-  if (sample_img != nullptr) {
-    
-  } else {
-    
-  }
-  sample_img_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), sample_img,
-      GetArena());
-  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeResponse.volumeInfo.sample_img)
-}
-
-// .helmsley.volumeResponse.scoreInfo scores = 10;
-inline bool volumeResponse_volumeInfo::_internal_has_scores() const {
-  return this != internal_default_instance() && scores_ != nullptr;
-}
-inline bool volumeResponse_volumeInfo::has_scores() const {
-  return _internal_has_scores();
-}
-inline void volumeResponse_volumeInfo::clear_scores() {
-  if (GetArena() == nullptr && scores_ != nullptr) {
-    delete scores_;
-  }
-  scores_ = nullptr;
-}
-inline const ::helmsley::volumeResponse_scoreInfo& volumeResponse_volumeInfo::_internal_scores() const {
-  const ::helmsley::volumeResponse_scoreInfo* p = scores_;
-  return p != nullptr ? *p : *reinterpret_cast<const ::helmsley::volumeResponse_scoreInfo*>(
-      &::helmsley::_volumeResponse_scoreInfo_default_instance_);
-}
-inline const ::helmsley::volumeResponse_scoreInfo& volumeResponse_volumeInfo::scores() const {
-  // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumeInfo.scores)
-  return _internal_scores();
-}
-inline void volumeResponse_volumeInfo::unsafe_arena_set_allocated_scores(
-    ::helmsley::volumeResponse_scoreInfo* scores) {
-  if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(scores_);
-  }
-  scores_ = scores;
-  if (scores) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:helmsley.volumeResponse.volumeInfo.scores)
-}
-inline ::helmsley::volumeResponse_scoreInfo* volumeResponse_volumeInfo::release_scores() {
-  
-  ::helmsley::volumeResponse_scoreInfo* temp = scores_;
-  scores_ = nullptr;
-  if (GetArena() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-  return temp;
-}
-inline ::helmsley::volumeResponse_scoreInfo* volumeResponse_volumeInfo::unsafe_arena_release_scores() {
-  // @@protoc_insertion_point(field_release:helmsley.volumeResponse.volumeInfo.scores)
-  
-  ::helmsley::volumeResponse_scoreInfo* temp = scores_;
-  scores_ = nullptr;
-  return temp;
-}
-inline ::helmsley::volumeResponse_scoreInfo* volumeResponse_volumeInfo::_internal_mutable_scores() {
-  
-  if (scores_ == nullptr) {
-    auto* p = CreateMaybeMessage<::helmsley::volumeResponse_scoreInfo>(GetArena());
-    scores_ = p;
-  }
-  return scores_;
-}
-inline ::helmsley::volumeResponse_scoreInfo* volumeResponse_volumeInfo::mutable_scores() {
-  // @@protoc_insertion_point(field_mutable:helmsley.volumeResponse.volumeInfo.scores)
-  return _internal_mutable_scores();
-}
-inline void volumeResponse_volumeInfo::set_allocated_scores(::helmsley::volumeResponse_scoreInfo* scores) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
-  if (message_arena == nullptr) {
-    delete scores_;
-  }
-  if (scores) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(scores);
-    if (message_arena != submessage_arena) {
-      scores = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, scores, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  scores_ = scores;
-  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeResponse.volumeInfo.scores)
-}
-
-// -------------------------------------------------------------------
-
 // volumeResponse
 
-// repeated .helmsley.volumeResponse.volumeInfo volumes = 1;
+// repeated .volumeInfo volumes = 1;
 inline int volumeResponse::_internal_volumes_size() const {
   return volumes_.size();
 }
 inline int volumeResponse::volumes_size() const {
   return _internal_volumes_size();
 }
-inline void volumeResponse::clear_volumes() {
-  volumes_.Clear();
-}
-inline ::helmsley::volumeResponse_volumeInfo* volumeResponse::mutable_volumes(int index) {
+inline ::volumeInfo* volumeResponse::mutable_volumes(int index) {
   // @@protoc_insertion_point(field_mutable:helmsley.volumeResponse.volumes)
   return volumes_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeResponse_volumeInfo >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >*
 volumeResponse::mutable_volumes() {
   // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.volumes)
   return &volumes_;
 }
-inline const ::helmsley::volumeResponse_volumeInfo& volumeResponse::_internal_volumes(int index) const {
+inline const ::volumeInfo& volumeResponse::_internal_volumes(int index) const {
   return volumes_.Get(index);
 }
-inline const ::helmsley::volumeResponse_volumeInfo& volumeResponse::volumes(int index) const {
+inline const ::volumeInfo& volumeResponse::volumes(int index) const {
   // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumes)
   return _internal_volumes(index);
 }
-inline ::helmsley::volumeResponse_volumeInfo* volumeResponse::_internal_add_volumes() {
+inline ::volumeInfo* volumeResponse::_internal_add_volumes() {
   return volumes_.Add();
 }
-inline ::helmsley::volumeResponse_volumeInfo* volumeResponse::add_volumes() {
+inline ::volumeInfo* volumeResponse::add_volumes() {
   // @@protoc_insertion_point(field_add:helmsley.volumeResponse.volumes)
   return _internal_add_volumes();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeResponse_volumeInfo >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >&
 volumeResponse::volumes() const {
   // @@protoc_insertion_point(field_list:helmsley.volumeResponse.volumes)
   return volumes_;
@@ -3709,24 +2487,10 @@ inline void RequestWholeVolume::set_unit_size(::PROTOBUF_NAMESPACE_ID::int32 val
 
 // -------------------------------------------------------------------
 
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
 
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace helmsley
-
-PROTOBUF_NAMESPACE_OPEN
-
-template <> struct is_proto_enum< ::helmsley::volumeResponse_volumeInfo_DataSource> : ::std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::helmsley::volumeResponse_volumeInfo_DataSource>() {
-  return ::helmsley::volumeResponse_volumeInfo_DataSource_descriptor();
-}
-
-PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

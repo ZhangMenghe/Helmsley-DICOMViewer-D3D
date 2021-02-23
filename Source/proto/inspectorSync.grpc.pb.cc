@@ -285,23 +285,23 @@ void inspectorSync::Stub::experimental_async::setMaskParams(::grpc::ClientContex
   return result;
 }
 
-::grpc::Status inspectorSync::Stub::setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::volumeConcise& request, ::commonResponse* response) {
+::grpc::Status inspectorSync::Stub::setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::commonResponse* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_setDisplayVolume_, context, request, response);
 }
 
-void inspectorSync::Stub::experimental_async::setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::volumeConcise* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
+void inspectorSync::Stub::experimental_async::setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
   ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_setDisplayVolume_, context, request, response, std::move(f));
 }
 
-void inspectorSync::Stub::experimental_async::setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::volumeConcise* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+void inspectorSync::Stub::experimental_async::setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
   ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_setDisplayVolume_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::volumeConcise& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
   return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_setDisplayVolume_, context, request, false);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::volumeConcise& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncsetDisplayVolumeRaw(context, request, cq);
   result->StartCall();
@@ -412,10 +412,10 @@ inspectorSync::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       inspectorSync_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::volumeConcise, ::commonResponse>(
+      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::DataMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::helmsley::volumeConcise* req,
+             const ::helmsley::DataMsg* req,
              ::commonResponse* resp) {
                return service->setDisplayVolume(ctx, req, resp);
              }, this)));
@@ -494,7 +494,7 @@ inspectorSync::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status inspectorSync::Service::setDisplayVolume(::grpc::ServerContext* context, const ::helmsley::volumeConcise* request, ::commonResponse* response) {
+::grpc::Status inspectorSync::Service::setDisplayVolume(::grpc::ServerContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response) {
   (void) context;
   (void) request;
   (void) response;

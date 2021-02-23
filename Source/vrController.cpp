@@ -16,10 +16,10 @@ vrController *vrController::instance()
 }
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager) :
-	m_tracking(false),
-	m_deviceResources(deviceResources),
-	m_manager(manager){
+vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager) : m_tracking(false),
+																																																																	 m_deviceResources(deviceResources),
+																																																																	 m_manager(manager)
+{
 	myPtr_ = this;
 
 	auto device = deviceResources->GetD3DDevice();
@@ -31,7 +31,6 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
-
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 	onReset();
@@ -39,7 +38,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 void vrController::onReset()
 {
 	SpaceMat_ = glm::mat4(1.0f);
-	
+
 	Mouse_old = {.0f, .0f};
 	rStates_.clear();
 	cst_name = "";
@@ -74,7 +73,7 @@ void vrController::InitOXRScene()
 {
 	uniScale = 0.5f;
 	PosVec3_.z = -1.0f;
-  volume_model_dirty = true;
+	volume_model_dirty = true;
 }
 
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num)
@@ -122,15 +121,18 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 	tex_volume = new Texture;
 	D3D11_TEXTURE3D_DESC texDesc{
-		ph,pw,pd,
-		1,
-		DXGI_FORMAT_R32_UINT,
-		D3D11_USAGE_DEFAULT,
-		D3D11_BIND_RENDER_TARGET|D3D11_BIND_SHADER_RESOURCE,
-		0,
-		D3D11_RESOURCE_MISC_GENERATE_MIPS
-	};
-	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
+			ph, pw, pd,
+			1,
+			DXGI_FORMAT_R32_UINT,
+			D3D11_USAGE_DEFAULT,
+			D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+			0,
+			D3D11_RESOURCE_MISC_GENERATE_MIPS};
+	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data))
+	{
+		delete tex_volume;
+		tex_volume = nullptr;
+	}
 	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
 
 	if (tex_baked != nullptr)
@@ -154,12 +156,12 @@ void vrController::init_texture()
 {
 	if (m_comp_tex_d3d != nullptr)
 	{
-		delete m_comp_tex_d3d;
+		m_comp_tex_d3d->Release();
 		m_comp_tex_d3d = nullptr;
 	}
 	if (m_textureUAV != nullptr)
 	{
-		delete m_textureUAV;
+		m_textureUAV->Release();
 		m_textureUAV = nullptr;
 	}
 
@@ -246,11 +248,7 @@ void vrController::StopTracking()
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render()
 {
-	// TODO: Debug
-	Manager::param_bool[dvr::CHECK_CUTTING] = true;
-  Manager::param_bool[dvr::CHECK_RAYCAST] = true;
-
-	if (!tex_volume)
+	if (tex_volume == nullptr || tex_baked == nullptr)
 		return;
 	if (!pre_draw_)
 	{
@@ -495,7 +493,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 		auto inv_model_mat = glm::inverse(SpaceMat_ * ModelMat_ * vol_dim_scale_mat_);
 		normal = glm::mat3(inv_model_mat) * glm::mat3(rot) * normal;
 
-		glm::vec3 pos = glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));//glm::vec3(x, y, z);//glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));
+		glm::vec3 pos = glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1)); //glm::vec3(x, y, z);//glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));
 
 		setCuttingPlane(pos, normal);
 	}
