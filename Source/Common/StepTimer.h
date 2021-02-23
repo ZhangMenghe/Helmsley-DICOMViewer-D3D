@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <wrl.h>
+//#include <wrl.h>
 
 namespace DX
 {

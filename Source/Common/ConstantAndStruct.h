@@ -143,7 +143,7 @@ namespace dvr{
             0.f,0.f,0.f,0.f
     };
     //color scheme
-    constexpr char* COLOR_SCHEMES[3]={"COLOR_GRAYSCALE", "COLOR_HSV", "COLOR_BRIGHT"};
+    constexpr const char* COLOR_SCHEMES[3]={"COLOR_GRAYSCALE", "COLOR_HSV", "COLOR_BRIGHT"};
 
     struct Rect{
         float width;float height;

@@ -7,10 +7,63 @@
 #include <OXRs/OXRScenes.h>
 #include <Utils/XrMath.h>
 
+// QR tracking stuff
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Microsoft.MixedReality.QR.h>
+//using namespace winrt::Windows::Foundation;
+using namespace winrt::Microsoft::MixedReality::QR;
+
 DX::OXRManager* oxr_manager = nullptr;
 std::unique_ptr<OXRScenes> m_oxr_scene;
 
+class QRListHelper
+{
+public:
+	QRListHelper() {}
+	QRCodeWatcher m_qrWatcher{ nullptr };
+
+	void OnAddedQRCode(const IInspectable&, const QRCodeAddedEventArgs& args)
+	{
+		//m_app.OnAddedQRCode(args);
+	}
+
+	void OnUpdatedQRCode(const IInspectable&, const QRCodeUpdatedEventArgs& args)
+	{
+		//m_app.OnUpdatedQRCode(args);
+	}
+
+	void OnEnumerationComplete(const IInspectable&, const IInspectable&)
+	{
+		//m_app.OnEnumerationComplete();
+	}
+};
+
+QRListHelper* list_helper = nullptr;
+
+void SetupQRCodes(QRListHelper* qrHelper) {
+  if (QRCodeWatcher::IsSupported())
+	{
+			QRCodeWatcherAccessStatus status = QRCodeWatcher::RequestAccessAsync().get();
+		if (status == QRCodeWatcherAccessStatus::Allowed)
+		{
+			qrHelper->m_qrWatcher = QRCodeWatcher();
+			//qrHelper->m_qrWatcher.Added({ qrHelper, &QRListHelper::OnAddedQRCode });
+			//qrHelper->m_qrWatcher.Updated({ qrHelper, &QRListHelper::OnUpdatedQRCode });
+			//qrHelper->m_qrWatcher.EnumerationCompleted({ qrHelper, &QRListHelper::OnEnumerationComplete });
+			qrHelper->m_qrWatcher.Start();
+		}
+		else
+		{
+			// Permission denied by system or user
+			// Handle the failures
+		}
+	}
+}
+
+
+
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
+	winrt::init_apartment();
 	oxr_manager = new DX::OXRManager;
 
 	if (!oxr_manager->InitOxrSession("Single file OpenXR")) {
@@ -18,10 +71,12 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 		throw std::exception("OpenXR initialization failed");
 		return 1;
 	}
-	
+	list_helper = new QRListHelper();
+
+	SetupQRCodes(list_helper);
+
 	oxr_manager->InitOxrActions();
 	m_oxr_scene = std::unique_ptr<OXRScenes>(new OXRScenes(std::unique_ptr<DX::DeviceResources>(oxr_manager)));
-
 	// Create reference space 1 meter in front of user
 	XrSpace refSpace = oxr_manager->createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL, xr::math::Pose::Translation({ 0, 0, -1 }));
 
@@ -53,5 +108,6 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	}
 	oxr_manager->ShutDown();
 
+	//co_return 0;
 	return 0;
 }

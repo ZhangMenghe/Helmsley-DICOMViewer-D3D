@@ -60,7 +60,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	float4 sum = .0;
 	float pd = .0;
 	uint steps = 0;
-	float usample_step_inverse = 0.003f;
+	float usample_step_inverse = 0.005f;
 	float high_bound = 0.01;
 	float step_size = usample_step_inverse;
 	bool last_succeeded = true;

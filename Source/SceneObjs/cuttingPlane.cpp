@@ -73,7 +73,7 @@ void cuttingController::Update(glm::mat4 model_mat) {
 }
 bool cuttingController::Draw(ID3D11DeviceContext* context) {
     context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
-    bool render_complete = plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
+    bool render_complete = true;// plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
     return render_complete;
 }

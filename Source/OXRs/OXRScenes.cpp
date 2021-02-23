@@ -68,7 +68,7 @@ void OXRScenes::setup_volume_local(){
 	m_data_manager->loadData(dsName, vInfo, true);
 }
 void OXRScenes::setup_resource() {
-	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false))
+	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false).get())
 		std::cerr << "Fail to copy";
 }
 void OXRScenes::onViewChanged()

@@ -50,9 +50,7 @@ bool dataManager::removeLocalData(std::string dsName, volumeResponse::volumeInfo
 	}
 
 	//remove data directory
-	DX::removeDataAsync(dsName + "\\" + vInfo.folder_name()).then([]() {
-		return true;
-	});
+	DX::removeDataAsync(dsName + "\\" + vInfo.folder_name()).get();
 	return true;
 }
 bool dataManager::loadData(std::string dsName, volumeResponse::volumeInfo vInfo, bool isLocal) {

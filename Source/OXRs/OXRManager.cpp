@@ -6,6 +6,7 @@
 #include <Utils/XrMath.h>
 #include <glm/gtc/quaternion.hpp>
 
+
 using namespace DX;
 OXRManager::OXRManager()
 :DeviceResources(true){
@@ -138,8 +139,8 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-	Microsoft::WRL::ComPtr<ID3D11Device> device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
+	winrt::com_ptr<ID3D11Device> device{nullptr};
+	winrt::com_ptr<ID3D11DeviceContext> context{nullptr};
 	if (FAILED(D3D11CreateDevice(
 		adapter, 
 		D3D_DRIVER_TYPE_UNKNOWN, 
@@ -148,21 +149,21 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 		featureLevels,
 		_countof(featureLevels), 
 		D3D11_SDK_VERSION, 
-		&device,
+		device.put(),
 		&m_d3dFeatureLevel,
-		&context)))
+		context.put())))
 		return false;
-	device.As(&m_d3dDevice);
-	context.As(&m_d3dContext);
+	device.try_as(m_d3dDevice);
+	context.try_as(m_d3dContext);
 	// Create the Direct2D device object and a corresponding context.
-	Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
-	m_d3dDevice.As(&dxgiDevice);
-	auto hr=m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice);
+	winrt::com_ptr<IDXGIDevice3> dxgiDevice{nullptr};
+	m_d3dDevice.try_as(dxgiDevice);
+	auto hr=m_d2dFactory->CreateDevice(dxgiDevice.get(), m_d2dDevice.put());
 	if (FAILED(hr)) {
 		throw Platform::Exception::CreateException(hr);
 
 	}
-	m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,&m_d2dContext);
+	m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,m_d2dContext.put());
 	
 	adapter->Release();
 
@@ -170,7 +171,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 	// A session represents this application's desire to display things! This is where we hook up our graphics API.
 	// This does not start the session, for that, you'll need a call to xrBeginSession, which we do in openxr_poll_events
 	XrGraphicsBindingD3D11KHR binding = { XR_TYPE_GRAPHICS_BINDING_D3D11_KHR };
-	binding.device = m_d3dDevice.Get();
+	binding.device = m_d3dDevice.get();
 	XrSessionCreateInfo sessionInfo = { XR_TYPE_SESSION_CREATE_INFO };
 	sessionInfo.next = &binding;
 	sessionInfo.systemId = xr_system_id;
@@ -372,8 +373,8 @@ void OXRManager::ShutDown() {
 	if (xr_debug != XR_NULL_HANDLE) ext_xrDestroyDebugUtilsMessengerEXT(xr_debug);
 	if (xr_instance != XR_NULL_HANDLE) xrDestroyInstance(xr_instance);
 
-	if (m_d3dContext.Get()) { m_d3dContext.Get()->Release(); m_d3dContext = nullptr; }
-	if (m_d3dDevice.Get()) { m_d3dDevice.Get()->Release();  m_d3dDevice = nullptr; }
+	if (m_d3dContext.get()) { m_d3dContext.get()->Release(); m_d3dContext = nullptr; }
+	if (m_d3dDevice.get()) { m_d3dDevice.get()->Release();  m_d3dDevice = nullptr; }
 }
 
 XrSpace DX::OXRManager::createReferenceSpace(XrReferenceSpaceType referenceSpaceType, XrPosef poseInReferenceSpace) {
@@ -553,7 +554,7 @@ swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapch
 	// Basically, the color_desc.Format of the OpenXR created swapchain is TYPELESS, but in order to
 	// create a View for the texture, we need a concrete variant of the texture format like UNORM.
 	target_desc.Format = (DXGI_FORMAT)d3d_swapchain_fmt;
-	m_d3dDevice.Get()->CreateRenderTargetView(d3d_swapchain_img.texture, &target_desc, &result.target_view);
+	m_d3dDevice.get()->CreateRenderTargetView(d3d_swapchain_img.texture, &target_desc, &result.target_view);
 
 	// Create a depth buffer that matches 
 	ID3D11Texture2D* depth_texture;
@@ -565,13 +566,13 @@ swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapch
 	depth_desc.ArraySize = color_desc.ArraySize;
 	depth_desc.Format = DXGI_FORMAT_R32_TYPELESS;
 	depth_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-	m_d3dDevice.Get()->CreateTexture2D(&depth_desc, nullptr, &depth_texture);
+	m_d3dDevice.get()->CreateTexture2D(&depth_desc, nullptr, &depth_texture);
 
 	// And create a view resource for the depth buffer, so we can set that up for rendering to as well!
 	D3D11_DEPTH_STENCIL_VIEW_DESC stencil_desc = {};
 	stencil_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	stencil_desc.Format = DXGI_FORMAT_D32_FLOAT;
-	m_d3dDevice.Get()->CreateDepthStencilView(depth_texture, &stencil_desc, &result.depth_view);
+	m_d3dDevice.get()->CreateDepthStencilView(depth_texture, &stencil_desc, &result.depth_view);
 
 	// We don't need direct access to the ID3D11Texture2D object anymore, we only need the view
 	depth_texture->Release();
@@ -649,14 +650,14 @@ void OXRManager::d3d_render_layer(XrCompositionLayerProjectionView& view, swapch
 	// Set up where on the render target we want to draw, the view has a 
 	XrRect2Di& rect = view.subImage.imageRect;
 	D3D11_VIEWPORT viewport = CD3D11_VIEWPORT((float)rect.offset.x, (float)rect.offset.y, (float)rect.extent.width, (float)rect.extent.height);
-	m_d3dContext.Get()->RSSetViewports(1, &viewport);
+	m_d3dContext.get()->RSSetViewports(1, &viewport);
 	
-	m_d3dContext.Get()->OMSetRenderTargets(1, &surface.target_view, surface.depth_view);
+	m_d3dContext.get()->OMSetRenderTargets(1, &surface.target_view, surface.depth_view);
 
 	// Wipe our swapchain color and depth target clean, and then set them up for rendering!
 	float clear[] = { 0, 0, 0, 0 };
-	m_d3dContext.Get()->ClearRenderTargetView(surface.target_view, clear);
-	m_d3dContext.Get()->ClearDepthStencilView(surface.depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);// | D3D11_CLEAR_STENCIL
+	m_d3dContext.get()->ClearRenderTargetView(surface.target_view, clear);
+	m_d3dContext.get()->ClearDepthStencilView(surface.depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);// | D3D11_CLEAR_STENCIL
 
 	saveCurrentTargetViews(surface.target_view, surface.depth_view);
 }

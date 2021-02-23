@@ -6,7 +6,7 @@
 #include <Utils/TypeConvertUtils.h>
 using namespace dvr;
 using namespace DirectX;
-using namespace Windows::Foundation;
+//using namespace winrt::Windows::Foundation;
 
 vrController *vrController::myPtr_ = nullptr;
 
@@ -190,7 +190,7 @@ void vrController::init_texture()
 // Initializes view parameters when the window size changes.
 void vrController::CreateWindowSizeDependentResources()
 {
-	Size outputSize = m_deviceResources->GetOutputSize();
+	winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
 	if (outputSize.Width == .0)
 		return;
 	DX::ThrowIfFailed(screen_quad->InitializeQuadTex(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height));
@@ -247,8 +247,8 @@ void vrController::StopTracking()
 void vrController::Render()
 {
 	// TODO: Debug
-	//Manager::param_bool[dvr::CHECK_CUTTING] = true;
-  //Manager::param_bool[dvr::CHECK_RAYCAST] = true;
+	Manager::param_bool[dvr::CHECK_CUTTING] = true;
+  Manager::param_bool[dvr::CHECK_RAYCAST] = true;
 
 	if (!tex_volume)
 		return;
@@ -259,7 +259,7 @@ void vrController::Render()
 	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	if (isDirty()) //(true) // TODO: debug
+	if (true) // TODO: debug
 	{
 		screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
 		render_scene();
@@ -488,10 +488,10 @@ void vrController::onTouchMove(float x, float y)
 void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side)
 {
 
-	if (side == 1)
+	if (side == 0)
 	{
 		// Update cutting plane
-		glm::vec3 normal = glm::vec3(1, 0, 0);
+		glm::vec3 normal = glm::vec3(-1, 0, 0);
 		auto inv_model_mat = glm::inverse(SpaceMat_ * ModelMat_ * vol_dim_scale_mat_);
 		normal = glm::mat3(inv_model_mat) * glm::mat3(rot) * normal;
 

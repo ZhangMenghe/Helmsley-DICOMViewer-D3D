@@ -25,7 +25,7 @@ void uiController::InitAll(){
 void uiController::AddTuneParams(){
     float opa_values[5] = {
         1.0f,
-        .0f,
+        1.0f,
         2.0f,
         0.0f,
         1.0f
@@ -37,8 +37,8 @@ void uiController::AddTuneParams(){
 void uiController::InitAllTuneParam(){
     float contrast_values[3] = {
         .0f,
-        .8f,
-        1.0f
+        1.0f,
+        0.5f
     };
     Manager::instance()->setRenderParam(contrast_values);
 }
