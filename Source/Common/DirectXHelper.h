@@ -223,25 +223,26 @@ namespace DX
 		getSubDirs(dest_name, sub_folders);
 
 		if (sub_folders.size() <= 4) {
-			auto copy_func = [=](StorageFolder const& folder) {
-				auto copy_data_func = [=]() {
-					std::ifstream inFile("Assets\\" + src_name, std::ios::in | std::ios::binary);
-					if (inFile.is_open()) {
-						std::ofstream outFile(getFilePath(dest_name), std::ios::out | std::ios::binary);
-						if (outFile.is_open()) {
-							outFile << inFile.rdbuf();
-							inFile.close();
-							outFile.close();
-							co_return true;
-						}
+			auto copy_data_func = [=]()->bool {
+				std::ifstream inFile("Assets\\" + src_name, std::ios::in | std::ios::binary);
+				if (inFile.is_open()) {
+					std::ofstream outFile(getFilePath(dest_name), std::ios::out | std::ios::binary);
+					if (outFile.is_open()) {
+						outFile << inFile.rdbuf();
+						inFile.close();
+						outFile.close();
+						return true;
 					}
-					co_return false;
-				};
+				}
+				return false;
+			};
+
+			auto copy_func = [=](StorageFolder const& folder) {
 				if (!overwrite) {
 					auto data = folder.TryGetItemAsync(sub_folders.back().c_str()).get();
-					if (data == nullptr) co_return copy_data_func();
+					if (data == nullptr) return copy_data_func();
 				}
-				co_return copy_data_func();
+				return copy_data_func();
 			};
 
 			StorageFolder const& dst_folder = ApplicationData::Current().LocalFolder();
@@ -252,7 +253,7 @@ namespace DX
 					auto tsk1 = tsk0.CreateFolderAsync(sub_folders[1].c_str(), CreationCollisionOption::OpenIfExists).get();
 					if (sub_folders.size() > 3) {
 						auto tsk2 = tsk1.CreateFolderAsync(sub_folders[2].c_str(), CreationCollisionOption::OpenIfExists).get();
-							co_return copy_func(tsk2);
+						co_return copy_func(tsk2);
 					}
 					else {
 						co_return copy_func(tsk1);
