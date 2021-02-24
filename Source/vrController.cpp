@@ -246,25 +246,21 @@ void vrController::StopTracking()
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void vrController::Render()
+void vrController::Render(int view_id)
 {
-	if (tex_volume == nullptr || tex_baked == nullptr)
-		return;
-	if (!pre_draw_)
-	{
-		render_scene();
-		return;
-	}
+	//if (tex_volume == nullptr || tex_baked == nullptr) return;
+	//if (!pre_draw_) { render_scene(); return; }
 
-	auto context = m_deviceResources->GetD3DDeviceContext();
-	if (true) // TODO: debug
-	{
-		screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
-		render_scene();
-	}
-	m_deviceResources->SetBackBufferRenderTarget();
-	screen_quad->Draw(context);
-	m_deviceResources->ClearCurrentDepthBuffer();
+	//auto context = m_deviceResources->GetD3DDeviceContext();
+	//if (isDirty()) //(true) // TODO: debug
+	//{
+	//	screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
+	//	render_scene();
+	//}
+	//m_deviceResources->SetBackBufferRenderTarget();
+	//screen_quad->Draw(context);
+	//m_deviceResources->ClearCurrentDepthBuffer();
+	render_scene(view_id);
 }
 
 void vrController::precompute()
@@ -306,8 +302,9 @@ void vrController::precompute()
 	Manager::baked_dirty_ = false;
 }
 
-void vrController::render_scene()
+void vrController::render_scene(int view_id)
 {
+	//if (!m_present)return;
 	if (volume_model_dirty)
 	{
 		updateVolumeModelMat();
@@ -322,65 +319,68 @@ void vrController::render_scene()
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
 	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
+	Frame_model_mat = SpaceMat_ * m_extrinsics_mats[view_id] * ModelMat_;
 
-	auto model_mat = SpaceMat_ * ModelMat_ * vol_dim_scale_mat_;
+	auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
+	//auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	cutter_->Update(model_mat);
-	if (Manager::IsCuttingNeedUpdate())
-		cutter_->Update(model_mat);
+	//cutter_->Update(model_mat);
+	//if (Manager::IsCuttingNeedUpdate())
+	//	cutter_->Update(model_mat);
 
 	bool render_complete = true;
 	//////  CUTTING PLANE  //////
-	if (Manager::param_bool[dvr::CHECK_CUTTING])
-	{
-		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
-		m_deviceResources->ClearCurrentDepthBuffer();
-	}
+	//if (Manager::param_bool[dvr::CHECK_CUTTING])
+	//{
+	//	render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+	//	m_deviceResources->ClearCurrentDepthBuffer();
+	//}
 
 	//////   VOLUME   //////
-	if (m_manager->isDrawVolume())
-	{
-		precompute();
-		if (Manager::isRayCasting())
-			render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
-		else
-			render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
-		m_deviceResources->ClearCurrentDepthBuffer();
-	}
+	//if (m_manager->isDrawVolume())
+	//{
+	//	//precompute();
+	//	if (Manager::isRayCasting())
+	render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+	//	else
+	//		render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
+	//m_deviceResources->ClearCurrentDepthBuffer();
+	//m_present = false;
+	//}
 
 	///// MESH  ////
-	if (m_manager->isDrawMesh())
-	{
-		render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	}
+	//if (m_manager->isDrawMesh())
+	//{
+	//	render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+	//}
 
 	///// CENTER LINE/////
-	if (m_manager->isDrawCenterLine())
-	{
-		auto mask_bits_ = m_manager->getMaskBits();
-		for (auto line : line_renderers_)
-			if ((mask_bits_ >> (line.first + 1)) & 1)
-				render_complete &= line.second->Draw(context, mat42xmmatrix(model_mat));
-		m_deviceResources->ClearCurrentDepthBuffer();
-	}
+	//if (m_manager->isDrawCenterLine())
+	//{
+	//	auto mask_bits_ = m_manager->getMaskBits();
+	//	for (auto line : line_renderers_)
+	//		if ((mask_bits_ >> (line.first + 1)) & 1)
+	//			render_complete &= line.second->Draw(context, mat42xmmatrix(model_mat));
+	//	m_deviceResources->ClearCurrentDepthBuffer();
+	//}
 
 	///// CENTERLINE TRAVERSAL PLANE////
-	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
-	{
-		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
-		m_deviceResources->ClearCurrentDepthBuffer();
-	}
+	//if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
+	//{
+	//	render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
+	//	m_deviceResources->ClearCurrentDepthBuffer();
+	//}
 
 	///// OVERLAY DATA BOARD/////
-	if (Manager::param_bool[dvr::CHECK_OVERLAY])
-	{
-		render_complete &= data_board_->Draw(m_deviceResources->GetD3DDeviceContext(),
-																				 DirectX::XMMatrixScaling(1.0, 0.3, 0.1) * DirectX::XMMatrixTranslation(0.8f, 0.8f, .0f),
-																				 is_front);
-		m_deviceResources->ClearCurrentDepthBuffer();
-	}
+	//if (Manager::param_bool[dvr::CHECK_OVERLAY])
+	//{
+	//	render_complete &= data_board_->Draw(m_deviceResources->GetD3DDeviceContext(),
+	//																			 DirectX::XMMatrixScaling(1.0, 0.3, 0.1) * DirectX::XMMatrixTranslation(0.8f, 0.8f, .0f),
+	//																			 is_front);
+	//	m_deviceResources->ClearCurrentDepthBuffer();
+	//}
 	Manager::baked_dirty_ = false;
-	m_scene_dirty = !render_complete;
+	//m_scene_dirty = !render_complete;
 	context->RSSetState(m_render_state_front);
 }
 
@@ -700,7 +700,9 @@ void vrController::onPan(float x, float y)
 }
 void vrController::updateVolumeModelMat()
 {
-	ModelMat_ = glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ * glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale, uniScale, uniScale));
+	ModelMat_ =
+			//glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ *
+			glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale, uniScale, uniScale));
 }
 
 bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)

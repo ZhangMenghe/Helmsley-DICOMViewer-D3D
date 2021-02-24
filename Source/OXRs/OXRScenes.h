@@ -7,17 +7,21 @@
 #include <Utils/uiController.h>
 #include <Utils/dataManager.h>
 #include <grpc/rpcHandler.h>
-
+#include <OXRs/ArucoMarkerTrackingScenario.h>
+#include <OXRs/SensorVizScenario.h>
 class OXRScenes{
 public:
 	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
 	void Update();
 	void Update(XrTime time);
-	bool Render();
+	bool Render(int view_id);
 	void onViewChanged();
 	void setSpaces(XrSpace *space, XrSpace *app_space);
 
-	void onSingle3DTouchDown(float x, float y, float z, int side) { m_sceneRenderer->onSingle3DTouchDown(x, y, z, side); };
+	void onSingle3DTouchDown(float x, float y, float z, int side) { 
+		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side); 
+		//m_scenario->onSingle3DTouchDown(x, y, z, side);
+	};
 	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) { m_sceneRenderer->on3DTouchMove(x, y, z, rot, side); };
 	void on3DTouchReleased(int side) { m_sceneRenderer->on3DTouchReleased(side); };
 
@@ -26,6 +30,7 @@ private:
 
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
+	std::unique_ptr<SensorVizScenario> m_scenario;
 
 	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 	
@@ -49,6 +54,7 @@ private:
 	DX::StepTimer m_timer;
 
 	bool m_overwrite_index_file = false;
+	bool m_render_scene = true;
 
 	void setup_volume_server();
 	void setup_volume_local();

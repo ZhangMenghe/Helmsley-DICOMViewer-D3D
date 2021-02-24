@@ -46,7 +46,7 @@ quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wch
 	this->initialize();
 }
 // Renders one frame using the vertex and pixel shaders.
-bool quadRenderer::	Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
+bool quadRenderer::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){
 	if (!m_loadingComplete) return false; 
 	if (m_constantBuffer != nullptr) {
 		XMStoreFloat4x4(&m_constantBufferData.uViewProjMat, Manager::camera->getVPMat());

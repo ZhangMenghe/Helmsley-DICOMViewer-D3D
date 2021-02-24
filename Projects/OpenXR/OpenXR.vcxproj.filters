@@ -104,6 +104,12 @@
     <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
       <UniqueIdentifier>{8154b040-7503-4f79-bfe9-f03332ef34ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\ResearchModeApi">
+      <UniqueIdentifier>{54f49612-96f6-42e4-8265-8450f5d40908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OXRs\OXRRenderer">
+      <UniqueIdentifier>{92b76414-d4ed-47fd-9bf0-8f95b856e3f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -209,6 +215,24 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -340,6 +364,33 @@
     <ClInclude Include="..\..\Source\Utils\dataManager.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\Scenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h">
+      <Filter>Source\ResearchModeApi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\TimeConverter.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -383,9 +434,6 @@
     <FxCompile Include="..\..\Source\Shaders\QuadVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
@@ -423,6 +471,9 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

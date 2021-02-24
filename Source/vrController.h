@@ -39,20 +39,20 @@ struct reservedStatus
 class vrController
 {
 public:
-	vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager);
-	static vrController *instance();
-	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num = 4);
+	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources, const std::shared_ptr<Manager>& manager);
+	static vrController* instance();
+	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
 
 	void onReset();
-	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam);
+	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam);
 	void InitOXRScene();
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
 	void ReleaseDeviceDependentResources();
-	void Update(DX::StepTimer const &timer);
+	void Update(DX::StepTimer const& timer);
 	//void Update(XrTime time);
-	void Render();
+	void Render(int view_id);
 	void StartTracking();
 	void TrackingUpdate(float positionX);
 	void StopTracking();
@@ -70,15 +70,17 @@ public:
 	void onPan(float x, float y);
 
 	//setter
-	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam);
+	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam);
 	bool addStatus(std::string name, bool use_current_status = false);
 	void setMVPStatus(std::string status_name);
-	void setupCenterLine(int id, float *data);
+	void setupCenterLine(int id, float* data);
 	void setCuttingPlane(float value);
 	void setCuttingPlane(int id, int delta);
 	void setCuttingPlane(glm::vec3 pp, glm::vec3 pn);
 	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
-
+	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); m_present = true; }
+	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; m_present = true; }
+	void setCameraExtrinsicsMat(int id, glm::mat4 ExtrinsicsMat) { m_extrinsics_mats[id] = ExtrinsicsMat; }
 	//void setSpaces(XrSpace * space, XrSpace * app_space);
 
 	//getter
@@ -86,6 +88,7 @@ public:
 	Texture *getVolumeTex() { return tex_volume; }
 	Texture *getBakedTex() { return tex_baked; }
 	bool isDirty();
+	glm::mat4 getFrameModelMat() { return Frame_model_mat; }
 	ID3D11RasterizerState *m_render_state_front, *m_render_state_back;
 
 private:
@@ -115,13 +118,14 @@ private:
 	ID3D11UnorderedAccessView *m_textureUAV;
 	ID3D11Buffer *m_compute_constbuff = nullptr;
 
+	glm::mat4 Frame_model_mat;
 	glm::mat4 SpaceMat_;
 
 	glm::mat4 ModelMat_, RotateMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer m_all_buff_Data;
 	std::map<std::string, reservedStatus> rStates_;
-
+	glm::mat4 m_extrinsics_mats[2] = { glm::mat4(1.0) };
 	//UI
 	bool m_IsPressed = false;
 
@@ -158,12 +162,13 @@ private:
 	bool m_tracking;
 	float m_degreesPerSecond = 1;
 
+	bool m_present = false;
 	//flags
 	int frame_num = 0;
 	bool volume_model_dirty, m_scene_dirty;
 	bool pre_draw_ = true;
 	void Rotate(float radians);
-	void render_scene();
+	void render_scene(int view_id);
 	void init_texture();
 	void updateVolumeModelMat();
 	void precompute();
