@@ -5,6 +5,7 @@
 #include <Common/Manager.h>
 #include <glm/gtx/transform.hpp>
 #include <Utils/TypeConvertUtils.h>
+#include <Utils/MathUtils.h>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>  // cv::Canny()
@@ -207,12 +208,16 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 		//	0.,         376.667932,   229.69762885,
 		//	0.,           0.,           1.
 		//};
-		m_cameraMatrix = (cv::Mat1d(3, 3) << 375.11117222, 0, 325.94678612, 0, 376.667932, 229.69762885, 0, 0, 1);
+
+		//	0,											376.667932.,        229.69762885,
+		//	-375.11117222.,         0,									-325.94678612,
+		//	0.,           0.,           1.
+		m_cameraMatrix = (cv::Mat1d(3, 3) << 376.66843581, 0, 249.3024784, 0, 375.11165342, 325.94698444, 0, 0, 1);
 
 		//m_cameraMatrix = cv::Mat(3, 3, CV_32F, camera_data);
 		//float distor_data[5] = { -0.04310492,  0.22544408, -0.00800435,  0.00223716, -0.25756141 };
 		//m_distCoeffs = cv::Mat(1, 5, CV_32F, distor_data);
-		m_distCoeffs = (cv::Mat1d(1, 5) << -0.04310492, 0.22544408, -0.00800435, 0.00223716, -0.25756141);
+		m_distCoeffs = (cv::Mat1d(1, 5) << -0.04310492, 0.22544408, 0.00223681, 0.0080043, -0.25756141);
 	}
 
 	ResearchModeSensorResolution resolution;
@@ -244,6 +249,7 @@ bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 
 
 	cv::Mat processed(m_slateHeight, m_slateWidth, CV_8U, (void*)m_texture_data);
+	cv::rotate(processed, processed, cv::ROTATE_90_CLOCKWISE);
 	std::vector<int> ids;
 	std::vector<std::vector<cv::Point2f>> corners;
 	cv::aruco::detectMarkers(processed, dictionary, corners, ids);
@@ -252,31 +258,24 @@ bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 	// if at least one marker detected
 	cv::aruco::estimatePoseSingleMarkers(corners, 0.16, m_cameraMatrix, m_distCoeffs, m_rvecs, m_tvecs);
 	
-	cv::Mat R;
+	/*cv::Mat R;
 	Rodrigues(m_rvecs[0], R);
 
 	glm::mat4 rot_mat(1.0f);
 
 	for (int i = 0; i < 3; i++) {
-		const float* Ri = R.ptr<float>(i);
 		for (int j = 0; j < 3; j++) {
-			rot_mat[i][j] = Ri[j];
+			rot_mat[i][j] = (float)R.at<double>(i, j);
 		}
-	}
+	}*/
 	auto tvec = m_tvecs[0];
 
-	glm::mat4 model_mat = 
-		//rot_mat *
-		glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], tvec[1], tvec[2]));
+	glm::quat q = getQuaternion(m_rvecs[0]);
+	q.y = -q.y; q.z = -q.z;
+	glm::mat4 rot_mat = glm::toMat4(q);
 
-	//opencv coordinates -> opengl coord, (x,y,z)->(x, -y, -z)
-	//glm is column major
-	float* pSource = (float*)glm::value_ptr(model_mat);
-	for (int i = 0; i < 16; i++)pSource[i] *= m_inverse_[i];
-
-	//Rotate the original image 90 degree clockwise(x,y,z)->(y, -x, z)
-	float tmp = model_mat[3][0];
-	model_mat[3][0] = model_mat[3][1];  model_mat[3][1] = -tmp;
+	glm::mat4 model_mat =
+		glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], -tvec[1], -tvec[2])) * rot_mat;
 
 	vrController::instance()->setPosition(model_mat);
 	UpdateExtrinsicsMatrix();
@@ -305,8 +304,6 @@ void SlateCameraRenderer::UpdateExtrinsicsMatrix() {
 	DirectX::XMStoreFloat3(&tvec, outTrans);
 	
 	glm::vec3 ttc = glm::vec3(tvec.y, tvec.x, tvec.z);
-
-
 
 	vrController::instance()->setCameraExtrinsicsMat(m_pRMCameraSensor->GetSensorType() == LEFT_FRONT?0:1, glm::translate(glm::mat4(1.0), ttc));
 }
@@ -337,7 +334,7 @@ bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat)
 }
 void SlateCameraRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the vertex shader file is loaded, create the shader and input layout.
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		device->CreateVertexShader(
 			&fileData[0],
 			fileData.size(),
@@ -347,7 +344,7 @@ void SlateCameraRenderer::create_vertex_shader(ID3D11Device* device, const std::
 	);
 
 	if (m_input_layout_id == dvr::INPUT_POS_TEX_2D) {
-		DX::ThrowIfFailed(
+		winrt::check_hresult(
 			device->CreateInputLayout(
 				dvr::g_vinput_pos_tex_desc,
 				ARRAYSIZE(dvr::g_vinput_pos_tex_desc),
@@ -359,7 +356,7 @@ void SlateCameraRenderer::create_vertex_shader(ID3D11Device* device, const std::
 		m_vertex_stride = sizeof(dvr::VertexPosTex2d);
 	}
 	else {
-		DX::ThrowIfFailed(
+		winrt::check_hresult(
 			device->CreateInputLayout(
 				dvr::g_vinput_pos_3d_desc,
 				ARRAYSIZE(dvr::g_vinput_pos_3d_desc),
@@ -374,7 +371,7 @@ void SlateCameraRenderer::create_vertex_shader(ID3D11Device* device, const std::
 }
 void SlateCameraRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the pixel shader file is loaded, create the shader and constant buffer.
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		device->CreatePixelShader(
 			&fileData[0],
 			fileData.size(),
@@ -401,10 +398,10 @@ void SlateCameraRenderer::create_fragment_shader(ID3D11Device* device, const std
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	// Create the texture sampler state.
-	DX::ThrowIfFailed(device->CreateSamplerState(&samplerDesc, &m_sampleState));
+	winrt::check_hresult(device->CreateSamplerState(&samplerDesc, &m_sampleState));
 
 	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(dvr::ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		device->CreateBuffer(
 			&constantBufferDesc,
 			nullptr,

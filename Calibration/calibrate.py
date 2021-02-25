@@ -39,8 +39,9 @@ prev_img_shape = None
 images = glob.glob('*.png') 
 
 for filename in images: 
-	image = cv2.imread(filename) 
-	grayColor = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
+	image = cv2.imread(filename)
+	image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+	grayColor = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 	# Find the chess board corners 
 	# If desired number of corners are 

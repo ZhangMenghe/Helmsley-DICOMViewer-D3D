@@ -319,7 +319,7 @@ void vrController::render_scene(int view_id)
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
 	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
-	Frame_model_mat = SpaceMat_ * m_extrinsics_mats[view_id] * ModelMat_;
+	Frame_model_mat = m_extrinsics_mats[view_id] * SpaceMat_ * ModelMat_;
 
 	auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
 	//auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
