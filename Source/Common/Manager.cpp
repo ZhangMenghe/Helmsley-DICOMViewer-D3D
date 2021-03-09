@@ -17,24 +17,24 @@ Manager* Manager::instance() {
     return myPtr_;
 }
 
-Manager::Manager(){
+Manager::Manager() {
     if (myPtr_ != nullptr) return;
     myPtr_ = this;
-    shader_contents = std::vector<std::string>(dvr::SHADER_ALL_END-1);
+    shader_contents = std::vector<std::string>(dvr::SHADER_ALL_END - 1);
     screen_w = 0; screen_h = 0;
     show_ar_ray = false; volume_ar_hold = false; baked_dirty_ = true;
     onReset();
 }
-Manager::~Manager(){
-    if(camera) delete camera;
+Manager::~Manager() {
+    if (camera) delete camera;
     param_bool.clear();
     shader_contents.clear();
 }
 
-void Manager::onReset(){
-    if(camera){delete camera; camera= nullptr;}
+void Manager::onReset() {
+    if (camera) { delete camera; camera = nullptr; }
     clear_opacity_widgets();
-    baked_dirty_ = true;    
+    baked_dirty_ = true;
     m_dirty_wid = -1;
 }
 
@@ -44,11 +44,15 @@ void Manager::clear_opacity_widgets() {
     for (auto param : widget_params_) param.clear();
     widget_params_.clear();
     widget_visibilities_.clear();
-    if (default_widget_points_!=nullptr) { delete[]default_widget_points_; default_widget_points_ = nullptr; }
+    if (default_widget_points_ != nullptr) { delete[]default_widget_points_; default_widget_points_ = nullptr; }
     baked_dirty_ = true;
 }
+void Manager::updateCamera(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj)
+{
+    camera->update(pose, proj);
+}
 
-void Manager::onViewChange(int w, int h){
+void Manager::onViewChange(int w, int h) {
     camera->setProjMat(w, h);
     screen_w = w; screen_h = h;
 }
@@ -72,7 +76,7 @@ void Manager::addOpacityWidget(float* values, int value_num) {
     if (!default_widget_points_) getGraphPoints(values, default_widget_points_);
 
     //update data for shader
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++) {
         m_volset_data.u_opacity[3 * wid + i] = {
             default_widget_points_[4 * i],
             default_widget_points_[4 * i + 1] ,
@@ -80,8 +84,8 @@ void Manager::addOpacityWidget(float* values, int value_num) {
             default_widget_points_[4 * i + 3]
         };
     }
-    m_volset_data.u_widget_num = wid+1;
-    m_volset_data.u_visible_bits |= 1<<wid;
+    m_volset_data.u_widget_num = wid + 1;
+    m_volset_data.u_visible_bits |= 1 << wid;
     baked_dirty_ = true;
     m_dirty_wid = wid;
 
@@ -91,10 +95,10 @@ void Manager::addOpacityWidget(float* values, int value_num) {
 
     for (int i = 0; i < 3; i++)
         m_volset_data.u_opacity[i] = {
-        points[4 * i], 
-        points[4 * i + 1] , 
-        points[4 * i + 2] , 
-        points[4 * i + 3] 
+        points[4 * i],
+        points[4 * i + 1] ,
+        points[4 * i + 2] ,
+        points[4 * i + 3]
     };
     m_volset_data.u_widget_num = 1;
     m_volset_data.u_visible_bits = 1;
@@ -127,13 +131,15 @@ void Manager::setRenderParam(int id, float value) {
     m_render_params[id] = value; Manager::baked_dirty_ = true;
     if (id == dvr::RENDER_CONTRAST_LOW)m_volset_data.u_contrast_low = value;
     else if (id == dvr::RENDER_CONTRAST_HIGH)m_volset_data.u_contrast_high = value;
-    else m_volset_data.u_brightness = m_render_params[dvr::RENDER_BRIGHTNESS];
+    else if(id == dvr::RENDER_BRIGHTNESS) m_volset_data.u_brightness = value;
+    else m_volset_data.u_base_value = value;
 }
 void Manager::setRenderParam(float* values) {
     memcpy(m_render_params, values, dvr::PARAM_RENDER_TUNE_END * sizeof(float));
     m_volset_data.u_contrast_low = m_render_params[dvr::RENDER_CONTRAST_LOW];
     m_volset_data.u_contrast_high = m_render_params[dvr::RENDER_CONTRAST_HIGH];
     m_volset_data.u_brightness = m_render_params[dvr::RENDER_BRIGHTNESS];
+    m_volset_data.u_base_value = m_render_params[dvr::RENDER_BASE_VALUE];
     Manager::baked_dirty_ = true;
 }
 void Manager::setCheck(std::string key, bool value) {
@@ -168,18 +174,17 @@ void Manager::setOpacityValue(int pid, float value) {
     widget_params_[m_current_wid][pid] = value;
 
     getGraphPoints(widget_params_[m_current_wid].data(), dirty_widget_points_);
-    
+
     for (int i = 0; i < 3; i++)
-        m_volset_data.u_opacity[3* m_current_wid + i] = {
+        m_volset_data.u_opacity[3 * m_current_wid + i] = {
         dirty_widget_points_[4 * i],
-        dirty_widget_points_[4 * i + 1] ,
-        dirty_widget_points_[4 * i + 2] ,
-        dirty_widget_points_[4 * i + 3]
-    };
+        dirty_widget_points_[4 * i + 1],
+        dirty_widget_points_[4 * i + 2],
+        dirty_widget_points_[4 * i + 3]};
 
     baked_dirty_ = true;
 }
-void Manager::setOpacityWidgetVisibility(int wid, bool visible){
+void Manager::setOpacityWidgetVisibility(int wid, bool visible) {
     widget_visibilities_[wid] = visible;
     if (visible) m_volset_data.u_visible_bits |= 1 << wid;
     else m_volset_data.u_visible_bits &= ~(1 << wid);
@@ -224,4 +229,3 @@ bool Manager::isRayCasting() { return param_bool[dvr::CHECK_RAYCAST]; }
 void Manager::setTraversalTargetId(int id) {
     traversal_target_id = (id == 0) ? dvr::ORGAN_COLON : dvr::ORGAN_ILEUM;
 }
-

@@ -1,5 +1,5 @@
 #include "rpcHandler.h"
-#include <ppltasks.h>	// For create_task
+#include <ppltasks.h> // For create_task
 #include <glm/gtc/type_ptr.hpp>
 #include <Utils/dataManager.h>
 using grpc::Channel;
@@ -14,7 +14,7 @@ using namespace Concurrency;
 
 bool rpcHandler::new_data_request = false;
 
-rpcHandler::rpcHandler(const std::string& host){
+rpcHandler::rpcHandler(const std::string& host) {
     auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
     syncer_ = inspectorSync::NewStub(channel);
     stub_ = dataTransfer::NewStub(channel);
@@ -22,30 +22,30 @@ rpcHandler::rpcHandler(const std::string& host){
     req.set_client_id(CLIENT_ID);
 }
 
-FrameUpdateMsg rpcHandler::getUpdates(){
+FrameUpdateMsg rpcHandler::getUpdates() {
     ClientContext context;
     syncer_->getUpdates(&context, req, &update_msg);
     return update_msg;
 }
-const RPCVector<GestureOp> rpcHandler::getOperations(){
+const RPCVector<GestureOp> rpcHandler::getOperations() {
     ClientContext context;
     std::vector<GestureOp> op_pool;
     OperationBatch op_batch;
     syncer_->getOperations(&context, req, &op_batch);
     return op_batch.gesture_op();
 }
-void rpcHandler::receiver_register(){
+void rpcHandler::receiver_register() {
     commonResponse resp;
     ClientContext context;
     syncer_->startReceiveBroadcast(&context, req, &resp);
 }
 
-void rpcHandler::Run(){
-    while(true){
-        if(ui_ == nullptr || manager_ == nullptr || vr_ == nullptr || m_dicom_loader == nullptr)
+void rpcHandler::Run() {
+    while (true) {
+        if (ui_ == nullptr || manager_ == nullptr || vr_ == nullptr || m_dicom_loader == nullptr)
             continue;
         //debug only: start to listen directly
-        if (!initialized){
+        if (!initialized) {
             receiver_register();
             initialized = true;
         }
@@ -54,10 +54,10 @@ void rpcHandler::Run(){
         int gid = 0, tid = 0, cid = 0;
         bool gesture_finished = false;
 
-        for(auto type : msg.types()){
-            switch(type){
+        for (auto type : msg.types()) {
+            switch (type) {
             case FrameUpdateMsg_MsgType_GESTURE:
-                if(!gesture_finished){
+                if (!gesture_finished) {
                     tackle_gesture_msg(msg.gestures());
                     gesture_finished = true;
                 }
@@ -78,14 +78,14 @@ void rpcHandler::Run(){
                 tackle_volume_msg(msg.data_value());
                 break;
             default:
-                std::cout<<"UNKNOWN TYPE"<<std::endl;
+                std::cout << "UNKNOWN TYPE" << std::endl;
                 break;
             }
         }
     }
 }
 
-void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo> &datasets){
+void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets) {
     datasetResponse response;
     ClientContext context;
     stub_->getAvailableDatasets(&context, req, &response);
@@ -95,7 +95,7 @@ void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo> &da
         datasets.push_back(ds);
 }
 
-void rpcHandler::getVolumeFromDataset(const std::string &dataset_name, std::vector<volumeInfo> &ret){
+void rpcHandler::getVolumeFromDataset(const std::string& dataset_name, std::vector<volumeInfo>& ret) {
     ret.clear();
     Request req;
     req.set_client_id(CLIENT_ID);
@@ -223,7 +223,7 @@ Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::
     });
     return create_task(Action);
 }
-void rpcHandler::DownloadMasksAndCenterlines(const std::string &folder_name){
+void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name) {
     Request req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(folder_name);
@@ -284,9 +284,9 @@ void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops){
         }
     }
 }
-void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg){
+void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg) {
     google::protobuf::RepeatedField<float> f;
-    switch (msg.type()){
+    switch (msg.type()) {
     case TuneMsg_TuneType_ADD_ONE:
         f = msg.values();
         ui_->addTuneParams(f.mutable_data(), f.size());
@@ -322,19 +322,19 @@ void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg){
         break;
     }
 }
-void rpcHandler::tack_check_msg(helmsley::CheckMsg msg){
+void rpcHandler::tack_check_msg(helmsley::CheckMsg msg) {
     ui_->setCheck(msg.key(), msg.value());
 }
-void rpcHandler::tack_mask_msg(helmsley::MaskMsg msg){
+void rpcHandler::tack_mask_msg(helmsley::MaskMsg msg) {
     ui_->setMaskBits(msg.num(), (unsigned int)msg.mbits());
 }
 
-void rpcHandler::tackle_volume_msg(helmsley::DataMsg msg){
+void rpcHandler::tackle_volume_msg(helmsley::DataMsg msg) {
     m_req_data = msg;
     new_data_request = true;
 }
 
-void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg){
+void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     //manager_->onReset();
 
     //checks

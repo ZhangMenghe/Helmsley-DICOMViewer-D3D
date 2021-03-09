@@ -77,6 +77,16 @@ public:
         DirectX::XMMATRIX orientationMatrix = DirectX::XMLoadFloat4x4(&orientation);
         _projMat = DirectX::XMMatrixTranspose(_projMat * orientationMatrix);
     }
+
+    void update(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj) {
+      _viewMat = DirectX::XMMatrixTranspose(pose);
+      _projMat = DirectX::XMMatrixTranspose(proj);
+      DirectX::XMVECTOR temp = DirectX::XMVector3Transform(XMLoadFloat3(&ORI_FRONT), DirectX::XMMatrixRotationQuaternion(DirectX::XMQuaternionRotationMatrix(pose)));
+      DirectX::XMStoreFloat3(
+        &_front,
+        temp);
+    }
+
     void setViewMat(DirectX::XMMATRIX viewmat) { _viewMat = viewmat; }
     //void setProjMat(DirectX::XMMATRIX projmat) {
     //    fov = 2.0 * atan(1.0f / projmat[1][1]);

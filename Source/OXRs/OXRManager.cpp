@@ -3,6 +3,9 @@
 #include <thread> // sleep_for
 #include <Common/Manager.h>
 #include <Common/DirectXHelper.h>
+#include <Utils/XrMath.h>
+#include <glm/gtc/quaternion.hpp>
+
 using namespace DX;
 OXRManager::OXRManager()
 :DeviceResources(true){
@@ -20,6 +23,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 	const char* ask_extensions[] = {
 		XR_KHR_D3D11_ENABLE_EXTENSION_NAME, // Use Direct3D11 for rendering
 		XR_EXT_DEBUG_UTILS_EXTENSION_NAME,  // Debug utils for extra info
+		XR_MSFT_SPATIAL_ANCHOR_EXTENSION_NAME,  // For spatial anchor
 	};
 
 	// We'll get a list of extensions that OpenXR provides using this 
@@ -73,6 +77,8 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 	xrGetInstanceProcAddr(xr_instance, "xrCreateDebugUtilsMessengerEXT", (PFN_xrVoidFunction*)(&ext_xrCreateDebugUtilsMessengerEXT));
 	xrGetInstanceProcAddr(xr_instance, "xrDestroyDebugUtilsMessengerEXT", (PFN_xrVoidFunction*)(&ext_xrDestroyDebugUtilsMessengerEXT));
 	xrGetInstanceProcAddr(xr_instance, "xrGetD3D11GraphicsRequirementsKHR", (PFN_xrVoidFunction*)(&ext_xrGetD3D11GraphicsRequirementsKHR));
+	xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialAnchorMSFT", (PFN_xrVoidFunction*)(&ext_xrCreateSpatialAnchorMSFT));
+	xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialAnchorSpaceMSFT", (PFN_xrVoidFunction*)(&ext_xrCreateSpatialAnchorSpaceMSFT));
 
 	// Set up a really verbose debug log! Great for dev, but turn this off or
 	// down for final builds. WMR doesn't produce much output here, but it
@@ -293,6 +299,8 @@ void OXRManager::InitOxrActions() {
 	attach_info.countActionSets = 1;
 	attach_info.actionSets = &xr_input.actionSet;
 	xrAttachSessionActionSets(xr_session, &attach_info);
+	lastFrameState = { XR_TYPE_FRAME_STATE };
+
 }
 bool OXRManager::Update() {
 	openxr_poll_events();
@@ -314,6 +322,7 @@ void OXRManager::Render(OXRScenes* scene){
 	// Must be called before any rendering is done! This can return some interesting flags, like 
 	// XR_SESSION_VISIBILITY_UNAVAILABLE, which means we could skip rendering this frame and call
 	// xrEndFrame right away.
+	lastFrameState = frame_state;
 	xrBeginFrame(xr_session, nullptr);
 
 	// Execute any code that's dependant on the predicted time, such as updating the location of
@@ -326,6 +335,7 @@ void OXRManager::Render(OXRScenes* scene){
 	XrCompositionLayerProjection             layer_proj = { XR_TYPE_COMPOSITION_LAYER_PROJECTION };
 	std::vector<XrCompositionLayerProjectionView> views;
 	bool session_active = xr_session_state == XR_SESSION_STATE_VISIBLE || xr_session_state == XR_SESSION_STATE_FOCUSED;
+	
 	if (session_active && openxr_render_layer(frame_state.predictedDisplayTime, views, layer_proj, scene)) {
 		layer = (XrCompositionLayerBaseHeader*)&layer_proj;
 	}
@@ -365,6 +375,41 @@ void OXRManager::ShutDown() {
 	if (m_d3dContext.Get()) { m_d3dContext.Get()->Release(); m_d3dContext = nullptr; }
 	if (m_d3dDevice.Get()) { m_d3dDevice.Get()->Release();  m_d3dDevice = nullptr; }
 }
+
+XrSpace DX::OXRManager::createReferenceSpace(XrReferenceSpaceType referenceSpaceType, XrPosef poseInReferenceSpace) {
+	XrSpace space;
+	XrReferenceSpaceCreateInfo createInfo{ XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
+	createInfo.referenceSpaceType = referenceSpaceType;
+	createInfo.poseInReferenceSpace = poseInReferenceSpace;
+	xrCreateReferenceSpace(xr_session, &createInfo, &space);
+	return space;
+}
+
+XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
+{
+	XrSpatialAnchorMSFT anchor;
+	// Anchors provide the best stability when moving beyond 5 meters, so if the extension is enabled,
+	// create an anchor at given location and place the hologram at the resulting anchor space.
+	XrSpatialAnchorCreateInfoMSFT createInfo{ XR_TYPE_SPATIAL_ANCHOR_CREATE_INFO_MSFT };
+	createInfo.space = xr_app_space;
+	createInfo.pose = poseInScene;
+	XrResult result = ext_xrCreateSpatialAnchorMSFT(
+		xr_session, &createInfo, &anchor);
+	return anchor;
+}
+
+XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
+{
+	XrSpatialAnchorMSFT anchor = createAnchor(poseInScene);
+	XrSpace space;
+	XrSpatialAnchorSpaceCreateInfoMSFT createSpaceInfo{ XR_TYPE_SPATIAL_ANCHOR_SPACE_CREATE_INFO_MSFT };
+	createSpaceInfo.anchor = anchor;
+	createSpaceInfo.poseInAnchorSpace = xr::math::Pose::Identity();
+	ext_xrCreateSpatialAnchorSpaceMSFT(xr_session, &createSpaceInfo, &space);
+	return space;
+}
+
+XrSpace * DX::OXRManager::getAppSpace() { return &xr_app_space; }
 
 void OXRManager::openxr_poll_events() {
 	XrEventDataBuffer event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
@@ -425,18 +470,48 @@ void OXRManager::openxr_poll_actions() {
 		XrActionStateBoolean select_state = { XR_TYPE_ACTION_STATE_BOOLEAN };
 		get_info.action = xr_input.selectAction;
 		xrGetActionStateBoolean(xr_session, &get_info, &select_state);
-		xr_input.handSelect[hand] = select_state.currentState && select_state.changedSinceLastSync;
+		xr_input.handSelect[hand] = select_state.isActive && select_state.currentState && select_state.changedSinceLastSync;
+		xr_input.handDeselect[hand] = select_state.isActive && !select_state.currentState && select_state.changedSinceLastSync;
 
-		// If we have a select event, update the hand pose to match the event's timestamp
-		if (xr_input.handSelect[hand]) {
+		// Constantly update pose if isActive
+		if (xr_input.renderHand[hand]) {
 			XrSpaceLocation space_location = { XR_TYPE_SPACE_LOCATION };
-			XrResult        res = xrLocateSpace(xr_input.handSpace[hand], xr_app_space, select_state.lastChangeTime, &space_location);
+			XrResult        res = xrLocateSpace(xr_input.handSpace[hand], xr_app_space, lastFrameState.predictedDisplayTime, &space_location);
 			if (XR_UNQUALIFIED_SUCCESS(res) &&
 				(space_location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
 				(space_location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0) {
 				xr_input.handPose[hand] = space_location.pose;
+				float x = space_location.pose.position.x;
+				float y = space_location.pose.position.y;
+				float z = space_location.pose.position.z;
+
+				glm::quat rot;
+				rot.x = space_location.pose.orientation.x;
+				rot.y = space_location.pose.orientation.y;
+				rot.z = space_location.pose.orientation.z;
+				rot.w = space_location.pose.orientation.w;
+				glm::mat4 rotMat = glm::mat4_cast(rot);
+
+				if(xr_input.handSelect[hand]) {
+					// If we have a select event, send onSingle3DTouchDown
+					onSingle3DTouchDown(x, y, z, hand);
+				}else if (xr_input.handDeselect[hand]) {
+					// If we have a deselect event, send on3DTouchReleased
+					on3DTouchReleased(hand);
+				}else{
+				  // Send on3DTouchMove
+					on3DTouchMove(x, y, z, rotMat, hand);
+				}
+
 			}
 		}
+	  else {
+
+			// lose tracking = release
+			on3DTouchReleased(hand);
+		}
+
+		
 	}
 }
 IDXGIAdapter1* OXRManager::d3d_get_adapter(LUID& adapter_luid) {
@@ -550,7 +625,10 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 			scene->onViewChanged();
 			Manager::instance()->onViewChange(m_outputSize.Width, m_outputSize.Height);
 		}
+		xr::math::NearFar nearFar = { 0.01f, 100.0f };
+		Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
+		scene->Update(predictedTime);
 		scene->Render();
 
 		// And tell OpenXR we're done with rendering to this one!

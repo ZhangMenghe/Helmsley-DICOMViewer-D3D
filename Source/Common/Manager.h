@@ -5,7 +5,8 @@
 #include <vector>
 #include <Common/ConstantAndStruct.h>
 #include <D3DPipeline/Camera.h>
-struct volumeSetupConstBuffer {
+struct volumeSetupConstBuffer
+{
     DirectX::XMUINT4 u_tex_size;
 
     //opacity widget
@@ -17,6 +18,7 @@ struct volumeSetupConstBuffer {
     float u_contrast_low;
     float u_contrast_high;
     float u_brightness;
+    float u_base_value;
 
     //mask
     UINT u_maskbits;
@@ -25,14 +27,15 @@ struct volumeSetupConstBuffer {
 
     //others
     int u_show_organ;
-    UINT u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
+    UINT u_color_scheme; //COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
 };
 
-class Manager {
+class Manager
+{
 public:
-    static Manager* instance();
+    static Manager *instance();
 
-    static Camera* camera;
+    static Camera *camera;
     static std::vector<bool> param_bool;
     static std::vector<std::string> shader_contents;
 
@@ -47,6 +50,7 @@ public:
     ~Manager();
     void onReset();
     void onViewChange(int w, int h);
+    void updateCamera(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj);
     void InitCheckParams(std::vector<std::string> keys, std::vector<bool> values);
 
     static bool IsCuttingEnabled();
@@ -55,7 +59,7 @@ public:
     static void setTraversalTargetId(int id);
 
     //getter
-    volumeSetupConstBuffer* getVolumeSetupConstData(){ return &m_volset_data; }
+    volumeSetupConstBuffer *getVolumeSetupConstData() { return &m_volset_data; }
     UINT getMaskBits() { return m_volset_data.u_maskbits; }
     bool getCheck(dvr::PARAM_BOOL id) { return param_bool[id]; }
     bool isDrawVolume() { return !param_bool[dvr::CHECK_MASKON] || param_bool[dvr::CHECK_VOLUME_ON]; }
@@ -67,13 +71,13 @@ public:
     std::vector<bool>* getOpacityWidgetVisibility() { return &widget_visibilities_; }
 
     //adder
-    void addOpacityWidget(float* values, int value_num);
+    void addOpacityWidget(float *values, int value_num);
     void removeOpacityWidget(int wid);
     void removeAllOpacityWidgets();
 
     //setter
     void setRenderParam(int id, float value);
-    void setRenderParam(float* values);
+    void setRenderParam(float *values);
     void setCheck(std::string key, bool value);
     void setMask(UINT num, UINT bits);
     void setColorScheme(int id);
@@ -82,16 +86,17 @@ public:
     void setOpacityValue(int pid, float value);
     void setOpacityWidgetVisibility(int wid, bool visible);
     void resetDirtyOpacityId() { m_dirty_wid = -1; }
+
 private:
     static Manager* myPtr_;
     volumeSetupConstBuffer m_volset_data;
-    
+
     //contrast, brightness, etc
-    float m_render_params[dvr::PARAM_RENDER_TUNE_END] = { .0f };
+    float m_render_params[dvr::PARAM_RENDER_TUNE_END] = {.0f};
     //opacity widgets
     std::vector<std::vector<float>> widget_params_;
     std::vector<bool> widget_visibilities_;
-    float* default_widget_points_ = nullptr, *dirty_widget_points_=nullptr;
+    float *default_widget_points_ = nullptr, *dirty_widget_points_ = nullptr;
     int m_current_wid = -1;
     int m_dirty_wid;
 
@@ -100,8 +105,7 @@ private:
 
     void clear_opacity_widgets();
     //todo: move to graph renderer
-    void getGraphPoints(float values[], float*& points);
+    void getGraphPoints(float values[], float *&points);
 };
-
 
 #endif //VOLUME_RENDERING_MANAGER_H

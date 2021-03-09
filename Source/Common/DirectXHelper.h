@@ -223,7 +223,6 @@ namespace DX
 		getSubDirs(dest_name, sub_folders);
 
 		if (sub_folders.size() > 4) return false;
-		
 		auto copy_func = [=](StorageFolder^ folder) {
 			auto copy_data_func = [=]() {
 				std::ifstream inFile("Assets\\" + src_name, std::ios::in | std::ios::binary);
@@ -272,6 +271,21 @@ namespace DX
 			else {
 				tsk0.then([=](StorageFolder^ folder) {
 					return copy_func(folder);
+				}).then([](task<bool> t)
+				{
+
+					try
+					{
+						t.get();
+						// .get() didn' t throw, so we succeeded.
+						OutputDebugString(L"2==");
+					}
+					catch (Platform::COMException ^ e)
+					{
+						//Example output: The system cannot find the specified file.
+						OutputDebugString(e->Message->Data());
+					}
+
 				});
 			}
 		}

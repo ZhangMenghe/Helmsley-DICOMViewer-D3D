@@ -2,27 +2,20 @@
 #include "dataManager.h"
 #include <sstream> 
 #include <Common/DirectXHelper.h>
-dataManager* dataManager::myPtr_ = nullptr;
-
-dataManager* dataManager::instance() {
-	return myPtr_;
-}
 
 dataManager::dataManager(const std::shared_ptr<dicomLoader>& dicom_loader)
 	:m_dicom_loader(dicom_loader),
 	m_index_file_path(dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME){
 	setup_local_datasets();
-	myPtr_ = this;
 }
 
-dataManager::dataManager(const std::shared_ptr<dicomLoader>& dicom_loader, 
+dataManager::dataManager(const std::shared_ptr<dicomLoader>& dicom_loader,
 	const std::shared_ptr<rpcHandler>& rpc_handler)
-:m_dicom_loader(dicom_loader), 
-m_rpc_handler(rpc_handler),
-m_index_file_path(dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME) {
+	:m_dicom_loader(dicom_loader),
+	m_rpc_handler(rpc_handler),
+	m_index_file_path(dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME) {
 	m_rpc_handler->getRemoteDatasets(m_remote_datasets);
 	setup_local_datasets();
-	myPtr_ = this;
 }
 
 bool dataManager::removeLocalData(std::string dsName, volumeInfo vInfo) {
@@ -38,7 +31,7 @@ bool dataManager::removeLocalData(std::string dsName, volumeInfo vInfo) {
 
 	for (int i = 0; i < config_lines.size(); i += 2) {
 		std::stringstream ssv(config_lines[i]);
-		for (int iv = 0; ssv.good()&&iv<4; iv++) std::getline(ssv, linfo[iv], '#');
+		for (int iv = 0; ssv.good() && iv < 4; iv++) std::getline(ssv, linfo[iv], '#');
 		if (linfo[2].compare(dsName) != 0 || linfo[3].compare(vlName) != 0) continue;
 
 		//update local_dv_map and m_local_ds
@@ -55,7 +48,7 @@ bool dataManager::removeLocalData(std::string dsName, volumeInfo vInfo) {
 		//update info contents
 		config_lines.erase(config_lines.begin() + i + 1);
 		config_lines.erase(config_lines.begin() + i);
-		
+
 		//write back to file
 		if (!DX::WriteLinesSync(m_index_file_path, config_lines)) return false;
 		break;
@@ -97,7 +90,6 @@ bool dataManager::loadData(std::string dsName, std::string vlName) {
 	for (auto ds : m_remote_datasets) {
 		if (ds.folder_name().compare(dsName) == 0) {
 			std::string path = dsName + "/" + vlName;
-			
 			//check if volume exists remotely
 			std::vector<volumeInfo> remote_vls;
 			m_rpc_handler->getVolumeFromDataset(dsName, remote_vls);
@@ -126,7 +118,6 @@ bool dataManager::loadData(std::string dsName, std::string vlName) {
 		}
 	}
 	return false;
-	
 }
 void dataManager::prepare_target_volume() {
 	auto dims = m_target_vl.dims();
@@ -156,7 +147,8 @@ bool dataManager::loadData(std::string dsName, volumeInfo vInfo, bool isLocal) {
 					m_dicom_loader->sendDataDone();
 					m_dicom_loader->saveAndUseCenterLineData(vl_path + "centerline.txt");
 				});
-			}else {
+			}
+			else {
 				save_target_dcmi();
 				m_dicom_loader->sendDataDone();
 			}
@@ -262,7 +254,7 @@ void dataManager::setup_local_datasets() {
 void dataManager::update_local_info(datasetResponse::datasetInfo tInfo, volumeInfo vInfo) {
 	std::string dsname = tInfo.folder_name();
 	if (m_local_dv_map.count(dsname) == 0) m_local_datasets.push_back(tInfo);
-	
+
 	auto itr = std::find_if(m_local_dv_map[dsname].begin(),
 		m_local_dv_map[dsname].end(), 
 		[vInfo](const volumeInfo& s) { return s.folder_name().compare(vInfo.folder_name()) == 0; });
@@ -292,7 +284,7 @@ void dataManager::save_target_dcmi() {
 	vs += std::to_string(m_target_vl.volume_loc_range())
 		+ "#" + (m_target_vl.with_mask() ? "true" : "false")
 		+ "#" + std::to_string(int(m_target_vl.data_source()));
-	
+
 	auto sinfo = m_target_vl.scores();
 	std::string ss = std::to_string(sinfo.rgroup_id())
 		+ "#" + std::to_string(sinfo.rank_id())
@@ -304,10 +296,8 @@ void dataManager::save_target_dcmi() {
 
 	//save data
 	std::string vl_path = dvr::CACHE_FOLDER_NAME + "\\" + m_target_ds.folder_name() + "\\" + m_target_vl.folder_name() + "\\";
-	
 	//TODO!!!!SAVE ONLY DATA IF NO MASK!!!!
 	//vl_path += m_target_vl.with_mask() ? "data_w_mask" : "data";
 	vl_path += dvr::DCM_WMASK_FILE_NAME;
 	m_dicom_loader->saveData(vl_path);
 }
-

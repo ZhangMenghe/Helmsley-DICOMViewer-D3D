@@ -1,5 +1,5 @@
-﻿#pragma once
-
+﻿#ifndef CORE_WIN_MAIN_H
+#define CORE_WIN_MAIN_H
 #include "Common\StepTimer.h"
 #include "Common\DeviceResources.h"
 #include <vrController.h>
@@ -10,7 +10,7 @@
 #include <grpc/rpcHandler.h>
 #include <Utils/dataManager.h>
 
-namespace CoreWin{
+namespace CoreWin {
 	class CoreWinMain : public DX::IDeviceNotify
 	{
 	public:
@@ -31,9 +31,8 @@ namespace CoreWin{
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
-		// TODO: Replace with your own content renderers.
-		std::unique_ptr<vrController> m_sceneRenderer;
 		std::shared_ptr<Manager> m_manager;
+		std::unique_ptr<vrController> m_sceneRenderer;
 
 		std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 
@@ -50,7 +49,7 @@ namespace CoreWin{
 		std::shared_ptr<rpcHandler> m_rpcHandler = nullptr;
 
 		// RPC thread
-		std::thread * m_rpcThread;
+		std::thread* m_rpcThread;
 
 		const bool m_overwrite_index_file = false;
 		void setup_volume_server();
@@ -58,3 +57,4 @@ namespace CoreWin{
 		void setup_resource();
 	};
 }
+#endif

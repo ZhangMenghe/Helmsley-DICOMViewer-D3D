@@ -9,22 +9,18 @@ struct vInfoCmp {
 };
 class dataManager {
 public:
-	static dataManager* instance();
-
 	dataManager(const std::shared_ptr<dicomLoader>& dicom_loader);
 	dataManager(const std::shared_ptr<dicomLoader>& dicom_loader, const std::shared_ptr<rpcHandler>& rpc_handler);
-	
+
 	bool removeLocalData(std::string dsName, volumeInfo vInfo);
 	bool loadData(std::string dsName, std::string vlName);
 	bool loadData(std::string dsName, volumeInfo vInfo, bool isLocal);
-	
+
 	//getter
 	std::vector<datasetResponse::datasetInfo> getAvailableDataset(bool isLocal);
 	void getAvailableVolumes(std::string dsname, std::vector<volumeInfo>& ret, bool isLocal);
 
 private:
-	static dataManager* myPtr_;
-
 	const std::string m_index_file_path;
 
 	std::shared_ptr<rpcHandler> m_rpc_handler;

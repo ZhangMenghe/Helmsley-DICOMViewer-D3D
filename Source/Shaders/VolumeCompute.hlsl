@@ -32,16 +32,16 @@ int getMaskBit(uint mask_value) {
 
 float3 TransferColor(float intensity, int ORGAN_BIT) {
 	float3 color = intensity;
-	
-	if (u_color_scheme > 0) 
-		color = hex2rgb(COLOR_SCHEME_HEX[u_color_scheme-1][int(intensity * 255.0)]);
+
+	if (u_color_scheme > 0)
+		color = hex2rgb(COLOR_SCHEME_HEX[u_color_scheme - 1][int(intensity * 255.0)]);
 	if (u_show_organ && u_mask_recolor && ORGAN_BIT > int(0)) color = transfer_scheme(ORGAN_BIT, intensity);
-	
+
 	return AdjustContrastBrightness(color);
 }
 
-[numthreads(8,8,8)]
-void main(uint3 threadID : SV_DispatchThreadID){
+[numthreads(8, 8, 8)]
+void main(uint3 threadID : SV_DispatchThreadID) {
 	uint value = srcVolume[threadID].r;
 	//mask
 	uint u_mask = value >> uint(16);
@@ -52,9 +52,7 @@ void main(uint3 threadID : SV_DispatchThreadID){
 	}
 
 	uint u_intensity = value & uint(0xffff);
-	//float intensity_01 = clamp(float(value.x) * 0.0002442002442002442, .0, 1.0);
-	float intensity_01 = float(value.x) * 0.0002442002442002442;
-
+	float intensity_01 = clamp(float(u_intensity) * 0.0002442002442002442 + u_base_value - 0.5, .0, 1.0);
 	float alpha = .0f;
 	for (int i = 0; i < u_widget_num; i++)
 		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity_01));

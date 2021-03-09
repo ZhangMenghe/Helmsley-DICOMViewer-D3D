@@ -7,18 +7,21 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources
 	m_manager = std::make_shared<Manager>();
 
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
-	m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
+	m_sceneRenderer->InitOXRScene();
+
+	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
 	m_uiController.InitAll();
-	
+
 	setup_resource();
 }
 void OXRScenes::setup_volume_server() {
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
-	std::vector<volumeInfo> vl = m_data_manager->getAvailableVolumes("IRB01", false);
+	std::vector<volumeInfo> vl;
+	m_data_manager->getAvailableVolumes("IRB01", vl, false);
 
 	volumeInfo vInfo;
 	for (auto vli : vl) {
@@ -37,7 +40,8 @@ void OXRScenes::setup_volume_server() {
 void OXRScenes::setup_volume_local() {
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
 	auto dsName = ds[0].folder_name();
-	std::vector<volumeInfo> vl = m_data_manager->getAvailableVolumes(dsName, true);
+	std::vector<volumeInfo> vl;
+	m_data_manager->getAvailableVolumes(dsName, vl, true);
 
 	auto vInfo = vl[0];
 	auto dims = vInfo.dims();
@@ -66,19 +70,20 @@ void OXRScenes::setup_resource() {
 		return true;
 	};
 	auto post_copy_func = [this]() {
-		if (dvr::CONNECT_TO_SERVER) {
-			m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
-			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-			m_rpcHandler->setDataLoader(m_dicom_loader);
-			m_rpcHandler->setVRController(m_sceneRenderer.get());
-			m_rpcHandler->setManager(m_manager.get());
-			m_rpcHandler->setUIController(&m_uiController);
-			m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
-		}
-		else {
-			m_data_manager = new dataManager(m_dicom_loader);
-		}
-		setup_volume_local();
+		
+		//if (dvr::CONNECT_TO_SERVER) {
+		//	m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
+		//	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+		//	m_rpcHandler->setDataLoader(m_dicom_loader);
+		//	m_rpcHandler->setVRController(m_sceneRenderer.get());
+		//	m_rpcHandler->setManager(m_manager.get());
+		//	m_rpcHandler->setUIController(&m_uiController);
+		//	m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
+		//}
+		//else {
+		//	m_data_manager = new dataManager(m_dicom_loader);
+		//}
+		//setup_volume_local();
 		//setup_volume_server();
 	};
 	create_task(dst_folder->CreateFolderAsync(Platform::StringReference(dir_name.c_str()), CreationCollisionOption::OpenIfExists))
@@ -94,17 +99,41 @@ void OXRScenes::setup_resource() {
 			if (copy_func())post_copy_func();
 		}
 	});
+	/*if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false))
+		std::cerr << "Fail to copy";*/
+	if (dvr::CONNECT_TO_SERVER) {
+		m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
+		m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+		m_rpcHandler->setDataLoader(m_dicom_loader);
+		m_rpcHandler->setVRController(m_sceneRenderer.get());
+		m_rpcHandler->setManager(m_manager.get());
+		m_rpcHandler->setUIController(&m_uiController);
+		m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
+	}
+	else {
+		m_data_manager = new dataManager(m_dicom_loader);
+	}
+	setup_volume_local();
 }
 void OXRScenes::onViewChanged()
 {
 	m_sceneRenderer->CreateWindowSizeDependentResources();
 }
-
-void OXRScenes::Update()
+void OXRScenes::setSpaces(XrSpace* space, XrSpace* app_space)
 {
+	this->space = space;
+	this->app_space = app_space;
+	//this->m_sceneRenderer->setSpaces(space, app_space);
+}
+void OXRScenes::Update() {
+	if (rpcHandler::new_data_request) {
+		auto dmsg = m_rpcHandler->GetNewDataRequest();
+		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
+		rpcHandler::new_data_request = false;
+	}
 	m_timer.Tick([&]() {
 		m_sceneRenderer->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
+		//m_fpsTextRenderer->Update(m_timer);
 	});
 }
 

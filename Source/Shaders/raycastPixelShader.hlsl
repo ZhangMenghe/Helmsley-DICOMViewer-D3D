@@ -42,6 +42,7 @@ float4 Sample(float3 p) {
 	float3 cp = clamp(p, .01f, 0.99f);
 	cp.y = 1.0 - cp.y;
 	return shaderTexture.Sample(uSampler, cp);
+	//return shaderTexture.Sample(uSampler, clamp(p, .01f, 0.99f));
 }
 float4 subDivide(float3 p, float3 ro, float3 rd, float t, float StepSize) {
 	float t0 = t - StepSize * 4.0;
@@ -65,7 +66,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	float step_size = usample_step_inverse;
 	bool last_succeeded = true;
 
-	for (float t = head; t < tail && steps<128; steps++ ) {
+	for (float t = head; t < tail && steps<50; steps++ ) {
 		if (sum.a >= 0.98f) break;
 		float3 p = ro + rd * t;
 		float4 val_color = Sample(p);
@@ -87,6 +88,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 		}
 	}
 	return float4(sum.rgb, saturate(sum.a));
+	//return float4(ro + rd * head, 1.0);
 }
 
 // A pass-through function for the (interpolated) color data.

@@ -11,26 +11,36 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 	UINT vertice_num, UINT idx_num)
 	:m_loadingComplete(false),
 	m_vertice_count(vertice_num),
-	m_index_count(idx_num){
+	m_index_count(idx_num),
+  device(device),
+	vname(vname),
+	pname(pname),
+	vdata(vdata),
+	idata(idata)
+{
+}
+
+void baseRenderer::initialize()
+{
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(vname);
 	auto loadPSTask = DX::ReadDataAsync(pname);
 
 	// After the vertex shader file is loaded, create the shader and input layout.
-	auto createVSTask = loadVSTask.then([this, device](const std::vector<byte>& fileData) {
+	auto createVSTask = loadVSTask.then([this](const std::vector<byte>& fileData) {
 		create_vertex_shader(device, fileData);
 	});
 
 
 	// After the pixel shader file is loaded, create the shader and constant buffer.
-	auto createPSTask = loadPSTask.then([this, device](const std::vector<byte>& fileData) {
+	auto createPSTask = loadPSTask.then([this](const std::vector<byte>& fileData) {
 		create_fragment_shader(device, fileData);
 	});
 
 
 	// Once both shaders are loaded, create the mesh.
-	auto createModelTask = (createPSTask && createVSTask).then([this, device, vdata, idata]() {
-		if(vdata!=nullptr)initialize_vertices(device, vdata);
+	auto createModelTask = (createPSTask && createVSTask).then([this]() {
+		if (vdata != nullptr)initialize_vertices(device, vdata);
 		if (idata != nullptr)initialize_indices(device, idata);
 		initialize_mesh_others(device);
 	});
@@ -39,6 +49,7 @@ baseRenderer::baseRenderer(ID3D11Device* device,
 		m_loadingComplete = true;
 	});
 }
+
 void baseRenderer::initialize_vertices(ID3D11Device* device, const float* vdata){
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = vdata;

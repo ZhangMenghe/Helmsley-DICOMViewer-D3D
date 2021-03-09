@@ -30,7 +30,7 @@ void CoreWinMain::setup_volume_server(){
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
 	std::vector<volumeInfo> vl;
-	m_data_manager->getAvailableVolumes("Larry-2012-01-17-MRI", vl, false);
+	m_data_manager->getAvailableVolumes("IRB01", vl, false);
 
 	volumeInfo vInfo;
 	for (auto vli : vl) {
@@ -44,33 +44,7 @@ void CoreWinMain::setup_volume_server(){
 		dims[0], dims[1], dims[2],
 		spacing[0] * dims[0], spacing[1] * dims[1], vInfo.volume_loc_range(),
 		vInfo.with_mask());
-	m_data_manager->loadData("Larry-2012-01-17-MRI", vInfo, false);
-
-	//auto vector = m_rpcHandler->getVolumeFromDataset("IRB02");
-
-	//if (vector.size() > 0) {
-	//	volumeInfo sel_vol_info;// = vector[0];
-	//	for (auto vol : vector) {
-	//		if (vol.folder_name().compare("21_WATERPOSTCORLAVAFLEX20secs") == 0) {
-	//			sel_vol_info = vol;
-	//			break;
-	//		}
-	//	}
-	//	auto vdims = sel_vol_info.dims();
-	//	auto spacing = sel_vol_info.resolution();
-	//	m_dicom_loader->sendDataPrepare(
-	//		vdims.Get(0), vdims.Get(1), vdims.Get(2),
-	//		spacing.Get(0) * vdims.Get(0), spacing.Get(1) * vdims.Get(1), spacing.Get(2) * vdims.Get(2),
-	//		sel_vol_info.with_mask());
-
-	//	std::string path;// = m_rpcHandler->target_ds.folder_name() + '/' + sel_vol_info.folder_name();
-	//	m_rpcHandler->DownloadVolume(path);
-	//	m_rpcHandler->DownloadMasksAndCenterlines(path);
-	//	m_dicom_loader.sendDataDone();
-	//}
-	//else {
-	//	setup_volume_local();
-	//}
+	m_data_manager->loadData("IRB01", vInfo, false);
 }
 void CoreWinMain::setup_volume_local() {
 	//test asset demo
@@ -83,8 +57,8 @@ void CoreWinMain::setup_volume_local() {
 	auto dims = vInfo.dims();
 	auto spacing = vInfo.resolution();
 	m_dicom_loader->sendDataPrepare(
-		dims[0], dims[1], dims[2], 
-		spacing[0] * dims[0], spacing[1] * dims[1], vInfo.volume_loc_range(), 
+		dims[0], dims[1], dims[2],
+		spacing[0] * dims[0], spacing[1] * dims[1], vInfo.volume_loc_range(),
 		vInfo.with_mask());
 	m_data_manager->loadData(dsName, vInfo, true);
 }
@@ -128,7 +102,7 @@ void CoreWinMain::setup_resource() {
 		if (!m_overwrite_index_file) {
 			create_task(folder->TryGetItemAsync(Platform::StringReference(index_file_name.c_str()))).then([this, copy_func, post_copy_func](IStorageItem^ data) {
 				if (data != nullptr) post_copy_func();
-				else if(copy_func()) post_copy_func();
+				else if (copy_func()) post_copy_func();
 			});
 		}
 		else {
@@ -142,16 +116,16 @@ CoreWinMain::~CoreWinMain(){
 }
 
 // Updates application state when the window size changes (e.g. device orientation change)
-void CoreWinMain::CreateWindowSizeDependentResources() 
+void CoreWinMain::CreateWindowSizeDependentResources()
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
-	//m_sceneRenderer->CreateWindowSizeDependentResources();
+	m_sceneRenderer->CreateWindowSizeDependentResources();
 	Size outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 }
 
 // Updates the application state once per frame.
-void CoreWinMain::Update() {
+void CoreWinMain::Update(){
 	if (rpcHandler::new_data_request) {
 		auto dmsg = m_rpcHandler->GetNewDataRequest();
 		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
@@ -168,7 +142,7 @@ void CoreWinMain::Update() {
 
 // Renders the current frame according to the current application state.
 // Returns true if the frame was rendered and is ready to be displayed.
-bool CoreWinMain::Render() 
+bool CoreWinMain::Render()
 {
 	// Don't try to render anything before the first Update.
 	if (m_timer.GetFrameCount() == 0)
@@ -183,7 +157,7 @@ bool CoreWinMain::Render()
 	context->RSSetViewports(1, &viewport);
 
 	// Reset render targets to the screen.
-	ID3D11RenderTargetView *const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
+	ID3D11RenderTargetView* const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
 	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
 
 	// Clear the back buffer and depth stencil view.
@@ -194,7 +168,7 @@ bool CoreWinMain::Render()
 	// TODO: Replace this with your app's content rendering functions.
 	m_sceneRenderer->Render();
 	m_fpsTextRenderer->Render();
-	
+
 	return true;
 }
 

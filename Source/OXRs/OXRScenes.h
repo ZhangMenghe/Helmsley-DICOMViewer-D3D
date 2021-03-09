@@ -10,11 +10,17 @@
 
 class OXRScenes {
 public:
-	OXRScenes(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
 	void Update();
 	void Update(XrTime time);
 	bool Render();
 	void onViewChanged();
+	void setSpaces(XrSpace *space, XrSpace *app_space);
+
+	void onSingle3DTouchDown(float x, float y, float z, int side) { m_sceneRenderer->onSingle3DTouchDown(x, y, z, side); };
+	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) { m_sceneRenderer->on3DTouchMove(x, y, z, rot, side); };
+	void on3DTouchReleased(int side) { m_sceneRenderer->on3DTouchReleased(side); };
+
 private:
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
@@ -22,7 +28,7 @@ private:
 	std::unique_ptr<vrController> m_sceneRenderer;
 
 	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
-
+	
 	uiController m_uiController;
 
 	dataManager* m_data_manager;
@@ -33,7 +39,7 @@ private:
 	std::shared_ptr<rpcHandler> m_rpcHandler = nullptr;
 
 	// RPC thread
-	std::thread* m_rpcThread;
+	std::thread *m_rpcThread;
 
 	//XR
 	XrSpace* space;
@@ -42,7 +48,7 @@ private:
 	// Rendering loop timer.
 	DX::StepTimer m_timer;
 
-	const bool m_overwrite_index_file = false;
+	bool m_overwrite_index_file = false;
 
 	void setup_volume_server();
 	void setup_volume_local();

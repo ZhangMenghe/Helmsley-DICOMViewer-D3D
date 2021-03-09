@@ -18,8 +18,8 @@ public:
 	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
 	void setTexture(Texture* tex) { texture = tex; }
 protected:
-	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
-	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
+	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
+	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 private:
 	dvr::ModelViewProjectionConstantBuffer m_constantBufferData;
 	bool m_as_render_target;

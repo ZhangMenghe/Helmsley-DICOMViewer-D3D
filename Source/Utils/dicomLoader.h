@@ -9,27 +9,27 @@
 /// JNIInterface for data loading stuff
 /// </summary>
 
-typedef enum{
+typedef enum {
     LOAD_DICOM = 0,
     LOAD_MASK,
     LOAD_BOTH
 }mLoadTarget;
 
 class vrController;
-class dicomLoader{
+class dicomLoader {
 public:
     void sendDataPrepare(int height, int width, int dims, float sh, float sw, float sd, bool b_wmask);
-    bool loadData(std::string filename, mLoadTarget target, bool b_from_asset, int unit_size=2);
-    bool loadData(std::string dicom_path, std::string mask_path, bool b_from_asset, int data_unit_size=2, int mask_unit_size=2);
+    bool loadData(std::string filename, mLoadTarget target, bool b_from_asset, int unit_size = 2);
+    bool loadData(std::string dicom_path, std::string mask_path, bool b_from_asset, int data_unit_size = 2, int mask_unit_size = 2);
     bool loadData(std::string dirpath, bool wmask, bool b_from_asset);
 
     bool setupCenterLineData(std::string filename, bool b_from_asset);
     bool saveData(std::string vlpath);
 
     //setter
-    int getChannelNum(){return CHANEL_NUM;}
-    UCHAR* getVolumeData(){return g_VolumeTexData;}
-    void reset(){
+    int getChannelNum() { return CHANEL_NUM; }
+    UCHAR* getVolumeData() { return g_VolumeTexData; }
+    void reset() {
         // delete[] g_VolumeTexData;
         // g_VolumeTexData = nullptr;
         // for(auto& offset:n_data_offset) offset = 0;
@@ -42,7 +42,7 @@ public:
 private:
     int CHANEL_NUM;
     UCHAR* g_VolumeTexData = nullptr;
-    int g_img_h=0, g_img_w=0, g_img_d=0;
+    int g_img_h = 0, g_img_w = 0, g_img_d = 0;
     float g_vol_h, g_vol_w, g_vol_depth = 0;
     size_t g_ssize = 0, g_vol_len;
     size_t n_data_offset[3];
