@@ -12,6 +12,10 @@
 class OXRScenes{
 public:
 	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
+	void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {
+		m_scenario->SetupReferenceFrame(referenceFrame);
+	}
+
 	void Update();
 	void Update(XrTime time);
 	bool Render(int view_id);

@@ -97,11 +97,20 @@ void SensorVizScenario::IntializeSensors() {
 }
 
 void SensorVizScenario::IntializeScene() {
+    IResearchModeSensorDevicePerception* pSensorDevicePerception;
+    GUID guid;
+    HRESULT hr = S_OK;
+    hr = m_pSensorDevice->QueryInterface(IID_PPV_ARGS(&pSensorDevicePerception));
+    hr = pSensorDevicePerception->GetRigNodeId(&guid);
+
     m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
     m_LFCameraRenderer->setPosition(glm::vec3(-0.2, .0, .0));
+    m_LFCameraRenderer->SetGUID(guid);
+
 
     m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
     m_RFCameraRenderer->setPosition(glm::vec3(0.2, .0, .0));
+    m_RFCameraRenderer->SetGUID(guid);
 
     D3D11_TEXTURE2D_DESC texDesc;
     texDesc.Width = 760;

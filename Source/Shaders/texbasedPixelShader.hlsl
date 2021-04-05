@@ -11,10 +11,10 @@ cbuffer texPixConstantBuffer : register(b0){
 	float u_cut_texz : packoffset(c2.x);
 };
 float4 main(v2f input) : SV_TARGET{
-	return float4(input.tex, 1.0);
-	//if (u_cut) {
-	//	if (u_front && input.tex.z > u_cut_texz) return .0f;
-	//	else if (!u_front && input.tex.z < u_cut_texz) return .0f;
-	//}
-	//return shaderTexture.SampleLevel(uSampler, u_front? input.tex:float3(input.tex.xy, 1.0 - input.tex.z),0);
+	//return float4(input.tex, 1.0);
+	if (u_cut) {
+		if (u_front && input.tex.z > u_cut_texz) return .0f;
+		else if (!u_front && input.tex.z < u_cut_texz) return .0f;
+	}
+	return shaderTexture.SampleLevel(uSampler, u_front? input.tex:float3(input.tex.xy, 1.0 - input.tex.z),0);
 }

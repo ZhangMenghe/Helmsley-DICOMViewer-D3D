@@ -21,5 +21,6 @@
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #define XR_USE_PLATFORM_WIN32
 #define XR_USE_GRAPHICS_API_D3D11
+#define PRINT_CAMERA_MATRIX FALSE
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>

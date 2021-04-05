@@ -248,19 +248,21 @@ void vrController::StopTracking()
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render(int view_id)
 {
-	//if (tex_volume == nullptr || tex_baked == nullptr) return;
-	//if (!pre_draw_) { render_scene(); return; }
+	if (tex_volume == nullptr || tex_baked == nullptr) return;
+	if (!pre_draw_) { render_scene(view_id); return; }
 
-	//auto context = m_deviceResources->GetD3DDeviceContext();
-	//if (isDirty()) //(true) // TODO: debug
-	//{
-	//	screen_quad->SetToDrawTarget(context, m_deviceResources->GetDepthStencilView());
-	//	render_scene();
-	//}
-	//m_deviceResources->SetBackBufferRenderTarget();
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	if (true) //(true) // TODO: debug
+	{
+		/*screen_quad->SetToDrawTarget(context, m_deviceResources.get());
+		render_scene(view_id);
+		m_deviceResources->removeCurrentTargetViews();*/
+	}
+	m_deviceResources->SetBackBufferRenderTarget();
 	//screen_quad->Draw(context);
-	//m_deviceResources->ClearCurrentDepthBuffer();
 	render_scene(view_id);
+	m_deviceResources->ClearCurrentDepthBuffer();
+	//render_scene(view_id);
 }
 
 void vrController::precompute()
@@ -315,18 +317,20 @@ void vrController::render_scene(int view_id)
 	//front or back
 	DirectX::XMFLOAT4X4 m_rot_mat;
 	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-	bool is_front = (m_rot_mat._33 * Manager::camera->getViewDirection().z) < 0;
-	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
 	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
-	Frame_model_mat = m_extrinsics_mats[view_id] * SpaceMat_ * ModelMat_;
+	Frame_model_mat = SpaceMat_;// *ModelMat_; // m_extrinsics_mats[view_id] * 
 
-	auto model_mat = Frame_model_mat * vol_dim_scale_mat_;
-	//auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
+	auto model_mat = Frame_model_mat * vol_dim_scale_mat_ *glm::scale(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0.2f)); //glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0.01f)) 
+
+	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
+	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
+
+  //auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	//cutter_->Update(model_mat);
-	//if (Manager::IsCuttingNeedUpdate())
-	//	cutter_->Update(model_mat);
+	cutter_->Update(model_mat);
+	if (Manager::IsCuttingNeedUpdate())
+		cutter_->Update(model_mat);
 
 	bool render_complete = true;
 	//////  CUTTING PLANE  //////
@@ -335,16 +339,16 @@ void vrController::render_scene(int view_id)
 	//	render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	//	m_deviceResources->ClearCurrentDepthBuffer();
 	//}
-
+	precompute();
 	//////   VOLUME   //////
 	//if (m_manager->isDrawVolume())
 	//{
 	//	//precompute();
 	//	if (Manager::isRayCasting())
-	render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+	//render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
 	//	else
-	//		render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(ModelMat_), is_front);
-	//m_deviceResources->ClearCurrentDepthBuffer();
+	render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat), is_front);
+	m_deviceResources->ClearCurrentDepthBuffer();
 	//m_present = false;
 	//}
 
@@ -380,7 +384,7 @@ void vrController::render_scene(int view_id)
 	//	m_deviceResources->ClearCurrentDepthBuffer();
 	//}
 	Manager::baked_dirty_ = false;
-	//m_scene_dirty = !render_complete;
+	m_scene_dirty = !render_complete;
 	context->RSSetState(m_render_state_front);
 }
 

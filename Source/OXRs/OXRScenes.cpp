@@ -20,6 +20,9 @@ OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources
 
 	setup_resource();
 }
+
+
+
 void OXRScenes::setup_volume_server()
 {
 	//test remote

@@ -1,6 +1,9 @@
 #ifndef D3DPIPELINE_CAMERA_H
 #define D3DPIPELINE_CAMERA_H
 #include "pch.h"
+#include "strsafe.h"
+#include "../../Projects/OpenXR/pch.h"
+#include "Utils/TypeConvertUtils.h"
 
 class Camera {
     const char* name_;
@@ -81,6 +84,14 @@ public:
 
     void update(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj) {
       _viewMat = DirectX::XMMatrixTranspose(pose);
+      auto mat = glm::inverse(xmmatrix2mat4(pose));
+      if (PRINT_CAMERA_MATRIX){
+        TCHAR buf[1024];
+        size_t cbDest = 1024 * sizeof(TCHAR);
+        StringCbPrintf(buf, cbDest, TEXT("Camera:(%f,%f,%f)\n"), (float)mat[3][0], (float)mat[3][1], (float)mat[3][2]);
+        OutputDebugString(buf);
+      }
+
       _projMat = DirectX::XMMatrixTranspose(proj);
       DirectX::XMVECTOR temp = DirectX::XMVector3Transform(XMLoadFloat3(&ORI_FRONT), DirectX::XMMatrixRotationQuaternion(DirectX::XMQuaternionRotationMatrix(pose)));
       DirectX::XMStoreFloat3(

@@ -90,6 +90,9 @@ public:
 	bool isDirty();
 	glm::mat4 getFrameModelMat() { return Frame_model_mat; }
 	ID3D11RasterizerState *m_render_state_front, *m_render_state_back;
+	glm::mat4 getCameraExtrinsicsMat(int id) {
+		return m_extrinsics_mats[id];
+	}
 
 private:
 	//XrSpace * space;

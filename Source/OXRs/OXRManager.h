@@ -30,6 +30,20 @@ namespace DX {
 		XrBool32 handDeselect[2];
 	};
 
+	struct ViewConfigurationState {
+		XrViewConfigurationType Type;
+		std::vector<XrViewConfigurationView> ViewConfigViews;
+		std::vector<XrView> Views;
+		bool Active;
+	};
+
+	struct ViewProperties {
+		XrViewConfigurationType Type;
+		XrBool32 FovMutable;
+		XrEnvironmentBlendMode BlendMode;
+		std::vector<XrEnvironmentBlendMode> SupportedBlendModes;
+	};
+
 	class OXRManager : public DeviceResources {
 	public:
 		OXRManager();
@@ -45,6 +59,10 @@ namespace DX {
 
 		XrSpace createAnchorSpace(const XrPosef& poseInScene);
 		XrSpace * getAppSpace();
+
+		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem getReferenceFrame() {
+			return referenceFrame;
+		}
 
 		std::function<void(float, float, float, int)> onSingle3DTouchDown;
 		std::function<void(float, float, float, glm::mat4, int)> on3DTouchMove;
@@ -63,6 +81,7 @@ namespace DX {
 		bool           xr_running = false;
 		bool		   xr_quit = false;
 		XrSpace        xr_app_space = {};
+		XrSpace				xr_view_space = {};
 		XrSystemId     xr_system_id = XR_NULL_SYSTEM_ID;
 		input_state_t  xr_input = { };
 		XrEnvironmentBlendMode   xr_blend = {};
@@ -72,6 +91,7 @@ namespace DX {
 		std::vector<XrView>                  xr_views;
 		std::vector<XrViewConfigurationView> xr_config_views;
 		std::vector<swapchain_t>             xr_swapchains;
+		std::vector<swapchain_t>             xr_depth_swapchains;
 
 		// Function pointers for some OpenXR extension methods we'll use.
 		PFN_xrGetD3D11GraphicsRequirementsKHR ext_xrGetD3D11GraphicsRequirementsKHR = nullptr;
@@ -80,19 +100,36 @@ namespace DX {
 		PFN_xrCreateSpatialAnchorMSFT    ext_xrCreateSpatialAnchorMSFT = nullptr;
 		PFN_xrCreateSpatialAnchorSpaceMSFT    ext_xrCreateSpatialAnchorSpaceMSFT = nullptr;
 
+		std::mutex m_secondaryViewConfigActiveMutex;
+		std::vector<XrSecondaryViewConfigurationStateMSFT> m_secondaryViewConfigurationsState;
+		std::vector<XrViewConfigurationType> EnabledSecondaryViewConfigurationTypes;
+		bool SupportsSecondaryViewConfiguration = true;
+		std::unordered_map<XrViewConfigurationType, ViewConfigurationState> m_viewConfigStates;
+		std::unordered_map<XrViewConfigurationType, ViewProperties> m_viewProperties;
+		std::vector<XrViewConfigurationType> SupportedPrimaryViewConfigurationTypes;
+		std::vector<XrViewConfigurationType> SupportedSecondaryViewConfigurationTypes;
+		std::vector<XrView>                  xr_secondary_views;
+		std::vector<XrViewConfigurationView> xr_secondary_config_views;
+		std::vector<swapchain_t>             xr_secondary_swapchains;
+		std::vector<swapchain_t>             xr_secondary_depth_swapchains;
+		winrt::Windows::Foundation::Size		 m_secondary_outputSizes;
+		bool render_for_MRC = false;
+
+		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame = { nullptr };
+
 		void openxr_poll_events();
 		void openxr_poll_actions();
 		void openxr_poll_predicted(XrTime predicted_time);
 
-		
+		void SetSecondaryViewConfigurationActive(ViewConfigurationState& secondaryViewConfigState, bool active);
 
 		DirectX::XMMATRIX d3d_xr_projection(XrFovf fov, float clip_near, float clip_far);
 		IDXGIAdapter1* d3d_get_adapter(LUID& adapter_luid);
 		swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchainImage);
 		bool openxr_render_layer(XrTime predictedTime, 
-			std::vector<XrCompositionLayerProjectionView>& projectionViews,
+			std::vector<XrCompositionLayerProjectionView>& projectionViews, std::vector<XrCompositionLayerDepthInfoKHR>& depthInfo,
 			XrCompositionLayerProjection& layer,
-			OXRScenes* scene);
+			OXRScenes* scene, bool is_secondary = false);
 		void d3d_render_layer(XrCompositionLayerProjectionView& layerView, swapchain_surfdata_t& surface);
 	};
 }

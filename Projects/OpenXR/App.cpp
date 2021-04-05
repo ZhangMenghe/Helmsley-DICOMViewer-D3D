@@ -13,6 +13,8 @@
 //using namespace winrt::Windows::Foundation;
 using namespace winrt::Microsoft::MixedReality::QR;
 
+#include <winrt/Windows.Graphics.Holographic.h>
+
 DX::OXRManager* oxr_manager = nullptr;
 std::unique_ptr<OXRScenes> m_oxr_scene;
 
@@ -71,9 +73,16 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 		throw std::exception("OpenXR initialization failed");
 		return 1;
 	}
-	list_helper = new QRListHelper();
+	//list_helper = new QRListHelper();
 
-	SetupQRCodes(list_helper);
+	//SetupQRCodes(list_helper);
+
+	auto display = winrt::Windows::Graphics::Holographic::HolographicDisplay::GetDefault();
+	auto view = display.TryGetViewConfiguration(winrt::Windows::Graphics::Holographic::HolographicViewConfigurationKind::PhotoVideoCamera);
+	if (view != nullptr)
+	{
+		view.IsEnabled(true);
+	}
 
 	oxr_manager->InitOxrActions();
 	m_oxr_scene = std::unique_ptr<OXRScenes>(new OXRScenes(std::unique_ptr<DX::DeviceResources>(oxr_manager)));
@@ -100,6 +109,8 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	oxr_manager->onSingle3DTouchDown = onSingle3DTouchDown;
 	oxr_manager->on3DTouchMove = on3DTouchMove;
 	oxr_manager->on3DTouchReleased = on3DTouchReleased;
+
+	m_oxr_scene->SetupReferenceFrame(oxr_manager->getReferenceFrame());
 
 	while (oxr_manager->Update()) {
 		m_oxr_scene->Update();

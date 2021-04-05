@@ -38,6 +38,7 @@ protected:
 	//texture
 	ID3D11SamplerState* m_sampleState = nullptr;
 	Texture* texture = nullptr;
+	Texture* depth_texture = nullptr;
 
 	const float m_clear_color[4] = {
 		1.f,1.f,1.f,1.f

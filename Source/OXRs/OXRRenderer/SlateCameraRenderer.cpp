@@ -7,6 +7,7 @@
 #include <Utils/TypeConvertUtils.h>
 #include <Utils/MathUtils.h>
 
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>  // cv::Canny()
 #include <opencv2/aruco.hpp>
@@ -15,8 +16,15 @@
 #include <glm/gtx/rotate_vector.hpp> 
 #include <vrController.h>
 #include <glm/gtx/component_wise.hpp>
+
+#include <winrt/Windows.Perception.Spatial.h>
+#include <winrt/Windows.Perception.Spatial.Preview.h>
+using namespace winrt::Windows::Perception;
+using namespace winrt::Windows::Perception::Spatial;
+using namespace winrt::Windows::Perception::Spatial::Preview;
 using namespace DirectX;
 
+#include "strsafe.h"
 
 void SlateCameraRenderer::CameraUpdateThread(SlateCameraRenderer* pSlateCameraRenderer, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent){
 	HRESULT hr = S_OK;
@@ -139,6 +147,7 @@ SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,
 	m_frameCallback = nullptr;
 
 	m_pCameraUpdateThread = new std::thread(CameraUpdateThread, this, hasData, pCamAccessConsent);
+
 }
 
 void SlateCameraRenderer::setPosition(glm::vec3 pos) {
@@ -205,19 +214,23 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 		//setup camera matrix
 		//float camera_data[9] = {
 		//	375.11117222,   0.,         325.94678612,
-		//	0.,         376.667932,   229.69762885,
+		//	0.,         376.667932,   229.69762885 -left,
 		//	0.,           0.,           1.
 		//};
 
 		//	0,											376.667932.,        229.69762885,
 		//	-375.11117222.,         0,									-325.94678612,
 		//	0.,           0.,           1.
-		m_cameraMatrix = (cv::Mat1d(3, 3) << 376.66843581, 0, 249.3024784, 0, 375.11165342, 325.94698444, 0, 0, 1);
-
+		//m_cameraMatrix = (cv::Mat1d(3, 3) << 370.06088626, 0, 306.86274468, 0, 374.89346096, 238.62886492, 0, 0, 1); // m
+		m_cameraMatrix = (cv::Mat1d(3, 3) << 370.06088626, 0, 322.86274468, 0, 374.89346096, 232.52886492, 0, 0, 1);
+		
+		//m_cameraMatrix = (cv::Mat1d(3, 3) << 374.74548357, 0, 248.08241952, 0, 370.32639999, 321.97007822, 0, 0, 1);
+		
 		//m_cameraMatrix = cv::Mat(3, 3, CV_32F, camera_data);
 		//float distor_data[5] = { -0.04310492,  0.22544408, -0.00800435,  0.00223716, -0.25756141 };
 		//m_distCoeffs = cv::Mat(1, 5, CV_32F, distor_data);
-		m_distCoeffs = (cv::Mat1d(1, 5) << -0.04310492, 0.22544408, 0.00223681, 0.0080043, -0.25756141);
+		m_distCoeffs = (cv::Mat1d(1, 5) << -0.04411806, 0.13393567, -0.00460908, 0.00304738, -0.09357143);
+		//m_distCoeffs = (cv::Mat1d(1, 5) << -0.04792172, 0.16861088, 0.00267955, 0.00622755, -0.163583);
 	}
 
 	ResearchModeSensorResolution resolution;
@@ -232,6 +245,67 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 	if (FAILED(m_pSensorFrame->QueryInterface(IID_PPV_ARGS(&pVLCFrame)))) return false;
 	pVLCFrame->GetBuffer(&m_texture_data, &outBufferCount);
 
+	ResearchModeSensorTimestamp timeStamp;
+	m_pSensorFrame->GetTimeStamp(&timeStamp);
+	HRESULT hr = S_OK;
+	
+	/*TCHAR buf[1024];
+	size_t cbDest = 1024 * sizeof(TCHAR);
+	StringCbPrintf(buf, cbDest, TEXT("GUID:(%d)\n"), (long)m_guid.Data1);
+	OutputDebugString(buf);*/
+
+	//m_frameOfReference = locator.CreateAttachedFrameOfReferenceAtCurrentHeading();
+
+	auto timestamp = PerceptionTimestampHelper::FromSystemRelativeTargetTime(winrt::Windows::Foundation::TimeSpan{ timeStamp.HostTicks });
+	//auto coordinateSystem = m_referenceFrame;//m_referenceFrame.CoordinateSystem();//GetStationaryCoordinateSystemAtTimestamp(timestamp);
+	auto location = locator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
+	if (location) {
+		//auto magic = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 0, 1));
+		//auto magic2 = glm::translate(glm::mat4(1.0f), glm::vec3(1, 2, 3));
+		auto rotMatrix = make_float4x4_from_quaternion(location.Orientation());
+		auto transMatrix = make_float4x4_translation(location.Position());
+	  /*
+		XMMATRIX rot = XMLoadFloat4x4(&rotMatrix);
+		XMMATRIX trans = XMLoadFloat4x4(&transMatrix);
+		glm::mat4 rot_glm = xmmatrix2mat4(rot);
+		glm::mat4 trans_glm = xmmatrix2mat4(trans);*/
+		auto transform4x4 = rotMatrix * transMatrix;
+		auto transformMatrix = XMLoadFloat4x4(&transform4x4);
+		
+		cameraToWorld = xmmatrix2mat4((transformMatrix));//XMMatrixTranspose
+		//xmmatrix2mat4(Manager::camera->getViewMat())
+		//cameraToWorld = flip * cameraToWorld;
+		//cameraToWorld = magic3 * cameraToWorld;
+		//cameraToWorld = magic * cameraToWorld;
+		//// Change coordinate system
+		//auto flip = glm::scale(glm::mat4(1), glm::vec3(1, 1, -1));
+		//auto swap = glm::mat4(0.0f);
+		//swap[0][1] = -1;
+		//swap[1][0] = 1;
+		//swap[2][2] = 1;
+		//swap[3][3] = 1;
+
+	 // //rot_glm = rot_glm * flip;
+		////rot_glm = rot_glm * swap;
+		//rot_glm = glm::transpose(rot_glm);
+		////trans_glm[3][0] = -trans_glm[3][1];
+		////trans_glm[3][1] = -trans_glm[3][0];
+		////trans_glm[3][2] = -trans_glm[3][2];
+		//auto magic = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 0, 1));
+		if (PRINT_CAMERA_MATRIX) {
+			TCHAR buf[1024];
+			size_t cbDest = 1024 * sizeof(TCHAR);
+			StringCbPrintf(buf, cbDest, TEXT("Location:(%f,%f,%f)\n"), (float)cameraToWorld[3][0], (float)cameraToWorld[3][1], (float)cameraToWorld[3][2]);
+			OutputDebugString(buf);
+		}
+
+		////rot_glm = xmmatrix2mat4(Manager::camera->getViewMat());
+		//rot_glm = glm::mat4(glm::mat3(rot_glm));
+		//cameraToWorld = rot_glm;//trans_glm * rot_glm;
+		////cameraToWorld = magic * flip * cameraToWorld; //
+		//cameraToWorld = glm::inverse(cameraToWorld);
+	}
+
 	//pVLCFrame->GetGain(&gain);
 	//pVLCFrame->GetExposure(&exposure);
 
@@ -244,19 +318,25 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 }
 bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 	if (!update_cam_texture(context)) return false;
+	//UpdateExtrinsicsMatrix();
+
+	if(m_pRMCameraSensor->GetSensorType() != LEFT_FRONT) {
+		return true;
+	}
+
 	//try estimate marker
 	static cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
 
-
 	cv::Mat processed(m_slateHeight, m_slateWidth, CV_8U, (void*)m_texture_data);
-	cv::rotate(processed, processed, cv::ROTATE_90_CLOCKWISE);
+	//std::memcpy(processed.data, (void*)m_texture_data, m_slateHeight * m_slateWidth * sizeof(byte));
+	//cv::rotate(processed, processed, cv::ROTATE_90_CLOCKWISE);
 	std::vector<int> ids;
 	std::vector<std::vector<cv::Point2f>> corners;
 	cv::aruco::detectMarkers(processed, dictionary, corners, ids);
-	if (ids.empty()) return false;
+	if (ids.empty()) return true;
 
 	// if at least one marker detected
-	cv::aruco::estimatePoseSingleMarkers(corners, 0.16, m_cameraMatrix, m_distCoeffs, m_rvecs, m_tvecs);
+	cv::aruco::estimatePoseSingleMarkers(corners, 0.15, m_cameraMatrix, m_distCoeffs, m_rvecs, m_tvecs);
 	
 	/*cv::Mat R;
 	Rodrigues(m_rvecs[0], R);
@@ -271,14 +351,15 @@ bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 	auto tvec = m_tvecs[0];
 
 	glm::quat q = getQuaternion(m_rvecs[0]);
-	q.y = -q.y; q.z = -q.z;
+	//q.y = -q.y; q.z = -q.z;
 	glm::mat4 rot_mat = glm::toMat4(q);
 
 	glm::mat4 model_mat =
-		glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], -tvec[1], -tvec[2])) * rot_mat;
+		glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], tvec[1], tvec[2])) * rot_mat;
 
-	vrController::instance()->setPosition(model_mat);
-	UpdateExtrinsicsMatrix();
+	//glm::mat4 cam_inv = glm::transpose(xmmatrix2mat4(Manager::camera->getViewMat()));//vrController::instance()->getCameraExtrinsicsMat(0);
+
+	vrController::instance()->setPosition(cameraToWorld * model_mat); // 
 	return true;
 }
 void SlateCameraRenderer::UpdateExtrinsicsMatrix() {
@@ -305,7 +386,7 @@ void SlateCameraRenderer::UpdateExtrinsicsMatrix() {
 	
 	glm::vec3 ttc = glm::vec3(tvec.y, tvec.x, tvec.z);
 
-	vrController::instance()->setCameraExtrinsicsMat(m_pRMCameraSensor->GetSensorType() == LEFT_FRONT?0:1, glm::translate(glm::mat4(1.0), ttc));
+	vrController::instance()->setCameraExtrinsicsMat(m_pRMCameraSensor->GetSensorType() == LEFT_FRONT ? 0 : 1, xmmatrix2mat4(cameraNodeToRigPoseInverted));//glm::translate(glm::mat4(1.0), ttc));
 }
 // Renders one frame using the vertex and pixel shaders.
 bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat){
@@ -331,6 +412,10 @@ bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat)
 
 	baseRenderer::Draw(context);
 	return true;
+}
+void SlateCameraRenderer::SetGUID(GUID guid) {
+	m_guid = guid;
+	locator = SpatialGraphInteropPreview::CreateLocatorForNode(m_guid);
 }
 void SlateCameraRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	// After the vertex shader file is loaded, create the shader and input layout.

@@ -38,6 +38,9 @@ namespace DX
 		//	return m_depthStencilViewStack.top();
 		//}
 		ID3D11DepthStencilView* GetDepthStencilView();
+		void SetDepthStencilView(ID3D11DepthStencilView* input) {
+			current_depth_view = input;
+		}
 		// The size of the render target, in pixels.
 		winrt::Windows::Foundation::Size	GetOutputSize() const					{ return m_outputSize; }
 

@@ -12,11 +12,16 @@
 #include <winrt/Windows.Perception.Spatial.h>
 #include <winrt/Windows.Graphics.Imaging.h>
 #include <winrt/Windows.Storage.h>
+#include <winrt/Windows.Perception.Spatial.h>
 class SensorVizScenario : public Scenario {
 public:
     SensorVizScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources);
     virtual ~SensorVizScenario();
 
+    void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {
+      m_LFCameraRenderer->SetupReferenceFrame(referenceFrame);
+      m_RFCameraRenderer->SetupReferenceFrame(referenceFrame);
+    }
     void IntializeSensors();
     void IntializeScene();
     void Update(DX::StepTimer& timer);

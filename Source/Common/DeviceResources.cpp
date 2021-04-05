@@ -656,10 +656,10 @@ void DX::DeviceResources::Present()
 	// Discard the contents of the render target.
 	// This is a valid operation only when the existing contents will be entirely
 	// overwritten. If dirty or scroll rects are used, this call should be removed.
-	m_d3dContext->DiscardView1(m_d3dRenderTargetView.get(), nullptr, 0);
+	//m_d3dContext->DiscardView1(m_d3dRenderTargetView.get(), nullptr, 0);
 
 	// Discard the contents of the depth stencil.
-	m_d3dContext->DiscardView1(m_d3dDepthStencilView.get(), nullptr, 0);
+	//m_d3dContext->DiscardView1(m_d3dDepthStencilView.get(), nullptr, 0);
 
 	// If the device was removed either by a disconnection or a driver upgrade, we 
 	// must recreate all device resources.
@@ -753,13 +753,17 @@ void DX::DeviceResources::removeCurrentTargetViews() {
 	if (!m_depthStencilViewStack.empty())m_depthStencilViewStack.pop();
 }
 ID3D11RenderTargetView* DX::DeviceResources::restoreRenderTargetView() {
-	if (m_renderTargetViewStack.empty())return m_d3dRenderTargetView.get();
+	if (m_renderTargetViewStack.empty()) {
+	  return m_d3dRenderTargetView.get();
+	}
 	auto v = m_renderTargetViewStack.top();
 	//m_renderTargetViewStack.pop();
 	return v;
 }
 ID3D11DepthStencilView* DX::DeviceResources::restoreDepthStencilView() {
-	if (m_depthStencilViewStack.empty())return m_d3dDepthStencilView.get();
+	if (m_depthStencilViewStack.empty()) {
+		return m_d3dDepthStencilView.get();
+	}
 	auto v = m_depthStencilViewStack.top();
 	//m_depthStencilViewStack.pop();
 	return v;
