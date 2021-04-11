@@ -205,7 +205,7 @@
       <DisableSpecificWarnings>4453;28204;4996</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenCvInstallArm64-412d\include;$(ProjectDir)/../../Library/arm64/include;$(ProjectDir)/../../Source;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\openxr_preview\include;$(SolutionDir)OpenCvInstallArm64-412d\include;$(ProjectDir)/../../Library/arm64/include;$(ProjectDir)/../../Source;$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <ConformanceMode>false</ConformanceMode>
     </ClCompile>
@@ -358,6 +358,15 @@
     <ClInclude Include="..\..\Source\OXRs\Scenario.h" />
     <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\TimeConverter.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrEnumerate.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrError.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensionContext.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensions.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHandle.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrInstanceContext.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrString.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStruct.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrToString.h" />
     <ClInclude Include="..\..\Source\proto\common.grpc.pb.h" />
     <ClInclude Include="..\..\Source\proto\common.pb.h" />
     <ClInclude Include="..\..\Source\proto\inspectorSync.grpc.pb.h" />
