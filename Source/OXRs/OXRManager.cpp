@@ -5,9 +5,7 @@
 #include <Common/DirectXHelper.h>
 #include <Utils/XrMath.h>
 #include <glm/gtc/quaternion.hpp>
-#include <OXRs/XrUtility/XrExtensionContext.h>
-#include <OXRs/XrUtility/XrInstanceContext.h>
-
+#include <OXRs/DxCommon/DxUtility.h>
 
 #include <winrt/Windows.Perception.Spatial.h>
 #include <winrt/Windows.Perception.Spatial.Preview.h>
@@ -117,26 +115,27 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     XR_MSFT_HAND_INTERACTION_EXTENSION_NAME,
     XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME,
     };
-    xr::ExtensionContext extension_results = xr::CreateExtensionContext(std::vector<const char*>(std::begin(requestedExtensions), std::end(requestedExtensions)));
-    if (!extension_results.SupportsD3D11) {
+    xr::ExtensionContext extensions = xr::CreateExtensionContext(std::vector<const char*>(std::begin(requestedExtensions), std::end(requestedExtensions)));
+    if (!extensions.SupportsD3D11) {
         throw std::logic_error("This sample currently only supports D3D11.");
         return false;
     }
 
-    //xr::InstanceContext instance =
-    //    xr::CreateInstanceContext({ app_name, 1 },//xr::AppInfo
-    //        { "XrSceneLib", 1 }, //xr::engineInfo
-    //        extension_results.EnabledExtensions);
-    ////extension_results.PopulateDispatchTable(instance.Handle);
-    //xr_instance = instance.Handle;
+    xr::InstanceContext instance =
+        xr::CreateInstanceContext({ app_name, 1 },//xr::AppInfo
+            { "XrSceneLib", 1 }, //xr::engineInfo
+            extensions.EnabledExtensions);
+
+    extensions.PopulateDispatchTable(instance.Handle);
+    auto xr_instance = instance.Handle;
 
     //// Initialize OpenXR with the extensions we've found!
-    XrInstanceCreateInfo createInfo = { XR_TYPE_INSTANCE_CREATE_INFO };
-    createInfo.enabledExtensionCount = extension_results.EnabledExtensions.size();
-    createInfo.enabledExtensionNames = extension_results.EnabledExtensions.data();
-    createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
-    strcpy_s(createInfo.applicationInfo.applicationName, app_name);
-    xrCreateInstance(&createInfo, &xr_instance);
+    //XrInstanceCreateInfo createInfo = { XR_TYPE_INSTANCE_CREATE_INFO };
+    //createInfo.enabledExtensionCount = extension_results.EnabledExtensions.size();
+    //createInfo.enabledExtensionNames = extension_results.EnabledExtensions.data();
+    //createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
+    //strcpy_s(createInfo.applicationInfo.applicationName, app_name);
+    //xrCreateInstance(&createInfo, &xr_instance);
 
     // Check if OpenXR is on this system, if this is null here, the user 
     // needs to install an OpenXR runtime and ensure it's active!
@@ -147,64 +146,92 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     // couple ways to do this, and this is a fairly manual one. Chek out this
     // file for another way to do it:
     // https://github.com/maluoi/StereoKit/blob/master/StereoKitC/systems/platform/openxr_extensions.h
-    xrGetInstanceProcAddr(xr_instance, "xrCreateDebugUtilsMessengerEXT", (PFN_xrVoidFunction*)(&ext_xrCreateDebugUtilsMessengerEXT));
-    xrGetInstanceProcAddr(xr_instance, "xrDestroyDebugUtilsMessengerEXT", (PFN_xrVoidFunction*)(&ext_xrDestroyDebugUtilsMessengerEXT));
-    xrGetInstanceProcAddr(xr_instance, "xrGetD3D11GraphicsRequirementsKHR", (PFN_xrVoidFunction*)(&ext_xrGetD3D11GraphicsRequirementsKHR));
-    xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialAnchorMSFT", (PFN_xrVoidFunction*)(&ext_xrCreateSpatialAnchorMSFT));
-    xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialAnchorSpaceMSFT", (PFN_xrVoidFunction*)(&ext_xrCreateSpatialAnchorSpaceMSFT));
+    //xrGetInstanceProcAddr(xr_instance, "xrCreateDebugUtilsMessengerEXT", (PFN_xrVoidFunction*)(&ext_xrCreateDebugUtilsMessengerEXT));
+    //xrGetInstanceProcAddr(xr_instance, "xrDestroyDebugUtilsMessengerEXT", (PFN_xrVoidFunction*)(&ext_xrDestroyDebugUtilsMessengerEXT));
+    //xrGetInstanceProcAddr(xr_instance, "xrGetD3D11GraphicsRequirementsKHR", (PFN_xrVoidFunction*)(&ext_xrGetD3D11GraphicsRequirementsKHR));
+    //xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialAnchorMSFT", (PFN_xrVoidFunction*)(&ext_xrCreateSpatialAnchorMSFT));
+    //xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialAnchorSpaceMSFT", (PFN_xrVoidFunction*)(&ext_xrCreateSpatialAnchorSpaceMSFT));
 
     // Set up a really verbose debug log! Great for dev, but turn this off or
     // down for final builds. WMR doesn't produce much output here, but it
     // may be more useful for other runtimes?
     // Here's some extra information about the message types and severities:
     // https://www.khronos.org/registry/OpenXR/specs/1.0/html/xrspec.html#debug-message-categorization
-    XrDebugUtilsMessengerCreateInfoEXT debug_info = { XR_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT };
-    debug_info.messageTypes =
-        XR_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-        XR_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-        XR_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
-        XR_DEBUG_UTILS_MESSAGE_TYPE_CONFORMANCE_BIT_EXT;
-    debug_info.messageSeverities =
-        XR_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-        XR_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-        XR_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-        XR_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    debug_info.userCallback = [](XrDebugUtilsMessageSeverityFlagsEXT severity, XrDebugUtilsMessageTypeFlagsEXT types, const XrDebugUtilsMessengerCallbackDataEXT* msg, void* user_data) {
-        // Print the debug message we got! There's a bunch more info we could
-        // add here too, but this is a pretty good start, and you can always
-        // add a breakpoint this line!
-        printf("%s: %s\n", msg->functionName, msg->message);
+    //XrDebugUtilsMessengerCreateInfoEXT debug_info = { XR_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT };
+    //debug_info.messageTypes =
+    //    XR_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+    //    XR_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+    //    XR_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
+    //    XR_DEBUG_UTILS_MESSAGE_TYPE_CONFORMANCE_BIT_EXT;
+    //debug_info.messageSeverities =
+    //    XR_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+    //    XR_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+    //    XR_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+    //    XR_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    //debug_info.userCallback = [](XrDebugUtilsMessageSeverityFlagsEXT severity, XrDebugUtilsMessageTypeFlagsEXT types, const XrDebugUtilsMessengerCallbackDataEXT* msg, void* user_data) {
+    //    // Print the debug message we got! There's a bunch more info we could
+    //    // add here too, but this is a pretty good start, and you can always
+    //    // add a breakpoint this line!
+    //    printf("%s: %s\n", msg->functionName, msg->message);
 
-        // Output to debug window
-        char text[512];
-        sprintf_s(text, "%s: %s", msg->functionName, msg->message);
-        OutputDebugStringA(text);
+    //    // Output to debug window
+    //    char text[512];
+    //    sprintf_s(text, "%s: %s", msg->functionName, msg->message);
+    //    OutputDebugStringA(text);
 
-        // Returning XR_TRUE here will force the calling function to fail
-        return (XrBool32)XR_FALSE;
-    };
+    //    // Returning XR_TRUE here will force the calling function to fail
+    //    return (XrBool32)XR_FALSE;
+    //};
     // Start up the debug utils!
-    if (ext_xrCreateDebugUtilsMessengerEXT)
-        ext_xrCreateDebugUtilsMessengerEXT(xr_instance, &debug_info, &xr_debug);
+    //if (ext_xrCreateDebugUtilsMessengerEXT)
+        //ext_xrCreateDebugUtilsMessengerEXT(xr_instance, &debug_info, &xr_debug);
+
+
+            // Then get the active system with required form factor.
+        // If no system is plugged in, wait until the device is plugged in.
+    xr::SystemContext system = [&instance, &extensions] {
+        std::optional<xr::SystemContext> systemOpt;
+        while (!(systemOpt = xr::CreateSystemContext(instance.Handle,
+            extensions,
+            XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY,//app_config_form
+            SupportedViewConfigurationTypes,
+            SupportedEnvironmentBlendModes))) {
+            //sample::Trace("Waiting for system plugin ...");
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+        return systemOpt.value();
+    }();
+
+    m_context = std::make_unique<xr::XrContext>(
+        std::move(instance),
+        std::move(extensions),
+        std::move(system)
+        //std::move(session),
+        //m_appSpace.Get(),
+        //std::move(pbrResources),
+        //device,
+        //deviceContext
+        );
 
     // Request a form factor from the device (HMD, Handheld, etc.)
-    XrSystemGetInfo systemInfo = { XR_TYPE_SYSTEM_GET_INFO };
-    systemInfo.formFactor = app_config_form;
-    xrGetSystem(xr_instance, &systemInfo, &xr_system_id);
+    //XrSystemGetInfo systemInfo = { XR_TYPE_SYSTEM_GET_INFO };
+    //systemInfo.formFactor = app_config_form;
+    //xrGetSystem(xr_instance, &systemInfo, &system.Id);
 
     // Check what blend mode is valid for this device (opaque vs transparent displays)
     // We'll just take the first one available!
     uint32_t blend_count = 0;
-    xrEnumerateEnvironmentBlendModes(xr_instance, xr_system_id, app_config_view, 1, &blend_count, &xr_blend);
+    xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, app_config_view, 1, &blend_count, &xr_blend);
 
     // OpenXR wants to ensure apps are using the correct graphics card, so this MUST be called 
     // before xrCreateSession. This is crucial on devices that have multiple graphics cards, 
     // like laptops with integrated graphics chips in addition to dedicated graphics cards.
-    XrGraphicsRequirementsD3D11KHR requirement = { XR_TYPE_GRAPHICS_REQUIREMENTS_D3D11_KHR };
-    ext_xrGetD3D11GraphicsRequirementsKHR(xr_instance, xr_system_id, &requirement);
 
+    XrGraphicsRequirementsD3D11KHR graphicsRequirements{ XR_TYPE_GRAPHICS_REQUIREMENTS_D3D11_KHR };
+    CHECK_XRCMD(extensions.xrGetD3D11GraphicsRequirementsKHR(xr_instance, system.Id, &graphicsRequirements));
 
-    IDXGIAdapter1* adapter = d3d_get_adapter(requirement.adapterLuid);
+    const winrt::com_ptr<IDXGIAdapter1> adapter = DX::GetAdapter(graphicsRequirements.adapterLuid);
+
     if (adapter == nullptr)
         return false;
     //support d2d
@@ -214,7 +241,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     winrt::com_ptr<ID3D11Device> device{ nullptr };
     winrt::com_ptr<ID3D11DeviceContext> context{ nullptr };
     if (FAILED(D3D11CreateDevice(
-        adapter,
+        adapter.get(),
         D3D_DRIVER_TYPE_UNKNOWN,
         0,
         creationFlags,
@@ -246,34 +273,34 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     binding.device = m_d3dDevice.get();
     XrSessionCreateInfo sessionInfo = { XR_TYPE_SESSION_CREATE_INFO };
     sessionInfo.next = &binding;
-    sessionInfo.systemId = xr_system_id;
+    sessionInfo.systemId = system.Id;
     xrCreateSession(xr_instance, &sessionInfo, &xr_session);
 
     // Initialize view configuration properties and environment blend modes
 
     uint32_t viewConfigurationCount = 0;
-    xrEnumerateViewConfigurations(xr_instance, xr_system_id, 0, &viewConfigurationCount, nullptr);
+    xrEnumerateViewConfigurations(xr_instance, system.Id, 0, &viewConfigurationCount, nullptr);
 
     std::vector<XrViewConfigurationType> systemSupportedViewConfigurationTypes(viewConfigurationCount);
-    xrEnumerateViewConfigurations(xr_instance, xr_system_id, viewConfigurationCount, &viewConfigurationCount, systemSupportedViewConfigurationTypes.data());
+    xrEnumerateViewConfigurations(xr_instance, system.Id, viewConfigurationCount, &viewConfigurationCount, systemSupportedViewConfigurationTypes.data());
 
     for (const auto viewConfigType : SupportedViewConfigurationTypes) {
         if (!Contains(systemSupportedViewConfigurationTypes, viewConfigType)) {
             continue; // The system doesn't support this view configuration
         }
 
-        //auto viewProperties = xr::CreateViewProperties(xr_instance, xr_system_id, viewConfigType, SupportedEnvironmentBlendModes);
+        //auto viewProperties = xr::CreateViewProperties(xr_instance, system.Id, viewConfigType, SupportedEnvironmentBlendModes);
         XrViewConfigurationProperties viewConfigProperties{ XR_TYPE_VIEW_CONFIGURATION_PROPERTIES };
-        xrGetViewConfigurationProperties(xr_instance, xr_system_id, viewConfigType, &viewConfigProperties);
+        xrGetViewConfigurationProperties(xr_instance, system.Id, viewConfigType, &viewConfigProperties);
 
         ViewProperties viewProperties{};
         viewProperties.Type = viewConfigType;
         viewProperties.FovMutable = viewConfigProperties.fovMutable;
 
         uint32_t blendModeCount;
-        xrEnumerateEnvironmentBlendModes(xr_instance, xr_system_id, viewConfigType, 0, &blendModeCount, nullptr);
+        xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, viewConfigType, 0, &blendModeCount, nullptr);
         std::vector<XrEnvironmentBlendMode> blendModes(blendModeCount);
-        xrEnumerateEnvironmentBlendModes(xr_instance, xr_system_id, viewConfigType, blendModeCount, &blendModeCount, blendModes.data());
+        xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, viewConfigType, blendModeCount, &blendModeCount, blendModes.data());
         viewProperties.SupportedBlendModes = blendModes;
 
         auto blendModeIt = std::find_first_of(viewProperties.SupportedBlendModes.begin(),
@@ -318,10 +345,10 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 
     for (const auto& viewConfigurationType : AllViewConfigurationType) {
         uint32_t viewCount;
-        xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, viewConfigurationType, 0, &viewCount, nullptr);
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, viewConfigurationType, 0, &viewCount, nullptr);
 
         std::vector<XrViewConfigurationView> newViewConfigViews(viewCount, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, viewConfigurationType, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, viewConfigurationType, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
 
         ViewConfigurationState state{};
         state.Type = viewConfigurationType;
@@ -346,10 +373,10 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         // Now we need to find all the viewpoints we need to take care of! For a stereo headset, this should be 2.
         // Similarly, for an AR phone, we'll need 1, and a VR cave could have 6, or even 12!
         uint32_t view_count = 0;
-        xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, app_config_view, 0, &view_count, nullptr);
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, app_config_view, 0, &view_count, nullptr);
         xr_config_views.resize(view_count, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
         xr_views.resize(view_count, { XR_TYPE_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, app_config_view, view_count, &view_count, xr_config_views.data());
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, app_config_view, view_count, &view_count, xr_config_views.data());
         for (uint32_t i = 0; i < view_count; i++) {
             // Create a swapchain for this viewpoint! A swapchain is a set of texture buffers used for displaying to screen,
             // typically this is a backbuffer and a front buffer, one for rendering data to, and one for displaying on-screen.
@@ -450,10 +477,10 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     {
         // Secondary 
         uint32_t view_count = 0;
-        xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, EnabledSecondaryViewConfigurationTypes[0], 0, &view_count, nullptr);
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, EnabledSecondaryViewConfigurationTypes[0], 0, &view_count, nullptr);
         xr_secondary_config_views.resize(view_count, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
         xr_secondary_views.resize(view_count, { XR_TYPE_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, EnabledSecondaryViewConfigurationTypes[0], view_count, &view_count, xr_secondary_config_views.data());
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, EnabledSecondaryViewConfigurationTypes[0], view_count, &view_count, xr_secondary_config_views.data());
         for (uint32_t i = 0; i < view_count; i++) {
             // Create a swapchain for this viewpoint! A swapchain is a set of texture buffers used for displaying to screen,
             // typically this is a backbuffer and a front buffer, one for rendering data to, and one for displaying on-screen.
@@ -552,6 +579,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     return true;
 }
 void OXRManager::InitOxrActions() {
+    auto xr_instance = XrContext().Instance.Handle;
     XrActionSetCreateInfo actionset_info = { XR_TYPE_ACTION_SET_CREATE_INFO };
     strcpy_s(actionset_info.actionSetName, "gameplay");
     strcpy_s(actionset_info.localizedActionSetName, "Gameplay");
@@ -787,6 +815,8 @@ void OXRManager::ShutDown() {
     if (xr_app_space != XR_NULL_HANDLE) xrDestroySpace(xr_app_space);
     if (xr_session != XR_NULL_HANDLE) xrDestroySession(xr_session);
     if (xr_debug != XR_NULL_HANDLE) ext_xrDestroyDebugUtilsMessengerEXT(xr_debug);
+    auto xr_instance = XrContext().Instance.Handle;
+
     if (xr_instance != XR_NULL_HANDLE) xrDestroyInstance(xr_instance);
 
     if (m_d3dContext.get()) { m_d3dContext.get()->Release(); m_d3dContext = nullptr; }
@@ -830,6 +860,7 @@ XrSpace* DX::OXRManager::getAppSpace() { return &xr_app_space; }
 
 void OXRManager::openxr_poll_events() {
     XrEventDataBuffer event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
+    auto xr_instance = XrContext().Instance.Handle;
 
     while (xrPollEvent(xr_instance, &event_buffer) == XR_SUCCESS) {
         switch (event_buffer.type) {
@@ -944,29 +975,6 @@ void OXRManager::openxr_poll_actions() {
 
 
     }
-}
-IDXGIAdapter1* OXRManager::d3d_get_adapter(LUID& adapter_luid) {
-    // Turn the LUID into a specific graphics device adapter
-    IDXGIAdapter1* final_adapter = nullptr;
-    IDXGIAdapter1* curr_adapter = nullptr;
-    IDXGIFactory1* dxgi_factory;
-    DXGI_ADAPTER_DESC1 adapter_desc;
-
-    CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&dxgi_factory));
-
-    int curr = 0;
-    while (dxgi_factory->EnumAdapters1(curr++, &curr_adapter) == S_OK) {
-        curr_adapter->GetDesc1(&adapter_desc);
-
-        if (memcmp(&adapter_desc.AdapterLuid, &adapter_luid, sizeof(&adapter_luid)) == 0) {
-            final_adapter = curr_adapter;
-            break;
-        }
-        curr_adapter->Release();
-        curr_adapter = nullptr;
-    }
-    dxgi_factory->Release();
-    return final_adapter;
 }
 
 swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapchain_img) {
@@ -1326,10 +1334,12 @@ void OXRManager::SetSecondaryViewConfigurationActive(ViewConfigurationState& sec
         // reset resources in layers related to this secondary view configuration.
         if (active) {
             uint32_t viewCount;
-            xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, secondaryViewConfigState.Type, 0, &viewCount, nullptr);
+            auto xr_instance = XrContext().Instance.Handle;
+
+            xrEnumerateViewConfigurationViews(xr_instance, XrContext().System.Id, secondaryViewConfigState.Type, 0, &viewCount, nullptr);
 
             std::vector<XrViewConfigurationView> newViewConfigViews(viewCount, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
-            xrEnumerateViewConfigurationViews(xr_instance, xr_system_id, secondaryViewConfigState.Type, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
+            xrEnumerateViewConfigurationViews(xr_instance, XrContext().System.Id, secondaryViewConfigState.Type, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
 
             if (IsRecommendedSwapchainSizeChanged(secondaryViewConfigState.ViewConfigViews, newViewConfigViews)) {
                 secondaryViewConfigState.ViewConfigViews = std::move(newViewConfigViews);

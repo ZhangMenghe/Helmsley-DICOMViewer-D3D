@@ -4,6 +4,7 @@
 #include <vector>
 #include <Common/DeviceResources.h>
 #include <OXRs/OXRScenes.h>
+#include <OXRs/XrUtility/XrContext.h>
 namespace DX {
 	struct swapchain_surfdata_t {
 		ID3D11DepthStencilView* depth_view;
@@ -63,6 +64,9 @@ namespace DX {
 		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem getReferenceFrame() {
 			return referenceFrame;
 		}
+		xr::XrContext& XrContext(){
+			return *m_context;
+		}
 
 		std::function<void(float, float, float, int)> onSingle3DTouchDown;
 		std::function<void(float, float, float, glm::mat4, int)> on3DTouchMove;
@@ -75,14 +79,17 @@ namespace DX {
 
 		const XrPosef  xr_pose_identity = { {0,0,0,1}, {0,0,0} };
 
-		XrInstance     xr_instance = {};
+		std::unique_ptr<xr::XrContext> m_context;
+
+
+		//XrInstance     xr_instance = {};
 		XrSession      xr_session = {};
 		XrSessionState xr_session_state = XR_SESSION_STATE_UNKNOWN;
 		bool           xr_running = false;
 		bool		   xr_quit = false;
 		XrSpace        xr_app_space = {};
 		XrSpace				xr_view_space = {};
-		XrSystemId     xr_system_id = XR_NULL_SYSTEM_ID;
+		//XrSystemId     xr_system_id = XR_NULL_SYSTEM_ID;
 		input_state_t  xr_input = { };
 		XrEnvironmentBlendMode   xr_blend = {};
 		XrDebugUtilsMessengerEXT xr_debug = {};
@@ -124,7 +131,7 @@ namespace DX {
 		void SetSecondaryViewConfigurationActive(ViewConfigurationState& secondaryViewConfigState, bool active);
 
 		DirectX::XMMATRIX d3d_xr_projection(XrFovf fov, float clip_near, float clip_far);
-		IDXGIAdapter1* d3d_get_adapter(LUID& adapter_luid);
+
 		swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchainImage);
 		bool openxr_render_layer(XrTime predictedTime, 
 			std::vector<XrCompositionLayerProjectionView>& projectionViews, std::vector<XrCompositionLayerDepthInfoKHR>& depthInfo,

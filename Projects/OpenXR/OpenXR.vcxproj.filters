@@ -113,6 +113,9 @@
     <Filter Include="Source\OXRs\XrUtility">
       <UniqueIdentifier>{83cfd24d-84e6-4cea-bee3-c159160d6270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\OXRs\DxCommon">
+      <UniqueIdentifier>{399003a4-3c48-4b3d-afeb-771c07e946b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -236,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp">
       <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\DxCommon\DxUtility.cpp">
+      <Filter>Source\OXRs\DxCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -420,6 +426,21 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStruct.h">
       <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSessionContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSystemContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrViewConfiguration.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\DxCommon\DxUtility.h">
+      <Filter>Source\OXRs\DxCommon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
