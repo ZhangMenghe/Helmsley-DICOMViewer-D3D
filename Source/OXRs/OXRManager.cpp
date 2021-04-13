@@ -310,16 +310,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         SupportedColorSwapchainFormats,
         SupportedDepthSwapchainFormats);
 
-    m_context = std::make_unique<xr::XrContext>(
-        std::move(instance),
-        std::move(extensions),
-        std::move(system),
-        std::move(session)
-        //m_appSpace.Get(),
-        //std::move(pbrResources),
-        //device,
-        //deviceContext
-        );
+
 
     auto xr_session = session.Handle;
     // A session represents this application's desire to display things! This is where we hook up our graphics API.
@@ -333,85 +324,90 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 
     // Initialize view configuration properties and environment blend modes
 
-    uint32_t viewConfigurationCount = 0;
-    xrEnumerateViewConfigurations(xr_instance, system.Id, 0, &viewConfigurationCount, nullptr);
+    //uint32_t viewConfigurationCount = 0;
+    //xrEnumerateViewConfigurations(xr_instance, system.Id, 0, &viewConfigurationCount, nullptr);
 
-    std::vector<XrViewConfigurationType> systemSupportedViewConfigurationTypes(viewConfigurationCount);
-    xrEnumerateViewConfigurations(xr_instance, system.Id, viewConfigurationCount, &viewConfigurationCount, systemSupportedViewConfigurationTypes.data());
+    //std::vector<XrViewConfigurationType> systemSupportedViewConfigurationTypes(viewConfigurationCount);
+    //xrEnumerateViewConfigurations(xr_instance, system.Id, viewConfigurationCount, &viewConfigurationCount, systemSupportedViewConfigurationTypes.data());
 
-    for (const auto viewConfigType : SupportedViewConfigurationTypes) {
-        if (!Contains(systemSupportedViewConfigurationTypes, viewConfigType)) {
-            continue; // The system doesn't support this view configuration
-        }
+    //for (const auto viewConfigType : SupportedViewConfigurationTypes) {
+    //    if (!Contains(systemSupportedViewConfigurationTypes, viewConfigType)) {
+    //        continue; // The system doesn't support this view configuration
+    //    }
 
-        //auto viewProperties = xr::CreateViewProperties(xr_instance, system.Id, viewConfigType, SupportedEnvironmentBlendModes);
-        XrViewConfigurationProperties viewConfigProperties{ XR_TYPE_VIEW_CONFIGURATION_PROPERTIES };
-        xrGetViewConfigurationProperties(xr_instance, system.Id, viewConfigType, &viewConfigProperties);
+    //    //auto viewProperties = xr::CreateViewProperties(xr_instance, system.Id, viewConfigType, SupportedEnvironmentBlendModes);
+    //    XrViewConfigurationProperties viewConfigProperties{ XR_TYPE_VIEW_CONFIGURATION_PROPERTIES };
+    //    xrGetViewConfigurationProperties(xr_instance, system.Id, viewConfigType, &viewConfigProperties);
 
-        ViewProperties viewProperties{};
-        viewProperties.Type = viewConfigType;
-        viewProperties.FovMutable = viewConfigProperties.fovMutable;
+    //    ViewProperties viewProperties{};
+    //    viewProperties.Type = viewConfigType;
+    //    viewProperties.FovMutable = viewConfigProperties.fovMutable;
 
-        uint32_t blendModeCount;
-        xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, viewConfigType, 0, &blendModeCount, nullptr);
-        std::vector<XrEnvironmentBlendMode> blendModes(blendModeCount);
-        xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, viewConfigType, blendModeCount, &blendModeCount, blendModes.data());
-        viewProperties.SupportedBlendModes = blendModes;
+    //    uint32_t blendModeCount;
+    //    xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, viewConfigType, 0, &blendModeCount, nullptr);
+    //    std::vector<XrEnvironmentBlendMode> blendModes(blendModeCount);
+    //    xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, viewConfigType, blendModeCount, &blendModeCount, blendModes.data());
+    //    viewProperties.SupportedBlendModes = blendModes;
 
-        auto blendModeIt = std::find_first_of(viewProperties.SupportedBlendModes.begin(),
-            viewProperties.SupportedBlendModes.end(),
-            SupportedEnvironmentBlendModes.begin(),
-            SupportedEnvironmentBlendModes.end());
-        if (blendModeIt == std::end(viewProperties.SupportedBlendModes)) {
-            throw std::runtime_error("No blend modes supported");
-        }
-        viewProperties.BlendMode = *blendModeIt;
+    //    auto blendModeIt = std::find_first_of(viewProperties.SupportedBlendModes.begin(),
+    //        viewProperties.SupportedBlendModes.end(),
+    //        SupportedEnvironmentBlendModes.begin(),
+    //        SupportedEnvironmentBlendModes.end());
+    //    if (blendModeIt == std::end(viewProperties.SupportedBlendModes)) {
+    //        throw std::runtime_error("No blend modes supported");
+    //    }
+    //    viewProperties.BlendMode = *blendModeIt;
 
-        if (viewProperties.SupportedBlendModes.size() > 0) {
-            m_viewProperties.emplace(viewConfigType, viewProperties);
+    //    if (viewProperties.SupportedBlendModes.size() > 0) {
+    //        m_viewProperties.emplace(viewConfigType, viewProperties);
 
-            if (viewConfigType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO ||
-                viewConfigType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO ||
-                viewConfigType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_QUAD_VARJO) {
-                SupportedPrimaryViewConfigurationTypes.push_back(viewConfigType);
-            }
-            else {
-                SupportedSecondaryViewConfigurationTypes.push_back(viewConfigType);
-            }
-        }
-    }
+    //        if (viewConfigType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO ||
+    //            viewConfigType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO ||
+    //            viewConfigType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_QUAD_VARJO) {
+    //            SupportedPrimaryViewConfigurationTypes.push_back(viewConfigType);
+    //        }
+    //        else {
+    //            SupportedSecondaryViewConfigurationTypes.push_back(viewConfigType);
+    //        }
+    //    }
+    //}
 
     for (const auto secondaryViewConfigurationType : SupportedViewConfigurationTypes) {
-        if (!Contains(SupportedSecondaryViewConfigurationTypes, secondaryViewConfigurationType)) {
+        if (!Contains(system.SupportedSecondaryViewConfigurationTypes, secondaryViewConfigurationType)) {
             continue; // Not supported by the system
         }
         EnabledSecondaryViewConfigurationTypes.push_back(secondaryViewConfigurationType);
     }
 
-    // Unable to start a session, may not have an MR device attached or ready
-    if (xr_session == nullptr)
-        return false;
+    //// Unable to start a session, may not have an MR device attached or ready
+    //if (xr_session == nullptr)
+    //    return false;
 
-    std::vector<XrViewConfigurationType> AllViewConfigurationType;
-    AllViewConfigurationType.push_back(PrimaryViewConfigurationType);
-    AllViewConfigurationType.insert(AllViewConfigurationType.end(),
-        EnabledSecondaryViewConfigurationTypes.begin(),
-        EnabledSecondaryViewConfigurationTypes.end());
+    //std::vector<XrViewConfigurationType> AllViewConfigurationType;
+    //AllViewConfigurationType.push_back(PrimaryViewConfigurationType);
+    //AllViewConfigurationType.insert(AllViewConfigurationType.end(),
+    //    EnabledSecondaryViewConfigurationTypes.begin(),
+    //    EnabledSecondaryViewConfigurationTypes.end());
 
-    for (const auto& viewConfigurationType : AllViewConfigurationType) {
-        uint32_t viewCount;
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, viewConfigurationType, 0, &viewCount, nullptr);
-
-        std::vector<XrViewConfigurationView> newViewConfigViews(viewCount, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, viewConfigurationType, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
-
-        ViewConfigurationState state{};
-        state.Type = viewConfigurationType;
-        state.ViewConfigViews = newViewConfigViews;
-        state.Views.resize(state.ViewConfigViews.size(), { XR_TYPE_VIEW });
-
-        m_viewConfigStates.emplace(viewConfigurationType, state);
+    // Initialize XrViewConfigurationView and XrView buffers
+    for (const auto& viewConfigurationType : xr::GetAllViewConfigurationTypes(session)) {
+        m_viewConfigStates.emplace(viewConfigurationType,
+            xr::CreateViewConfigurationState(viewConfigurationType, instance.Handle, system.Id));
     }
+    //for (const auto& viewConfigurationType : AllViewConfigurationType) {
+    //    uint32_t viewCount;
+    //    xrEnumerateViewConfigurationViews(xr_instance, system.Id, viewConfigurationType, 0, &viewCount, nullptr);
+
+    //    std::vector<XrViewConfigurationView> newViewConfigViews(viewCount, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
+    //    xrEnumerateViewConfigurationViews(xr_instance, system.Id, viewConfigurationType, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
+
+    //    ViewConfigurationState state{};
+    //    state.Type = viewConfigurationType;
+    //    state.ViewConfigViews = newViewConfigViews;
+    //    state.Views.resize(state.ViewConfigViews.size(), { XR_TYPE_VIEW });
+
+    //    m_viewConfigStates.emplace(viewConfigurationType, state);
+    //}
 
     // OpenXR uses a couple different types of reference frames for positioning content, we need to choose one for
     // displaying our content! STAGE would be relative to the center of your guardian system's bounds, and LOCAL
@@ -630,7 +626,16 @@ bool OXRManager::InitOxrSession(const char* app_name) {
             }
         }
     }
-
+    m_context = std::make_unique<xr::XrContext>(
+        std::move(instance),
+        std::move(extensions),
+        std::move(system),
+        std::move(session)
+        //m_appSpace.Get(),
+        //std::move(pbrResources),
+        //device,
+        //deviceContext
+        );
     return true;
 }
 void OXRManager::InitOxrActions() {
@@ -748,7 +753,7 @@ void OXRManager::Render(OXRScenes* scene) {
     XrFrameEndInfo end_info{ XR_TYPE_FRAME_END_INFO };
     xrBeginFrame(xr_session, &beginFrameDescription);
 
-    end_info.environmentBlendMode = m_viewProperties.at(app_config_view).BlendMode;
+    end_info.environmentBlendMode = XrContext().System.ViewProperties.at(app_config_view).BlendMode;
     end_info.displayTime = frame_state.predictedDisplayTime;
 
     if (SupportsSecondaryViewConfiguration) {
@@ -773,7 +778,7 @@ void OXRManager::Render(OXRScenes* scene) {
                     XrSecondaryViewConfigurationLayerInfoMSFT{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_LAYER_INFO_MSFT,
                                                               nullptr,
                                                               secondaryViewConfigType,
-                                                              m_viewProperties.at(secondaryViewConfigType).BlendMode });
+                                                              XrContext().System.ViewProperties.at(secondaryViewConfigType).BlendMode });
             }
         }
 
@@ -853,8 +858,6 @@ void OXRManager::Render(OXRScenes* scene) {
 }
 void OXRManager::ShutDown() {
     auto xr_session = XrContext().Session.Handle;
-    auto m_d3dContext = XrContext().DeviceContext;
-    auto m_d3dDevice = XrContext().Device;
     // We used a graphics API to initialize the swapchain data, so we'll
     // give it a chance to release anythig here!
     for (int32_t i = 0; i < xr_swapchains.size(); i++) {
@@ -1093,8 +1096,6 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
     XrCompositionLayerProjection& layer,
     OXRScenes* scene, bool is_secondary) {
     auto xr_session = XrContext().Session.Handle;
-    auto m_d3dContext = XrContext().DeviceContext;
-    auto m_d3dDevice = XrContext().Device;
     // Find the state and location of each viewpoint at the predicted time
 
     uint32_t         view_count = 0;
@@ -1103,7 +1104,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
         view_count = 0;
         XrViewState      view_state = { XR_TYPE_VIEW_STATE };
         XrViewLocateInfo locate_info = { XR_TYPE_VIEW_LOCATE_INFO };
-        locate_info.viewConfigurationType = SupportedSecondaryViewConfigurationTypes[0];
+        locate_info.viewConfigurationType = XrContext().System.SupportedSecondaryViewConfigurationTypes[0];
         locate_info.displayTime = predictedTime;
         locate_info.space = xr_app_space;
 
@@ -1399,7 +1400,7 @@ void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
     }
 }
 
-void OXRManager::SetSecondaryViewConfigurationActive(ViewConfigurationState& secondaryViewConfigState, bool active) {
+void OXRManager::SetSecondaryViewConfigurationActive(xr::ViewConfigurationState& secondaryViewConfigState, bool active) {
     if (secondaryViewConfigState.Active != active) {
         secondaryViewConfigState.Active = active;
 

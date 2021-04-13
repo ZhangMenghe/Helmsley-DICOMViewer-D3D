@@ -31,19 +31,7 @@ namespace DX {
 		XrBool32 handDeselect[2];
 	};
 
-	struct ViewConfigurationState {
-		XrViewConfigurationType Type;
-		std::vector<XrViewConfigurationView> ViewConfigViews;
-		std::vector<XrView> Views;
-		bool Active;
-	};
 
-	struct ViewProperties {
-		XrViewConfigurationType Type;
-		XrBool32 FovMutable;
-		XrEnvironmentBlendMode BlendMode;
-		std::vector<XrEnvironmentBlendMode> SupportedBlendModes;
-	};
 
 	class OXRManager : public DeviceResources {
 	public:
@@ -111,10 +99,10 @@ namespace DX {
 		std::vector<XrSecondaryViewConfigurationStateMSFT> m_secondaryViewConfigurationsState;
 		std::vector<XrViewConfigurationType> EnabledSecondaryViewConfigurationTypes;
 		bool SupportsSecondaryViewConfiguration = true;
-		std::unordered_map<XrViewConfigurationType, ViewConfigurationState> m_viewConfigStates;
-		std::unordered_map<XrViewConfigurationType, ViewProperties> m_viewProperties;
-		std::vector<XrViewConfigurationType> SupportedPrimaryViewConfigurationTypes;
-		std::vector<XrViewConfigurationType> SupportedSecondaryViewConfigurationTypes;
+		std::unordered_map<XrViewConfigurationType, xr::ViewConfigurationState> m_viewConfigStates;
+		//std::unordered_map<XrViewConfigurationType, ViewProperties> m_viewProperties;
+		//std::vector<XrViewConfigurationType> SupportedPrimaryViewConfigurationTypes;
+		//std::vector<XrViewConfigurationType> SupportedSecondaryViewConfigurationTypes;
 		std::vector<XrView>                  xr_secondary_views;
 		std::vector<XrViewConfigurationView> xr_secondary_config_views;
 		std::vector<swapchain_t>             xr_secondary_swapchains;
@@ -128,7 +116,7 @@ namespace DX {
 		void openxr_poll_actions();
 		void openxr_poll_predicted(XrTime predicted_time);
 
-		void SetSecondaryViewConfigurationActive(ViewConfigurationState& secondaryViewConfigState, bool active);
+		void SetSecondaryViewConfigurationActive(xr::ViewConfigurationState& secondaryViewConfigState, bool active);
 
 		DirectX::XMMATRIX d3d_xr_projection(XrFovf fov, float clip_near, float clip_far);
 
