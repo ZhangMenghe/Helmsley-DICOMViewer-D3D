@@ -28,6 +28,27 @@ const std::vector<XrEnvironmentBlendMode> SupportedEnvironmentBlendModes = {
       XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND,
 };
 
+const std::vector<D3D_FEATURE_LEVEL> SupportedFeatureLevels = {
+    D3D_FEATURE_LEVEL_12_1,
+    D3D_FEATURE_LEVEL_12_0,
+    D3D_FEATURE_LEVEL_11_1,
+    D3D_FEATURE_LEVEL_11_0,
+    D3D_FEATURE_LEVEL_10_1,
+    D3D_FEATURE_LEVEL_10_0,
+};
+const std::vector<DXGI_FORMAT> SupportedColorSwapchainFormats = {
+    DXGI_FORMAT_R8G8B8A8_UNORM,
+    DXGI_FORMAT_B8G8R8A8_UNORM,
+    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+    DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+};
+
+const std::vector<DXGI_FORMAT> SupportedDepthSwapchainFormats = {
+    DXGI_FORMAT_D32_FLOAT,
+    DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
+    DXGI_FORMAT_D24_UNORM_S8_UINT,
+    DXGI_FORMAT_D16_UNORM,
+};
 
 OXRManager::OXRManager()
     :DeviceResources(true) {
@@ -201,17 +222,10 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         }
         return systemOpt.value();
     }();
+    if (!xr::Contains(system.SupportedPrimaryViewConfigurationTypes, PrimaryViewConfigurationType)) {
+        throw std::logic_error("The system doesn't support required primary view configuration.");
+    }
 
-    m_context = std::make_unique<xr::XrContext>(
-        std::move(instance),
-        std::move(extensions),
-        std::move(system)
-        //std::move(session),
-        //m_appSpace.Get(),
-        //std::move(pbrResources),
-        //device,
-        //deviceContext
-        );
 
     // Request a form factor from the device (HMD, Handheld, etc.)
     //XrSystemGetInfo systemInfo = { XR_TYPE_SYSTEM_GET_INFO };
@@ -227,54 +241,95 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     // before xrCreateSession. This is crucial on devices that have multiple graphics cards, 
     // like laptops with integrated graphics chips in addition to dedicated graphics cards.
 
-    XrGraphicsRequirementsD3D11KHR graphicsRequirements{ XR_TYPE_GRAPHICS_REQUIREMENTS_D3D11_KHR };
-    CHECK_XRCMD(extensions.xrGetD3D11GraphicsRequirementsKHR(xr_instance, system.Id, &graphicsRequirements));
 
-    const winrt::com_ptr<IDXGIAdapter1> adapter = DX::GetAdapter(graphicsRequirements.adapterLuid);
+    auto [d3d11Binding, device, deviceContext] = DX::CreateD3D11Binding(
+        xr_instance, 
+        system.Id, 
+        extensions,
+        false, //m_appConfiguration.SingleThreadedD3D11Device, 
+        SupportedFeatureLevels);
 
-    if (adapter == nullptr)
-        return false;
+
+
+    //XrGraphicsRequirementsD3D11KHR graphicsRequirements{ XR_TYPE_GRAPHICS_REQUIREMENTS_D3D11_KHR };
+    //CHECK_XRCMD(extensions.xrGetD3D11GraphicsRequirementsKHR(xr_instance, system.Id, &graphicsRequirements));
+
+    //const winrt::com_ptr<IDXGIAdapter1> adapter = DX::GetAdapter(graphicsRequirements.adapterLuid);
+
+    //if (adapter == nullptr)
+        //return false;
     //support d2d
-    UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+    //UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
-    D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-    winrt::com_ptr<ID3D11Device> device{ nullptr };
-    winrt::com_ptr<ID3D11DeviceContext> context{ nullptr };
-    if (FAILED(D3D11CreateDevice(
-        adapter.get(),
-        D3D_DRIVER_TYPE_UNKNOWN,
-        0,
-        creationFlags,
-        featureLevels,
-        _countof(featureLevels),
-        D3D11_SDK_VERSION,
-        device.put(),
-        &m_d3dFeatureLevel,
-        context.put())))
-        return false;
+    //D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+    //winrt::com_ptr<ID3D11Device> device{ nullptr };
+    //winrt::com_ptr<ID3D11DeviceContext> context{ nullptr };
+    //if (FAILED(D3D11CreateDevice(
+    //    adapter.get(),
+    //    D3D_DRIVER_TYPE_UNKNOWN,
+    //    0,
+    //    creationFlags,
+    //    featureLevels,
+    //    _countof(featureLevels),
+    //    D3D11_SDK_VERSION,
+    //    device.put(),
+    //    &m_d3dFeatureLevel,
+    //    context.put())))
+    //    return false;
     device.try_as(m_d3dDevice);
-    context.try_as(m_d3dContext);
-    // Create the Direct2D device object and a corresponding context.
+    deviceContext.try_as(m_d3dContext);
+    //// Create the Direct2D device object and a corresponding context.
     winrt::com_ptr<IDXGIDevice3> dxgiDevice{ nullptr };
-    m_d3dDevice.try_as(dxgiDevice);
+    device.try_as(dxgiDevice);
     auto hr = m_d2dFactory->CreateDevice(dxgiDevice.get(), m_d2dDevice.put());
     if (FAILED(hr)) {
         throw Platform::Exception::CreateException(hr);
-
     }
     m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, m_d2dContext.put());
 
-    adapter->Release();
+    //adapter->Release();
 
+    xr::SessionHandle sessionHandle;
+    XrSessionCreateInfo sessionCreateInfo{ XR_TYPE_SESSION_CREATE_INFO, nullptr, 0, system.Id };
 
+    xr::InsertExtensionStruct(sessionCreateInfo, d3d11Binding);
+
+    //XrHolographicWindowAttachmentMSFT holographicWindowAttachment;
+    //if (m_appConfiguration.HolographicWindowAttachment.has_value() && extensions.SupportsHolographicWindowAttachment) {
+    //    holographicWindowAttachment = m_appConfiguration.HolographicWindowAttachment.value();
+    //    xr::InsertExtensionStruct(sessionCreateInfo, holographicWindowAttachment);
+    //}
+
+    CHECK_XRCMD(xrCreateSession(instance.Handle, &sessionCreateInfo, sessionHandle.Put()));
+
+    xr::SessionContext session(std::move(sessionHandle),
+        system,
+        extensions,
+        PrimaryViewConfigurationType,
+        SupportedViewConfigurationTypes, // enable all supported secondary view config
+        SupportedColorSwapchainFormats,
+        SupportedDepthSwapchainFormats);
+
+    m_context = std::make_unique<xr::XrContext>(
+        std::move(instance),
+        std::move(extensions),
+        std::move(system),
+        std::move(session)
+        //m_appSpace.Get(),
+        //std::move(pbrResources),
+        //device,
+        //deviceContext
+        );
+
+    auto xr_session = session.Handle;
     // A session represents this application's desire to display things! This is where we hook up our graphics API.
     // This does not start the session, for that, you'll need a call to xrBeginSession, which we do in openxr_poll_events
-    XrGraphicsBindingD3D11KHR binding = { XR_TYPE_GRAPHICS_BINDING_D3D11_KHR };
-    binding.device = m_d3dDevice.get();
-    XrSessionCreateInfo sessionInfo = { XR_TYPE_SESSION_CREATE_INFO };
-    sessionInfo.next = &binding;
-    sessionInfo.systemId = system.Id;
-    xrCreateSession(xr_instance, &sessionInfo, &xr_session);
+    //XrGraphicsBindingD3D11KHR binding = { XR_TYPE_GRAPHICS_BINDING_D3D11_KHR };
+    //binding.device = device.get();
+    //XrSessionCreateInfo sessionInfo = { XR_TYPE_SESSION_CREATE_INFO };
+    //sessionInfo.next = &binding;
+    //sessionInfo.systemId = system.Id;
+    //xrCreateSession(xr_instance, &sessionInfo, &xr_session);
 
     // Initialize view configuration properties and environment blend modes
 
@@ -580,6 +635,8 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 }
 void OXRManager::InitOxrActions() {
     auto xr_instance = XrContext().Instance.Handle;
+    auto xr_session = XrContext().Session.Handle;
+
     XrActionSetCreateInfo actionset_info = { XR_TYPE_ACTION_SET_CREATE_INFO };
     strcpy_s(actionset_info.actionSetName, "gameplay");
     strcpy_s(actionset_info.localizedActionSetName, "Gameplay");
@@ -660,6 +717,7 @@ void OXRManager::Render(OXRScenes* scene) {
     // Also returns a prediction of when the next frame will be displayed, for use with predicting
     // locations of controllers, viewpoints, etc.
     XrFrameState frame_state = { XR_TYPE_FRAME_STATE };
+    auto xr_session = XrContext().Session.Handle;
 
     // secondaryViewConfigFrameState needs to have the same lifetime as frameState
     XrSecondaryViewConfigurationFrameStateMSFT secondaryViewConfigFrameState{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_STATE_MSFT };
@@ -794,6 +852,9 @@ void OXRManager::Render(OXRScenes* scene) {
     xrEndFrame(xr_session, &end_info);
 }
 void OXRManager::ShutDown() {
+    auto xr_session = XrContext().Session.Handle;
+    auto m_d3dContext = XrContext().DeviceContext;
+    auto m_d3dDevice = XrContext().Device;
     // We used a graphics API to initialize the swapchain data, so we'll
     // give it a chance to release anythig here!
     for (int32_t i = 0; i < xr_swapchains.size(); i++) {
@@ -825,6 +886,8 @@ void OXRManager::ShutDown() {
 
 XrSpace DX::OXRManager::createReferenceSpace(XrReferenceSpaceType referenceSpaceType, XrPosef poseInReferenceSpace) {
     XrSpace space;
+    auto xr_session = XrContext().Session.Handle;
+
     XrReferenceSpaceCreateInfo createInfo{ XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
     createInfo.referenceSpaceType = referenceSpaceType;
     createInfo.poseInReferenceSpace = poseInReferenceSpace;
@@ -834,6 +897,8 @@ XrSpace DX::OXRManager::createReferenceSpace(XrReferenceSpaceType referenceSpace
 
 XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
 {
+    auto xr_session = XrContext().Session.Handle;
+
     XrSpatialAnchorMSFT anchor;
     // Anchors provide the best stability when moving beyond 5 meters, so if the extension is enabled,
     // create an anchor at given location and place the hologram at the resulting anchor space.
@@ -847,6 +912,7 @@ XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
 
 XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
 {
+    auto xr_session = XrContext().Session.Handle;
     XrSpatialAnchorMSFT anchor = createAnchor(poseInScene);
     XrSpace space;
     XrSpatialAnchorSpaceCreateInfoMSFT createSpaceInfo{ XR_TYPE_SPATIAL_ANCHOR_SPACE_CREATE_INFO_MSFT };
@@ -859,6 +925,8 @@ XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
 XrSpace* DX::OXRManager::getAppSpace() { return &xr_app_space; }
 
 void OXRManager::openxr_poll_events() {
+    auto xr_session = XrContext().Session.Handle;
+
     XrEventDataBuffer event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
     auto xr_instance = XrContext().Instance.Handle;
 
@@ -913,6 +981,7 @@ void OXRManager::openxr_poll_actions() {
     XrActionsSyncInfo sync_info = { XR_TYPE_ACTIONS_SYNC_INFO };
     sync_info.countActiveActionSets = 1;
     sync_info.activeActionSets = &action_set;
+    auto xr_session = XrContext().Session.Handle;
 
     xrSyncActions(xr_session, &sync_info);
 
@@ -1017,12 +1086,15 @@ swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapch
 
     return result;
 }
+
 bool OXRManager::openxr_render_layer(XrTime predictedTime,
     std::vector<XrCompositionLayerProjectionView>& views,
     std::vector<XrCompositionLayerDepthInfoKHR>& depthInfo,
     XrCompositionLayerProjection& layer,
     OXRScenes* scene, bool is_secondary) {
-
+    auto xr_session = XrContext().Session.Handle;
+    auto m_d3dContext = XrContext().DeviceContext;
+    auto m_d3dDevice = XrContext().Device;
     // Find the state and location of each viewpoint at the predicted time
 
     uint32_t         view_count = 0;
@@ -1034,6 +1106,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
         locate_info.viewConfigurationType = SupportedSecondaryViewConfigurationTypes[0];
         locate_info.displayTime = predictedTime;
         locate_info.space = xr_app_space;
+
         xrLocateViews(xr_session, &locate_info, &view_state, (uint32_t)xr_secondary_views.size(), &view_count, xr_secondary_views.data());
         views.resize(view_count);
         depthInfo.resize(view_count);

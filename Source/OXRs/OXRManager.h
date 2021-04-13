@@ -83,7 +83,7 @@ namespace DX {
 
 
 		//XrInstance     xr_instance = {};
-		XrSession      xr_session = {};
+		//XrSession      xr_session = {};
 		XrSessionState xr_session_state = XR_SESSION_STATE_UNKNOWN;
 		bool           xr_running = false;
 		bool		   xr_quit = false;

@@ -16,8 +16,8 @@ namespace xr {
     struct XrContext final {
         XrContext(xr::InstanceContext instance,
                 xr::ExtensionContext extensions,
-                xr::SystemContext system
-                //xr::SessionContext session,
+                xr::SystemContext system,
+                xr::SessionContext session
                 //XrSpace appSpace,
                 //Pbr::Resources pbrResources,
                 //winrt::com_ptr<ID3D11Device> device,
@@ -26,7 +26,7 @@ namespace xr {
             : Instance(std::move(instance))
             , Extensions(std::move(extensions))
             , System(std::move(system))
-            //, Session(std::move(session))
+            , Session(std::move(session))
             //, AppSpace(appSpace)
             //, PbrResources(std::move(pbrResources))
             //, Device(std::move(device))
@@ -37,7 +37,7 @@ namespace xr {
         const xr::InstanceContext Instance;
         const xr::ExtensionContext Extensions;
         const xr::SystemContext System;
-        //const xr::SessionContext Session;
+        const xr::SessionContext Session;
 
         //const XrSpace AppSpace;
 
