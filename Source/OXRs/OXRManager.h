@@ -99,7 +99,7 @@ namespace DX {
 
 		std::mutex m_secondaryViewConfigActiveMutex;
 		std::vector<XrSecondaryViewConfigurationStateMSFT> m_secondaryViewConfigurationsState;
-		std::vector<XrViewConfigurationType> EnabledSecondaryViewConfigurationTypes;
+		//std::vector<XrViewConfigurationType> EnabledSecondaryViewConfigurationTypes;
 		bool SupportsSecondaryViewConfiguration = true;
 		std::unordered_map<XrViewConfigurationType, xr::ViewConfigurationState> m_viewConfigStates;
 		//std::unordered_map<XrViewConfigurationType, ViewProperties> m_viewProperties;

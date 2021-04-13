@@ -372,12 +372,12 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     //    }
     //}
 
-    for (const auto secondaryViewConfigurationType : SupportedViewConfigurationTypes) {
-        if (!Contains(system.SupportedSecondaryViewConfigurationTypes, secondaryViewConfigurationType)) {
-            continue; // Not supported by the system
-        }
-        EnabledSecondaryViewConfigurationTypes.push_back(secondaryViewConfigurationType);
-    }
+    //for (const auto secondaryViewConfigurationType : SupportedViewConfigurationTypes) {
+    //    if (!Contains(system.SupportedSecondaryViewConfigurationTypes, secondaryViewConfigurationType)) {
+    //        continue; // Not supported by the system
+    //    }
+    //    EnabledSecondaryViewConfigurationTypes.push_back(secondaryViewConfigurationType);
+    //}
 
     //// Unable to start a session, may not have an MR device attached or ready
     //if (xr_session == nullptr)
@@ -431,13 +431,15 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put()));
 
 
-
+    //setup reference frame
     auto locator = SpatialLocator::GetDefault();
     m_referenceFrame = locator.CreateStationaryFrameOfReferenceAtCurrentLocation().CoordinateSystem();
 
     {
         // Now we need to find all the viewpoints we need to take care of! For a stereo headset, this should be 2.
         // Similarly, for an AR phone, we'll need 1, and a VR cave could have 6, or even 12!
+        //uint32_t view_count = m_viewConfigStates.at(PrimaryViewConfigurationType).Views.size();
+        //auto xr_config_views = m_viewConfigStates.at(PrimaryViewConfigurationType).ViewConfigViews;
         uint32_t view_count = 0;
         xrEnumerateViewConfigurationViews(xr_instance, system.Id, app_config_view, 0, &view_count, nullptr);
         xr_config_views.resize(view_count, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
@@ -543,10 +545,10 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     {
         // Secondary 
         uint32_t view_count = 0;
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, EnabledSecondaryViewConfigurationTypes[0], 0, &view_count, nullptr);
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, session.EnabledSecondaryViewConfigurationTypes[0], 0, &view_count, nullptr);
         xr_secondary_config_views.resize(view_count, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
         xr_secondary_views.resize(view_count, { XR_TYPE_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, EnabledSecondaryViewConfigurationTypes[0], view_count, &view_count, xr_secondary_config_views.data());
+        xrEnumerateViewConfigurationViews(xr_instance, system.Id, session.EnabledSecondaryViewConfigurationTypes[0], view_count, &view_count, xr_secondary_config_views.data());
         for (uint32_t i = 0; i < view_count; i++) {
             // Create a swapchain for this viewpoint! A swapchain is a set of texture buffers used for displaying to screen,
             // typically this is a backbuffer and a front buffer, one for rendering data to, and one for displaying on-screen.
@@ -568,7 +570,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
                 swapchain_info.sampleCount = view.recommendedSwapchainSampleCount;
                 swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
                 XrSecondaryViewConfigurationSwapchainCreateInfoMSFT secondaryViewConfigCreateInfo{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SWAPCHAIN_CREATE_INFO_MSFT };
-                secondaryViewConfigCreateInfo.viewConfigurationType = EnabledSecondaryViewConfigurationTypes[0];
+                secondaryViewConfigCreateInfo.viewConfigurationType = session.EnabledSecondaryViewConfigurationTypes[0];
                 swapchain_info.next = &secondaryViewConfigCreateInfo;
 
 
@@ -603,7 +605,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
                 swapchain_info.sampleCount = view.recommendedSwapchainSampleCount;
                 swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
                 XrSecondaryViewConfigurationSwapchainCreateInfoMSFT secondaryViewConfigCreateInfo{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SWAPCHAIN_CREATE_INFO_MSFT };
-                secondaryViewConfigCreateInfo.viewConfigurationType = EnabledSecondaryViewConfigurationTypes[0];
+                secondaryViewConfigCreateInfo.viewConfigurationType = session.EnabledSecondaryViewConfigurationTypes[0];
                 swapchain_info.next = &secondaryViewConfigCreateInfo;
 
                 xrCreateSwapchain(xr_session, &swapchain_info, &handle);
@@ -742,7 +744,7 @@ void OXRManager::Render(OXRScenes* scene) {
     // secondaryViewConfigFrameState needs to have the same lifetime as frameState
     XrSecondaryViewConfigurationFrameStateMSFT secondaryViewConfigFrameState{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_STATE_MSFT };
 
-    const size_t enabledSecondaryViewConfigCount = EnabledSecondaryViewConfigurationTypes.size();
+    const size_t enabledSecondaryViewConfigCount = XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
     std::vector<XrSecondaryViewConfigurationStateMSFT> secondaryViewConfigStates(enabledSecondaryViewConfigCount,
         { XR_TYPE_SECONDARY_VIEW_CONFIGURATION_STATE_MSFT });
 
@@ -785,8 +787,8 @@ void OXRManager::Render(OXRScenes* scene) {
 
     // Chain secondary view configuration layers data to endFrameInfo
     if (SupportsSecondaryViewConfiguration &&
-        EnabledSecondaryViewConfigurationTypes.size() > 0) {
-        for (auto& secondaryViewConfigType : EnabledSecondaryViewConfigurationTypes) {
+        XrContext().Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
+        for (auto& secondaryViewConfigType : XrContext().Session.EnabledSecondaryViewConfigurationTypes) {
             auto& secondaryViewConfig = m_viewConfigStates.at(secondaryViewConfigType);
             if (secondaryViewConfig.Active) {
                 activeSecondaryViewConfigLayerInfos.emplace_back(
@@ -953,9 +955,9 @@ void OXRManager::openxr_poll_events() {
                 XrSecondaryViewConfigurationSessionBeginInfoMSFT secondaryViewConfigInfo{
                     XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SESSION_BEGIN_INFO_MSFT };
                 if (SupportsSecondaryViewConfiguration &&
-                    EnabledSecondaryViewConfigurationTypes.size() > 0) {
-                    secondaryViewConfigInfo.viewConfigurationCount = (uint32_t)EnabledSecondaryViewConfigurationTypes.size();
-                    secondaryViewConfigInfo.enabledViewConfigurationTypes = EnabledSecondaryViewConfigurationTypes.data();
+                    XrContext().Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
+                    secondaryViewConfigInfo.viewConfigurationCount = (uint32_t)XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
+                    secondaryViewConfigInfo.enabledViewConfigurationTypes = XrContext().Session.EnabledSecondaryViewConfigurationTypes.data();
 
                     secondaryViewConfigInfo.next = begin_info.next;
                     begin_info.next = &secondaryViewConfigInfo;
@@ -1125,6 +1127,8 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
         locate_info.viewConfigurationType = app_config_view;
         locate_info.displayTime = predictedTime;
         locate_info.space = m_appSpace.Get();
+        //auto xr_views = m_viewConfigStates.at(PrimaryViewConfigurationType).Views;
+
         xrLocateViews(xr_session, &locate_info, &view_state, (uint32_t)xr_views.size(), &view_count, xr_views.data());
         views.resize(view_count);
         depthInfo.resize(view_count);
@@ -1184,6 +1188,8 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
               views[i].fov = xr_secondary_views[0].fov;
             }
             else {*/
+            //auto xr_views = m_viewConfigStates.at(PrimaryViewConfigurationType).Views;
+
             views[i].pose = xr_views[i].pose;
             views[i].fov = xr_views[i].fov;
             //}
