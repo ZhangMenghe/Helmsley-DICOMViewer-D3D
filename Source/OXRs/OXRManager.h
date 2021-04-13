@@ -66,6 +66,7 @@ namespace DX {
 
 
 		std::unique_ptr<xr::XrContext> m_context;
+		//ProjectionLayers m_projectionLayers;
 
 
 		//XrInstance     xr_instance = {};

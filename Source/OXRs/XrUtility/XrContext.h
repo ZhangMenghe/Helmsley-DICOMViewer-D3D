@@ -17,20 +17,20 @@ namespace xr {
         XrContext(xr::InstanceContext instance,
                 xr::ExtensionContext extensions,
                 xr::SystemContext system,
-                xr::SessionContext session
-                //XrSpace appSpace,
+                xr::SessionContext session,
+                XrSpace appSpace,
                 //Pbr::Resources pbrResources,
-                //winrt::com_ptr<ID3D11Device> device,
-                //winrt::com_ptr<ID3D11DeviceContext> deviceContext
+                winrt::com_ptr<ID3D11Device> device,
+                winrt::com_ptr<ID3D11DeviceContext> deviceContext
         )
             : Instance(std::move(instance))
             , Extensions(std::move(extensions))
             , System(std::move(system))
             , Session(std::move(session))
-            //, AppSpace(appSpace)
+            , AppSpace(appSpace)
             //, PbrResources(std::move(pbrResources))
-            //, Device(std::move(device))
-            //, DeviceContext(std::move(deviceContext))
+            , Device(std::move(device))
+            , DeviceContext(std::move(deviceContext))
         {
         }
 
@@ -39,10 +39,10 @@ namespace xr {
         const xr::SystemContext System;
         const xr::SessionContext Session;
 
-        //const XrSpace AppSpace;
+        const XrSpace AppSpace;
 
-        //const winrt::com_ptr<ID3D11DeviceContext> DeviceContext;
-        //const winrt::com_ptr<ID3D11Device> Device;
+        const winrt::com_ptr<ID3D11DeviceContext> DeviceContext;
+        const winrt::com_ptr<ID3D11Device> Device;
         //Pbr::Resources PbrResources;
     };
 

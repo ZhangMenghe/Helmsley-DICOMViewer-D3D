@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "OXRs/OXRManager.h"
 #include <OXRs/OXRScenes.h>
-#include <Utils/XrMath.h>
+#include <OXRs/XrUtility/XrMath.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Graphics.Holographic.h>

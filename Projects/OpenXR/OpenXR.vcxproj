@@ -359,6 +359,7 @@
     <ClInclude Include="..\..\Source\OXRs\Scenario.h" />
     <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\TimeConverter.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\FrameTime.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrEnumerate.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrError.h" />
@@ -366,7 +367,9 @@
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensions.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHandle.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrInstanceContext.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrMath.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSessionContext.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStereoView.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrString.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStruct.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSystemContext.h" />
@@ -394,7 +397,6 @@
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
     <ClInclude Include="..\..\Source\Utils\uiController.h" />
-    <ClInclude Include="..\..\Source\Utils\XrMath.h" />
     <ClInclude Include="..\..\Source\Utils\TypeConvertUtils.h" />
     <ClInclude Include="..\..\Source\vrController.h" />
     <ClInclude Include="App.h" />
