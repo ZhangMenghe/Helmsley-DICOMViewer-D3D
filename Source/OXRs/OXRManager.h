@@ -43,14 +43,13 @@ namespace DX {
 		void Render(OXRScenes* scene);
 		void ShutDown();
 
-		XrSpace createReferenceSpace(XrReferenceSpaceType referenceSpaceType, XrPosef poseInReferenceSpace);
 		XrSpatialAnchorMSFT createAnchor(const XrPosef& poseInScene);
 
 		XrSpace createAnchorSpace(const XrPosef& poseInScene);
 		XrSpace * getAppSpace();
 
 		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem getReferenceFrame() {
-			return referenceFrame;
+			return m_referenceFrame;
 		}
 		xr::XrContext& XrContext(){
 			return *m_context;
@@ -65,7 +64,6 @@ namespace DX {
 		const XrFormFactor app_config_form = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
 		const XrViewConfigurationType app_config_view = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
 
-		const XrPosef  xr_pose_identity = { {0,0,0,1}, {0,0,0} };
 
 		std::unique_ptr<xr::XrContext> m_context;
 
@@ -75,8 +73,12 @@ namespace DX {
 		XrSessionState xr_session_state = XR_SESSION_STATE_UNKNOWN;
 		bool           xr_running = false;
 		bool		   xr_quit = false;
-		XrSpace        xr_app_space = {};
-		XrSpace				xr_view_space = {};
+
+		xr::SpaceHandle m_appSpace;
+		xr::SpaceHandle m_viewSpace;
+
+		//XrSpace        xr_app_space = {};
+		//XrSpace				xr_view_space = {};
 		//XrSystemId     xr_system_id = XR_NULL_SYSTEM_ID;
 		input_state_t  xr_input = { };
 		XrEnvironmentBlendMode   xr_blend = {};
@@ -110,7 +112,7 @@ namespace DX {
 		winrt::Windows::Foundation::Size		 m_secondary_outputSizes;
 		bool render_for_MRC = false;
 
-		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame = { nullptr };
+		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem m_referenceFrame = { nullptr };
 
 		void openxr_poll_events();
 		void openxr_poll_actions();

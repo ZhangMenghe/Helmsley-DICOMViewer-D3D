@@ -412,13 +412,28 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     // OpenXR uses a couple different types of reference frames for positioning content, we need to choose one for
     // displaying our content! STAGE would be relative to the center of your guardian system's bounds, and LOCAL
     // would be relative to your device's starting location. HoloLens doesn't have a STAGE, so we'll use LOCAL.
-    XrReferenceSpaceCreateInfo ref_space = { XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
-    ref_space.poseInReferenceSpace = xr_pose_identity;
-    ref_space.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT;//XR_REFERENCE_SPACE_TYPE_LOCAL;
-    xrCreateReferenceSpace(xr_session, &ref_space, &xr_app_space);
+
+
+    //XrReferenceSpaceCreateInfo ref_space = { XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
+    //ref_space.poseInReferenceSpace = xr_pose_identity;
+    //ref_space.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT;//XR_REFERENCE_SPACE_TYPE_LOCAL;
+    //xrCreateReferenceSpace(xr_session, &ref_space, &xr_app_space);
+    
+    // Create view app space
+    XrReferenceSpaceCreateInfo spaceCreateInfo{ XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
+    spaceCreateInfo.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_VIEW;
+    spaceCreateInfo.poseInReferenceSpace = xr::math::Pose::Identity();
+    CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_viewSpace.Put()));
+
+    //Create main app space
+    spaceCreateInfo.referenceSpaceType =
+        extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT : XR_REFERENCE_SPACE_TYPE_LOCAL;
+    CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put()));
+
+
 
     auto locator = SpatialLocator::GetDefault();
-    referenceFrame = locator.CreateStationaryFrameOfReferenceAtCurrentLocation().CoordinateSystem();
+    m_referenceFrame = locator.CreateStationaryFrameOfReferenceAtCurrentLocation().CoordinateSystem();
 
     {
         // Now we need to find all the viewpoints we need to take care of! For a stereo headset, this should be 2.
@@ -693,7 +708,7 @@ void OXRManager::InitOxrActions() {
     for (int32_t i = 0; i < 2; i++) {
         XrActionSpaceCreateInfo action_space_info = { XR_TYPE_ACTION_SPACE_CREATE_INFO };
         action_space_info.action = xr_input.poseAction;
-        action_space_info.poseInActionSpace = xr_pose_identity;
+        action_space_info.poseInActionSpace = xr::math::Pose::Identity();
         action_space_info.subactionPath = xr_input.handSubactionPath[i];
         xrCreateActionSpace(xr_session, &action_space_info, &xr_input.handSpace[i]);
     }
@@ -876,7 +891,7 @@ void OXRManager::ShutDown() {
         if (xr_input.handSpace[1] != XR_NULL_HANDLE) xrDestroySpace(xr_input.handSpace[1]);
         xrDestroyActionSet(xr_input.actionSet);
     }
-    if (xr_app_space != XR_NULL_HANDLE) xrDestroySpace(xr_app_space);
+    //if (m_appSpace.Get() != XR_NULL_HANDLE) xrDestroySpace(xr_app_space);
     if (xr_session != XR_NULL_HANDLE) xrDestroySession(xr_session);
     if (xr_debug != XR_NULL_HANDLE) ext_xrDestroyDebugUtilsMessengerEXT(xr_debug);
     auto xr_instance = XrContext().Instance.Handle;
@@ -887,16 +902,6 @@ void OXRManager::ShutDown() {
     if (m_d3dDevice.get()) { m_d3dDevice.get()->Release();  m_d3dDevice = nullptr; }
 }
 
-XrSpace DX::OXRManager::createReferenceSpace(XrReferenceSpaceType referenceSpaceType, XrPosef poseInReferenceSpace) {
-    XrSpace space;
-    auto xr_session = XrContext().Session.Handle;
-
-    XrReferenceSpaceCreateInfo createInfo{ XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
-    createInfo.referenceSpaceType = referenceSpaceType;
-    createInfo.poseInReferenceSpace = poseInReferenceSpace;
-    xrCreateReferenceSpace(xr_session, &createInfo, &space);
-    return space;
-}
 
 XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
 {
@@ -906,7 +911,7 @@ XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
     // Anchors provide the best stability when moving beyond 5 meters, so if the extension is enabled,
     // create an anchor at given location and place the hologram at the resulting anchor space.
     XrSpatialAnchorCreateInfoMSFT createInfo{ XR_TYPE_SPATIAL_ANCHOR_CREATE_INFO_MSFT };
-    createInfo.space = xr_app_space;
+    createInfo.space = m_appSpace.Get();
     createInfo.pose = poseInScene;
     XrResult result = ext_xrCreateSpatialAnchorMSFT(
         xr_session, &createInfo, &anchor);
@@ -925,7 +930,7 @@ XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
     return space;
 }
 
-XrSpace* DX::OXRManager::getAppSpace() { return &xr_app_space; }
+XrSpace* DX::OXRManager::getAppSpace() { return (XrSpace*)m_appSpace.Get(); }
 
 void OXRManager::openxr_poll_events() {
     auto xr_session = XrContext().Session.Handle;
@@ -1008,7 +1013,7 @@ void OXRManager::openxr_poll_actions() {
         // Constantly update pose if isActive
         if (xr_input.renderHand[hand]) {
             XrSpaceLocation space_location = { XR_TYPE_SPACE_LOCATION };
-            XrResult        res = xrLocateSpace(xr_input.handSpace[hand], xr_app_space, lastFrameState.predictedDisplayTime, &space_location);
+            XrResult        res = xrLocateSpace(xr_input.handSpace[hand], m_appSpace.Get(), lastFrameState.predictedDisplayTime, &space_location);
             if (XR_UNQUALIFIED_SUCCESS(res) &&
                 (space_location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
                 (space_location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0) {
@@ -1106,7 +1111,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
         XrViewLocateInfo locate_info = { XR_TYPE_VIEW_LOCATE_INFO };
         locate_info.viewConfigurationType = XrContext().System.SupportedSecondaryViewConfigurationTypes[0];
         locate_info.displayTime = predictedTime;
-        locate_info.space = xr_app_space;
+        locate_info.space = m_appSpace.Get();
 
         xrLocateViews(xr_session, &locate_info, &view_state, (uint32_t)xr_secondary_views.size(), &view_count, xr_secondary_views.data());
         views.resize(view_count);
@@ -1119,7 +1124,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
         XrViewLocateInfo locate_info = { XR_TYPE_VIEW_LOCATE_INFO };
         locate_info.viewConfigurationType = app_config_view;
         locate_info.displayTime = predictedTime;
-        locate_info.space = xr_app_space;
+        locate_info.space = m_appSpace.Get();
         xrLocateViews(xr_session, &locate_info, &view_state, (uint32_t)xr_views.size(), &view_count, xr_views.data());
         views.resize(view_count);
         depthInfo.resize(view_count);
@@ -1359,7 +1364,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
         removeCurrentTargetViews();
     }
 
-    layer.space = xr_app_space;
+    layer.space = m_appSpace.Get();
     layer.viewCount = (uint32_t)views.size();
     layer.views = views.data();
     return true;
@@ -1391,7 +1396,7 @@ void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
         if (!xr_input.renderHand[i])
             continue;
         XrSpaceLocation spaceRelation = { XR_TYPE_SPACE_LOCATION };
-        XrResult        res = xrLocateSpace(xr_input.handSpace[i], xr_app_space, predicted_time, &spaceRelation);
+        XrResult        res = xrLocateSpace(xr_input.handSpace[i], m_appSpace.Get(), predicted_time, &spaceRelation);
         if (XR_UNQUALIFIED_SUCCESS(res) &&
             (spaceRelation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
             (spaceRelation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0) {

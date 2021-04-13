@@ -33,7 +33,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	oxr_manager->InitOxrActions();
 	m_oxr_scene = std::unique_ptr<OXRScenes>(new OXRScenes(std::unique_ptr<DX::DeviceResources>(oxr_manager)));
 	// Create reference space 1 meter in front of user
-	XrSpace refSpace = oxr_manager->createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL, xr::math::Pose::Translation({ 0, 0, -1 }));
+	//XrSpace refSpace = oxr_manager->createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL, xr::math::Pose::Translation({ 0, 0, -1 }));
 
 	// Create anchor for volume origin
 	//XrSpace volumeSpace = oxr_manager->createAnchorSpace(xr::math::Pose::Translation({ 0, 0, -1 }));
