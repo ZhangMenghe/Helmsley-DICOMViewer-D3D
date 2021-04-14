@@ -2,26 +2,24 @@
 #include "OXRScenes.h"
 #include <Common/DirectXHelper.h>
 #include "OXRRenderer/OpenCVFrameProcessing.h"
-OXRScenes::OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources)
-		: m_deviceResources(deviceResources)
-{
+OXRScenes::OXRScenes(const std::shared_ptr<xr::XrContext>& context)
+	:xr::Scene(context) {
 	m_manager = std::make_shared<Manager>();
 
-	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
-	m_sceneRenderer->InitOXRScene();
-
-	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(deviceResources));
+	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(context));
 
 	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
 	m_uiController.InitAll();
-
-	setup_resource();
 }
 
-
+void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
+	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
+	m_sceneRenderer->InitOXRScene();
+	setup_resource();
+}
 
 void OXRScenes::setup_volume_server()
 {
@@ -140,7 +138,7 @@ void OXRScenes::setSpaces(XrSpace *space, XrSpace *app_space)
 	this->app_space = app_space;
 	//this->m_sceneRenderer->setSpaces(space, app_space);
 }
-void OXRScenes::Update()
+void OXRScenes::Update(const xr::FrameTime& frameTime)
 {
 	if (rpcHandler::new_data_request)
 	{
@@ -154,17 +152,15 @@ void OXRScenes::Update()
 		//m_fpsTextRenderer->Update(m_timer);
 	});
 }
+void OXRScenes::BeforeRender(const xr::FrameTime& frameTime) {
 
-void OXRScenes::Update(XrTime time)
-{
-	//m_sceneRenderer->Update(time);
 }
 
-bool OXRScenes::Render(int view_id)
-{
+
+void OXRScenes::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 	if (m_timer.GetFrameCount() == 0)
 	{
-		return false;
+		return;
 	}
 	if (view_id == 0)
 	{

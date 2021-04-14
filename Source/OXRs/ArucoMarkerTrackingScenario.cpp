@@ -13,8 +13,8 @@ HMODULE LoadLibraryA(
     LPCSTR lpLibFileName
 );
 
-ArucoMarkerTrackingScenario::ArucoMarkerTrackingScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources)
-:Scenario(deviceResources){
+ArucoMarkerTrackingScenario::ArucoMarkerTrackingScenario(const std::shared_ptr<xr::XrContext>& context)
+:Scenario(context){
     IntializeSensors();
     IntializeScene();
 
@@ -88,10 +88,10 @@ void ArucoMarkerTrackingScenario::IntializeSensors() {
 }
 
 void ArucoMarkerTrackingScenario::IntializeScene() {
-    m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
+    m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_context->Device.get(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
     //m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
 
-    m_LFTracker = std::make_shared<SlateArucoTracker>(m_deviceResources);
+    m_LFTracker = std::make_shared<SlateArucoTracker>();
     m_LFTracker->StartCVProcessing(0xff);
     m_LFCameraRenderer->SetFrameCallBack(SlateArucoTracker::FrameReadyCallback, m_LFTracker.get());
 

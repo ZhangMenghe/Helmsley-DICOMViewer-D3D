@@ -405,6 +405,7 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         std::move(device),
         std::move(deviceContext)
         );
+    InitOxrActions();
     return true;
 }
 void OXRManager::InitOxrActions() {
@@ -510,11 +511,14 @@ bool OXRManager::Update(OXRScenes* scene) {
         }
         m_current_framestate = frame_state;
 
-        scene->Update();
+        m_currentFrameTime.Update(frame_state, xr_session_state);
+        scene->Update(m_currentFrameTime);
     }
     return !xr_quit;
 }
 void OXRManager::Render(OXRScenes* scene) {
+    const xr::FrameTime renderFrameTime = m_currentFrameTime;
+
     auto xr_session = XrContext().Session.Handle;
 
     XrFrameBeginInfo beginFrameDescription{ XR_TYPE_FRAME_BEGIN_INFO };
@@ -529,7 +533,7 @@ void OXRManager::Render(OXRScenes* scene) {
 
     XrFrameEndInfo end_info{ XR_TYPE_FRAME_END_INFO };
     end_info.environmentBlendMode = XrContext().System.ViewProperties.at(app_config_view).BlendMode;
-    end_info.displayTime = m_current_framestate.predictedDisplayTime;//actually current frame, just updated
+    end_info.displayTime = renderFrameTime.PredictedDisplayTime;//actually current frame, just updated
     
     // Secondary view config frame info need to have same lifetime as XrFrameEndInfo;
     XrSecondaryViewConfigurationFrameEndInfoMSFT frameEndSecondaryViewConfigInfo{
@@ -1033,8 +1037,8 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 
             Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
-            scene->Update(predictedTime);
-            scene->Render(9);
+            scene->Update(m_currentFrameTime);
+            scene->Render(m_currentFrameTime, i);
 
             // And tell OpenXR we're done with rendering to this one!
             XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };
@@ -1103,8 +1107,8 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
             }
             Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
-            scene->Update(predictedTime);
-            scene->Render(i);
+            scene->Update(m_currentFrameTime);
+            scene->Render(m_currentFrameTime, i);
 
             // And tell OpenXR we're done with rendering to this one!
             XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };

@@ -457,6 +457,9 @@
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.h">
       <Filter>Source\OXRs\XrSceneLib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\CompositionLayers.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

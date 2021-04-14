@@ -9,16 +9,20 @@
 #include <grpc/rpcHandler.h>
 #include <OXRs/ArucoMarkerTrackingScenario.h>
 #include <OXRs/SensorVizScenario.h>
-class OXRScenes{
+#include <OXRs/XrSceneLib/Scene.h>
+class OXRScenes : public xr::Scene{
 public:
-	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
+	OXRScenes(const std::shared_ptr<xr::XrContext>& context);
 	void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {
 		m_scenario->SetupReferenceFrame(referenceFrame);
 	}
 
-	void Update();
-	void Update(XrTime time);
-	bool Render(int view_id);
+	//override
+	void Update(const xr::FrameTime& frameTime);
+	void BeforeRender(const xr::FrameTime& frameTime);
+	void Render(const xr::FrameTime& frameTime, uint32_t view_id);
+
+	void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 	void onViewChanged();
 	void setSpaces(XrSpace *space, XrSpace *app_space);
 
@@ -30,8 +34,6 @@ public:
 	void on3DTouchReleased(int side) { m_sceneRenderer->on3DTouchReleased(side); };
 
 private:
-	std::shared_ptr<DX::DeviceResources> m_deviceResources;
-
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
 	std::unique_ptr<SensorVizScenario> m_scenario;

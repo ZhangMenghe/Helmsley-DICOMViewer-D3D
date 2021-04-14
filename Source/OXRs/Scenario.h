@@ -2,15 +2,15 @@
 #define SCENARIO_H
 
 #include "pch.h"
-#include <Common/DeviceResources.h>
 #include <Common/StepTimer.h>
 #include <winrt/Windows.UI.Core.h>
+#include <OXRs/XrSceneLib/XrContext.h>
 
 class Scenario
 {
 public:
-    Scenario(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
-        m_deviceResources(deviceResources)
+    Scenario(const std::shared_ptr<xr::XrContext>& context) :
+        m_context(context)
     {
     }
 
@@ -39,7 +39,8 @@ public:
     virtual void OnDeviceRestored() = 0;
 
 protected:
-    std::shared_ptr<DX::DeviceResources> m_deviceResources;
+    std::shared_ptr<xr::XrContext> m_context;
+    //std::shared_ptr<DX::DeviceResources> m_deviceResources;
     //winrt::Windows::Perception::Spatial::SpatialStationaryFrameOfReference m_stationaryReferenceFrame = nullptr;
 
 };

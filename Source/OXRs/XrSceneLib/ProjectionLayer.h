@@ -8,7 +8,8 @@
 #include <OXRs/XrUtility/XrHandle.h>
 #include <OXRs/XrUtility/XrMath.h>
 #include <OXRs/DxCommon/DxUtility.h>
-#include <OXRs/XrUtility/XrContext.h>
+#include <OXRs/XrSceneLib/XrContext.h>
+
 #include <mutex>
 #include "FrameTime.h"
 

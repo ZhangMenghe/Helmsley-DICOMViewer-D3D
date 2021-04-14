@@ -15,7 +15,7 @@
 #include <winrt/Windows.Perception.Spatial.h>
 class SensorVizScenario : public Scenario {
 public:
-    SensorVizScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    SensorVizScenario(const std::shared_ptr<xr::XrContext>& context);
     virtual ~SensorVizScenario();
 
     void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {

@@ -4,7 +4,7 @@
 #include <vector>
 #include <Common/DeviceResources.h>
 #include <OXRs/OXRScenes.h>
-#include <OXRs/XrUtility/XrContext.h>
+#include <OXRs/XrSceneLib/XrContext.h>
 #include <OXRs/XrSceneLib/ProjectionLayer.h>
 namespace DX {
 	struct swapchain_surfdata_t {
@@ -31,7 +31,6 @@ namespace DX {
 		XrBool32 handSelect[2];
 		XrBool32 handDeselect[2];
 	};
-
 
 
 	class OXRManager : public DeviceResources {
@@ -68,6 +67,7 @@ namespace DX {
 
 		std::unique_ptr<xr::XrContext> m_context;
 		xr::ProjectionLayers m_projectionLayers;
+		xr::FrameTime m_currentFrameTime{};
 
 
 		//XrInstance     xr_instance = {};

@@ -1,13 +1,12 @@
 #ifndef SLATE_ARUCO_TRACKER_H
 #define SLATE_ARUCO_TRACKER_H
 
-#include <Common/DeviceResources.h>
 #include <ResearchModeApi/ResearchModeApi.h>
 #include "OpenCVFrameProcessing.h"
 #include <mutex>
 class SlateArucoTracker{
 public:
-    SlateArucoTracker(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    SlateArucoTracker();
     ~SlateArucoTracker();
 
     //DirectX::XMMATRIX GetModelRotation();

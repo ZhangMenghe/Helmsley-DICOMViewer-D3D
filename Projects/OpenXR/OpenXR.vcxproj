@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props')" />
   <Import Project="..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.props" Condition="Exists('..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.props')" />
@@ -359,9 +359,11 @@
     <ClInclude Include="..\..\Source\OXRs\Scenario.h" />
     <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\TimeConverter.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\CompositionLayers.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\FrameTime.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.h" />
-    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrContext.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\Scene.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\XrContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrEnumerate.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrError.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensionContext.h" />
@@ -422,6 +424,7 @@
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp" />
     <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp" />
     <ClCompile Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\Scene.cpp" />
     <ClCompile Include="..\..\Source\proto\common.grpc.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>

@@ -3,7 +3,7 @@
 
 using namespace DirectX;
 using namespace winrt::Windows::Foundation::Numerics;
-SlateArucoTracker::SlateArucoTracker(std::shared_ptr<DX::DeviceResources> const& deviceResources)
+SlateArucoTracker::SlateArucoTracker()
 {
     m_Width = 0;
     m_Height = 0;

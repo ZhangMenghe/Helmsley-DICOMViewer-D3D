@@ -10,7 +10,7 @@ struct Line {
 };
 class ArucoMarkerTrackingScenario : public Scenario {
 public:
-    ArucoMarkerTrackingScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ArucoMarkerTrackingScenario(const std::shared_ptr<xr::XrContext>& context);
     virtual ~ArucoMarkerTrackingScenario();
 
     void IntializeSensors();

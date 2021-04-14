@@ -5,10 +5,10 @@
 
 //#include <pbr/PbrResources.h>
 //#include <XrUtility/XrString.h>
-#include "XrInstanceContext.h"
-#include "XrExtensionContext.h"
-#include "XrSystemContext.h"
-#include "XrSessionContext.h"
+#include <OXRs/XrUtility/XrInstanceContext.h>
+#include <OXRs/XrUtility/XrExtensionContext.h>
+#include <OXRs/XrUtility/XrSystemContext.h>
+#include <OXRs/XrUtility/XrSessionContext.h>
 
 namespace xr {
 

@@ -149,7 +149,7 @@ void RGBFrameProcessor::DumpFrame(const SoftwareBitmap& softwareBitmap, long lon
     //update texture to draw
     int height = softwareBitmap.PixelHeight();
     int width = softwareBitmap.PixelWidth();
-    m_targetTex->setTexData(m_deviceResources->GetD3DDeviceContext(), pixelBufferData, width * sizeof(uint8_t) * 4, 0);
+    m_targetTex->setTexData(m_context->DeviceContext.get(), pixelBufferData, width * sizeof(uint8_t) * 4, 0);
 
     // shallow copy because we want convertedMat.data = pPixels
     // don't use .copyTo or .clone

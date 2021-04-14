@@ -14,8 +14,8 @@ HMODULE LoadLibraryA(
     LPCSTR lpLibFileName
 );
 
-SensorVizScenario::SensorVizScenario(std::shared_ptr<DX::DeviceResources> const& deviceResources)
-:Scenario(deviceResources){
+SensorVizScenario::SensorVizScenario(const std::shared_ptr<xr::XrContext>& context)
+:Scenario(context){
     IntializeSensors();
     IntializeScene();
 
@@ -103,12 +103,12 @@ void SensorVizScenario::IntializeScene() {
     hr = m_pSensorDevice->QueryInterface(IID_PPV_ARGS(&pSensorDevicePerception));
     hr = pSensorDevicePerception->GetRigNodeId(&guid);
 
-    m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
+    m_LFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_context->Device.get(), m_pLFCameraSensor, camConsentGiven, &camAccessCheck);
     m_LFCameraRenderer->setPosition(glm::vec3(-0.2, .0, .0));
     m_LFCameraRenderer->SetGUID(guid);
 
 
-    m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_deviceResources->GetD3DDevice(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
+    m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_context->Device.get(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
     m_RFCameraRenderer->setPosition(glm::vec3(0.2, .0, .0));
     m_RFCameraRenderer->SetGUID(guid);
 
@@ -131,9 +131,9 @@ void SensorVizScenario::IntializeScene() {
     };
     view_desc.Texture2D.MipSlice = 0;
     m_rgbTex = std::make_shared<Texture>();
-    m_rgbTex->Initialize(m_deviceResources->GetD3DDevice(), texDesc, view_desc);
+    m_rgbTex->Initialize(m_context->Device.get(), texDesc, view_desc);
 
-    m_rgbRender = new quadRenderer(m_deviceResources->GetD3DDevice());
+    m_rgbRender = new quadRenderer(m_context->Device.get());
     m_rgbRender->setTexture(m_rgbTex.get());
 }
 void SensorVizScenario::Update(DX::StepTimer& timer) {
@@ -141,7 +141,7 @@ void SensorVizScenario::Update(DX::StepTimer& timer) {
 }
 bool SensorVizScenario::Render() {
     auto model_mat = vrController::instance()->getFrameModelMat();
-    if (m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext()))
+    if (m_LFCameraRenderer->Update(m_context->DeviceContext.get()))
         m_RFCameraRenderer->UpdateExtrinsicsMatrix();
     else
         return false;
@@ -172,7 +172,7 @@ winrt::Windows::Foundation::IAsyncAction SensorVizScenario::InitializeVideoFrame
         return;
     }
 
-    m_videoFrameProcessor = std::make_unique<RGBFrameProcessor>(m_deviceResources);
+    m_videoFrameProcessor = std::make_unique<RGBFrameProcessor>(m_context);
     m_videoFrameProcessor->setTargetTexture(m_rgbTex);
     if (!m_videoFrameProcessor.get())
     {

@@ -13,7 +13,7 @@
 #include <OXRs/TimeConverter.h>
 #include <opencv2/core.hpp>
 #include <D3DPipeline/Texture.h>
-#include <Common/DeviceResources.h>
+#include <OXRs/XrSceneLib/XrContext.h>
 // Struct to store per-frame PV information:
 // timestamp, PV2world transform, focal length
 struct PVFrame{
@@ -26,8 +26,8 @@ struct PVFrame{
 
 class RGBFrameProcessor{
 public:
-    RGBFrameProcessor(std::shared_ptr<DX::DeviceResources> const& deviceResources)
-        :m_deviceResources(deviceResources){}
+    RGBFrameProcessor(const std::shared_ptr<xr::XrContext>& context)
+        :m_context(context){}
     virtual ~RGBFrameProcessor()
     {
         m_fExit = true;
@@ -68,8 +68,8 @@ private:
     bool m_fExit = false;
     TimeConverter m_converter;
     std::shared_ptr<Texture> m_targetTex;
-    std::shared_ptr<DX::DeviceResources> m_deviceResources;
-    
+    std::shared_ptr<xr::XrContext> m_context;
+
     cv::Mat m_FrameMat;
     static int frame_count;
     static const int kImageWidth;
