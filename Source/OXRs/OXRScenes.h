@@ -21,8 +21,8 @@ public:
 	void Update(const xr::FrameTime& frameTime);
 	void BeforeRender(const xr::FrameTime& frameTime);
 	void Render(const xr::FrameTime& frameTime, uint32_t view_id);
-
 	void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+
 	void onViewChanged();
 	void setSpaces(XrSpace *space, XrSpace *app_space);
 

@@ -6,18 +6,19 @@ OXRScenes::OXRScenes(const std::shared_ptr<xr::XrContext>& context)
 	:xr::Scene(context) {
 	m_manager = std::make_shared<Manager>();
 
-	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(context));
+
+}
+
+void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
+	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
+	m_sceneRenderer->InitOXRScene();
+	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
 
 	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
 	m_uiController.InitAll();
-}
-
-void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
-	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
-	m_sceneRenderer->InitOXRScene();
 	setup_resource();
 }
 

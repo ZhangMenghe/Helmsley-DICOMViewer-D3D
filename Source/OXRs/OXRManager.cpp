@@ -476,7 +476,7 @@ void OXRManager::InitOxrActions() {
     lastFrameState = { XR_TYPE_FRAME_STATE };
 
 }
-bool OXRManager::Update(OXRScenes* scene) {
+bool OXRManager::Update() {
     openxr_poll_events();
     if (xr_running) {
         openxr_poll_actions();
@@ -512,11 +512,16 @@ bool OXRManager::Update(OXRScenes* scene) {
         m_current_framestate = frame_state;
 
         m_currentFrameTime.Update(frame_state, xr_session_state);
-        scene->Update(m_currentFrameTime);
+        
+        for (auto& scene : m_scenes) {
+            if (scene->IsActive()) {
+                scene->Update(m_currentFrameTime);
+            }
+        }
     }
     return !xr_quit;
 }
-void OXRManager::Render(OXRScenes* scene) {
+void OXRManager::Render() {
     const xr::FrameTime renderFrameTime = m_currentFrameTime;
 
     auto xr_session = XrContext().Session.Handle;
@@ -574,7 +579,7 @@ void OXRManager::Render(OXRScenes* scene) {
     std::vector<XrCompositionLayerDepthInfoKHR> depthInfo;
     bool session_active = xr_session_state == XR_SESSION_STATE_VISIBLE || xr_session_state == XR_SESSION_STATE_FOCUSED;
 
-    if (session_active && openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj, scene)) {
+    if (session_active && openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj)) {
         layer = (XrCompositionLayerBaseHeader*)&layer_proj;
     }
 
@@ -598,7 +603,7 @@ void OXRManager::Render(OXRScenes* scene) {
 
             XrSecondaryViewConfigurationLayerInfoMSFT& secondaryViewConfigLayerInfo = activeSecondaryViewConfigLayerInfos.at(i);
             //engine::CompositionLayers& secondaryViewConfigLayers = layersForAllViewConfigs.at(i + 1);
-            if (openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj, scene, true)) {
+            if (openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj, true)) {
                 layer_array[i] = (XrCompositionLayerBaseHeader*)&layer_proj;
             }
             //RenderViewConfiguration(sceneLock, secondaryViewConfigLayerInfo.viewConfigurationType, secondaryViewConfigLayers);
@@ -646,6 +651,32 @@ void OXRManager::ShutDown() {
     if (m_d3dDevice.get()) { m_d3dDevice.get()->Release();  m_d3dDevice = nullptr; }
 }
 
+void OXRManager::AddScene(std::unique_ptr<xr::Scene> scene) {
+    if (!scene) {
+        return; // Some scenes might skip creation due to extension unavailability.
+    }
+    scene->SetupDeviceResource(std::unique_ptr<DX::DeviceResources>(this));
+    scene->SetupReferenceFrame(m_referenceFrame);
+
+    std::scoped_lock lock(m_sceneMutex);
+    m_scenes.push_back(std::move(scene));
+    
+
+}
+void OXRManager::AddSceneFinished() {
+    onSingle3DTouchDown = [&](float x, float y, float z, int side) {
+        for (const std::unique_ptr<xr::Scene>& scene : m_scenes) 
+            scene->onSingle3DTouchDown(x, y, z, side);
+    };
+    on3DTouchMove = [&](float x, float y, float z, glm::mat4 rot, int side) {
+        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
+        scene->on3DTouchMove(x, y, z, rot, side);
+    };
+    on3DTouchReleased = [&](int side) {
+        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
+        scene->on3DTouchReleased(side);
+    };
+}
 
 XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
 {
@@ -850,8 +881,7 @@ swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapch
 bool OXRManager::openxr_render_layer(XrTime predictedTime,
     std::vector<XrCompositionLayerProjectionView>& views,
     std::vector<XrCompositionLayerDepthInfoKHR>& depthInfo,
-    XrCompositionLayerProjection& layer,
-    OXRScenes* scene, bool is_secondary) {
+    XrCompositionLayerProjection& layer, bool is_secondary) {
     auto xr_session = XrContext().Session.Handle;
     // Find the state and location of each viewpoint at the predicted time
 
@@ -1037,8 +1067,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
 
             Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
-            scene->Update(m_currentFrameTime);
-            scene->Render(m_currentFrameTime, i);
+            m_scenes[0]->Render(m_currentFrameTime, i);
 
             // And tell OpenXR we're done with rendering to this one!
             XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };
@@ -1107,8 +1136,7 @@ bool OXRManager::openxr_render_layer(XrTime predictedTime,
             }
             Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
 
-            scene->Update(m_currentFrameTime);
-            scene->Render(m_currentFrameTime, i);
+            m_scenes[0]->Render(m_currentFrameTime, i);
 
             // And tell OpenXR we're done with rendering to this one!
             XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };

@@ -4,8 +4,8 @@
 #include <vector>
 #include <Common/DeviceResources.h>
 #include <OXRs/OXRScenes.h>
-#include <OXRs/XrSceneLib/XrContext.h>
 #include <OXRs/XrSceneLib/ProjectionLayer.h>
+#include <OXRs/XrSceneLib/Scene.h>
 namespace DX {
 	struct swapchain_surfdata_t {
 		ID3D11DepthStencilView* depth_view;
@@ -39,9 +39,12 @@ namespace DX {
 		int64_t GetSwapchainFmt()const { return d3d_swapchain_fmt; }
 		bool InitOxrSession(const char* app_name);
 		void InitOxrActions();
-		bool Update(OXRScenes* scene);
-		void Render(OXRScenes* scene);
+		bool Update();
+		void Render();
 		void ShutDown();
+
+		void AddScene(std::unique_ptr<xr::Scene> scene);
+		void AddSceneFinished();
 
 		XrSpatialAnchorMSFT createAnchor(const XrPosef& poseInScene);
 
@@ -60,6 +63,9 @@ namespace DX {
 		std::function<void(int)> on3DTouchReleased;
 
 	private:
+		std::vector<std::unique_ptr<xr::Scene>> m_scenes;
+
+
 		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
 		const XrFormFactor app_config_form = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
 		const XrViewConfigurationType app_config_view = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
@@ -100,6 +106,8 @@ namespace DX {
 		PFN_xrCreateSpatialAnchorSpaceMSFT    ext_xrCreateSpatialAnchorSpaceMSFT = nullptr;
 
 		std::mutex m_secondaryViewConfigActiveMutex;
+		std::mutex m_sceneMutex;
+
 		std::vector<XrSecondaryViewConfigurationStateMSFT> m_secondaryViewConfigurationsState;
 		//std::vector<XrViewConfigurationType> EnabledSecondaryViewConfigurationTypes;
 		//bool SupportsSecondaryViewConfiguration = true;
@@ -127,8 +135,7 @@ namespace DX {
 		swapchain_surfdata_t d3d_make_surface_data(XrBaseInStructure& swapchainImage);
 		bool openxr_render_layer(XrTime predictedTime, 
 			std::vector<XrCompositionLayerProjectionView>& projectionViews, std::vector<XrCompositionLayerDepthInfoKHR>& depthInfo,
-			XrCompositionLayerProjection& layer,
-			OXRScenes* scene, bool is_secondary = false);
+			XrCompositionLayerProjection& layer, bool is_secondary = false);
 		void d3d_render_layer(XrCompositionLayerProjectionView& layerView, swapchain_surfdata_t& surface);
 	};
 }

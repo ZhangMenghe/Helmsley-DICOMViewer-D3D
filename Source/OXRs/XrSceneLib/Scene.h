@@ -1,8 +1,10 @@
 #pragma once
 #include <mutex>
+#include <winrt/Windows.Perception.Spatial.h>
+
+#include <Common/DeviceResources.h>
 #include "FrameTime.h"
 #include "XrContext.h"
-
 namespace xr {
 
     struct Scene {
@@ -16,6 +18,12 @@ namespace xr {
         virtual void Update(const FrameTime& frameTime) = 0;
         virtual void BeforeRender(const FrameTime& frameTime) = 0;
         virtual void Render(const xr::FrameTime& frameTime, uint32_t view_id) = 0;
+        virtual void onSingle3DTouchDown(float x, float y, float z, int side) = 0;
+        virtual void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) = 0;
+        virtual void on3DTouchReleased(int side) = 0;
+
+        virtual void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources){}
+        virtual void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame){}
 
         // Active is true when the scene participates update and render loop.
         bool IsActive() const {
