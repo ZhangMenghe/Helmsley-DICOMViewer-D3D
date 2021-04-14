@@ -244,9 +244,6 @@
     <ClInclude Include="..\..\Source\Common\DirectXHelper.h">
       <Filter>Source\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Common\StepTimer.h">
-      <Filter>Source\Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h">
       <Filter>Source\OXRs</Filter>
     </ClInclude>
@@ -391,6 +388,9 @@
     <ClInclude Include="..\..\Source\OXRs\TimeConverter.h">
       <Filter>Source\OXRs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Common\StepTimer.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -428,9 +428,6 @@
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\QuadVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
@@ -440,22 +437,13 @@
     <FxCompile Include="..\..\Source\Shaders\VolumeCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\texbasedPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\texbasedVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\Naive2DTexVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\MarchingCubeGeometryShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\mesh3DPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\mesh3DVertexShader.hlsl">
@@ -464,16 +452,28 @@
     <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\mesh3DPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\texbasedPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
