@@ -246,6 +246,9 @@
     <ClCompile Include="..\..\Source\OXRs\DxCommon\DxUtility.cpp">
       <Filter>Source\OXRs\DxCommon</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.cpp">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -449,6 +452,9 @@
       <Filter>Source\OXRs\XrUtility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\FrameTime.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.h">
       <Filter>Source\OXRs\XrSceneLib</Filter>
     </ClInclude>
   </ItemGroup>

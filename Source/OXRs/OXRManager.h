@@ -5,6 +5,7 @@
 #include <Common/DeviceResources.h>
 #include <OXRs/OXRScenes.h>
 #include <OXRs/XrUtility/XrContext.h>
+#include <OXRs/XrSceneLib/ProjectionLayer.h>
 namespace DX {
 	struct swapchain_surfdata_t {
 		ID3D11DepthStencilView* depth_view;
@@ -39,7 +40,7 @@ namespace DX {
 		int64_t GetSwapchainFmt()const { return d3d_swapchain_fmt; }
 		bool InitOxrSession(const char* app_name);
 		void InitOxrActions();
-		bool Update();
+		bool Update(OXRScenes* scene);
 		void Render(OXRScenes* scene);
 		void ShutDown();
 
@@ -66,7 +67,7 @@ namespace DX {
 
 
 		std::unique_ptr<xr::XrContext> m_context;
-		//ProjectionLayers m_projectionLayers;
+		xr::ProjectionLayers m_projectionLayers;
 
 
 		//XrInstance     xr_instance = {};
@@ -81,10 +82,10 @@ namespace DX {
 		//XrSpace        xr_app_space = {};
 		//XrSpace				xr_view_space = {};
 		//XrSystemId     xr_system_id = XR_NULL_SYSTEM_ID;
-		input_state_t  xr_input = { };
+		input_state_t  xr_input = {};
 		XrEnvironmentBlendMode   xr_blend = {};
 		XrDebugUtilsMessengerEXT xr_debug = {};
-		XrFrameState lastFrameState;
+		XrFrameState m_current_framestate, lastFrameState;
 
 		std::vector<XrView>                  xr_views;
 		std::vector<XrViewConfigurationView> xr_config_views;
@@ -101,7 +102,7 @@ namespace DX {
 		std::mutex m_secondaryViewConfigActiveMutex;
 		std::vector<XrSecondaryViewConfigurationStateMSFT> m_secondaryViewConfigurationsState;
 		//std::vector<XrViewConfigurationType> EnabledSecondaryViewConfigurationTypes;
-		bool SupportsSecondaryViewConfiguration = true;
+		//bool SupportsSecondaryViewConfiguration = true;
 		std::unordered_map<XrViewConfigurationType, xr::ViewConfigurationState> m_viewConfigStates;
 		//std::unordered_map<XrViewConfigurationType, ViewProperties> m_viewProperties;
 		//std::vector<XrViewConfigurationType> SupportedPrimaryViewConfigurationTypes;

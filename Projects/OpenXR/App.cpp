@@ -58,9 +58,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 
 	m_oxr_scene->SetupReferenceFrame(oxr_manager->getReferenceFrame());
 
-	while (oxr_manager->Update()) {
-		m_oxr_scene->Update();
-		//order matters!
+	while (oxr_manager->Update(m_oxr_scene.get())) {
 		oxr_manager->Render(m_oxr_scene.get());
 	}
 	oxr_manager->ShutDown();

@@ -38,7 +38,9 @@ void ProjectionLayer::PrepareRendering(const XrContext& context,
     if (!shouldResetSwapchain && layerCurrentConfig.ColorSwapchainFormat != layerPendingConfig.ColorSwapchainFormat) {
         if (!xr::Contains(context.Session.SupportedColorSwapchainFormats, layerPendingConfig.ColorSwapchainFormat)) {
             throw std::runtime_error(
-                fmt::format("Unsupported color swapchain format: {}", layerPendingConfig.ColorSwapchainFormat).c_str());
+                "Unsupported color swapchain format:"
+                //fmt::format("Unsupported color swapchain format: {}", layerPendingConfig.ColorSwapchainFormat).c_str()
+            );
         }
         shouldResetSwapchain = true;
     }
@@ -46,7 +48,10 @@ void ProjectionLayer::PrepareRendering(const XrContext& context,
     if (!shouldResetSwapchain && layerCurrentConfig.DepthSwapchainFormat != layerPendingConfig.DepthSwapchainFormat) {
         if (!xr::Contains(context.Session.SupportedDepthSwapchainFormats, layerPendingConfig.DepthSwapchainFormat)) {
             throw std::runtime_error(
-                fmt::format("Unsupported depth swapchain format: {}", layerPendingConfig.DepthSwapchainFormat).c_str());
+                "Unsupported color swapchain format:"
+
+                //fmt::format("Unsupported depth swapchain format: {}", layerPendingConfig.DepthSwapchainFormat).c_str()
+            );
         }
         shouldResetSwapchain = true;
     }
@@ -121,7 +126,7 @@ void ProjectionLayer::PrepareRendering(const XrContext& context,
 
     // Create depth swapchain with recommended properties.
     viewConfigComponent.DepthSwapchain =
-        sample::dx::CreateSwapchainD3D11(context.Session.Handle,
+        DX::CreateSwapchainD3D11(context.Session.Handle,
                                          layerCurrentConfig.DepthSwapchainFormat,
                                          swapchainImageWidth * wideScale,
                                          swapchainImageHeight,
@@ -275,17 +280,17 @@ bool ProjectionLayer::Render(XrContext& context,
                 DirectX::XMMATRIX worldToViewMatrix = xr::math::LoadInvertedXrPose(projectionViews[viewIndex].pose);
 
 
-                context.PbrResources.SetViewProjection(worldToViewMatrix, projectionMatrix);
-                context.PbrResources.Bind(context.DeviceContext.get());
-                context.PbrResources.SetDepthFuncReversed(reversedZ);
+                //context.PbrResources.SetViewProjection(worldToViewMatrix, projectionMatrix);
+                //context.PbrResources.Bind(context.DeviceContext.get());
+                //context.PbrResources.SetDepthFuncReversed(reversedZ);
 
                 // Render all active scenes.
-                for (const std::unique_ptr<Scene>& scene : activeScenes) {
+                /*for (const std::unique_ptr<Scene>& scene : activeScenes) {
                     if (scene->IsActive() && !std::empty(scene->GetObjects())) {
                         submitProjectionLayer = true;
                         scene->Render(frameTime, viewIndex);
                     }
-                }
+                }*/
             }
         }
     }

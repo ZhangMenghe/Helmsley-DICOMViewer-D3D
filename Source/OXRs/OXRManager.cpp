@@ -184,6 +184,8 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     //setup reference frame
     auto locator = SpatialLocator::GetDefault();
     m_referenceFrame = locator.CreateStationaryFrameOfReferenceAtCurrentLocation().CoordinateSystem();
+    
+    //m_projectionLayers.Resize(1, XrContext(), true /*forceReset*/);
 
     {
         // Now we need to find all the viewpoints we need to take care of! For a stereo headset, this should be 2.
@@ -473,7 +475,7 @@ void OXRManager::InitOxrActions() {
     lastFrameState = { XR_TYPE_FRAME_STATE };
 
 }
-bool OXRManager::Update() {
+bool OXRManager::Update(OXRScenes* scene) {
     openxr_poll_events();
     if (xr_running) {
         openxr_poll_actions();
@@ -481,62 +483,61 @@ bool OXRManager::Update() {
             xr_session_state != XR_SESSION_STATE_FOCUSED) {
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
+        
+        XrFrameState frame_state = { XR_TYPE_FRAME_STATE };
+        auto xr_session = XrContext().Session.Handle;
+
+        // secondaryViewConfigFrameState needs to have the same lifetime as frameState
+        XrSecondaryViewConfigurationFrameStateMSFT secondaryViewConfigFrameState{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_STATE_MSFT };
+
+        const size_t enabledSecondaryViewConfigCount = XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
+        std::vector<XrSecondaryViewConfigurationStateMSFT> secondaryViewConfigStates(enabledSecondaryViewConfigCount,
+            { XR_TYPE_SECONDARY_VIEW_CONFIGURATION_STATE_MSFT });
+
+        if (XrContext().Extensions.SupportsSecondaryViewConfiguration && enabledSecondaryViewConfigCount > 0) {
+            secondaryViewConfigFrameState.viewConfigurationCount = (uint32_t)secondaryViewConfigStates.size();
+            secondaryViewConfigFrameState.viewConfigurationStates = secondaryViewConfigStates.data();
+            secondaryViewConfigFrameState.next = frame_state.next;
+            frame_state.next = &secondaryViewConfigFrameState;
+        }
+
+        XrFrameWaitInfo waitFrameInfo{ XR_TYPE_FRAME_WAIT_INFO };
+        xrWaitFrame(xr_session, &waitFrameInfo, &frame_state);
+
+        if (XrContext().Extensions.SupportsSecondaryViewConfiguration) {
+            std::scoped_lock lock(m_secondaryViewConfigActiveMutex);
+            m_secondaryViewConfigurationsState = std::move(secondaryViewConfigStates);
+        }
+        m_current_framestate = frame_state;
+
+        scene->Update();
     }
     return !xr_quit;
 }
 void OXRManager::Render(OXRScenes* scene) {
-    // Block until the previous frame is finished displaying, and is ready for another one.
-    // Also returns a prediction of when the next frame will be displayed, for use with predicting
-    // locations of controllers, viewpoints, etc.
-    XrFrameState frame_state = { XR_TYPE_FRAME_STATE };
     auto xr_session = XrContext().Session.Handle;
 
-    // secondaryViewConfigFrameState needs to have the same lifetime as frameState
-    XrSecondaryViewConfigurationFrameStateMSFT secondaryViewConfigFrameState{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_STATE_MSFT };
-
-    const size_t enabledSecondaryViewConfigCount = XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
-    std::vector<XrSecondaryViewConfigurationStateMSFT> secondaryViewConfigStates(enabledSecondaryViewConfigCount,
-        { XR_TYPE_SECONDARY_VIEW_CONFIGURATION_STATE_MSFT });
-
-    if (SupportsSecondaryViewConfiguration && enabledSecondaryViewConfigCount > 0) {
-        secondaryViewConfigFrameState.viewConfigurationCount = (uint32_t)secondaryViewConfigStates.size();
-        secondaryViewConfigFrameState.viewConfigurationStates = secondaryViewConfigStates.data();
-        secondaryViewConfigFrameState.next = frame_state.next;
-        frame_state.next = &secondaryViewConfigFrameState;
-    }
-
-    XrFrameWaitInfo waitFrameInfo{ XR_TYPE_FRAME_WAIT_INFO };
-    xrWaitFrame(xr_session, &waitFrameInfo, &frame_state);
-
-    if (SupportsSecondaryViewConfiguration) {
-        std::scoped_lock lock(m_secondaryViewConfigActiveMutex);
-        m_secondaryViewConfigurationsState = std::move(secondaryViewConfigStates);
-    }
-    // Must be called before any rendering is done! This can return some interesting flags, like 
-    // XR_SESSION_VISIBILITY_UNAVAILABLE, which means we could skip rendering this frame and call
-    // xrEndFrame right away.
-    lastFrameState = frame_state;
     XrFrameBeginInfo beginFrameDescription{ XR_TYPE_FRAME_BEGIN_INFO };
-    XrFrameEndInfo end_info{ XR_TYPE_FRAME_END_INFO };
-    xrBeginFrame(xr_session, &beginFrameDescription);
+    CHECK_XRCMD(xrBeginFrame(xr_session, &beginFrameDescription));
 
-    end_info.environmentBlendMode = XrContext().System.ViewProperties.at(app_config_view).BlendMode;
-    end_info.displayTime = frame_state.predictedDisplayTime;
-
-    if (SupportsSecondaryViewConfiguration) {
+    if (XrContext().Extensions.SupportsSecondaryViewConfiguration) {
         std::scoped_lock lock(m_secondaryViewConfigActiveMutex);
         for (auto& state : m_secondaryViewConfigurationsState) {
             SetSecondaryViewConfigurationActive(m_viewConfigStates.at(state.viewConfigurationType), state.active);
         }
     }
 
+    XrFrameEndInfo end_info{ XR_TYPE_FRAME_END_INFO };
+    end_info.environmentBlendMode = XrContext().System.ViewProperties.at(app_config_view).BlendMode;
+    end_info.displayTime = m_current_framestate.predictedDisplayTime;//actually current frame, just updated
+    
     // Secondary view config frame info need to have same lifetime as XrFrameEndInfo;
     XrSecondaryViewConfigurationFrameEndInfoMSFT frameEndSecondaryViewConfigInfo{
         XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_END_INFO_MSFT };
     std::vector<XrSecondaryViewConfigurationLayerInfoMSFT> activeSecondaryViewConfigLayerInfos;
 
     // Chain secondary view configuration layers data to endFrameInfo
-    if (SupportsSecondaryViewConfiguration &&
+    if (XrContext().Extensions.SupportsSecondaryViewConfiguration &&
         XrContext().Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
         for (auto& secondaryViewConfigType : XrContext().Session.EnabledSecondaryViewConfigurationTypes) {
             auto& secondaryViewConfig = m_viewConfigStates.at(secondaryViewConfigType);
@@ -561,11 +562,6 @@ void OXRManager::Render(OXRScenes* scene) {
         }
     }
 
-    // Execute any code that's dependant on the predicted time, such as updating the location of
-    // controller models.
-    //openxr_poll_predicted(frame_state.predictedDisplayTime);
-    //app_update_predicted();
-
     // If the session is active, lets render our layer in the compositor!
     // Primary render
     XrCompositionLayerBaseHeader* layer = nullptr;
@@ -574,25 +570,16 @@ void OXRManager::Render(OXRScenes* scene) {
     std::vector<XrCompositionLayerDepthInfoKHR> depthInfo;
     bool session_active = xr_session_state == XR_SESSION_STATE_VISIBLE || xr_session_state == XR_SESSION_STATE_FOCUSED;
 
-    if (session_active && openxr_render_layer(frame_state.predictedDisplayTime, views, depthInfo, layer_proj, scene)) {
+    if (session_active && openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj, scene)) {
         layer = (XrCompositionLayerBaseHeader*)&layer_proj;
     }
-
-    //{
-    //	XrCompositionLayerBaseHeader* layer = nullptr;
-    //	XrCompositionLayerProjection             layer_proj = { XR_TYPE_COMPOSITION_LAYER_PROJECTION };
-    //	std::vector<XrCompositionLayerProjectionView> views;
-    //  if (openxr_render_layer(frame_state.predictedDisplayTime, views, layer_proj, scene, true)) {
-    //	  layer = (XrCompositionLayerBaseHeader*)&layer_proj;
-    //  }
-   // }
 
     std::vector<std::vector<XrCompositionLayerProjectionView>> views_array;
     std::vector<std::vector<XrCompositionLayerDepthInfoKHR>> depthInfo_array;
     std::vector<XrCompositionLayerProjection> layer_proj_array;
     std::vector<XrCompositionLayerBaseHeader*> layer_array;
     // Secondary render
-    if (SupportsSecondaryViewConfiguration && activeSecondaryViewConfigLayerInfos.size() > 0) {
+    if (XrContext().Extensions.SupportsSecondaryViewConfiguration && activeSecondaryViewConfigLayerInfos.size() > 0) {
         views_array.resize(activeSecondaryViewConfigLayerInfos.size());
         depthInfo_array.resize(activeSecondaryViewConfigLayerInfos.size());
         layer_proj_array.resize(activeSecondaryViewConfigLayerInfos.size());
@@ -607,7 +594,7 @@ void OXRManager::Render(OXRScenes* scene) {
 
             XrSecondaryViewConfigurationLayerInfoMSFT& secondaryViewConfigLayerInfo = activeSecondaryViewConfigLayerInfos.at(i);
             //engine::CompositionLayers& secondaryViewConfigLayers = layersForAllViewConfigs.at(i + 1);
-            if (openxr_render_layer(frame_state.predictedDisplayTime, views, depthInfo, layer_proj, scene, true)) {
+            if (openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj, scene, true)) {
                 layer_array[i] = (XrCompositionLayerBaseHeader*)&layer_proj;
             }
             //RenderViewConfiguration(sceneLock, secondaryViewConfigLayerInfo.viewConfigurationType, secondaryViewConfigLayers);
@@ -617,11 +604,12 @@ void OXRManager::Render(OXRScenes* scene) {
     }
 
     // We're finished with rendering our layer, so send it off for display!
-    end_info.displayTime = frame_state.predictedDisplayTime;
+    end_info.displayTime = m_current_framestate.predictedDisplayTime;
     end_info.environmentBlendMode = xr_blend;
     end_info.layerCount = layer == nullptr ? 0 : 1;
     end_info.layers = &layer;
     xrEndFrame(xr_session, &end_info);
+    lastFrameState = m_current_framestate;
 }
 void OXRManager::ShutDown() {
     auto xr_session = XrContext().Session.Handle;
@@ -686,25 +674,26 @@ XrSpace* DX::OXRManager::getAppSpace() { return (XrSpace*)m_appSpace.Get(); }
 
 void OXRManager::openxr_poll_events() {
     auto xr_session = XrContext().Session.Handle;
-
     XrEventDataBuffer event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
-    auto xr_instance = XrContext().Instance.Handle;
 
-    while (xrPollEvent(xr_instance, &event_buffer) == XR_SUCCESS) {
+    while (xrPollEvent(XrContext().Instance.Handle, &event_buffer) == XR_SUCCESS) {
         switch (event_buffer.type) {
-        case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED: {
+
+        case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED: 
+        {
             XrEventDataSessionStateChanged* changed = (XrEventDataSessionStateChanged*)&event_buffer;
             xr_session_state = changed->state;
 
             // Session state change is where we can begin and end sessions, as well as find quit messages!
-            switch (xr_session_state) {
+            switch (xr_session_state) 
+            {
             case XR_SESSION_STATE_READY: {
                 XrSessionBeginInfo begin_info = { XR_TYPE_SESSION_BEGIN_INFO };
                 begin_info.primaryViewConfigurationType = app_config_view;
 
                 XrSecondaryViewConfigurationSessionBeginInfoMSFT secondaryViewConfigInfo{
                     XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SESSION_BEGIN_INFO_MSFT };
-                if (SupportsSecondaryViewConfiguration &&
+                if (XrContext().Extensions.SupportsSecondaryViewConfiguration &&
                     XrContext().Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
                     secondaryViewConfigInfo.viewConfigurationCount = (uint32_t)XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
                     secondaryViewConfigInfo.enabledViewConfigurationTypes = XrContext().Session.EnabledSecondaryViewConfigurationTypes.data();
@@ -715,16 +704,24 @@ void OXRManager::openxr_poll_events() {
 
                 xrBeginSession(xr_session, &begin_info);
                 xr_running = true;
-            } break;
-            case XR_SESSION_STATE_STOPPING: {
+            }
+                break;
+            case XR_SESSION_STATE_STOPPING: 
+            {
                 xr_running = false;
                 xrEndSession(xr_session);
-            } break;
-            case XR_SESSION_STATE_EXITING:      xr_quit = true; break;
-            case XR_SESSION_STATE_LOSS_PENDING: xr_quit = true; break;
+            } 
+                break;
+            case XR_SESSION_STATE_EXITING:      
+                xr_quit = true; break;
+            case XR_SESSION_STATE_LOSS_PENDING:
+                xr_quit = true; break;
             }
-        } break;
-        case XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING: xr_quit = true; return;
+        } 
+            break;
+        case XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING: 
+            xr_quit = true; 
+            return;
         }
         event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
     }
