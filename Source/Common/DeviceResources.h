@@ -82,7 +82,7 @@ namespace DX
 		// Direct3D rendering objects. Required for 3D.
 		winrt::com_ptr<ID3D11RenderTargetView1>	m_d3dRenderTargetView{ nullptr };
 		winrt::com_ptr<ID3D11DepthStencilView>	m_d3dDepthStencilView{ nullptr };
-		D3D11_VIEWPORT									m_screenViewport;
+		D3D11_VIEWPORT							m_screenViewport;
 
 		// Direct2D drawing components.
 		winrt::com_ptr<ID2D1Factory3>		m_d2dFactory{ nullptr };
@@ -98,15 +98,15 @@ namespace DX
 		winrt::agile_ref<winrt::Windows::UI::Core::CoreWindow> m_window;
 
 		// Cached device properties.
-		D3D_FEATURE_LEVEL								m_d3dFeatureLevel;
+		D3D_FEATURE_LEVEL										m_d3dFeatureLevel;
 		winrt::Windows::Foundation::Size						m_d3dRenderTargetSize;
 		winrt::Windows::Foundation::Size						m_outputSize;
 		winrt::Windows::Foundation::Size						m_logicalSize;
 		winrt::Windows::Graphics::Display::DisplayOrientations	m_nativeOrientation;
 		winrt::Windows::Graphics::Display::DisplayOrientations	m_currentOrientation;
-		float											m_dpi;
 
 		// This is the DPI that will be reported back to the app. It takes into account whether the app supports high resolution screens or not.
+		float m_dpi;
 		float m_effectiveDpi;
 
 		// Transforms used for display orientation.

@@ -9,6 +9,7 @@
 #include <OXRs/XrUtility/XrMath.h>
 #include <OXRs/DxCommon/DxUtility.h>
 #include <OXRs/XrSceneLib/XrContext.h>
+#include <OXRs/XrSceneLib/Scene.h>
 
 #include <mutex>
 #include "FrameTime.h"
@@ -32,8 +33,6 @@ namespace xr {
         std::optional<XrCompositionLayerReprojectionInfoMSFT> ReprojectionConfig;
         std::optional<XrCompositionLayerReprojectionPlaneOverrideMSFT> ReprojectionPlaneOverride;
     };
-
-    struct Scene;
 
     class ProjectionLayer {
     public:
@@ -66,7 +65,7 @@ namespace xr {
                     const xr::FrameTime& frameTime,
                     XrSpace layerSpace,
                     const std::vector<XrView>& Views,
-                    const std::vector<std::unique_ptr<Scene>>& activeScenes,
+                    const std::vector<std::unique_ptr<xr::Scene>>& activeScenes,
                     XrViewConfigurationType viewConfig);
 
     private:

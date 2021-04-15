@@ -16,12 +16,11 @@ vrController *vrController::instance()
 }
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager) : m_tracking(false),
-																																																																	 m_deviceResources(deviceResources),
-																																																																	 m_manager(manager)
-{
+vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager)
+						    : m_tracking(false)
+							, m_deviceResources(deviceResources)
+							, m_manager(manager){
 	myPtr_ = this;
-
 	auto device = deviceResources->GetD3DDevice();
 	screen_quad = new screenQuadRenderer(device);
 	raycast_renderer = new raycastVolumeRenderer(device);
@@ -258,10 +257,10 @@ void vrController::Render(int view_id)
 		render_scene(view_id);
 		m_deviceResources->removeCurrentTargetViews();*/
 	}
-	m_deviceResources->SetBackBufferRenderTarget();
+	//m_deviceResources->SetBackBufferRenderTarget();
 	//screen_quad->Draw(context);
 	render_scene(view_id);
-	m_deviceResources->ClearCurrentDepthBuffer();
+	//m_deviceResources->ClearCurrentDepthBuffer();
 	//render_scene(view_id);
 }
 
@@ -339,16 +338,16 @@ void vrController::render_scene(int view_id)
 	//	render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 	//	m_deviceResources->ClearCurrentDepthBuffer();
 	//}
-	precompute();
+	//precompute();
 	//////   VOLUME   //////
 	//if (m_manager->isDrawVolume())
 	//{
-	//	//precompute();
+	precompute();
 	//	if (Manager::isRayCasting())
 	//render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
 	//	else
 	render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat), is_front);
-	m_deviceResources->ClearCurrentDepthBuffer();
+	//m_deviceResources->ClearCurrentDepthBuffer();
 	//m_present = false;
 	//}
 

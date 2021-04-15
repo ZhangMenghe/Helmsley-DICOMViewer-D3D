@@ -17,7 +17,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	oxr_manager = new DX::OXRManager;
 
 	if (!oxr_manager->InitOxrSession("Single file OpenXR")) {
-		oxr_manager->ShutDown();
+		//oxr_manager->ShutDown();
 		throw std::exception("OpenXR initialization failed");
 		return 1;
 	}
@@ -34,7 +34,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	while (oxr_manager->Update()) {
 		oxr_manager->Render();
 	}
-	oxr_manager->ShutDown();
+	//oxr_manager->ShutDown();
 
 	//co_return 0;
 	return 0;

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ProjectionLayer.h"
+#include "CompositionLayers.h"
+#include <Common/Manager.h>
 using namespace DirectX;
 using namespace xr;
 
@@ -148,13 +150,14 @@ void ProjectionLayer::PrepareRendering(const XrContext& context,
 
     viewConfigComponent.ProjectionViews.resize(viewConfigViews.size());
     viewConfigComponent.DepthInfo.resize(viewConfigViews.size());
+    Manager::instance()->onViewChange(swapchainImageWidth* wideScale, swapchainImageHeight);
 }
 
 bool ProjectionLayer::Render(XrContext& context,
                             const xr::FrameTime& frameTime,
                             XrSpace layerSpace,
                             const std::vector<XrView>& views,
-                            const std::vector<std::unique_ptr<Scene>>& activeScenes,
+                            const std::vector<std::unique_ptr<xr::Scene>>& activeScenes,
                             XrViewConfigurationType viewConfig
 ) {
 
@@ -283,14 +286,16 @@ bool ProjectionLayer::Render(XrContext& context,
                 //context.PbrResources.SetViewProjection(worldToViewMatrix, projectionMatrix);
                 //context.PbrResources.Bind(context.DeviceContext.get());
                 //context.PbrResources.SetDepthFuncReversed(reversedZ);
+                
+                Manager::instance()->updateCamera(worldToViewMatrix, projectionMatrix);
 
                 // Render all active scenes.
-                /*for (const std::unique_ptr<Scene>& scene : activeScenes) {
-                    if (scene->IsActive() && !std::empty(scene->GetObjects())) {
+                for (const std::unique_ptr<xr::Scene>& scene : activeScenes) {
+                    if (scene->IsActive()) {
                         submitProjectionLayer = true;
                         scene->Render(frameTime, viewIndex);
                     }
-                }*/
+                }
             }
         }
     }
@@ -305,8 +310,8 @@ bool ProjectionLayer::Render(XrContext& context,
 
     return submitProjectionLayer;
 }
-/*
-void AppendProjectionLayer(CompositionLayers& layers, ProjectionLayer* layer, XrViewConfigurationType viewConfig) {
+
+void xr::AppendProjectionLayer(CompositionLayers& layers, ProjectionLayer* layer, XrViewConfigurationType viewConfig) {
     XrCompositionLayerProjection& projectionLayer = layers.AddProjectionLayer(layer->Config(viewConfig).LayerFlags);
     projectionLayer.space = layer->LayerSpace(viewConfig);
     projectionLayer.viewCount = (uint32_t)layer->ProjectionViews(viewConfig).size();
@@ -319,6 +324,5 @@ void AppendProjectionLayer(CompositionLayers& layers, ProjectionLayer* layer, Xr
     if (auto& reprojPlaneOverride = layer->Config(viewConfig).ReprojectionPlaneOverride) {
         xr::InsertExtensionStruct(projectionLayer, reprojPlaneOverride.value());
     }
-
 }
-*/
+
