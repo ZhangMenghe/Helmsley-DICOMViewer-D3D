@@ -1,15 +1,13 @@
 #include "pch.h"
 #include "cuttingPlane.h"
-#include <Common/Manager.h>
-#include <Utils/MathUtils.h>
 
 #include <glm/gtx/transform.hpp>
-#include <vrController.h>
 #include <glm/gtx/rotate_vector.hpp>
-#include <Utils/mathUtils.h>
+
 #include <Utils/TypeConvertUtils.h>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include <Utils/MathUtils.h>
+#include <Common/Manager.h>
+#include <vrController.h>
 using namespace glm;
 
 cuttingController::cuttingController(ID3D11Device* device) {

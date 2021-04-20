@@ -1,210 +1,209 @@
 ﻿#include "pch.h"
-#include "App.h"
+//#include "App.h"
 
 #include <ppltasks.h>
 
-using namespace CoreWin;
+#include "CoreWinMain.h"
+#include <Common/DeviceResources.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Windows.ApplicationModel.Core.h>
+#include <winrt/Windows.UI.Core.h>
+#include <winrt/Windows.UI.Input.h>
 
-using namespace concurrency;
-using namespace Windows::ApplicationModel;
-using namespace Windows::ApplicationModel::Core;
-using namespace Windows::ApplicationModel::Activation;
-using namespace Windows::UI::Core;
-using namespace Windows::UI::Input;
-using namespace Windows::System;
-using namespace Windows::Foundation;
-using namespace Windows::Graphics::Display;
+namespace windows {
+	using namespace winrt::Windows::ApplicationModel;
+	using namespace winrt::Windows::ApplicationModel::Activation;
+	using namespace winrt::Windows::ApplicationModel::Core;
+	using namespace winrt::Windows::UI::Core;
+	using namespace winrt::Windows::Graphics::Display;
+	using namespace winrt::Windows::Foundation;
+} // namespace windows
 
-// The main function is only used to initialize our IFrameworkView class.
-[Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^)
+namespace CoreWin
 {
-	auto direct3DApplicationSource = ref new Direct3DApplicationSource();
-	CoreApplication::Run(direct3DApplicationSource);
-	return 0;
-}
-
-IFrameworkView^ Direct3DApplicationSource::CreateView()
-{
-	return ref new App();
-}
-
-App::App() :
-	m_windowClosed(false),
-	m_windowVisible(true)
-{
-}
-
-// The first method called when the IFrameworkView is being created.
-void App::Initialize(CoreApplicationView^ applicationView)
-{
-	// Register event handlers for app lifecycle. This example includes Activated, so that we
-	// can make the CoreWindow active and start rendering on the window.
-	applicationView->Activated +=
-		ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
-	
-	CoreApplication::Suspending +=
-		ref new EventHandler<SuspendingEventArgs^>(this, &App::OnSuspending);
-
-	CoreApplication::Resuming +=
-		ref new EventHandler<Platform::Object^>(this, &App::OnResuming);
-
-	// At this point we have access to the device. 
-	// We can create the device-dependent resources.
-	m_deviceResources = std::make_shared<DX::DeviceResources>();
-}
-
-// Called when the CoreWindow object is created (or re-created).
-void App::SetWindow(CoreWindow^ window)
-{
-	window->SizeChanged += 
-		ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnWindowSizeChanged);
-
-	window->VisibilityChanged +=
-		ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &App::OnVisibilityChanged);
-
-	window->Closed += 
-		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
-
-	window->PointerPressed += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerPressed);
-	window->PointerMoved += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerMoved);
-	window->PointerReleased += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerReleased);
-
-	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
-
-	currentDisplayInformation->DpiChanged +=
-		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDpiChanged);
-
-	currentDisplayInformation->OrientationChanged +=
-		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnOrientationChanged);
-
-	DisplayInformation::DisplayContentsInvalidated +=
-		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDisplayContentsInvalidated);
-
-	m_deviceResources->SetWindow(window);
-}
-
-// Initializes scene resources, or loads a previously saved app state.
-void App::Load(Platform::String^ entryPoint)
-{
-	if (m_main == nullptr)
-	{
-		m_main = std::unique_ptr<CoreWinMain>(new CoreWinMain(m_deviceResources));
-	}
-}
-
-// This method is called after the window becomes active.
-void App::Run()
-{
-	while (!m_windowClosed)
-	{
-		if (m_windowVisible)
+	// Main entry point for our app. Connects the app with the Windows shell and handles application lifecycle events.
+	struct App : winrt::implements<App, windows::IFrameworkViewSource, windows::IFrameworkView> {
+	//public:
+		App();
+		windows::IFrameworkView CreateView()
 		{
-			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+			return *this;
+		}
+		// IFrameworkView Methods.
+		void Initialize(windows::CoreApplicationView const& applicationView);
+		void SetWindow(windows::CoreWindow const& window);
+		void Load(winrt::hstring const& entryPoint);
+		void Run();
+		void Uninitialize();
 
-			m_main->Update();
+	//protected:
+		// Application lifecycle event handlers.
+		void OnActivated(windows::CoreApplicationView const&, windows::IActivatedEventArgs const& args);
+		void OnSuspending(windows::IInspectable const& sender, winrt::Windows::ApplicationModel::SuspendingEventArgs const& args);
+		void OnResuming(windows::IInspectable const& sender, windows::IInspectable const& args);
 
-			if (m_main->Render())
+		// Window event handlers.
+		void OnWindowSizeChanged(windows::CoreWindow const& sender, windows::WindowSizeChangedEventArgs const& args);
+		void OnVisibilityChanged(windows::CoreWindow const& sender, windows::VisibilityChangedEventArgs const& args);
+		void OnWindowClosed(windows::CoreWindow const& sender, windows::CoreWindowEventArgs const& args);
+
+		// DisplayInformation event handlers.
+		void OnDpiChanged(windows::DisplayInformation const& sender, windows::IInspectable const& args);
+		void OnOrientationChanged(windows::DisplayInformation const& sender, windows::IInspectable const& args);
+		void OnDisplayContentsInvalidated(windows::DisplayInformation const& sender, windows::IInspectable const& args);
+
+		//interaction
+		void OnPointerPressed(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
+		void OnPointerMoved(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
+		void OnPointerReleased(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
+	//private:
+		std::shared_ptr<DX::DeviceResources> m_deviceResources;
+		std::unique_ptr<CoreWinMain> m_main;
+		bool m_windowClosed;
+		bool m_windowVisible;
+	};
+
+	App::App() :
+		m_windowClosed(false),
+		m_windowVisible(true)
+	{
+	}
+
+	void App::Initialize(windows::CoreApplicationView const& applicationView) {
+		applicationView.Activated({ this, &App::OnActivated });
+		windows::CoreApplication::Suspending({ this, &App::OnSuspending });
+		windows::CoreApplication::Resuming({ this, &App::OnResuming });
+
+		m_deviceResources = std::make_shared<DX::DeviceResources>();
+	}
+
+	// Called when the CoreWindow object is created (or re-created).
+	void App::SetWindow(winrt::Windows::UI::Core::CoreWindow const& window) {
+		window.SizeChanged({ this, &App::OnWindowSizeChanged });
+
+		window.Closed({ this, &App::OnWindowClosed });
+
+		window.VisibilityChanged({ this, &App::OnVisibilityChanged });
+
+		windows::DisplayInformation currentDisplayInformation{ windows::DisplayInformation::GetForCurrentView() };
+
+		currentDisplayInformation.DpiChanged({ this, &App::OnDpiChanged });
+
+		currentDisplayInformation.OrientationChanged({ this, &App::OnOrientationChanged });
+
+		windows::DisplayInformation::DisplayContentsInvalidated({ this, &App::OnDisplayContentsInvalidated });
+
+		//window.PointerPressed(std::bind(&App::OnPointerPressed, this, std::placeholders::_1, std::placeholders::_2));
+		//window.PointerMoved(std::bind(&App::OnPointerMoved, this, std::placeholders::_1, std::placeholders::_2));
+		//window.PointerReleased(std::bind(&App::OnPointerReleased, this, std::placeholders::_1, std::placeholders::_2));
+		
+		window.PointerPressed({ this, &App::OnPointerPressed });
+		window.PointerReleased({ this, &App::OnPointerReleased });
+		window.PointerMoved({ this, &App::OnPointerMoved });
+
+		m_deviceResources->SetWindow(window);
+	}
+
+	// Initializes scene resources, or loads a previously saved app state.
+	void App::Load(winrt::hstring const& entryPoint) {
+		if (m_main == nullptr)
+		{
+			m_main = std::unique_ptr<CoreWinMain>(new CoreWinMain(m_deviceResources));
+		}
+	}
+
+	// This method is called after the window becomes active.
+	void App::Run() {
+		while (!m_windowClosed)
+		{
+			windows::CoreWindow window = windows::CoreWindow::GetForCurrentThread();
+
+			if (m_windowVisible)
 			{
-				m_deviceResources->Present();
+
+				window.Dispatcher().ProcessEvents(windows::CoreProcessEventsOption::ProcessAllIfPresent);
+
+				m_main->Update();
+
+				if (m_main->Render())
+				{
+					m_deviceResources->Present();
+				}
+			}
+			else			{
+				window.Dispatcher().ProcessEvents(windows::CoreProcessEventsOption::ProcessOneAndAllPending);
 			}
 		}
-		else
+	}
+
+	// Required for IFrameworkView.
+	// Terminate events do not cause Uninitialize to be called. It will be called if your IFrameworkView
+	// class is torn down while the app is in the foreground.
+	void App::Uninitialize()
+	{
+	}
+
+	// Application lifecycle event handlers.
+
+	void App::OnActivated(windows::CoreApplicationView const&, windows::IActivatedEventArgs const& args) {
+		windows::CoreWindow::GetForCurrentThread().Activate();
+	}
+	void App::OnSuspending(windows::IInspectable const& sender, winrt::Windows::ApplicationModel::SuspendingEventArgs const& args) {
+		windows::SuspendingDeferral deferral = args.SuspendingOperation().GetDeferral();
+
+		concurrency::create_task([this, deferral]
 		{
-			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
-		}
+			m_deviceResources->Trim();
+			deferral.Complete();
+		});
+	}
+	void App::OnResuming(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args) {
+	}
+
+	// Window event handlers.
+
+	void App::OnWindowSizeChanged(windows::CoreWindow const& sender, windows::WindowSizeChangedEventArgs const& args) {
+		m_main->CreateWindowSizeDependentResources();
+	}
+
+	void App::OnVisibilityChanged(windows::CoreWindow const& sender, windows::VisibilityChangedEventArgs const& args) {
+		m_windowVisible = args.Visible();
+	}
+
+	void App::OnWindowClosed(windows::CoreWindow const& sender, windows::CoreWindowEventArgs const& args) {
+		m_windowClosed = true;
+	}
+
+	// DisplayInformation event handlers.
+
+	void App::OnDpiChanged(windows::DisplayInformation const& sender, windows::IInspectable const& args) {
+		m_deviceResources->SetDpi(sender.LogicalDpi());
+		m_main->CreateWindowSizeDependentResources();
+	}
+
+	void App::OnOrientationChanged(windows::DisplayInformation const& sender, windows::IInspectable const& args)
+	{
+		m_deviceResources->SetCurrentOrientation(sender.CurrentOrientation());
+		m_main->CreateWindowSizeDependentResources();
+	}
+
+	void App::OnDisplayContentsInvalidated(windows::DisplayInformation const& sender, windows::IInspectable const& args) {
+		m_deviceResources->ValidateDevice();
+	}
+
+	void App::OnPointerPressed(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
+		if (m_main != nullptr) m_main->OnPointerPressed(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y);
+	}
+	void App::OnPointerMoved(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
+		if (m_main != nullptr) m_main->OnPointerMoved(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y);
+	}
+	void App::OnPointerReleased(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
+		if (m_main != nullptr) m_main->OnPointerReleased();
 	}
 }
 
-// Required for IFrameworkView.
-// Terminate events do not cause Uninitialize to be called. It will be called if your IFrameworkView
-// class is torn down while the app is in the foreground.
-void App::Uninitialize()
-{
-}
-
-// Application lifecycle event handlers.
-
-void App::OnActivated(CoreApplicationView^ applicationView, IActivatedEventArgs^ args)
-{
-	// Run() won't start until the CoreWindow is activated.
-	CoreWindow::GetForCurrentThread()->Activate();
-}
-
-void App::OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
-{
-	// Save app state asynchronously after requesting a deferral. Holding a deferral
-	// indicates that the application is busy performing suspending operations. Be
-	// aware that a deferral may not be held indefinitely. After about five seconds,
-	// the app will be forced to exit.
-	SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
-
-	create_task([this, deferral]()
-	{
-        m_deviceResources->Trim();
-
-		// Insert your code here.
-
-		deferral->Complete();
-	});
-}
-
-void App::OnResuming(Platform::Object^ sender, Platform::Object^ args)
-{
-	// Restore any data or state that was unloaded on suspend. By default, data
-	// and state are persisted when resuming from suspend. Note that this event
-	// does not occur if the app was previously terminated.
-
-	// Insert your code here.
-}
-
-// Window event handlers.
-
-void App::OnWindowSizeChanged(CoreWindow^ sender, WindowSizeChangedEventArgs^ args)
-{
-	//m_deviceResources->SetLogicalSize(Size(sender->Bounds.Width, sender->Bounds.Height));
-	m_main->CreateWindowSizeDependentResources();
-}
-
-void App::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
-{
-	m_windowVisible = args->Visible;
-}
-
-void App::OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
-{
-	m_windowClosed = true;
-}
-
-// DisplayInformation event handlers.
-
-void App::OnDpiChanged(DisplayInformation^ sender, Object^ args)
-{
-	// Note: The value for LogicalDpi retrieved here may not match the effective DPI of the app
-	// if it is being scaled for high resolution devices. Once the DPI is set on DeviceResources,
-	// you should always retrieve it using the GetDpi method.
-	// See DeviceResources.cpp for more details.
-	m_deviceResources->SetDpi(sender->LogicalDpi);
-	m_main->CreateWindowSizeDependentResources();
-}
-
-void App::OnOrientationChanged(DisplayInformation^ sender, Object^ args)
-{
-	m_deviceResources->SetCurrentOrientation(sender->CurrentOrientation);
-	m_main->CreateWindowSizeDependentResources();
-}
-
-void App::OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
-{
-	m_deviceResources->ValidateDevice();
-}
-
-void App::OnPointerPressed(Windows::UI::Core::CoreWindow^ window, Windows::UI::Core::PointerEventArgs^ args) {
-	if (m_main != nullptr) m_main->OnPointerPressed(args->CurrentPoint->Position.X, args->CurrentPoint->Position.Y);
-}
-void App::OnPointerMoved(Windows::UI::Core::CoreWindow^ window, Windows::UI::Core::PointerEventArgs^ args) {
-	if (m_main != nullptr) m_main->OnPointerMoved(args->CurrentPoint->Position.X, args->CurrentPoint->Position.Y);
-}
-void App::OnPointerReleased(Windows::UI::Core::CoreWindow^ window, Windows::UI::Core::PointerEventArgs^ args) {
-	if (m_main != nullptr) m_main->OnPointerReleased();
+[Platform::MTAThread]
+int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int) {
+	windows::CoreApplication::Run(winrt::make<CoreWin::App>());
 }

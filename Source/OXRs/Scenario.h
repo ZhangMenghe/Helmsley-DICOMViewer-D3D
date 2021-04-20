@@ -1,7 +1,6 @@
 ﻿#ifndef SCENARIO_H
 #define SCENARIO_H
 
-#include "pch.h"
 #include <Common/StepTimer.h>
 #include <winrt/Windows.UI.Core.h>
 #include <OXRs/XrSceneLib/XrContext.h>

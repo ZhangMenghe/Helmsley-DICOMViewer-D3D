@@ -1,6 +1,5 @@
 #ifndef TYPE_CONVERT_UTILS_H
 #define TYPE_CONVERT_UTILS_H
-#include "pch.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 

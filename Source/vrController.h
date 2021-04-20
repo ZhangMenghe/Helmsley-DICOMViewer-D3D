@@ -1,6 +1,5 @@
 ﻿#ifndef VR_CONTROLLER_H
 #define VR_CONTROLLER_H
-#include "pch.h"
 #include <Renderers/raycastVolumeRenderer.h>
 #include <Renderers/quadRenderer.h>
 #include <Common/DeviceResources.h>
@@ -81,23 +80,19 @@ public:
 	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); m_present = true; }
 	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; m_present = true; }
 	void setCameraExtrinsicsMat(int id, glm::mat4 ExtrinsicsMat) { m_extrinsics_mats[id] = ExtrinsicsMat; }
-	//void setSpaces(XrSpace * space, XrSpace * app_space);
-
+	void setUseSpaceMat(bool use) { m_use_space_mat = use; }
 	//getter
 	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
 	Texture *getVolumeTex() { return tex_volume; }
 	Texture *getBakedTex() { return tex_baked; }
 	bool isDirty();
-	glm::mat4 getFrameModelMat() { return Frame_model_mat; }
+	//glm::mat4 getFrameModelMat() { return Frame_model_mat; }
 	ID3D11RasterizerState *m_render_state_front, *m_render_state_back;
 	glm::mat4 getCameraExtrinsicsMat(int id) {
 		return m_extrinsics_mats[id];
 	}
 
 private:
-	//XrSpace * space;
-	//XrSpace * app_space;
-
 	static vrController *myPtr_;
 
 	screenQuadRenderer *screen_quad;
@@ -121,9 +116,8 @@ private:
 	ID3D11UnorderedAccessView *m_textureUAV;
 	ID3D11Buffer *m_compute_constbuff = nullptr;
 
-	glm::mat4 Frame_model_mat;
+	//glm::mat4 Frame_model_mat;
 	glm::mat4 SpaceMat_;
-
 	glm::mat4 ModelMat_, RotateMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer m_all_buff_Data;
@@ -170,6 +164,8 @@ private:
 	int frame_num = 0;
 	bool volume_model_dirty, m_scene_dirty;
 	bool pre_draw_ = true;
+	bool m_compute_created = false;
+	bool m_use_space_mat = false;
 	void Rotate(float radians);
 	void render_scene(int view_id);
 	void init_texture();

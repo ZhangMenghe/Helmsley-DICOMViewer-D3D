@@ -396,6 +396,7 @@
     <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
+    <ClInclude Include="..\..\Source\Utils\CVMathUtils.h" />
     <ClInclude Include="..\..\Source\Utils\dataManager.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />

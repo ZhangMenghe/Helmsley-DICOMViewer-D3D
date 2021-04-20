@@ -1,6 +1,5 @@
 #ifndef UTILS_DICOMLOADER_H
 #define UTILS_DICOMLOADER_H
-#include "pch.h"
 #include <cstddef>
 #include <string>
 #include <fstream>

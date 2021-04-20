@@ -1,7 +1,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "pch.h"
 #include <vector>
 #include <Common/ConstantAndStruct.h>
 #include <D3DPipeline/Camera.h>

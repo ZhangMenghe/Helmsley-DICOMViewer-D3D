@@ -204,7 +204,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h" />
     <ClInclude Include="CoreWinMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="..\..\Source\Common\DeviceResources.h">

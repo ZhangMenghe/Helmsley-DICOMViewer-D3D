@@ -1,11 +1,12 @@
 ﻿#include "pch.h"
 #include "CoreWinMain.h"
+#include <ppltasks.h>
 #include <Common/DirectXHelper.h>
 
 using namespace CoreWin;
-using namespace Windows::Foundation;
-using namespace Windows::System::Threading;
-using namespace Concurrency;
+//using namespace winrt::Windows::Foundation;
+//using namespace winrt::Windows::System::Threading;
+//using namespace winrt::Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
@@ -20,7 +21,7 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
-	Size outputSize = m_deviceResources->GetOutputSize();
+	auto outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
 
@@ -64,51 +65,14 @@ void CoreWinMain::setup_volume_local() {
 }
 
 void CoreWinMain::setup_resource() {
-	std::wstring dir_name(dvr::CACHE_FOLDER_NAME.begin(), dvr::CACHE_FOLDER_NAME.end());
-	Windows::Storage::StorageFolder^ dst_folder = Windows::Storage::ApplicationData::Current->LocalFolder;
-
-	auto copy_func = []() {
-		std::string file_name = dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME;
-		std::ifstream inFile("Assets\\" + file_name, std::ios::in | std::ios::binary);
-		if (!inFile.is_open())
-			return false;
-		std::ofstream outFile(DX::getFilePath(file_name), std::ios::out | std::ios::binary);
-		if (!outFile.is_open())
-			return false;
-		outFile << inFile.rdbuf();
-		inFile.close();
-		outFile.close();
-		return true;
-	};
-	auto post_copy_func = [this]() {
-		if (dvr::CONNECT_TO_SERVER) {
-			m_rpcHandler = std::make_shared<rpcHandler>("localhost:23333");
-			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-			m_rpcHandler->setDataLoader(m_dicom_loader);
-			m_rpcHandler->setVRController(m_sceneRenderer.get());
-			m_rpcHandler->setManager(m_manager.get());
-			m_rpcHandler->setUIController(&m_uiController);
-			m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
-		}
-		else {
-			m_data_manager = new dataManager(m_dicom_loader);
-		}
-		setup_volume_local();
-		//setup_volume_server();
-	};
-	create_task(dst_folder->CreateFolderAsync(Platform::StringReference(dir_name.c_str()), CreationCollisionOption::OpenIfExists))
-		.then([=](StorageFolder^ folder) {
-		std::wstring index_file_name(dvr::CONFIG_NAME.begin(), dvr::CONFIG_NAME.end());
-		if (!m_overwrite_index_file) {
-			create_task(folder->TryGetItemAsync(Platform::StringReference(index_file_name.c_str()))).then([this, copy_func, post_copy_func](IStorageItem^ data) {
-				if (data != nullptr) post_copy_func();
-				else if (copy_func()) post_copy_func();
-			});
-		}
-		else {
-			if (copy_func())post_copy_func();
-		}
+	auto task = concurrency::create_task([] {
+		return DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false).get();
 	});
+	task.then([this](bool result) {
+		if(!result) std::cerr << "Fail to copy";
+		m_local_initialized = result;
+	});
+
 }
 CoreWinMain::~CoreWinMain(){
 	// Deregister device notification
@@ -120,12 +84,30 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
 	m_sceneRenderer->CreateWindowSizeDependentResources();
-	Size outputSize = m_deviceResources->GetOutputSize();
+	auto outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 }
 
 // Updates the application state once per frame.
 void CoreWinMain::Update(){
+	if (m_local_initialized) {
+		if (dvr::CONNECT_TO_SERVER)
+		{
+			m_rpcHandler = std::make_shared<rpcHandler>("localhost:23333");
+			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+			m_rpcHandler->setDataLoader(m_dicom_loader);
+			m_rpcHandler->setVRController(m_sceneRenderer.get());
+			m_rpcHandler->setManager(m_manager.get());
+			m_rpcHandler->setUIController(&m_uiController);
+			m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
+		}
+		else
+		{
+			m_data_manager = new dataManager(m_dicom_loader);
+		}
+		setup_volume_local();
+		m_local_initialized = false;
+	}
 	if (rpcHandler::new_data_request) {
 		auto dmsg = m_rpcHandler->GetNewDataRequest();
 		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
@@ -142,8 +124,7 @@ void CoreWinMain::Update(){
 
 // Renders the current frame according to the current application state.
 // Returns true if the frame was rendered and is ready to be displayed.
-bool CoreWinMain::Render()
-{
+bool CoreWinMain::Render(){
 	// Don't try to render anything before the first Update.
 	if (m_timer.GetFrameCount() == 0)
 	{
@@ -166,7 +147,7 @@ bool CoreWinMain::Render()
 
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
-	m_sceneRenderer->Render();
+	m_sceneRenderer->Render(0);
 	m_fpsTextRenderer->Render();
 
 	return true;

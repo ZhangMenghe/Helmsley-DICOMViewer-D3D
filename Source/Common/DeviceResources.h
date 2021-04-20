@@ -1,9 +1,8 @@
 ﻿#pragma once
+#include "pch.h"
 #include <stack>
-
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.Graphics.Display.h>
-
 namespace DX
 {
 	// Provides an interface for an application that owns DeviceResources to be notified of the device being lost or created.

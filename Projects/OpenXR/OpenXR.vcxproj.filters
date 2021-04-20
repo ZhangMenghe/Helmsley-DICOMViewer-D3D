@@ -249,6 +249,7 @@
     <ClCompile Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.cpp">
       <Filter>Source\OXRs\XrSceneLib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -430,9 +431,6 @@
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStruct.h">
       <Filter>Source\OXRs\XrUtility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrContext.h">
-      <Filter>Source\OXRs\XrUtility</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSessionContext.h">
       <Filter>Source\OXRs\XrUtility</Filter>
     </ClInclude>
@@ -459,6 +457,11 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\CompositionLayers.h">
       <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\Scene.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\XrContext.h" />
+    <ClInclude Include="..\..\Source\Utils\CVMathUtils.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

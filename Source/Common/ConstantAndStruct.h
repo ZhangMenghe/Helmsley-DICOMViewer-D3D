@@ -1,10 +1,12 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
-#include "pch.h"
 #include <string>
+#include <DirectXMath.h>
+#include <DirectXColors.h>
+#include <d3d11_3.h>
+#include <glm/glm.hpp>
 
-namespace dvr
-{
+namespace dvr{
     enum PARAM_BOOL
     {
         CHECK_RAYCAST = 0,
@@ -135,6 +137,7 @@ namespace dvr
     const bool CONNECT_TO_SERVER = true;
     const bool LOAD_DATA_FROM_SERVER = false;
     static const ORGAN_IDS DEFAULT_TRAVERSAL_ORGAN = ORGAN_COLON;
+    static const bool PRINT_CAMERA_MATRIX = false;
 
     //Names
     const static std::string CACHE_FOLDER_NAME = "helmsley_cached", CONFIG_NAME = "pacs_local.txt";
@@ -151,7 +154,7 @@ namespace dvr
     //const DirectX::XMFLOAT3 DEFAULT_POS = { .0f, .0f, .0f };
 
     const glm::mat4 DEFAULT_ROTATE = glm::mat4(1.0f);
-    const glm::vec3 DEFAULT_SCALE = glm::vec3(0.5f);
+    const glm::vec3 DEFAULT_SCALE = glm::vec3(1.0f);
     const glm::vec3 DEFAULT_POS = glm::vec3(.0f, .0f, 0.0f);
 
     const float SCREEN_CLEAR_COLOR[4] = {

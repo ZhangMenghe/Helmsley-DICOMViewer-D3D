@@ -6,6 +6,7 @@
 #include <glm/gtx/transform.hpp>
 #include <Utils/TypeConvertUtils.h>
 #include <Utils/MathUtils.h>
+#include <Utils/CVMathUtils.h>
 
 
 #include <opencv2/core.hpp>
@@ -137,6 +138,7 @@ SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device)
 	quad_vertices_pos_w_tex, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
 	this->initialize();
+	vrController::instance()->setUseSpaceMat(true);
 }
 SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,
 	IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent)
@@ -292,7 +294,7 @@ bool SlateCameraRenderer::update_cam_texture(ID3D11DeviceContext* context) {
 		////trans_glm[3][1] = -trans_glm[3][0];
 		////trans_glm[3][2] = -trans_glm[3][2];
 		//auto magic = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 0, 1));
-		if (PRINT_CAMERA_MATRIX) {
+		if (dvr::PRINT_CAMERA_MATRIX) {
 			TCHAR buf[1024];
 			size_t cbDest = 1024 * sizeof(TCHAR);
 			StringCbPrintf(buf, cbDest, TEXT("Location:(%f,%f,%f)\n"), (float)cameraToWorld[3][0], (float)cameraToWorld[3][1], (float)cameraToWorld[3][2]);

@@ -1,6 +1,6 @@
 ﻿#ifndef FPS_TEXT_RENDERER_H
 #define FPS_TEXT_RENDERER_H
-#include "pch.h"
+
 #include <Common/DeviceResources.h>
 #include <Common/StepTimer.h>
 #include <Renderers/quadRenderer.h>

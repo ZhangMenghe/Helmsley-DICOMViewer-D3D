@@ -1,6 +1,6 @@
 ﻿#ifndef BASE_RENDERER_H
 #define BASE_RENDERER_H
-#include "pch.h"
+#include <winrt/base.h>
 #include <Common/ConstantAndStruct.h>
 #include <D3DPipeline/Texture.h>
 class baseRenderer {

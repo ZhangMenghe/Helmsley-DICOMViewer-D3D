@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.h"
 #include <vector>
 #include <Common/DeviceResources.h>
 #include <OXRs/OXRScenes.h>

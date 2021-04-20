@@ -1,6 +1,5 @@
 ﻿#ifndef SCREEN_QUAD_RENDERER_H
 #define SCREEN_QUAD_RENDERER_H
-#include "pch.h"
 #include <Renderers/quadRenderer.h>
 #include <Common/DeviceResources.h>
 

@@ -1,6 +1,7 @@
 #ifndef D3DPIPELINE_TEXTURE_H
 #define D3DPIPELINE_TEXTURE_H
-#include "pch.h"
+#include <d3d11.h>
+#include <winrt/base.h>
 class Texture {
 public:
 	Texture(){}

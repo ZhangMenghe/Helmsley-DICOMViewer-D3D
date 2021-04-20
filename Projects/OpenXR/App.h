@@ -1,6 +1,5 @@
 ﻿//#pragma once
 //
-#include "pch.h"
 //#include "Common\DeviceResources.h"
 ////#include "OpenXRMain.h"
 //

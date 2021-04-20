@@ -68,8 +68,7 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 	volume_model_dirty = false;
 }
 
-void vrController::InitOXRScene()
-{
+void vrController::InitOXRScene(){
 	uniScale = 0.5f;
 	PosVec3_.z = -1.0f;
 	volume_model_dirty = true;
@@ -278,8 +277,7 @@ void vrController::precompute()
 	context->CSSetShaderResources(0, 1, &texview);
 	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
 
-	if (m_compute_constbuff != nullptr)
-	{
+	if (m_compute_created)	{
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
 				m_compute_constbuff,
@@ -317,10 +315,8 @@ void vrController::render_scene(int view_id)
 	DirectX::XMFLOAT4X4 m_rot_mat;
 	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
 
-	//auto model_mat = vol_dim_scale_mat_ * ModelMat_ * SpaceMat_;
-	Frame_model_mat = SpaceMat_;// *ModelMat_; // m_extrinsics_mats[view_id] * 
-
-	auto model_mat = Frame_model_mat * vol_dim_scale_mat_ *glm::scale(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0.2f)); //glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0.01f)) 
+	auto model_mat_tex = m_use_space_mat?SpaceMat_ *glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)) : ModelMat_;
+	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
 
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
@@ -346,7 +342,7 @@ void vrController::render_scene(int view_id)
 	//	if (Manager::isRayCasting())
 	//render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
 	//	else
-	render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat), is_front);
+	render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat_tex), is_front);
 	//m_deviceResources->ClearCurrentDepthBuffer();
 	//m_present = false;
 	//}
@@ -407,6 +403,7 @@ void vrController::CreateDeviceDependentResources()
 						&constantBufferDesc,
 						nullptr,
 						&m_compute_constbuff));
+		m_compute_created = true;
 	});
 	D3D11_RASTERIZER_DESC rasterDesc;
 
@@ -703,9 +700,11 @@ void vrController::onPan(float x, float y)
 }
 void vrController::updateVolumeModelMat()
 {
-	ModelMat_ =
-			//glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ *
-			glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale, uniScale, uniScale));
+	ModelMat_ = 
+		glm::translate(glm::mat4(1.0), PosVec3_) 
+		* RotateMat_ 
+		* glm::scale(glm::mat4(1.0), ScaleVec3_) 
+		* glm::scale(glm::mat4(1.0), glm::vec3(uniScale));
 }
 
 bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)

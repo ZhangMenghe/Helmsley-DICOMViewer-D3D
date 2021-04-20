@@ -5,8 +5,6 @@
 OXRScenes::OXRScenes(const std::shared_ptr<xr::XrContext>& context)
 	:xr::Scene(context) {
 	m_manager = std::make_shared<Manager>();
-
-
 }
 
 void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
