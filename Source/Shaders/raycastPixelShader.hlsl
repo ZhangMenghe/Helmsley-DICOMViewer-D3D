@@ -60,12 +60,12 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	float4 sum = .0;
 	float pd = .0;
 	uint steps = 0;
-	float usample_step_inverse = 0.005f;
+	float usample_step_inverse = 0.01f;
 	float high_bound = 0.01;
 	float step_size = usample_step_inverse;
 	bool last_succeeded = true;
 
-	for (float t = head; t < tail && steps<128; steps++ ) {
+	for (float t = head; t < tail && steps<32; steps++ ) {
 		if (sum.a >= 0.98f) break;
 		float3 p = ro + rd * t;
 		float4 val_color = Sample(p);
