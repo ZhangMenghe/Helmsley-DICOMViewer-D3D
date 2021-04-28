@@ -10,7 +10,7 @@ using grpc::ClientWriter;
 using grpc::Status;
 using namespace helmsley;
 using namespace std;
-using namespace Concurrency;
+using namespace concurrency;
 
 bool rpcHandler::new_data_request = false;
 
@@ -163,10 +163,10 @@ void rpcHandler::DownloadVolume(const string& folder_path){
     Status status = data_reader->Finish();
     winrt::check_hresult(status.ok());
 }
-Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string &folder_path){
-    using namespace Concurrency;
+concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string& folder_path) {
+    using namespace concurrency;
     //return create_task([]() {return; });
-    Windows::Foundation::IAsyncAction^ Action = create_async([folder_path, this](){
+    concurrency::task<void> Action = create_task([folder_path, this]() {
         RequestWholeVolume req;
         req.set_client_id(CLIENT_ID);
         req.set_req_msg(folder_path);
@@ -188,10 +188,10 @@ Concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string &folde
     });
     return create_task(Action);
 }
-Concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::string &folder_path){
+concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::string& folder_path) {
     using namespace Concurrency;
     //return create_task([]() {return; });
-    Windows::Foundation::IAsyncAction^ Action = create_async([folder_path, this]() {
+    concurrency::task<void> Action = create_task([folder_path, this]() {
         Request req;
         req.set_client_id(CLIENT_ID);
         req.set_req_msg(folder_path);
@@ -345,9 +345,11 @@ void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     auto vps = msg.volume_pose();
     auto cps = msg.camera_pose();
 
+    glm::vec3 old_pos, old_scale;
+    vrController::instance()->getRPS(old_pos, old_scale);
     vrController::instance()->onReset(
-        glm::vec3(vps[0], vps[1], vps[2]),
-        glm::vec3(vps[3], vps[4], vps[5]),
+        old_pos,//glm::vec3(vps[0], vps[1], vps[2]),
+        old_scale,//glm::vec3(vps[3], vps[4], vps[5]),
         glm::make_mat4(vps.Mutable(6)),
         nullptr
         //new Camera(

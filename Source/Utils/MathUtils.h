@@ -4,6 +4,7 @@
 #include <D3DPipeline/Primitive.h>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
+
 inline void getScreenToClientPos(float& x, float& y, float sw, float sh) {
     x = (2.0 * x - sw * 0.5f) / sw;
     y = 2.0f * (sh * 0.5f - y) / sh;

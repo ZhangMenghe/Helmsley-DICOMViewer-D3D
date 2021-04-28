@@ -1,7 +1,6 @@
 #ifndef TEXT_TEXTURE_H
 #define TEXT_TEXTURE_H
 
-#include "pch.h"
 #include <Common/DeviceResources.h>
 #include <D3DPipeline/Texture.h>
 

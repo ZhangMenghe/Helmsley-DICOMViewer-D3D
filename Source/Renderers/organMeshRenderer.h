@@ -18,6 +18,11 @@ public:
 	organMeshRenderer(ID3D11Device* device);
 	void Setup(ID3D11Device* device, UINT h, UINT w, UINT d);
 	bool Draw(ID3D11DeviceContext* context, Texture* tex_vol, DirectX::XMMATRIX modelMat);
+	void SetMask(UINT num, UINT bits) {
+		m_computeConstData.u_organ_num = num;
+		m_computeConstData.u_maskbits = bits;
+		m_baked_dirty = true;
+	}
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
@@ -30,6 +35,7 @@ private:
 
 	//for compute shader input 
 	ID3D11Buffer* m_computeInBuff_tri, *m_computeInBuff_config;
+
 	ID3D11ShaderResourceView *m_computeInSRV_tri, *m_computeInSRV_config;
 	ID3D11Texture2D* m_triTableTex;
 	ID3D11ShaderResourceView* m_triTableSRV = nullptr;
@@ -43,9 +49,10 @@ private:
 	ID3D11Buffer* m_computeConstBuff = nullptr;
 	mcConstantBuffer m_computeConstData;
 
-	ID3D11RasterizerState* m_RasterizerState;
+	ID3D11RasterizerState *m_raster_fill, *m_raster_polygon;
 	dvr::ModelViewProjectionConstantBuffer m_const_buff_data;
 
 	bool m_baked_dirty = false;
+	void setup_new_buffers();
 };
 #endif

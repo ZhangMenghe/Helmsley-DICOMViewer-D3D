@@ -104,6 +104,21 @@
     <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
       <UniqueIdentifier>{8154b040-7503-4f79-bfe9-f03332ef34ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\ResearchModeApi">
+      <UniqueIdentifier>{54f49612-96f6-42e4-8265-8450f5d40908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OXRs\OXRRenderer">
+      <UniqueIdentifier>{92b76414-d4ed-47fd-9bf0-8f95b856e3f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OXRs\XrUtility">
+      <UniqueIdentifier>{83cfd24d-84e6-4cea-bee3-c159160d6270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OXRs\DxCommon">
+      <UniqueIdentifier>{399003a4-3c48-4b3d-afeb-771c07e946b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OXRs\XrSceneLib">
+      <UniqueIdentifier>{8dbd3936-7eab-4759-ad63-22e1d9a50c88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -210,6 +225,31 @@
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\DxCommon\DxUtility.cpp">
+      <Filter>Source\OXRs\DxCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.cpp">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -218,9 +258,6 @@
       <Filter>Source\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Common\DirectXHelper.h">
-      <Filter>Source\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Common\StepTimer.h">
       <Filter>Source\Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h">
@@ -292,9 +329,6 @@
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Utils\XrMath.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
@@ -340,6 +374,93 @@
     <ClInclude Include="..\..\Source\Utils\dataManager.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\Scenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h">
+      <Filter>Source\ResearchModeApi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.h">
+      <Filter>Source\OXRs\OXRRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\TimeConverter.h">
+      <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrEnumerate.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrError.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrToString.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensionContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensions.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHandle.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrInstanceContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrString.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStruct.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSessionContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrSystemContext.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrViewConfiguration.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\DxCommon\DxUtility.h">
+      <Filter>Source\OXRs\DxCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrMath.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrStereoView.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\FrameTime.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\CompositionLayers.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\Scene.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\XrContext.h" />
+    <ClInclude Include="..\..\Source\Utils\CVMathUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Common\StepTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -377,13 +498,7 @@
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\QuadVertexShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
@@ -392,22 +507,13 @@
     <FxCompile Include="..\..\Source\Shaders\VolumeCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\texbasedPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\texbasedVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\Naive2DTexVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\MarchingCubeGeometryShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\mesh3DPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\mesh3DVertexShader.hlsl">
@@ -416,13 +522,34 @@
     <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\ClippedColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\mesh3DPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\texbasedPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\SimpleColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,13 +1,6 @@
 ﻿#ifndef CORE_WIN_MAIN_H
 #define CORE_WIN_MAIN_H
-#include "Common\StepTimer.h"
-#include "Common\DeviceResources.h"
-#include <vrController.h>
-#include <Utils/dicomLoader.h>
-#include <Utils/uiController.h>
-#include <Common/Manager.h>
 #include <Renderers/FpsTextRenderer.h>
-#include <grpc/rpcHandler.h>
 #include <Utils/dataManager.h>
 
 namespace CoreWin {
@@ -52,6 +45,8 @@ namespace CoreWin {
 		std::thread* m_rpcThread;
 
 		const bool m_overwrite_index_file = false;
+		bool m_local_initialized = false;
+
 		void setup_volume_server();
 		void setup_volume_local();
 		void setup_resource();

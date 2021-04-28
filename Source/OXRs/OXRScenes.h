@@ -7,25 +7,43 @@
 #include <Utils/uiController.h>
 #include <Utils/dataManager.h>
 #include <grpc/rpcHandler.h>
-
-class OXRScenes {
+#include <OXRs/ArucoMarkerTrackingScenario.h>
+#include <OXRs/SensorVizScenario.h>
+#include <OXRs/XrSceneLib/Scene.h>
+class OXRScenes : public xr::Scene{
 public:
-	OXRScenes(const std::shared_ptr<DX::DeviceResources> &deviceResources);
-	void Update();
-	void Update(XrTime time);
-	bool Render();
+	OXRScenes(const std::shared_ptr<xr::XrContext>& context);
+	void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {
+		//m_scenario->SetupReferenceFrame(referenceFrame);
+	}
+
+	//override
+	void Update(const xr::FrameTime& frameTime);
+	void BeforeRender(const xr::FrameTime& frameTime);
+	void Render(const xr::FrameTime& frameTime, uint32_t view_id);
+	void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources);
+
 	void onViewChanged();
 	void setSpaces(XrSpace *space, XrSpace *app_space);
 
-	void onSingle3DTouchDown(float x, float y, float z, int side) { m_sceneRenderer->onSingle3DTouchDown(x, y, z, side); };
+	void onSingle3DTouchDown(float x, float y, float z, int side) { 
+		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side); 
+		//m_scenario->onSingle3DTouchDown(x, y, z, side);
+	};
 	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) { m_sceneRenderer->on3DTouchMove(x, y, z, rot, side); };
 	void on3DTouchReleased(int side) { m_sceneRenderer->on3DTouchReleased(side); };
-
+	//void saveCurrentTargetViews(ID3D11RenderTargetView* render_target, ID3D11DepthStencilView* depth_target) {
+	//	m_deviceResources->saveCurrentTargetViews(render_target, depth_target);
+	//}
+	void saveCurrentTargetViews(winrt::com_ptr <ID3D11RenderTargetView> render_target,
+		winrt::com_ptr<ID3D11DepthStencilView> depth_target, float depth_value) {
+		m_deviceResources->saveCurrentTargetViews(render_target, depth_target, depth_value);
+	}
 private:
-	std::shared_ptr<DX::DeviceResources> m_deviceResources;
-
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
+	//std::unique_ptr<SensorVizScenario> m_scenario;
+	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
 	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
 	
@@ -49,6 +67,8 @@ private:
 	DX::StepTimer m_timer;
 
 	bool m_overwrite_index_file = false;
+	bool m_render_scene = true;
+	bool m_local_initialized = false;
 
 	void setup_volume_server();
 	void setup_volume_local();

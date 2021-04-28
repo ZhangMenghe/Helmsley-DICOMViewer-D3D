@@ -204,7 +204,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h" />
     <ClInclude Include="CoreWinMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="..\..\Source\Common\DeviceResources.h">
@@ -337,9 +336,6 @@
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
-      <Filter>Source\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
@@ -383,6 +379,16 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl" />
+    <FxCompile Include="..\..\Source\Shaders\SimpleColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

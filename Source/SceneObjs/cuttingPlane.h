@@ -5,7 +5,6 @@
 #include <Renderers/quadRenderer.h>
 #include <glm/glm.hpp>
 
-
 typedef struct {
     glm::vec3 p;
     glm::vec3 n;

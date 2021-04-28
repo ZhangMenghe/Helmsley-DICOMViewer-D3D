@@ -125,6 +125,7 @@ void baseRenderer::updateVertexBuffer(ID3D11DeviceContext* context, const void* 
 	//	0,
 	//	0
 	//);
+	if (m_vertexBuffer == nullptr) return;
 	D3D11_MAPPED_SUBRESOURCE resource;
 	context->Map(m_vertexBuffer.get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, data, m_vertice_count*sizeof(float));

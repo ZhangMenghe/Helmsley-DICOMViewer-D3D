@@ -25,27 +25,61 @@ screenQuadRenderer::screenQuadRenderer(ID3D11Device* device)
 }
 
 bool screenQuadRenderer::InitializeQuadTex(ID3D11Device* device, ID3D11DeviceContext* context, float width, float height){
-	texture = new Texture;
-	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = width;
-	texDesc.Height = height;
-	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+	{
+		texture = new Texture;
+		D3D11_TEXTURE2D_DESC texDesc;
+		texDesc.Width = width;
+		texDesc.Height = height;
+		texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
 
-	D3D11_RENDER_TARGET_VIEW_DESC view_desc{
-		texDesc.Format,
-		D3D11_RTV_DIMENSION_TEXTURE2D,
-	};
-	view_desc.Texture2D.MipSlice = 0;
-	if (!texture->Initialize(device, texDesc, view_desc)) { delete texture; texture = nullptr; return false; }
-	
+		D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+			texDesc.Format,
+			D3D11_RTV_DIMENSION_TEXTURE2D,
+		};
+		view_desc.Texture2D.MipSlice = 0;
+		if (!texture->Initialize(device, texDesc, view_desc)) { delete texture; texture = nullptr; return false; }
+	}
+
+
+	{
+		ID3D11Texture2D* depth_texture = nullptr;
+		D3D11_TEXTURE2D_DESC texDesc;
+		texDesc.Width = width;
+		texDesc.Height = height;
+		texDesc.Format = DXGI_FORMAT_D16_UNORM ;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = 0;
+
+		/*D3D11_RENDER_TARGET_VIEW_DESC view_desc{
+			texDesc.Format,
+			D3D11_RTV_DIMENSION_TEXTURE2D,
+		};
+		view_desc.Texture2D.MipSlice = 0;*/
+
+		CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(
+			D3D11_DSV_DIMENSION_TEXTURE2D,
+			DXGI_FORMAT_D16_UNORM ,
+			0 /* mipSlice */,
+			0,
+			1 /* arraySize */);
+		device->CreateTexture2D(&texDesc, nullptr, &depth_texture);
+		device->CreateDepthStencilView(depth_texture, &depthStencilViewDesc, &depthStencilView);
+	}
+
 	//D3D11_MAPPED_SUBRESOURCE mappedResource;
 	//context->Map(texture->GetTexture2D(), 0, D3D11_MAP_READ, 0, &mappedResource);
 
@@ -71,10 +105,15 @@ void screenQuadRenderer::Draw(ID3D11DeviceContext* context) {
 	//context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
 	baseRenderer::Draw(context);
 }
-void screenQuadRenderer::SetToDrawTarget(ID3D11DeviceContext* context, ID3D11DepthStencilView* pDepthStencilView){
+void screenQuadRenderer::SetToDrawTarget(ID3D11DeviceContext* context, DX::DeviceResources* resources){
 	auto tview = texture->GetRenderTargetView();
+	// Create a depth stencil view into the slice of the depth stencil texture array for this swapchain image.
+				// This is a lightweight operation which can be done for each viewport projection.
 	
-	context->OMSetRenderTargets(1, &tview, pDepthStencilView);
+
+	ID3D11RenderTargetView* const targets[1] = { tview };
+	context->OMSetRenderTargets(1, targets, depthStencilView);
+	resources->saveCurrentTargetViews(tview, depthStencilView);
 	context->ClearRenderTargetView(tview, dvr::SCREEN_CLEAR_COLOR);
-	context->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }

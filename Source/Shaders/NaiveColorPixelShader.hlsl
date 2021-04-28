@@ -1,11 +1,17 @@
-struct PixelShaderInput{
+Texture2D shaderTexture;
+SamplerState SampleType;
+
+// Per-pixel color data passed through the pixel shader.
+struct PixelShaderInput
+{
 	float4 pos : SV_POSITION;
-	float4 ori_pos: POSITION;
-};
-cbuffer ColorConstantBuffer : register(b0) {
-	float4 u_color;
+	float2 tex : TEXCOORD0;
 };
 // A pass-through function for the (interpolated) color data.
-float4 main(PixelShaderInput input) : SV_TARGET{
-	return u_color;
+float4 main(PixelShaderInput input) : SV_TARGET
+{
+	//return float4(input.tex.xy,.0f, 1.0f);
+	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
+	float value = shaderTexture.Sample(SampleType, input.tex).r;
+	return float4(value, value, value, 1.0);
 }

@@ -47,8 +47,8 @@ float3 CalculateGradient(uint3 p) {
 	uint2 e = uint2(1, 0);
 
 	float3 n = float3(map(p + e.xyy) - map(p - e.xyy),  // Gradient x
-		map(p + e.yxy) - map(p - e.yxy),  // Gradient y
-		map(p + e.yyx) - map(p - e.yyx)); // Gradient z
+			map(p + e.yxy) - map(p - e.yxy),  // Gradient y
+			map(p + e.yyx) - map(p - e.yyx)); // Gradient z
 
 	return normalize(n);
 }
