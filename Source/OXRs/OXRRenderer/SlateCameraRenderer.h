@@ -47,6 +47,8 @@ private:
     uint64_t m_refreshTimeInMilliseconds = 0;
     uint64_t m_sensorRefreshTime = 0;
     uint64_t m_lastHostTicks = 0;
+    uint64_t m_qpcTime = 0;
+    const uint64_t refreshTime = 10000;
 
     float m_slateWidth, m_slateHeight;
 
@@ -57,8 +59,11 @@ private:
     bool m_fExit = { false };
 
     std::mutex m_mutex;
+    bool init = false;
 
+    DirectX::XMMATRIX viewMatrix;
     glm::mat4 cameraToWorld = glm::mat4(1.0f);
+    glm::mat4 markerMatrix = glm::mat4(1.0f);
 
 	dvr::ModelViewProjectionConstantBuffer m_constantBufferData;
 	dvr::INPUT_LAYOUT_IDS m_input_layout_id;
@@ -80,9 +85,33 @@ private:
     glm::mat4 m_extrinsics_mat = glm::mat4(1.0);
 
     winrt::Windows::Perception::Spatial::SpatialCoordinateSystem m_referenceFrame = {nullptr};
+    winrt::Windows::Perception::Spatial::SpatialLocatorAttachedFrameOfReference m_frameOfReference = { nullptr };
 
     static void CameraUpdateThread(SlateCameraRenderer* pSlateCameraRenderer, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent);
     bool update_cam_texture(ID3D11DeviceContext* context);
+    void update_marker_position();
+
+    // Convert a duration value from a source tick frequency to a destination tick frequency.
+    static inline int64_t SourceDurationTicksToDestDurationTicks(int64_t sourceDurationInTicks, int64_t sourceTicksPerSecond, int64_t destTicksPerSecond)
+    {
+      int64_t whole = (sourceDurationInTicks / sourceTicksPerSecond) * destTicksPerSecond;                          // 'whole' is rounded down in the target time units.
+      int64_t part = (sourceDurationInTicks % sourceTicksPerSecond) * destTicksPerSecond / sourceTicksPerSecond;    // 'part' is the remainder in the target time units.
+      return whole + part;
+    }
+
+    DirectX::XMMATRIX spatialLocationToMatrix(winrt::Windows::Perception::Spatial::SpatialLocation location);
+
+    static inline winrt::Windows::Foundation::TimeSpan TimeSpanFromQpcTicks(int64_t qpcTicks)
+    {
+      static const int64_t qpcFrequency = []
+      {
+        LARGE_INTEGER frequency;
+        QueryPerformanceFrequency(&frequency);
+        return frequency.QuadPart;
+      }();
+
+      return winrt::Windows::Foundation::TimeSpan{ SourceDurationTicksToDestDurationTicks(qpcTicks, qpcFrequency, winrt::clock::period::den) / winrt::clock::period::num };
+    }
 };
 #endif // !SLATE_CAMERA_RENDERER_H
 

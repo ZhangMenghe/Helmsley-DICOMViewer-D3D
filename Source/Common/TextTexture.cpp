@@ -3,7 +3,7 @@
 #include <Common/DirectXHelper.h>
 
 namespace {
-    constexpr DXGI_FORMAT TextFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+    constexpr DXGI_FORMAT TextFormat = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 }
 TextTexture::TextTexture(const std::shared_ptr<DX::DeviceResources>& deviceResources, TextTextureInfo textInfo)
     : m_textInfo(std::move(textInfo)),

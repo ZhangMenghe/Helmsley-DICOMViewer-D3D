@@ -115,7 +115,7 @@ void SensorVizScenario::IntializeScene() {
     D3D11_TEXTURE2D_DESC texDesc;
     texDesc.Width = 760;
     texDesc.Height = 428;
-    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
     texDesc.Usage = D3D11_USAGE_DEFAULT;
     texDesc.MipLevels = 1;
     texDesc.ArraySize = 1;
@@ -141,11 +141,12 @@ void SensorVizScenario::Update(DX::StepTimer& timer) {
 }
 bool SensorVizScenario::Render() {
     //auto model_mat = vrController::instance()->getFrameModelMat();
-    if (m_LFCameraRenderer->Update(m_context->DeviceContext.get()))
-        m_RFCameraRenderer->UpdateExtrinsicsMatrix();
-    else
-        return false;
-    return true;
+    return m_LFCameraRenderer->Update(m_context->DeviceContext.get());
+    //if (m_LFCameraRenderer->Update(m_context->DeviceContext.get()))
+    //    m_RFCameraRenderer->UpdateExtrinsicsMatrix();
+    //else
+    //    return false;
+    //return true;
     //m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_RFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_rgbRender->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));

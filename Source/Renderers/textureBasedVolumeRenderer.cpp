@@ -61,7 +61,7 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0.0f;
 	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.BorderColor[0] = 0;
 	samplerDesc.BorderColor[1] = 0;
 	samplerDesc.BorderColor[2] = 0;
@@ -105,6 +105,14 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
+	//rtbd.SrcBlend = D3D11_BLEND_SRC_ALPHA;//D3D11_BLEND_ONE;
+	//rtbd.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//D3D11_BLEND_INV_SRC_ALPHA;
+	//rtbd.BlendOp = D3D11_BLEND_OP_ADD;
+	//rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;//D3D11_BLEND_INV_DEST_ALPHA;
+	//rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;//D3D11_BLEND_ONE;
+	//rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	//rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.RenderTarget[0] = rtbd;
 
@@ -122,8 +130,10 @@ void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	float mappedZVal = -(dimensions - 1) / 2.0f * step;
 	float mappedZVal_back = -mappedZVal;
 	for (int i = 0; i < dimensions; i++) {
-		zInfos_front[i].zinfo.x = mappedZVal * vol_thickness_factor; zInfos_front[i].zinfo.y = zTex;
-		zInfos_back[i].zinfo.x = mappedZVal_back * vol_thickness_factor; zInfos_back[i].zinfo.y = zTex;
+		zInfos_front[i].zinfo.x = mappedZVal * vol_thickness_factor; 
+	  zInfos_front[i].zinfo.y = zTex;
+		zInfos_back[i].zinfo.x = mappedZVal_back * vol_thickness_factor;
+	  zInfos_back[i].zinfo.y = zTex;
 		mappedZVal += step; mappedZVal_back -= step; zTex += dimension_inv;
 	}
 	
@@ -204,6 +214,25 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	}
 	context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
 
+	D3D11_DEPTH_STENCIL_DESC dsDesc;
+
+	// Depth test parameters
+	dsDesc.DepthEnable = false;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	// Stencil test parameters
+	dsDesc.StencilEnable = false;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+
+	// Create depth stencil state
+	ID3D11DepthStencilState* pDSState;
+	device->CreateDepthStencilState(&dsDesc, &pDSState);
+
+	// Bind depth stencil state
+	context->OMSetDepthStencilState(pDSState, 1);
+
 	if (tex != nullptr) {
 		auto texview = tex->GetTextureView();
 		context->PSSetShaderResources(0, 1, &texview);
@@ -211,7 +240,7 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	//texture sampler
 	if (m_sampleState != nullptr) context->PSSetSamplers(0, 1, &m_sampleState);
 
-	ID3D11Buffer* vertInstBuffers[2] = { m_vertexBuffer.get(), is_front? m_instanceBuffer_front.get(): m_instanceBuffer_back.get() };
+	ID3D11Buffer* vertInstBuffers[2] = { m_vertexBuffer.get(), is_front? m_instanceBuffer_front.get() : m_instanceBuffer_back.get() };
 	UINT strides[2] = { sizeof(dvr::VertexPosTex2d), sizeof(InstanceType) };
 	UINT offsets[2] = { 0, 0 };
 	context->IASetVertexBuffers(0, 2, vertInstBuffers, strides, offsets);
@@ -232,6 +261,7 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	
 	//setback states
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
+	context->OMSetDepthStencilState(nullptr, 1);
 	return true;
 }
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {

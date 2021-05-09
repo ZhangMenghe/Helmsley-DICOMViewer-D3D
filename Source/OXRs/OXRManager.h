@@ -67,7 +67,7 @@ namespace DX {
 		std::vector<std::unique_ptr<xr::Scene>> m_scenes;
 
 
-		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
+		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 		const XrFormFactor app_config_form = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
 		const XrViewConfigurationType app_config_view = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
 

@@ -23,11 +23,11 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	myPtr_ = this;
 	auto device = deviceResources->GetD3DDevice();
 	screen_quad = new screenQuadRenderer(device);
-	raycast_renderer = new raycastVolumeRenderer(device);
+	//raycast_renderer = new raycastVolumeRenderer(device);
 	texvrRenderer_ = new textureBasedVolumeRenderer(device);
-	cutter_ = new cuttingController(device);
-	data_board_ = new dataBoard(device);
-	meshRenderer_ = new organMeshRenderer(device);
+	//cutter_ = new cuttingController(device);
+	//data_board_ = new dataBoard(device);
+	//meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
 	CreateDeviceDependentResources();
@@ -108,7 +108,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
 		m_manager->setDimension(vol_dimension_);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
-		cutter_->setDimension(pd, vol_dim_scale_.z);
+		//cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
 
 	if (tex_volume != nullptr)
@@ -147,7 +147,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 	Manager::baked_dirty_ = true;
 
-	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+	//meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
 }
 
 void vrController::init_texture()
@@ -297,7 +297,7 @@ void vrController::precompute()
 	// Disable Compute Shader
 	context->CSSetShader(nullptr, nullptr, 0);
 
-	data_board_->Update(m_deviceResources->GetD3DDevice(), context);
+	//data_board_->Update(m_deviceResources->GetD3DDevice(), context);
 	Manager::baked_dirty_ = false;
 }
 
@@ -323,9 +323,9 @@ void vrController::render_scene(int view_id)
 
   //auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
 	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	cutter_->Update(model_mat);
-	if (Manager::IsCuttingNeedUpdate())
-		cutter_->Update(model_mat);
+	//cutter_->Update(model_mat);
+	//if (Manager::IsCuttingNeedUpdate())
+		//cutter_->Update(model_mat);
 
 	bool render_complete = true;
 	//////  CUTTING PLANE  //////
@@ -767,10 +767,11 @@ void vrController::setupCenterLine(int id, float *data)
 		line_renderers_[oid]->updateVertices(m_deviceResources->GetD3DDevice(), 4000, data);
 	else
 		line_renderers_[oid] = new lineRenderer(m_deviceResources->GetD3DDevice(), oid, 4000, data);
-	cutter_->setupCenterLine((dvr::ORGAN_IDS)oid, data);
+	//cutter_->setupCenterLine((dvr::ORGAN_IDS)oid, data);
 }
 void vrController::setCuttingPlane(float value)
 {
+	return;
 	if (Manager::param_bool[dvr::CHECK_CUTTING])
 	{
 		if (!Manager::isRayCasting())
@@ -792,6 +793,7 @@ void vrController::setCuttingPlane(float value)
 }
 void vrController::setCuttingPlane(int id, int delta)
 {
+	return;
 	if (Manager::param_bool[dvr::CHECK_CUTTING])
 	{
 		cutter_->setCuttingPlaneDelta(delta);
@@ -811,11 +813,13 @@ void vrController::setCuttingPlane(int id, int delta)
 }
 void vrController::setCuttingPlane(glm::vec3 pp, glm::vec3 pn)
 {
+	return;
 	cutter_->setCutPlane(pp, pn);
 	m_scene_dirty = true;
 }
 void vrController::switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id)
 {
+	return;
 	cutter_->SwitchCuttingPlane(cut_plane_id);
 	if (Manager::param_bool[dvr::CHECK_TRAVERSAL_VIEW])
 		AlignModelMatToTraversalPlane();
@@ -841,6 +845,7 @@ bool vrController::isDirty()
 }
 void vrController::AlignModelMatToTraversalPlane()
 {
+	return;
 	glm::vec3 pp, pn;
 	cutter_->getCurrentTraversalInfo(pp, pn);
 	pn = glm::normalize(pn);

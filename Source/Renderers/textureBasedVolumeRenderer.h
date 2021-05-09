@@ -27,7 +27,7 @@ protected:
 	void initialize_mesh_others(ID3D11Device* device);
 
 private:
-	const float DENSE_FACTOR = 1.0f;
+	const float DENSE_FACTOR = 0.3f;
 	int dimensions; float dimension_inv;
 	float vol_thickness_factor = 1.0f;
 	const int MAX_DIMENSIONS = 1000;

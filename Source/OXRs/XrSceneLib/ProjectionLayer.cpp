@@ -288,12 +288,17 @@ bool ProjectionLayer::Render(XrContext& context,
                 //context.PbrResources.SetDepthFuncReversed(reversedZ);
                 
                 Manager::instance()->updateCamera(worldToViewMatrix, projectionMatrix);
+                int view_id = viewIndex;
+
+                if(viewConfig == XR_VIEW_CONFIGURATION_TYPE_SECONDARY_MONO_FIRST_PERSON_OBSERVER_MSFT) {
+                    view_id = -1;
+                }
 
                 // Render all active scenes.
                 for (const std::unique_ptr<xr::Scene>& scene : activeScenes) {
                     if (scene->IsActive()) {
                         submitProjectionLayer = true;
-                        scene->Render(frameTime, viewIndex);
+                        scene->Render(frameTime, view_id);
                     }
                 }
             }
