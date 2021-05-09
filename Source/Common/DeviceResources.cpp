@@ -686,7 +686,7 @@ void DX::DeviceResources::SetBackBufferRenderTarget() {
 
 void DX::DeviceResources::ClearCurrentDepthBuffer() {
 	if(current_depth_view == nullptr) current_depth_view = restoreDepthStencilView();
-	m_d3dContext.get()->ClearDepthStencilView(current_depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_d3dContext.get()->ClearDepthStencilView(current_depth_view, D3D11_CLEAR_DEPTH, m_depth_value, 0);
 }
 
 // This method determines the rotation between the display device's native orientation and the

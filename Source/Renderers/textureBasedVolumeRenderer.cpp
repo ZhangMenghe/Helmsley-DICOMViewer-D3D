@@ -100,8 +100,8 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	rtbd.SrcBlend = D3D11_BLEND_SRC_ALPHA;//D3D11_BLEND_ONE;
 	rtbd.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//D3D11_BLEND_INV_SRC_ALPHA;
 	rtbd.BlendOp = D3D11_BLEND_OP_ADD;
-	rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;//D3D11_BLEND_INV_DEST_ALPHA;
-	rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;//D3D11_BLEND_ONE;
+	rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;//D3D11_BLEND_ONE;
+	rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;//D3D11_BLEND_ZERO;
 	rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 

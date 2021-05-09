@@ -42,8 +42,6 @@ void FpsTextRenderer::Render()
 		* DirectX::XMMatrixRotationAxis(vy, .2f)
 		* DirectX::XMMatrixTranslation(0.8f, -0.8f, .0f) 
 	);
-		/** DirectX::XMMatrixTranslation(0.3f, 0.f, .0f)*/
-
 }
 
 void FpsTextRenderer::CreateDeviceDependentResources()

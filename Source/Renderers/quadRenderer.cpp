@@ -11,7 +11,7 @@ quadRenderer::quadRenderer(ID3D11Device* device)
 	this->initialize();
 }
 quadRenderer::quadRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color, const float* vdata)
-:baseRenderer(device, L"Naive3DVertexShader.cso", L"NaiveColorPixelShader.cso", 
+:baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso", 
 	vdata, quad_indices, 12, 6),
 	m_input_layout_id(dvr::INPUT_POS_3D){
 	this->initialize();

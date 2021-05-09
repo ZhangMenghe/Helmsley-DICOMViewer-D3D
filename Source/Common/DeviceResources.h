@@ -31,15 +31,18 @@ namespace DX
 		void ClearCurrentDepthBuffer();
 
 		void saveCurrentTargetViews(ID3D11RenderTargetView* render_target, ID3D11DepthStencilView* depth_target);
+		void saveCurrentTargetViews(winrt::com_ptr <ID3D11RenderTargetView> render_target,
+			winrt::com_ptr<ID3D11DepthStencilView> depth_target, float depth_value) {
+			current_depth_view = depth_target.get();
+			current_render_target_view = render_target.get();
+			m_depth_value = depth_value;
+		}
 		void removeCurrentTargetViews();
 		//ID3D11DepthStencilView*		GetDepthStencilView() const {
 		//	if (m_depthStencilViewStack.empty())	return m_d3dDepthStencilView.Get();
 		//	return m_depthStencilViewStack.top();
 		//}
 		ID3D11DepthStencilView* GetDepthStencilView();
-		void SetDepthStencilView(ID3D11DepthStencilView* input) {
-			current_depth_view = input;
-		}
 		// The size of the render target, in pixels.
 		winrt::Windows::Foundation::Size	GetOutputSize() const					{ return m_outputSize; }
 
@@ -107,7 +110,7 @@ namespace DX
 		// This is the DPI that will be reported back to the app. It takes into account whether the app supports high resolution screens or not.
 		float m_dpi;
 		float m_effectiveDpi;
-
+		float m_depth_value = 1.0f;
 		// Transforms used for display orientation.
 		D2D1::Matrix3x2F	m_orientationTransform2D;
 		DirectX::XMFLOAT4X4	m_orientationTransform3D;

@@ -23,7 +23,8 @@ struct v2f{
 v2f main(VertexShaderInput input){
 	v2f output;
 	output.col = input.pos.xyz * 2.0f;
-	output.pos = mul(float4(-input.pos.y, input.pos.x, input.pos.z, 1.0f), model);
+	output.pos = mul(float4(input.pos.x, -input.pos.y, input.pos.z, 1.0f), model);
+	//output.pos = mul(float4(input.pos, 1.0f), model);
 	output.pos = mul(output.pos, uViewProjMat);
 	output.norm = input.norm;
 	return output;

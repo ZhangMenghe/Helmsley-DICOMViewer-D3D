@@ -3,7 +3,6 @@ syntax = "proto3";
 package helmsley;
 import "common.proto";
 
-
 enum ReqType{
     SET = 0;
     GET = 1;

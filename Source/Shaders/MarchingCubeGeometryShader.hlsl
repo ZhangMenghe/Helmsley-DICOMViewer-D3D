@@ -47,8 +47,8 @@ float3 CalculateGradient(uint3 p) {
 	uint2 e = uint2(1, 0);
 
 	float3 n = float3(map(p + e.xyy) - map(p - e.xyy),  // Gradient x
-		map(p + e.yxy) - map(p - e.yxy),  // Gradient y
-		map(p + e.yyx) - map(p - e.yyx)); // Gradient z
+			map(p + e.yxy) - map(p - e.yxy),  // Gradient y
+			map(p + e.yyx) - map(p - e.yyx)); // Gradient z
 
 	return normalize(n);
 }
@@ -207,14 +207,7 @@ void main(uint3 threadID : SV_DispatchThreadID){
 			output_vertices[idx + 1].normal = calcNormal(v1.position, v2.position, v0.position);
 			output_vertices[idx + 2].normal = calcNormal(v2.position, v0.position, v1.position);
 		}
-		else{
-			//output_vertices[idx].position = float3(0, 0, 0);
-			//output_vertices[idx].normal = float3(0, 0, 0);
-			//output_vertices[idx+1].position = float3(0, 0, 0);
-			//output_vertices[idx+1].normal = float3(0, 0, 0);
-			//output_vertices[idx+2].position = float3(0, 0, 0);
-			//output_vertices[idx+2].normal = float3(0, 0, 0);
-		}
+
 	}
     //output_vertices[threadID.x].pos = .0f;// inputConstantParticleData[dispatchThreadID.x].position;
 }

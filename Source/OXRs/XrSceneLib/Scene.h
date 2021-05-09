@@ -24,6 +24,8 @@ namespace xr {
 
         virtual void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources){}
         virtual void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame){}
+        virtual void saveCurrentTargetViews(winrt::com_ptr <ID3D11RenderTargetView> render_target, 
+            winrt::com_ptr<ID3D11DepthStencilView> depth_target, float depth_value){}
 
         // Active is true when the scene participates update and render loop.
         bool IsActive() const {
@@ -45,7 +47,7 @@ namespace xr {
 
     protected:
         std::shared_ptr<xr::XrContext> m_context;
-
+        //winrt::com_ptr<ID3D11DepthStencilView> m_depthStencilView = nullptr;
         //virtual void OnUpdate(const xr::FrameTime& frameTime [[maybe_unused]]) {
         //}
         //virtual void OnBeforeRender(const xr::FrameTime& frameTime [[maybe_unused]]) const {

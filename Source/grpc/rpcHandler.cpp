@@ -106,10 +106,10 @@ void rpcHandler::getVolumeFromDataset(const std::string& dataset_name, std::vect
 
     std::unique_ptr<ClientReader<volumeResponse>> volume_reader(
         stub_->getVolumeFromDataset(&context, req));
-    while (volume_reader->Read(&volume)) {
+    while (volume_reader->Read(&volume)){
         std::cout << volume.volumes_size() << std::endl;
 
-        for (auto vol : volume.volumes()) {
+        for (auto vol : volume.volumes()){
             ret.push_back(vol);
         }
     }
@@ -117,7 +117,7 @@ void rpcHandler::getVolumeFromDataset(const std::string& dataset_name, std::vect
     winrt::check_hresult(status.ok());
 }
 
-std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles() {
+std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles(){
     std::vector<configResponse::configInfo> available_config_files;
 
     configResponse response;
@@ -125,13 +125,13 @@ std::vector<configResponse::configInfo> rpcHandler::getAvailableConfigFiles() {
 
     stub_->getAvailableConfigs(&context, req, &response);
 
-    for (configResponse::configInfo config : response.configs()) {
+    for (configResponse::configInfo config : response.configs()){
         available_config_files.push_back(config);
     }
 
     return available_config_files;
 }
-void rpcHandler::exportConfigs(std::string content) {
+void rpcHandler::exportConfigs(std::string content){
     if (content.empty()) return;
 
     ClientContext context;
@@ -142,7 +142,7 @@ void rpcHandler::exportConfigs(std::string content) {
     stub_->exportConfigs(&context, creq, &response);
 }
 
-void rpcHandler::DownloadVolume(const string& folder_path) {
+void rpcHandler::DownloadVolume(const string& folder_path){
     RequestWholeVolume req;
     req.set_client_id(CLIENT_ID);
     req.set_req_msg(folder_path);
@@ -155,7 +155,7 @@ void rpcHandler::DownloadVolume(const string& folder_path) {
         stub_->DownloadVolume(&context, req));
 
     int id = 0;
-    while (data_reader->Read(&resData)) {
+    while (data_reader->Read(&resData)){
         m_dicom_loader->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
         id++;
     };
@@ -179,7 +179,7 @@ concurrency::task<void> rpcHandler::DownloadVolumeAsync(const std::string& folde
             stub_->DownloadVolume(&context, req));
 
         int id = 0;
-        while (data_reader->Read(&resData)) {
+        while (data_reader->Read(&resData)){
             m_dicom_loader->send_dicom_data(LOAD_DICOM, id, resData.data().length(), 2, resData.data().c_str());
             id++;
         };
@@ -202,7 +202,7 @@ concurrency::task<void> rpcHandler::DownloadMasksAndCenterlinesAsync(const std::
             stub_->DownloadMasksVolume(&context, req));
 
         int id = 0;
-        while (data_reader->Read(&resData)) {
+        while (data_reader->Read(&resData)){
             m_dicom_loader->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
             id++;
         };
@@ -234,7 +234,7 @@ void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name) {
         stub_->DownloadMasksVolume(&context, req));
 
     int id = 0;
-    while (data_reader->Read(&resData)) {
+    while (data_reader->Read(&resData)){
         m_dicom_loader->send_dicom_data(LOAD_MASK, id, resData.data().length(), 2, resData.data().c_str());
         id++;
     };
@@ -242,12 +242,12 @@ void rpcHandler::DownloadMasksAndCenterlines(const std::string& folder_name) {
     winrt::check_hresult(status.ok());
     DownloadCenterlines(req);
 }
-void rpcHandler::DownloadCenterlines(Request req) {
+void rpcHandler::DownloadCenterlines(Request req){
     ClientContext context;
     centerlineData clData;
     std::unique_ptr<ClientReader<centerlineData>> cl_reader(
         stub_->DownloadCenterLineData(&context, req));
-    while (cl_reader->Read(&clData)) {
+    while (cl_reader->Read(&clData)){
         m_dicom_loader->sendDataFloats(0, clData.data().size(), std::vector<float>(clData.data().begin(), clData.data().end()));
     };
     Status status = cl_reader->Finish();
@@ -257,9 +257,9 @@ void rpcHandler::DownloadCenterlines(Request req) {
 ////////////////////////////
 ////////Inspectator/////////
 ///////////////////////////
-void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops) {
-    for (auto op : ops) {
-        switch (op.type()) {
+void rpcHandler::tackle_gesture_msg(const RPCVector<helmsley::GestureOp> ops){
+    for (auto op : ops){
+        switch (op.type()){
         case GestureOp_OPType_TOUCH_DOWN:
             vr_->onSingleTouchDown(op.x(), op.y());
             // sp.notify();
@@ -345,9 +345,11 @@ void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     auto vps = msg.volume_pose();
     auto cps = msg.camera_pose();
 
+    glm::vec3 old_pos, old_scale;
+    vrController::instance()->getRPS(old_pos, old_scale);
     vrController::instance()->onReset(
-        glm::vec3(vps[0], vps[1], vps[2]),
-        glm::vec3(vps[3], vps[4], vps[5]),
+        old_pos,//glm::vec3(vps[0], vps[1], vps[2]),
+        old_scale,//glm::vec3(vps[3], vps[4], vps[5]),
         glm::make_mat4(vps.Mutable(6)),
         nullptr
         //new Camera(

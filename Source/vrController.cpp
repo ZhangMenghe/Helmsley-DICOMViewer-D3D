@@ -17,9 +17,8 @@ vrController *vrController::instance()
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager)
-						    : m_tracking(false)
-							, m_deviceResources(deviceResources)
-							, m_manager(manager){
+		: m_tracking(false), m_deviceResources(deviceResources), m_manager(manager)
+{
 	myPtr_ = this;
 	auto device = deviceResources->GetD3DDevice();
 	screen_quad = new screenQuadRenderer(device);
@@ -68,7 +67,8 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 	volume_model_dirty = false;
 }
 
-void vrController::InitOXRScene(){
+void vrController::InitOXRScene()
+{
 	uniScale = 0.5f;
 	PosVec3_.z = -1.0f;
 	volume_model_dirty = true;
@@ -126,6 +126,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 			D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 			0,
 			D3D11_RESOURCE_MISC_GENERATE_MIPS};
+
 	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data))
 	{
 		delete tex_volume;
@@ -155,10 +156,12 @@ void vrController::init_texture()
 	if (m_comp_tex_d3d != nullptr)
 	{
 		m_comp_tex_d3d->Release();
+		//delete m_comp_tex_d3d;
 		m_comp_tex_d3d = nullptr;
 	}
 	if (m_textureUAV != nullptr)
 	{
+		//delete m_textureUAV;
 		m_textureUAV->Release();
 		m_textureUAV = nullptr;
 	}
@@ -246,8 +249,13 @@ void vrController::StopTracking()
 // Renders one frame using the vertex and pixel shaders.
 void vrController::Render(int view_id)
 {
-	if (tex_volume == nullptr || tex_baked == nullptr) return;
-	if (!pre_draw_) { render_scene(view_id); return; }
+	if (tex_volume == nullptr || tex_baked == nullptr)
+		return;
+	if (!pre_draw_)
+	{
+		render_scene(view_id);
+		return;
+	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	if (true) //(true) // TODO: debug
@@ -277,7 +285,8 @@ void vrController::precompute()
 	context->CSSetShaderResources(0, 1, &texview);
 	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
 
-	if (m_compute_created)	{
+	if (m_compute_created)
+	{
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
 				m_compute_constbuff,
@@ -303,7 +312,6 @@ void vrController::precompute()
 
 void vrController::render_scene(int view_id)
 {
-	//if (!m_present)return;
 	if (volume_model_dirty)
 	{
 		updateVolumeModelMat();
@@ -314,70 +322,68 @@ void vrController::render_scene(int view_id)
 	//front or back
 	DirectX::XMFLOAT4X4 m_rot_mat;
 	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-
-	auto model_mat_tex = m_use_space_mat?SpaceMat_ *glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)) : ModelMat_;
+	auto model_mat_tex = m_use_space_mat ? SpaceMat_ * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)) : ModelMat_;
 	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
 
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
-  //auto test_space_mat = SpaceMat_ * vol_dim_scale_mat_;
-	//meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	//cutter_->Update(model_mat);
-	//if (Manager::IsCuttingNeedUpdate())
-		//cutter_->Update(model_mat);
+	if (Manager::IsCuttingNeedUpdate())
+		cutter_->Update(model_mat);
 
 	bool render_complete = true;
-	//////  CUTTING PLANE  //////
-	//if (Manager::param_bool[dvr::CHECK_CUTTING])
-	//{
-	//	render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
-	//	m_deviceResources->ClearCurrentDepthBuffer();
-	//}
-	//precompute();
-	//////   VOLUME   //////
-	//if (m_manager->isDrawVolume())
-	//{
+
+	////  CUTTING PLANE  //////
+	if (Manager::param_bool[dvr::CHECK_CUTTING])
+	{
+		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
+
 	precompute();
-	//	if (Manager::isRayCasting())
-	//render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
-	//	else
-	render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat_tex), is_front);
-	//m_deviceResources->ClearCurrentDepthBuffer();
-	//m_present = false;
-	//}
 
-	///// MESH  ////
-	//if (m_manager->isDrawMesh())
-	//{
-	//	render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
-	//}
+	//////   VOLUME   //////
+	if (m_manager->isDrawVolume())
+	{
+		if (Manager::isRayCasting())
+			render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+		else
+			render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat_tex), is_front);
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
 
-	///// CENTER LINE/////
-	//if (m_manager->isDrawCenterLine())
-	//{
-	//	auto mask_bits_ = m_manager->getMaskBits();
-	//	for (auto line : line_renderers_)
-	//		if ((mask_bits_ >> (line.first + 1)) & 1)
-	//			render_complete &= line.second->Draw(context, mat42xmmatrix(model_mat));
-	//	m_deviceResources->ClearCurrentDepthBuffer();
-	//}
+	/// MESH  ////
+	if (m_manager->isDrawMesh())
+	{
+		render_complete &= meshRenderer_->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume, mat42xmmatrix(model_mat));
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
 
-	///// CENTERLINE TRAVERSAL PLANE////
-	//if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
-	//{
-	//	render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
-	//	m_deviceResources->ClearCurrentDepthBuffer();
-	//}
+	/// CENTER LINE/////
+	if (m_manager->isDrawCenterLine())
+	{
+		auto mask_bits_ = m_manager->getMaskBits();
+		for (auto line : line_renderers_)
+			if ((mask_bits_ >> (line.first + 1)) & 1)
+				render_complete &= line.second->Draw(context, mat42xmmatrix(model_mat));
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
 
-	///// OVERLAY DATA BOARD/////
-	//if (Manager::param_bool[dvr::CHECK_OVERLAY])
-	//{
-	//	render_complete &= data_board_->Draw(m_deviceResources->GetD3DDeviceContext(),
-	//																			 DirectX::XMMatrixScaling(1.0, 0.3, 0.1) * DirectX::XMMatrixTranslation(0.8f, 0.8f, .0f),
-	//																			 is_front);
-	//	m_deviceResources->ClearCurrentDepthBuffer();
-	//}
+	/// CENTERLINE TRAVERSAL PLANE////
+	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
+	{
+		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
+
+	/// OVERLAY DATA BOARD/////
+	if (Manager::param_bool[dvr::CHECK_OVERLAY])
+	{
+		render_complete &= data_board_->Draw(m_deviceResources->GetD3DDeviceContext(),
+																				 DirectX::XMMatrixScaling(1.0, 0.3, 0.1) * DirectX::XMMatrixTranslation(0.8f, 0.8f, .0f),
+																				 is_front);
+		m_deviceResources->ClearCurrentDepthBuffer();
+	}
 	Manager::baked_dirty_ = false;
 	m_scene_dirty = !render_complete;
 	context->RSSetState(m_render_state_front);
@@ -485,8 +491,7 @@ void vrController::onTouchMove(float x, float y)
 
 void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side)
 {
-
-	if (side == 0)
+	if (dvr::USE_GESTURE_CUTTING && side == 0)
 	{
 		// Update cutting plane
 		glm::vec3 normal = glm::vec3(-1, 0, 0);
@@ -700,11 +705,8 @@ void vrController::onPan(float x, float y)
 }
 void vrController::updateVolumeModelMat()
 {
-	ModelMat_ = 
-		glm::translate(glm::mat4(1.0), PosVec3_) 
-		* RotateMat_ 
-		* glm::scale(glm::mat4(1.0), ScaleVec3_) 
-		* glm::scale(glm::mat4(1.0), glm::vec3(uniScale));
+	ModelMat_ =
+			glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ * glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale));
 }
 
 bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)

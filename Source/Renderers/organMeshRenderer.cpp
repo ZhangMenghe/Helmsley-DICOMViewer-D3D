@@ -13,7 +13,7 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	D3D11_RASTERIZER_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
 	desc.FillMode = D3D11_FILL_SOLID;// D3D11_FILL_SOLID;//D3D11_FILL_WIREFRAME;//
-	desc.CullMode = D3D11_CULL_FRONT; // D3D11_CULL_NONE // D3D11_CULL_BACK // D3D11_CULL_FRONT
+	desc.CullMode = D3D11_CULL_BACK; // D3D11_CULL_NONE // D3D11_CULL_BACK // D3D11_CULL_FRONT
 	//desc.CullMode = D3D11_CULL_BACK;
 	desc.FrontCounterClockwise = FALSE;
 	desc.DepthBias = 0;
@@ -26,7 +26,9 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	desc.AntialiasedLineEnable = FALSE;
 
 	//Create
-	device->CreateRasterizerState(&desc, &m_RasterizerState);
+	device->CreateRasterizerState(&desc, &m_raster_fill);
+	desc.FillMode = D3D11_FILL_WIREFRAME;
+	device->CreateRasterizerState(&desc, &m_raster_polygon);
 
 	//setup compute shader
 	auto loadCSTask = DX::ReadDataAsync(L"MarchingCubeGeometryShader.cso");
@@ -49,15 +51,9 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 				&m_computeConstBuff
 			)
 		);
-		m_computeConstData.u_organ_num = 7;
-		m_computeConstData.u_maskbits =8;
 	});
 
-	//setup StructuredBuffer(triangle table & configuration table)
-
 	CD3D11_BUFFER_DESC constantDataDesc(sizeof(int) * 256 * 16, D3D11_BIND_SHADER_RESOURCE);
-	//constantDataDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-
 	D3D11_SUBRESOURCE_DATA tri_data = { 0 };
 	tri_data.pSysMem = &triangle_table[0][0];
 	tri_data.SysMemPitch = 0;
@@ -74,7 +70,6 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	srvDesc.Buffer.FirstElement = 0;
 	//srvDesc.Buffer.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
 	srvDesc.Buffer.NumElements = 256 * 16;
-	
 	
 	winrt::check_hresult(
 		device->CreateShaderResourceView(m_computeInBuff_tri, &srvDesc, &m_computeInSRV_tri)
@@ -93,88 +88,20 @@ organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	winrt::check_hresult(
 		device->CreateShaderResourceView(m_computeInBuff_config, &srvDesc, &m_computeInSRV_config)
 	);
-
-	//////
-	/*
-	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Height = 256;
-	texDesc.Width = 16;
-	texDesc.Format = DXGI_FORMAT_R32_SINT;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.SampleDesc = { 1, 0 };
-
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA initData;
-	ZeroMemory(&initData, sizeof(initData));
-	initData.pSysMem = triangle_table;
-	initData.SysMemPitch = 16 * sizeof(int);
-	initData.SysMemSlicePitch = 0;
-	
-	ID3D11Texture2D* tmp_tex = nullptr;
-
-	winrt::check_hresult(
-		device->CreateTexture2D(&texDesc, &initData, &tmp_tex)
-	);
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	shaderResourceViewDesc.Format = texDesc.Format;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = -1;
-
-	winrt::check_hresult(
-		device->CreateShaderResourceView(tmp_tex, &shaderResourceViewDesc, &m_triTableSRV)
-	);
-
-
-	CD3D11_BUFFER_DESC constantDataDesc(sizeof(int) * 6 * 3, D3D11_BIND_SHADER_RESOURCE);
-	constantDataDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
-
-	const int m_indices[3][6] = {
-		{0,1,3,1,2,3},
-		{0,1,3,1,2,3},
-		{0,1,3,1,2,3}
-	};
-
-	D3D11_SUBRESOURCE_DATA tri_data = { 0 };
-	tri_data.pSysMem = m_indices;
-	tri_data.SysMemPitch = 0;
-	tri_data.SysMemSlicePitch = 0;
-
-	winrt::check_hresult(
-		device->CreateBuffer(&constantDataDesc, &tri_data, &m_computeInBuff_tri)
-	);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;// DXGI_FORMAT_UNKNOWN;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
-
-	srvDesc.BufferEx.FirstElement = 0;
-	srvDesc.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
-	srvDesc.BufferEx.NumElements = 6*3;
-
-	winrt::check_hresult(
-		device->CreateShaderResourceView(m_computeInBuff_tri, &srvDesc, &m_computeInSRV_tri)
-	);
-	*/
 }
 
 void organMeshRenderer::Setup(ID3D11Device* device, UINT h, UINT w, UINT d) {
-	m_computeConstData.u_volume_size = { h,w,d,(UINT)0};
-	m_computeConstData.u_grid_size = { UINT(h* grid_factor), UINT(w * grid_factor), UINT(d * grid_factor), (UINT)0 };
-	
+	m_computeConstData.u_volume_size = { h,w,d,(UINT)0 };
+	m_computeConstData.u_grid_size = { UINT(h * grid_factor), UINT(w * grid_factor), UINT(d * grid_factor), (UINT)0 };
+
 	m_vertice_count = m_computeConstData.u_grid_size.x
-		* m_computeConstData.u_grid_size.y 
-		* m_computeConstData.u_grid_size.z 
-		* max_triangles_per_cell 
+		* m_computeConstData.u_grid_size.y
+		* m_computeConstData.u_grid_size.z
+		* max_triangles_per_cell
 		* max_vertices_per_triangle;
+}
 
-	//m_vertice_count = 6;
-
+void organMeshRenderer::setup_new_buffers(){
 	//setup the RW buffer
 	if (m_computeOutBuff != nullptr) { m_computeOutBuff->Release(); m_computeOutBuff = nullptr; }
 	if (m_vertexBuffer != nullptr) { m_vertexBuffer = nullptr; }
@@ -261,44 +188,16 @@ void organMeshRenderer::create_fragment_shader(ID3D11Device* device, const std::
 			m_constantBuffer.put()
 		)
 	);
-
-	//CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(meshPixelConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	//winrt::check_hresult(
-	//	device->CreateBuffer(
-	//		&pixconstantBufferDesc,
-	//		nullptr,
-	//		m_pixConstantBuffer.put()
-	//	)
-	//);
-	//D3D11_BLEND_DESC omDesc;
-	//ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
-	//omDesc.RenderTarget[0].BlendEnable = TRUE;
-	//omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	//omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	//omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	//omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ONE;
-	//omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;// D3D11_BLEND_ZERO;
-	//omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	//omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-	//device->CreateBlendState(&omDesc, &d3dBlendState);
-
-
-	/*D3D11_RASTERIZER_DESC wfdesc;
-	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
-	wfdesc.CullMode = D3D11_CULL_NONE;
-	wfdesc.FrontCounterClockwise = TRUE;
-	device->CreateRasterizerState(&wfdesc, &m_render_state);*/
 }
 bool organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, DirectX::XMMATRIX modelMat) {
 	if (!m_loadingComplete) return false;
-	if (m_baked_dirty) {
+	if (m_baked_dirty){
+		setup_new_buffers();
 		context->CSSetShader(m_computeShader, nullptr, 0);
 		ID3D11ShaderResourceView* srvs[3] = { 
 			tex_vol->GetTextureView(), 
 			m_computeInSRV_tri,
 			m_computeInSRV_config,
-			//m_triTableSRV 
 		};
 		//ID3D11ShaderResourceView* texview = tex_vol->GetTextureView();
 		context->CSSetShaderResources(0, 3, srvs);
@@ -322,10 +221,8 @@ bool organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, Dir
 			(m_computeConstData.u_grid_size.y + 7) / 8,// / 8, 
 			(m_computeConstData.u_grid_size.z + 7) / 8// / 8
 		);
-		//debug
-		//context->Dispatch((tex_vol->Width() + 7) / 6, (tex_vol->Height() + 7) / 6, (tex_vol->Depth() + 7) / 6);
-
 		context->CopyResource(m_vertexBuffer.get(), m_computeOutBuff);
+
 		//unbind UAV
 		ID3D11UnorderedAccessView* nullUAV[] = { NULL };
 		context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
@@ -350,7 +247,8 @@ bool organMeshRenderer::Draw(ID3D11DeviceContext* context, Texture* tex_vol, Dir
 			0
 		);
 	}
-	context->RSSetState(m_RasterizerState);
+	if(Manager::param_bool[dvr::CHECK_POLYGON_WIREFRAME]) context->RSSetState(m_raster_polygon);
+	else context->RSSetState(m_raster_fill);
 	baseRenderer::Draw(context);
 	context->RSSetState(nullptr);
 	return true;

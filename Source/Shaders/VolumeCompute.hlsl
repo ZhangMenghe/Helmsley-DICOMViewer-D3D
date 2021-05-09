@@ -52,9 +52,7 @@ void main(uint3 threadID : SV_DispatchThreadID) {
 	}
 
 	uint u_intensity = value & uint(0xffff);
-	//float intensity_01 = clamp(float(value.x) * 0.0002442002442002442, .0, 1.0);
-	float intensity_01 = float(value.x) * 0.0002442002442002442;
-
+	float intensity_01 = clamp(float(u_intensity) * 0.0002442002442002442 + u_base_value - 0.5, .0, 1.0);
 	float alpha = .0f;
 	for (int i = 0; i < u_widget_num; i++)
 		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity_01));

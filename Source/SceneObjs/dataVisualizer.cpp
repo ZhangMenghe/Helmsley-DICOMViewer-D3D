@@ -236,7 +236,6 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
     bool render_complete = true;
 
     render_complete &= m_board_quad->Draw(context, model_mat);
-
     //color bar texture
     context->CSSetShader(m_color_comp_shader, nullptr, 0);
     ID3D11ShaderResourceView* texview = m_color_tex->GetTextureView();
@@ -264,7 +263,6 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
     context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
     // Disable Compute Shader
     context->CSSetShader(nullptr, nullptr, 0);
-
     render_complete &= m_color_bar->Draw(context, model_mat);
 
     auto visibles = Manager::instance()->getOpacityWidgetVisibility();

@@ -10,7 +10,8 @@ OXRScenes::OXRScenes(const std::shared_ptr<xr::XrContext>& context)
 void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 	m_sceneRenderer->InitOXRScene();
-	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
+	m_deviceResources = deviceResources;
+	//m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
 
 	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
@@ -62,91 +63,48 @@ void OXRScenes::setup_volume_local()
 }
 void OXRScenes::setup_resource()
 {
-	if (!DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false).get())
-		std::cerr << "Fail to copy";
-
-	// std::wstring dir_name(dvr::CACHE_FOLDER_NAME.begin(), dvr::CACHE_FOLDER_NAME.end());
-	// Windows::Storage::StorageFolder^ dst_folder = Windows::Storage::ApplicationData::Current->LocalFolder;
-
-	// auto copy_func = []() {
-	// 	std::string file_name = dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME;
-	// 	std::ifstream inFile("Assets\\" + file_name, std::ios::in | std::ios::binary);
-	// 	if (!inFile.is_open())
-	// 		return false;
-	// 	std::ofstream outFile(DX::getFilePath(file_name), std::ios::out | std::ios::binary);
-	// 	if (!outFile.is_open())
-	// 		return false;
-	// 	outFile << inFile.rdbuf();
-	// 	inFile.close();
-	// 	outFile.close();
-	// 	return true;
-	// };
-	// auto post_copy_func = [this]() {
-
-	// 	//if (dvr::CONNECT_TO_SERVER) {
-	// 	//	m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
-	// 	//	m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-	// 	//	m_rpcHandler->setDataLoader(m_dicom_loader);
-	// 	//	m_rpcHandler->setVRController(m_sceneRenderer.get());
-	// 	//	m_rpcHandler->setManager(m_manager.get());
-	// 	//	m_rpcHandler->setUIController(&m_uiController);
-	// 	//	m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
-	// 	//}
-	// 	//else {
-	// 	//	m_data_manager = new dataManager(m_dicom_loader);
-	// 	//}
-	// 	//setup_volume_local();
-	// 	//setup_volume_server();
-	// };
-	// create_task(dst_folder->CreateFolderAsync(Platform::StringReference(dir_name.c_str()), CreationCollisionOption::OpenIfExists))
-	// 	.then([=](StorageFolder^ folder) {
-	// 	std::wstring index_file_name(dvr::CONFIG_NAME.begin(), dvr::CONFIG_NAME.end());
-	// 	if (!m_overwrite_index_file) {
-	// 		create_task(folder->TryGetItemAsync(Platform::StringReference(index_file_name.c_str()))).then([this, copy_func, post_copy_func](IStorageItem^ data) {
-	// 			if (data != nullptr) post_copy_func();
-	// 			else if (copy_func()) post_copy_func();
-	// 		});
-	// 	}
-	// 	else {
-	// 		if (copy_func())post_copy_func();
-	// 	}
-	// });
-	if (dvr::CONNECT_TO_SERVER)
-	{
-		m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
-		m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
-		m_rpcHandler->setDataLoader(m_dicom_loader);
-		m_rpcHandler->setVRController(m_sceneRenderer.get());
-		m_rpcHandler->setManager(m_manager.get());
-		m_rpcHandler->setUIController(&m_uiController);
-		m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
-	}
-	else
-	{
-		m_data_manager = new dataManager(m_dicom_loader);
-	}
-	setup_volume_local();
+	auto task = concurrency::create_task([] {
+		return DX::CopyAssetData("helmsley_cached/pacs_local.txt", "helmsley_cached\\pacs_local.txt", false).get();
+	});
+	task.then([this](bool result) {
+		if (!result) std::cerr << "Fail to copy";
+		m_local_initialized = result;
+	});
 }
-void OXRScenes::onViewChanged()
-{
+void OXRScenes::onViewChanged(){
 	m_sceneRenderer->CreateWindowSizeDependentResources();
 }
-void OXRScenes::setSpaces(XrSpace *space, XrSpace *app_space)
-{
+void OXRScenes::setSpaces(XrSpace *space, XrSpace *app_space){
 	this->space = space;
 	this->app_space = app_space;
-	//this->m_sceneRenderer->setSpaces(space, app_space);
 }
 void OXRScenes::Update(const xr::FrameTime& frameTime)
 {
-	if (rpcHandler::new_data_request)
-	{
+	if (m_local_initialized) {
+		if (dvr::CONNECT_TO_SERVER)		{
+			m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
+			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
+			m_rpcHandler->setDataLoader(m_dicom_loader);
+			m_rpcHandler->setVRController(m_sceneRenderer.get());
+			m_rpcHandler->setManager(m_manager.get());
+			m_rpcHandler->setUIController(&m_uiController);
+			m_data_manager = new dataManager(m_dicom_loader, m_rpcHandler);
+		}
+		else		{
+			m_data_manager = new dataManager(m_dicom_loader);
+		}
+		setup_volume_local();
+		//setup_volume_server();
+		m_local_initialized = false;
+	}
+	if (rpcHandler::new_data_request)	{
 		auto dmsg = m_rpcHandler->GetNewDataRequest();
 		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
 		rpcHandler::new_data_request = false;
 	}
 	m_timer.Tick([&]() {
-		m_scenario->Update(m_timer);
+		m_dicom_loader->onUpdate();
+		//m_scenario->Update(m_timer);
 		m_sceneRenderer->Update(m_timer);
 		//m_fpsTextRenderer->Update(m_timer);
 	});
@@ -161,12 +119,13 @@ void OXRScenes::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 	{
 		return;
 	}
-	if (view_id == 0)
-	{
-		m_render_scene = m_scenario->Render();
-	}
-	if (m_render_scene)
+	//if (view_id == 0)
+	//{
+	//	m_render_scene = m_scenario->Render();
+	//}
+	if (m_render_scene) {
 		m_sceneRenderer->Render(view_id);
+	}
 
 	//m_fpsTextRenderer->Render();
 

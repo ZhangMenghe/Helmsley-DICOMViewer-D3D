@@ -81,6 +81,10 @@ public:
 	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; m_present = true; }
 	void setCameraExtrinsicsMat(int id, glm::mat4 ExtrinsicsMat) { m_extrinsics_mats[id] = ExtrinsicsMat; }
 	void setUseSpaceMat(bool use) { m_use_space_mat = use; }
+	void setMask(UINT num, UINT bits) {
+		meshRenderer_->SetMask(num, bits);
+	}
+
 	//getter
 	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
 	Texture *getVolumeTex() { return tex_volume; }
@@ -91,17 +95,20 @@ public:
 	glm::mat4 getCameraExtrinsicsMat(int id) {
 		return m_extrinsics_mats[id];
 	}
+	void getRPS(glm::vec3& pos, glm::vec3& scale) {
+		pos = PosVec3_; scale = ScaleVec3_;
+	}
 
 private:
 	static vrController *myPtr_;
 
-	screenQuadRenderer *screen_quad;
-	raycastVolumeRenderer *raycast_renderer;
-	textureBasedVolumeRenderer *texvrRenderer_;
-	cuttingController *cutter_;
-	dataBoard *data_board_;
-	organMeshRenderer *meshRenderer_;
-	std::unordered_map<int, lineRenderer *> line_renderers_;
+	screenQuadRenderer* screen_quad;
+	raycastVolumeRenderer* raycast_renderer;
+	textureBasedVolumeRenderer* texvrRenderer_;
+	cuttingController* cutter_;
+	dataBoard* data_board_;
+	organMeshRenderer* meshRenderer_;
+	std::unordered_map<int, lineRenderer*> line_renderers_;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
@@ -125,7 +132,6 @@ private:
 	glm::mat4 m_extrinsics_mats[2] = { glm::mat4(1.0) };
 	//UI
 	bool m_IsPressed = false;
-
 	//DirectX::XMFLOAT2 Mouse_old;
 
 	bool m_IsPressed_left = false;

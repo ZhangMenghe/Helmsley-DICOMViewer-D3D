@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Manager.h"
+#include <D3DPipeline/Primitive.h>
 Camera* Manager::camera = nullptr;
 std::vector<bool> Manager::param_bool;
 std::vector<std::string> Manager::shader_contents;
@@ -130,13 +131,15 @@ void Manager::setRenderParam(int id, float value) {
     m_render_params[id] = value; Manager::baked_dirty_ = true;
     if (id == dvr::RENDER_CONTRAST_LOW)m_volset_data.u_contrast_low = value;
     else if (id == dvr::RENDER_CONTRAST_HIGH)m_volset_data.u_contrast_high = value;
-    else m_volset_data.u_brightness = m_render_params[dvr::RENDER_BRIGHTNESS];
+    else if(id == dvr::RENDER_BRIGHTNESS) m_volset_data.u_brightness = value;
+    else m_volset_data.u_base_value = value;
 }
 void Manager::setRenderParam(float* values) {
     memcpy(m_render_params, values, dvr::PARAM_RENDER_TUNE_END * sizeof(float));
     m_volset_data.u_contrast_low = m_render_params[dvr::RENDER_CONTRAST_LOW];
     m_volset_data.u_contrast_high = m_render_params[dvr::RENDER_CONTRAST_HIGH];
     m_volset_data.u_brightness = m_render_params[dvr::RENDER_BRIGHTNESS];
+    m_volset_data.u_base_value = m_render_params[dvr::RENDER_BASE_VALUE];
     Manager::baked_dirty_ = true;
 }
 void Manager::setCheck(std::string key, bool value) {

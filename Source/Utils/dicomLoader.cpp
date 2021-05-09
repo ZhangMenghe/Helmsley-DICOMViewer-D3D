@@ -133,13 +133,16 @@ void dicomLoader::sendDataFloats(int target, int chunk_size, std::vector<float> 
     memcpy(cdata, &data[1], (chunk_size - 1) * sizeof(float));
     centerline_map[(int)data[0]] = cdata;
 }
-void dicomLoader::sendDataDone() {
-    for (int i = 0; i < 3; i++) {
-        if (n_data_offset[i] != 0) {
-            vrController::instance()->assembleTexture(i, g_img_h, g_img_w, g_img_d, g_vol_h, g_vol_w, g_vol_depth, g_VolumeTexData, CHANEL_NUM);
-            n_data_offset[i] = 0;
-            break;
+void dicomLoader::onUpdate() {
+    if (m_new_data_available) {
+        for (int i = 0; i < 3; i++) {
+            if (n_data_offset[i] != 0) {
+                vrController::instance()->assembleTexture(i, g_img_h, g_img_w, g_img_d, g_vol_h, g_vol_w, g_vol_depth, g_VolumeTexData, CHANEL_NUM);
+                n_data_offset[i] = 0;
+                break;
+            }
         }
+        m_new_data_available = false;
     }
 }
 void dicomLoader::saveAndUseCenterLineData(std::string filepath) {

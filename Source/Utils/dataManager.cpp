@@ -2,9 +2,10 @@
 #include "dataManager.h"
 #include <sstream> 
 #include <Common/DirectXHelper.h>
+
 dataManager::dataManager(const std::shared_ptr<dicomLoader>& dicom_loader)
 	:m_dicom_loader(dicom_loader),
-	m_index_file_path(dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME) {
+	m_index_file_path(dvr::CACHE_FOLDER_NAME + "\\" + dvr::CONFIG_NAME){
 	setup_local_datasets();
 }
 
@@ -87,7 +88,6 @@ bool dataManager::loadData(std::string dsName, std::string vlName) {
 	for (auto ds : m_remote_datasets) {
 		if (ds.folder_name().compare(dsName) == 0) {
 			std::string path = dsName + "/" + vlName;
-
 			//check if volume exists remotely
 			std::vector<volumeInfo> remote_vls;
 			m_rpc_handler->getVolumeFromDataset(dsName, remote_vls);
@@ -116,7 +116,6 @@ bool dataManager::loadData(std::string dsName, std::string vlName) {
 		}
 	}
 	return false;
-
 }
 void dataManager::prepare_target_volume() {
 	auto dims = m_target_vl.dims();
@@ -255,7 +254,7 @@ void dataManager::update_local_info(datasetResponse::datasetInfo tInfo, volumeIn
 	if (m_local_dv_map.count(dsname) == 0) m_local_datasets.push_back(tInfo);
 
 	auto itr = std::find_if(m_local_dv_map[dsname].begin(),
-		m_local_dv_map[dsname].end(),
+		m_local_dv_map[dsname].end(), 
 		[vInfo](const volumeInfo& s) { return s.folder_name().compare(vInfo.folder_name()) == 0; });
 	if (itr == m_local_dv_map[dsname].end()) m_local_dv_map[dsname].push_back(vInfo);
 	else *itr = vInfo;
@@ -295,7 +294,6 @@ void dataManager::save_target_dcmi() {
 
 	//save data
 	std::string vl_path = dvr::CACHE_FOLDER_NAME + "\\" + m_target_ds.folder_name() + "\\" + m_target_vl.folder_name() + "\\";
-
 	//TODO!!!!SAVE ONLY DATA IF NO MASK!!!!
 	//vl_path += m_target_vl.with_mask() ? "data_w_mask" : "data";
 	vl_path += dvr::DCM_WMASK_FILE_NAME;

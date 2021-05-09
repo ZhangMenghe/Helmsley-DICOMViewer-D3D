@@ -4,9 +4,6 @@
 #include <Common/DirectXHelper.h>
 
 using namespace CoreWin;
-//using namespace winrt::Windows::Foundation;
-//using namespace winrt::Windows::System::Threading;
-//using namespace winrt::Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
@@ -35,7 +32,7 @@ void CoreWinMain::setup_volume_server(){
 
 	volumeInfo vInfo;
 	for (auto vli : vl) {
-		if (vli.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0) {
+		if (vli.folder_name().compare("series_3_optional__trufi_1_cine") == 0) {
 			vInfo = vli; break;
 		}
 	}
@@ -116,6 +113,7 @@ void CoreWinMain::Update(){
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{
+		m_dicom_loader->onUpdate();
 		// TODO: Replace this with your app's content update functions.
 		m_sceneRenderer->Update(m_timer);
 		m_fpsTextRenderer->Update(m_timer);

@@ -1253,7 +1253,7 @@ void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& pro
             : DirectX::Colors::Transparent);
         const bool shouldSubmitProjectionLayer =
             projectionLayer.Render(XrContext(), m_currentFrameTime, XrContext().AppSpace, views, m_scenes, viewConfigurationType);
-
+        
         // Create the multi projection layer
         if (shouldSubmitProjectionLayer) {
             AppendProjectionLayer(layers, &projectionLayer, viewConfigurationType);

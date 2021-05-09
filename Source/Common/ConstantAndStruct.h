@@ -57,6 +57,7 @@ namespace dvr{
         RENDER_CONTRAST_LOW = 0,
         RENDER_CONTRAST_HIGH,
         RENDER_BRIGHTNESS,
+        RENDER_BASE_VALUE,
         PARAM_RENDER_TUNE_END
     };
     enum SHADER_FILES
@@ -136,6 +137,7 @@ namespace dvr{
     //setting
     const bool CONNECT_TO_SERVER = true;
     const bool LOAD_DATA_FROM_SERVER = false;
+    const bool USE_GESTURE_CUTTING = false;
     static const ORGAN_IDS DEFAULT_TRAVERSAL_ORGAN = ORGAN_COLON;
     static const bool PRINT_CAMERA_MATRIX = false;
 

@@ -43,7 +43,7 @@ void cuttingController::init_plane_renderer(ID3D11Device* device) {
         indices[3 * i + 2] = i;
     }
     plane_render_ = new quadRenderer(device,
-        L"Naive3DVertexShader.cso", L"NaiveColorPixelShader.cso",
+        L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso",
         m_quad_vertices, indices, 63, 60, dvr::INPUT_POS_3D);
 
     CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
@@ -71,7 +71,7 @@ void cuttingController::Update(glm::mat4 model_mat) {
 }
 bool cuttingController::Draw(ID3D11DeviceContext* context) {
     context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
-    bool render_complete = true;// plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
+    bool render_complete = plane_render_->Draw(context, mat42xmmatrix(p_p2w_mat));
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
     return render_complete;
 }
@@ -160,11 +160,12 @@ void cuttingController::update_plane_(ID3D11Device* device) {
         D3D11_BLEND_DESC omDesc;
         ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
         omDesc.RenderTarget[0].BlendEnable = TRUE;
-        omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+
+        omDesc.RenderTarget[0].SrcBlend =  D3D11_BLEND_SRC_ALPHA;
         omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
         omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-        omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+        omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
         omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
         omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
         device->CreateBlendState(&omDesc, &d3dBlendState);

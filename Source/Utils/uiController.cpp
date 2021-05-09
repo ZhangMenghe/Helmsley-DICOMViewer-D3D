@@ -25,7 +25,7 @@ void uiController::InitAll(){
 void uiController::AddTuneParams(){
     float opa_values[5] = {
         1.0f,
-        1.0f,
+         .0f,
         2.0f,
         0.0f,
         1.0f
@@ -35,9 +35,10 @@ void uiController::AddTuneParams(){
 }
 
 void uiController::InitAllTuneParam(){
-    float contrast_values[3] = {
+    float contrast_values[4] = {
         .0f,
-        1.0f,
+        .8f,
+        0.5f,
         0.5f
     };
     Manager::instance()->setRenderParam(contrast_values);
@@ -95,6 +96,7 @@ void uiController::InitCheckParam(){
 
 void uiController::setMaskBits(int num, unsigned int mbits){
     Manager::instance()->setMask(num, mbits);
+    vrController::instance()->setMask(num, mbits);
 }
 void uiController::setCheck(std::string key, bool value){
     Manager::instance()->setCheck(key, value);

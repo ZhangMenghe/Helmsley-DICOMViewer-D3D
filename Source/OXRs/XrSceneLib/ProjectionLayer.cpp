@@ -224,6 +224,7 @@ bool ProjectionLayer::Render(XrContext& context,
 
             // Render for this view pose.
             {
+                depthStencilView = nullptr; renderTargetView=nullptr;
                 // Set the Viewport.
                 context.DeviceContext->RSSetViewports(1, &viewport);
 
@@ -231,7 +232,7 @@ bool ProjectionLayer::Render(XrContext& context,
 
                 // Create a render target view into the appropriate slice of the color texture from this swapchain image.
                 // This is a lightweight operation which can be done for each viewport projection.
-                winrt::com_ptr<ID3D11RenderTargetView> renderTargetView;
+                //winrt::com_ptr<ID3D11RenderTargetView> renderTargetView;
                 const CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(
                     currentConfig.SwapchainSampleCount > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMSARRAY : D3D11_RTV_DIMENSION_TEXTURE2DARRAY,
                     currentConfig.ColorSwapchainFormat,
@@ -245,7 +246,7 @@ bool ProjectionLayer::Render(XrContext& context,
 
                 // Create a depth stencil view into the slice of the depth stencil texture array for this swapchain image.
                 // This is a lightweight operation which can be done for each viewport projection.
-                winrt::com_ptr<ID3D11DepthStencilView> depthStencilView;
+                //winrt::com_ptr<ID3D11DepthStencilView> depthStencilView;
                 CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(
                     currentConfig.SwapchainSampleCount > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY : D3D11_DSV_DIMENSION_TEXTURE2DARRAY,
                     currentConfig.DepthSwapchainFormat,
@@ -264,7 +265,7 @@ bool ProjectionLayer::Render(XrContext& context,
                 // In double wide mode, the first projection clears the whole RTV and DSV.
                 if ((viewIndex == 0) || !currentConfig.DoubleWideMode) {
                     context.DeviceContext->ClearRenderTargetView(renderTargets[0], reinterpret_cast<const float*>(&Config().ClearColor));
-
+                    
                     const float clearDepthValue = reversedZ ? 0.f : 1.f;
                     context.DeviceContext->ClearDepthStencilView(
                         depthStencilView.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, clearDepthValue, 0);
@@ -297,6 +298,7 @@ bool ProjectionLayer::Render(XrContext& context,
                 // Render all active scenes.
                 for (const std::unique_ptr<xr::Scene>& scene : activeScenes) {
                     if (scene->IsActive()) {
+                        scene->saveCurrentTargetViews(renderTargetView, depthStencilView, reversedZ ? 0.f : 1.f);
                         submitProjectionLayer = true;
                         scene->Render(frameTime, view_id);
                     }

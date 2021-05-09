@@ -337,5 +337,5 @@ third_party/*
 *.dll
 
 */dicom-data/*
-
+diagnostic/
 Library.zip

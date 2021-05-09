@@ -17,6 +17,7 @@ struct volumeSetupConstBuffer
     float u_contrast_low;
     float u_contrast_high;
     float u_brightness;
+    float u_base_value;
 
     //mask
     UINT u_maskbits;
@@ -64,8 +65,8 @@ public:
     bool isDrawCenterLine() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_CENTER_LINE]; }
     bool isDrawMesh() { return param_bool[dvr::CHECK_MASKON] && Manager::param_bool[dvr::CHECK_DRAW_POLYGON]; }
     int getDirtyOpacityId() { return m_dirty_wid; }
-    float *getDefaultWidgetPoints() { return default_widget_points_; }
-    float *getDirtyWidgetPoints() { return dirty_widget_points_; }
+    float* getDefaultWidgetPoints() { return default_widget_points_; }
+    float* getDirtyWidgetPoints() { return dirty_widget_points_; }
     std::vector<bool>* getOpacityWidgetVisibility() { return &widget_visibilities_; }
 
     //adder
@@ -86,7 +87,7 @@ public:
     void resetDirtyOpacityId() { m_dirty_wid = -1; }
 
 private:
-    static Manager *myPtr_;
+    static Manager* myPtr_;
     volumeSetupConstBuffer m_volset_data;
 
     //contrast, brightness, etc

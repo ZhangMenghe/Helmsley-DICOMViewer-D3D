@@ -36,7 +36,8 @@ public:
     void send_dicom_data(mLoadTarget target, int id, int chunk_size, int unit_size, const char* data);
     void sendDataFloats(int target, int chunk_size, std::vector<float> data);
     void saveAndUseCenterLineData(std::string filepath);
-    void sendDataDone();
+    void sendDataDone() { m_new_data_available = true; }
+    void onUpdate();
 
 private:
     int CHANEL_NUM;
@@ -46,5 +47,6 @@ private:
     size_t g_ssize = 0, g_vol_len;
     size_t n_data_offset[3];
     std::unordered_map<int, float*> centerline_map;
+    bool m_new_data_available = false;
 };
 #endif

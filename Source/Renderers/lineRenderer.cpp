@@ -4,7 +4,7 @@
 #include <Common/Manager.h>
 using namespace DirectX;
 lineRenderer::lineRenderer(ID3D11Device* device, int uid)
-:baseRenderer(device, L"Naive3DVertexShader.cso", L"NaiveColorPixelShader.cso"),
+:baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso"),
 m_uid(uid){
 	this->initialize();
 
@@ -59,10 +59,10 @@ bool lineRenderer::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat
 			0
 		);
 	}
-	context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
+	//context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
 
 	baseRenderer::Draw(context, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	context->OMSetBlendState(nullptr, 0, 0xffffffff);
+	//context->OMSetBlendState(nullptr, 0, 0xffffffff);
 	return true;
 }
 void lineRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {

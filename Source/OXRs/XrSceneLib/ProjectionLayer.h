@@ -86,6 +86,9 @@ namespace xr {
         };
         std::unordered_map<XrViewConfigurationType, ViewConfigComponent> m_viewConfigComponents;
         XrViewConfigurationType m_defaultViewConfigurationType;
+        
+        winrt::com_ptr<ID3D11RenderTargetView> renderTargetView;
+        winrt::com_ptr<ID3D11DepthStencilView> depthStencilView;
 
         winrt::com_ptr<ID3D11DepthStencilState> m_reversedZDepthNoStencilTest;
     };
