@@ -42,7 +42,6 @@ public:
     static dvr::ORGAN_IDS traversal_target_id;
     static int screen_w, screen_h;
     static bool show_ar_ray, volume_ar_hold;
-    static bool isRayCut();
     static bool new_data_available;
 
     Manager();

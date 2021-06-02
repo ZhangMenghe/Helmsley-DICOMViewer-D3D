@@ -218,7 +218,6 @@ void Manager::getGraphPoints(float values[], float*& points) {
 /// <summary>
 /// static functions
 /// </summary>
-bool Manager::isRayCut() { return param_bool[dvr::CHECK_RAYCAST] && param_bool[dvr::CHECK_CUTTING]; }
 bool Manager::IsCuttingNeedUpdate() {
     return param_bool[dvr::CHECK_CUTTING] || param_bool[dvr::CHECK_CENTER_LINE_TRAVEL];
 }

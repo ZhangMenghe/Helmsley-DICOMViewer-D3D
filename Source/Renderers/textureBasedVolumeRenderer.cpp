@@ -6,7 +6,7 @@
 using namespace DirectX;
 
 textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
-	:baseRenderer(device,
+	:baseDicomRenderer(device,
 		L"texbasedVertexShader.cso", L"texbasedPixelShader.cso",
 		quad_vertices_pos_w_tex, quad_indices, 24, 6
 	),
@@ -108,7 +108,7 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.RenderTarget[0] = rtbd;
 
-	device->CreateBlendState(&blendDesc, &d3dBlendState);
+	device->CreateBlendState(&blendDesc, &m_d3dBlendState);
 }
 void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
 	//update instance data
@@ -202,7 +202,7 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 
 		m_data_dirty = false;
 	}
-	context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
+	context->OMSetBlendState(m_d3dBlendState, 0, 0xffffffff);
 
 	if (tex != nullptr) {
 		auto texview = tex->GetTextureView();
@@ -235,6 +235,8 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	return true;
 }
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
+	baseDicomRenderer::setDimension(device, vol_dimension, vol_dim_scale);
+
 	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
 	initialize_mesh_others(device);
@@ -246,4 +248,7 @@ void textureBasedVolumeRenderer::setCuttingPlane(float percent) {
 void textureBasedVolumeRenderer::setCuttingPlaneDelta(int delta) {
 	cut_id = ((int)fmax(0, cut_id + delta)) % dimensions;
 	//baked_dirty_ = true;
+}
+void textureBasedVolumeRenderer::setRenderingParameters(float* values) {
+
 }

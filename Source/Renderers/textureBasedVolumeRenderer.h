@@ -2,7 +2,7 @@
 #define TEXTURE_BASED_VOLUME_RENDERER_H
 
 #include <D3DPipeline/Texture.h>
-#include <Renderers/baseRenderer.h>
+#include <Renderers/baseDicomRenderer.h>
 #include <Common/ConstantAndStruct.h>
 struct InstanceType{
 	DirectX::XMFLOAT2 zinfo;
@@ -12,7 +12,7 @@ struct texPixConstantBuffer {
 	alignas(16)bool u_cut;
 	alignas(16)float u_cut_texz;
 };
-class textureBasedVolumeRenderer:public baseRenderer {
+class textureBasedVolumeRenderer:public baseDicomRenderer {
 public:
 	textureBasedVolumeRenderer(ID3D11Device* device);
 
@@ -20,6 +20,7 @@ public:
 	void setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale);
 	void setCuttingPlane(float percent);
 	void setCuttingPlaneDelta(int delta);
+	void setRenderingParameters(float* values);
 
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
@@ -48,6 +49,6 @@ private:
 	dvr::ModelViewProjectionConstantBuffer m_const_buff_data;
 	texPixConstantBuffer m_const_buff_data_pix;
 
-	ID3D11BlendState* d3dBlendState;
+	//ID3D11BlendState* d3dBlendState;
 };
 #endif
