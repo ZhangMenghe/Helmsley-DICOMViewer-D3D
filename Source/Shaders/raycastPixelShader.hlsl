@@ -14,6 +14,7 @@ cbuffer raypixConstantBuffer : register(b0) {
 	bool u_cutplane_realsample : packoffset(c1);
 	float4 u_pp: packoffset(c2);
 	float4 u_pn: packoffset(c3);
+	float1 u_sampling_step: packoffset(c4);
 };
 
 float2 RayCube(float3 ro, float3 rd, float3 extents) {
@@ -61,9 +62,9 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	float4 sum = .0;
 	float pd = .0;
 	uint steps = 0;
-	float usample_step_inverse = 0.01f;
+	float step_size = u_sampling_step;
+
 	float high_bound = 0.01;
-	float step_size = usample_step_inverse;
 	bool last_succeeded = true;
 
 	for (float t = head; t < tail && steps<32; steps++ ) {
@@ -84,7 +85,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 			}
 		}
 		else {
-			t += 4.0 * usample_step_inverse;
+			t += 4.0 * u_sampling_step;
 		}
 	}
 	return float4(sum.rgb, saturate(sum.a));

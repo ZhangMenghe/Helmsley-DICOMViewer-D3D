@@ -117,6 +117,7 @@ bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	}
 	//update pixel shader const buffer data
 	if (m_pixConstantBuffer != nullptr) {
+		m_pix_const_buff_data.u_sampling_step = 1.0f / m_sample_steps;
 		m_pix_const_buff_data.u_cutplane_realsample = Manager::param_bool[dvr::CUT_PLANE_REAL_SAMPLE];
 		m_pix_const_buff_data.u_cut = Manager::IsCuttingEnabled();
 		if (m_pix_const_buff_data.u_cut) vrController::instance()->getCuttingPlane(m_pix_const_buff_data.u_pp, m_pix_const_buff_data.u_pn);
