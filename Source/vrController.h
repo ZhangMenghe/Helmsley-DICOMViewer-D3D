@@ -84,7 +84,30 @@ public:
 	void setMask(UINT num, UINT bits) {
 		meshRenderer_->SetMask(num, bits);
 	}
+	void setRenderingMethod(dvr::RENDER_METHOD method) {
+		if(method == dvr::TEXTURE_BASED)
+			OutputDebugString(L"======TEXTURE-BASED======\n");
+		else if(method == dvr::VIEW_ALIGN_SLICING)
+			OutputDebugString(L"======VIEW-ALIGNMED======\n");
+		else if (method == dvr::RAYCASTING)
+			OutputDebugString(L"======RAYCAST======\n");
 
+		//if (m_rmethod_id == method) return;
+		//m_rmethod_id = method;//vRenderer_[m_rmethod_id]->dirtyPrecompute();
+	}
+	void setRenderingParameters(dvr::RENDER_METHOD method, float* values) {
+		OutputDebugString(L"======RAYCAST======\n");
+		TCHAR buf[1024];
+		size_t cbDest = 1024 * sizeof(TCHAR);
+		StringCbPrintf(buf, cbDest, TEXT("Render Method: %d, value %f\n"), (int)method, values[0]);
+		OutputDebugString(buf);
+
+		//if (method < vRenderer_.size())
+		//	vRenderer_[method]->setRenderingParameters(values);
+		//else {
+		//	Manager::indiv_rendering_params[method] = values[0];
+		//}
+	}
 	//getter
 	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
 	Texture *getVolumeTex() { return tex_volume; }

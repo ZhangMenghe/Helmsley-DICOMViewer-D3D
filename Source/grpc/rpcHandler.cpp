@@ -318,6 +318,9 @@ void rpcHandler::tack_tune_msg(helmsley::TuneMsg msg) {
     case TuneMsg_TuneType_COLOR_SCHEME:
         ui_->setColorScheme(msg.target());
         break;
+    case TuneMsg_TuneType_RENDER_METHOD:
+        ui_->setRenderingMethod(msg.target());
+        break;
     default:
         break;
     }

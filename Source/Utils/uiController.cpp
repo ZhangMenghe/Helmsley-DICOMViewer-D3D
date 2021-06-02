@@ -111,12 +111,24 @@ void uiController::removeAllTuneWidget(){
     Manager::instance()->removeAllOpacityWidgets();
 }
 void uiController::setTuneParamById(int tid, int pid, float value){
-    if(tid == 0 && pid < dvr::TUNE_END)Manager::instance()->setOpacityValue(pid, value);
-    if(tid == 1) Manager::instance()->setRenderParam(pid, value);
+    if (tid == dvr::TID_OPACITY) {
+        if (pid < dvr::TUNE_END)Manager::instance()->setOpacityValue(pid, value);
+    }
+    else if(tid == dvr::TID_CONTRAST) Manager::instance()->setRenderParam(pid, value);
+    else {
+        float tmp[] = { value };
+        vrController::instance()->setRenderingParameters(dvr::RENDER_METHOD(tid - 2), tmp);
+    }
 }
-void uiController::setAllTuneParamById(int id, std::vector<float> values){  
-    if(id == 1)Manager::instance()->setRenderParam(&values[0]);
-    else if(id == 2)vrController::instance()->setCuttingPlane(glm::vec3(values[0], values[1], values[2]), glm::vec3(values[3], values[4],values[5]));
+void uiController::setAllTuneParamById(int tid, std::vector<float> values){
+    if (tid >= dvr::TID_END) return;
+
+    if(tid == dvr::TID_CONTRAST)
+        Manager::instance()->setRenderParam(&values[0]);
+    else if(tid == dvr::TID_CUTTING_PLANE)
+        vrController::instance()->setCuttingPlane(glm::vec3(values[0], values[1], values[2]), glm::vec3(values[3], values[4],values[5]));
+    else
+        vrController::instance()->setRenderingParameters(dvr::RENDER_METHOD(tid - 2), values.data());
 }
 void uiController::setTuneWidgetVisibility(int wid, bool visibility){
     Manager::instance()->setOpacityWidgetVisibility(wid, visibility);
@@ -130,4 +142,7 @@ void uiController::setCuttingPlane(int id, float value){
 }
 void uiController::setColorScheme(int id){
     Manager::instance()->setColorScheme(id);
+}
+void uiController::setRenderingMethod(int id) {
+    vrController::instance()->setRenderingMethod(dvr::RENDER_METHOD(id));
 }

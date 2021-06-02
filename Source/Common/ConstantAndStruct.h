@@ -27,6 +27,21 @@ namespace dvr{
         CHECK_AR_DRAW_POINT,
         CHECK_AR_DRAW_PLANE,
     };
+    enum PARAM_TID {
+        TID_OPACITY = 0,
+        TID_CONTRAST,
+        TID_TEXTURE_BASED,
+        TID_VIEW_ALIGNED,
+        TID_RAYCAST,
+        TID_CUTTING_PLANE,
+        TID_END
+    };
+    enum RENDER_METHOD {
+        TEXTURE_BASED = 0,
+        VIEW_ALIGN_SLICING,
+        RAYCASTING,
+        RENDER_METHOD_END
+    };
     enum PARAM_TUNE
     {
         TUNE_OVERALL = 0,

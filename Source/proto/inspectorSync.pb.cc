@@ -312,42 +312,43 @@ const char descriptor_table_protodef_inspectorSync_2eproto[] PROTOBUF_SECTION_VA
   "h\022\013\n\003bid\030\001 \001(\002\022\'\n\ngesture_op\030\002 \003(\0132\023.hel"
   "msley.GestureOp\"^\n\010ResetMsg\022\022\n\ncheck_key"
   "s\030\001 \003(\t\022\024\n\014check_values\030\002 \003(\010\022\023\n\013volume_"
-  "pose\030\003 \003(\002\022\023\n\013camera_pose\030\004 \003(\002\"\214\002\n\007Tune"
+  "pose\030\003 \003(\002\022\023\n\013camera_pose\030\004 \003(\002\"\237\002\n\007Tune"
   "Msg\022(\n\004type\030\001 \001(\0162\032.helmsley.TuneMsg.Tun"
   "eType\022\016\n\006target\030\002 \001(\005\022\022\n\nsub_target\030\003 \001("
-  "\005\022\r\n\005value\030\004 \001(\002\022\016\n\006values\030\005 \003(\002\"\223\001\n\010Tun"
+  "\005\022\r\n\005value\030\004 \001(\002\022\016\n\006values\030\005 \003(\002\"\246\001\n\010Tun"
   "eType\022\013\n\007ADD_ONE\020\000\022\016\n\nREMOVE_ONE\020\001\022\016\n\nRE"
   "MOTE_ALL\020\002\022\013\n\007SET_ONE\020\003\022\013\n\007SET_ALL\020\004\022\017\n\013"
   "SET_VISIBLE\020\005\022\016\n\nSET_TARGET\020\006\022\r\n\tCUT_PLA"
-  "NE\020\007\022\020\n\014COLOR_SCHEME\020\010\"&\n\010CheckMsg\022\013\n\003ke"
-  "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\010\"%\n\007MaskMsg\022\013\n\003num"
-  "\030\001 \001(\005\022\r\n\005mbits\030\002 \001(\005\"/\n\007DataMsg\022\017\n\007ds_n"
-  "ame\030\001 \001(\t\022\023\n\013volume_name\030\002 \001(\t\"\361\002\n\016Frame"
-  "UpdateMsg\022/\n\005types\030\001 \003(\0162 .helmsley.Fram"
-  "eUpdateMsg.MsgType\022%\n\010gestures\030\002 \003(\0132\023.h"
-  "elmsley.GestureOp\022 \n\005tunes\030\003 \003(\0132\021.helms"
-  "ley.TuneMsg\022\"\n\006checks\030\004 \003(\0132\022.helmsley.C"
-  "heckMsg\022%\n\nmask_value\030\005 \001(\0132\021.helmsley.M"
-  "askMsg\022\'\n\013reset_value\030\006 \001(\0132\022.helmsley.R"
-  "esetMsg\022%\n\ndata_value\030\007 \001(\0132\021.helmsley.D"
-  "ataMsg\"J\n\007MsgType\022\013\n\007GESTURE\020\000\022\010\n\004TUNE\020\001"
-  "\022\t\n\005CHECK\020\002\022\010\n\004MASK\020\003\022\t\n\005RESET\020\004\022\010\n\004DATA"
-  "\020\005*\033\n\007ReqType\022\007\n\003SET\020\000\022\007\n\003GET\020\0012\314\004\n\rinsp"
-  "ectorSync\022+\n\016startBroadcast\022\010.Request\032\017."
-  "commonResponse\0222\n\025startReceiveBroadcast\022"
-  "\010.Request\032\017.commonResponse\0220\n\014gsVolumePo"
-  "se\022\017.helmsley.VPMsg\032\017.commonResponse\0223\n\r"
-  "getOperations\022\010.Request\032\030.helmsley.Opera"
-  "tionBatch\0220\n\ngetUpdates\022\010.Request\032\030.helm"
-  "sley.FrameUpdateMsg\0222\n\013reqestReset\022\022.hel"
-  "msley.ResetMsg\032\017.commonResponse\0224\n\014setGe"
-  "stureOp\022\023.helmsley.GestureOp\032\017.commonRes"
-  "ponse\0223\n\rsetTuneParams\022\021.helmsley.TuneMs"
-  "g\032\017.commonResponse\0225\n\016setCheckParams\022\022.h"
-  "elmsley.CheckMsg\032\017.commonResponse\0223\n\rset"
-  "MaskParams\022\021.helmsley.MaskMsg\032\017.commonRe"
-  "sponse\0226\n\020setDisplayVolume\022\021.helmsley.Da"
-  "taMsg\032\017.commonResponseb\006proto3"
+  "NE\020\007\022\020\n\014COLOR_SCHEME\020\010\022\021\n\rRENDER_METHOD\020"
+  "\t\"&\n\010CheckMsg\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001("
+  "\010\"%\n\007MaskMsg\022\013\n\003num\030\001 \001(\005\022\r\n\005mbits\030\002 \001(\005"
+  "\"/\n\007DataMsg\022\017\n\007ds_name\030\001 \001(\t\022\023\n\013volume_n"
+  "ame\030\002 \001(\t\"\361\002\n\016FrameUpdateMsg\022/\n\005types\030\001 "
+  "\003(\0162 .helmsley.FrameUpdateMsg.MsgType\022%\n"
+  "\010gestures\030\002 \003(\0132\023.helmsley.GestureOp\022 \n\005"
+  "tunes\030\003 \003(\0132\021.helmsley.TuneMsg\022\"\n\006checks"
+  "\030\004 \003(\0132\022.helmsley.CheckMsg\022%\n\nmask_value"
+  "\030\005 \001(\0132\021.helmsley.MaskMsg\022\'\n\013reset_value"
+  "\030\006 \001(\0132\022.helmsley.ResetMsg\022%\n\ndata_value"
+  "\030\007 \001(\0132\021.helmsley.DataMsg\"J\n\007MsgType\022\013\n\007"
+  "GESTURE\020\000\022\010\n\004TUNE\020\001\022\t\n\005CHECK\020\002\022\010\n\004MASK\020\003"
+  "\022\t\n\005RESET\020\004\022\010\n\004DATA\020\005*\033\n\007ReqType\022\007\n\003SET\020"
+  "\000\022\007\n\003GET\020\0012\314\004\n\rinspectorSync\022+\n\016startBro"
+  "adcast\022\010.Request\032\017.commonResponse\0222\n\025sta"
+  "rtReceiveBroadcast\022\010.Request\032\017.commonRes"
+  "ponse\0220\n\014gsVolumePose\022\017.helmsley.VPMsg\032\017"
+  ".commonResponse\0223\n\rgetOperations\022\010.Reque"
+  "st\032\030.helmsley.OperationBatch\0220\n\ngetUpdat"
+  "es\022\010.Request\032\030.helmsley.FrameUpdateMsg\0222"
+  "\n\013reqestReset\022\022.helmsley.ResetMsg\032\017.comm"
+  "onResponse\0224\n\014setGestureOp\022\023.helmsley.Ge"
+  "stureOp\032\017.commonResponse\0223\n\rsetTuneParam"
+  "s\022\021.helmsley.TuneMsg\032\017.commonResponse\0225\n"
+  "\016setCheckParams\022\022.helmsley.CheckMsg\032\017.co"
+  "mmonResponse\0223\n\rsetMaskParams\022\021.helmsley"
+  ".MaskMsg\032\017.commonResponse\0226\n\020setDisplayV"
+  "olume\022\021.helmsley.DataMsg\032\017.commonRespons"
+  "eb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_inspectorSync_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
@@ -365,7 +366,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ins
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_inspectorSync_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_inspectorSync_2eproto = {
-  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 1950,
+  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 1969,
   &descriptor_table_inspectorSync_2eproto_once, descriptor_table_inspectorSync_2eproto_sccs, descriptor_table_inspectorSync_2eproto_deps, 9, 1,
   schemas, file_default_instances, TableStruct_inspectorSync_2eproto::offsets,
   file_level_metadata_inspectorSync_2eproto, 9, file_level_enum_descriptors_inspectorSync_2eproto, file_level_service_descriptors_inspectorSync_2eproto,
@@ -439,6 +440,7 @@ bool TuneMsg_TuneType_IsValid(int value) {
     case 6:
     case 7:
     case 8:
+    case 9:
       return true;
     default:
       return false;
@@ -455,6 +457,7 @@ constexpr TuneMsg_TuneType TuneMsg::SET_VISIBLE;
 constexpr TuneMsg_TuneType TuneMsg::SET_TARGET;
 constexpr TuneMsg_TuneType TuneMsg::CUT_PLANE;
 constexpr TuneMsg_TuneType TuneMsg::COLOR_SCHEME;
+constexpr TuneMsg_TuneType TuneMsg::RENDER_METHOD;
 constexpr TuneMsg_TuneType TuneMsg::TuneType_MIN;
 constexpr TuneMsg_TuneType TuneMsg::TuneType_MAX;
 constexpr int TuneMsg::TuneType_ARRAYSIZE;

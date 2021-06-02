@@ -54,6 +54,7 @@ message TuneMsg{
         SET_TARGET = 6;
         CUT_PLANE = 7;
         COLOR_SCHEME = 8;
+        RENDER_METHOD = 9;
     }
     TuneType type = 1;
     int32 target = 2;
