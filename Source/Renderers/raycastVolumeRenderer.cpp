@@ -13,6 +13,7 @@ raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
 	)
 {
 	this->initialize();
+	m_sample_steps = Manager::indiv_rendering_params[dvr::RAYCASTING];
 }
 
 void raycastVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -91,7 +92,8 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 		)
 	);
 }
-bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat) {
+
+bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front) {
 	if (!m_loadingComplete) return false;
 	//context->RSSetState(m_render_state);
 	if (m_constantBuffer != nullptr) {

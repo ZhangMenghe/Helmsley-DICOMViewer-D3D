@@ -1,13 +1,12 @@
 ﻿#ifndef VR_CONTROLLER_H
 #define VR_CONTROLLER_H
-#include <Renderers/raycastVolumeRenderer.h>
 #include <Renderers/quadRenderer.h>
 #include <Common/DeviceResources.h>
 #include <Common/Manager.h>
 #include <Common/StepTimer.h>
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
-#include <Renderers/textureBasedVolumeRenderer.h>
+#include <Renderers/baseDicomRenderer.h>
 
 #include <Renderers/screenQuadRenderer.h>
 #include <SceneObjs/cuttingPlane.h>
@@ -85,28 +84,29 @@ public:
 		meshRenderer_->SetMask(num, bits);
 	}
 	void setRenderingMethod(dvr::RENDER_METHOD method) {
-		if(method == dvr::TEXTURE_BASED)
-			OutputDebugString(L"======TEXTURE-BASED======\n");
-		else if(method == dvr::VIEW_ALIGN_SLICING)
-			OutputDebugString(L"======VIEW-ALIGNMED======\n");
-		else if (method == dvr::RAYCASTING)
-			OutputDebugString(L"======RAYCAST======\n");
+		//if(method == dvr::TEXTURE_BASED)
+		//	OutputDebugString(L"======TEXTURE-BASED======\n");
+		//else if(method == dvr::VIEW_ALIGN_SLICING)
+		//	OutputDebugString(L"======VIEW-ALIGNMED======\n");
+		//else if (method == dvr::RAYCASTING)
+		//	OutputDebugString(L"======RAYCAST======\n");
 
-		//if (m_rmethod_id == method) return;
-		//m_rmethod_id = method;//vRenderer_[m_rmethod_id]->dirtyPrecompute();
+		if (m_rmethod_id == method) return;
+		m_rmethod_id = method;
+		//vRenderer_[m_rmethod_id]->dirtyPrecompute();
 	}
 	void setRenderingParameters(dvr::RENDER_METHOD method, float* values) {
-		OutputDebugString(L"======RAYCAST======\n");
-		TCHAR buf[1024];
-		size_t cbDest = 1024 * sizeof(TCHAR);
-		StringCbPrintf(buf, cbDest, TEXT("Render Method: %d, value %f\n"), (int)method, values[0]);
-		OutputDebugString(buf);
+		//OutputDebugString(L"======RAYCAST======\n");
+		//TCHAR buf[1024];
+		//size_t cbDest = 1024 * sizeof(TCHAR);
+		//StringCbPrintf(buf, cbDest, TEXT("Render Method: %d, value %f\n"), (int)method, values[0]);
+		//OutputDebugString(buf);
 
-		//if (method < vRenderer_.size())
-		//	vRenderer_[method]->setRenderingParameters(values);
-		//else {
-		//	Manager::indiv_rendering_params[method] = values[0];
-		//}
+		if (method < vRenderer_.size())
+			vRenderer_[method]->setRenderingParameters(values);
+		else {
+			Manager::indiv_rendering_params[method] = values[0];
+		}
 	}
 	//getter
 	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
@@ -125,9 +125,10 @@ public:
 private:
 	static vrController *myPtr_;
 
+	std::vector<baseDicomRenderer*> vRenderer_;
+	int m_rmethod_id = -1;
+
 	screenQuadRenderer* screen_quad;
-	raycastVolumeRenderer* raycast_renderer;
-	textureBasedVolumeRenderer* texvrRenderer_;
 	cuttingController* cutter_;
 	dataBoard* data_board_;
 	organMeshRenderer* meshRenderer_;
@@ -191,7 +192,7 @@ private:
 	bool m_present = false;
 	//flags
 	int frame_num = 0;
-	bool volume_model_dirty, m_scene_dirty;
+	bool volume_model_dirty, m_scene_dirty, volume_rotate_dirty;
 	bool pre_draw_ = true;
 	bool m_compute_created = false;
 	bool m_use_space_mat = false;
@@ -201,5 +202,6 @@ private:
 	void updateVolumeModelMat();
 	void precompute();
 	void AlignModelMatToTraversalPlane();
+	bool isRayCasting() { return m_rmethod_id == (int)dvr::RAYCASTING; }
 };
 #endif

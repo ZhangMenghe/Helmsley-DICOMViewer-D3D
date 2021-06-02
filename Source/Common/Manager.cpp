@@ -9,6 +9,7 @@ bool Manager::new_data_available;
 dvr::ORGAN_IDS Manager::traversal_target_id;
 int Manager::screen_w, Manager::screen_h;
 bool Manager::show_ar_ray, Manager::volume_ar_hold;
+float Manager::indiv_rendering_params[3] = { 1.0f, 0.3f, 100.f };
 
 Manager* Manager::myPtr_ = nullptr;
 
@@ -224,7 +225,6 @@ bool Manager::IsCuttingNeedUpdate() {
 bool Manager::IsCuttingEnabled() {
     return param_bool[dvr::CHECK_CUTTING] || (param_bool[dvr::CHECK_CENTER_LINE_TRAVEL] && param_bool[dvr::CHECK_TRAVERSAL_VIEW]);
 }
-bool Manager::isRayCasting() { return param_bool[dvr::CHECK_RAYCAST]; }
 void Manager::setTraversalTargetId(int id) {
     traversal_target_id = (id == 0) ? dvr::ORGAN_COLON : dvr::ORGAN_ILEUM;
 }

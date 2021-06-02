@@ -13,6 +13,8 @@ textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
 	cut_id(0)
 {
 	this->initialize();
+	float tmp[] = { Manager::indiv_rendering_params[0] };
+	setRenderingParameters(tmp);
 }
 
 void textureBasedVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {

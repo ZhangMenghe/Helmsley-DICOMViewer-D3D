@@ -21,7 +21,7 @@ class raycastVolumeRenderer:public baseDicomRenderer {
 public:
 	raycastVolumeRenderer(ID3D11Device* device);
 
-	bool Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat);
+	bool Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front = true);
 	void setRenderingParameters(float* values) { m_sample_steps = values[0]; }
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
