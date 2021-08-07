@@ -137,9 +137,10 @@ namespace dvr{
     //setting
     const bool CONNECT_TO_SERVER = true;
     const bool LOAD_DATA_FROM_SERVER = false;
-    const bool USE_GESTURE_CUTTING = false;
+    const bool USE_GESTURE_CUTTING = true;
     static const ORGAN_IDS DEFAULT_TRAVERSAL_ORGAN = ORGAN_COLON;
     static const bool PRINT_CAMERA_MATRIX = false;
+    static const bool VIEW_ALIGNED_LAZY_UPDATE = false;
 
     //Names
     const static std::string CACHE_FOLDER_NAME = "helmsley_cached", CONFIG_NAME = "pacs_local.txt";

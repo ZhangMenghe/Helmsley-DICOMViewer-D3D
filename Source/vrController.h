@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <D3DPipeline/Camera.h>
 #include <Renderers/textureBasedVolumeRenderer.h>
+#include <Renderers/ViewAlignedSlicingRenderer.h>
 
 #include <Renderers/screenQuadRenderer.h>
 #include <SceneObjs/cuttingPlane.h>
@@ -16,6 +17,9 @@
 #include <Renderers/LineRenderer.h>
 #include <SceneObjs/dataVisualizer.h>
 
+namespace DX {
+	class OXRManager;
+}
 struct reservedStatus
 {
 	glm::mat4 model_mat, rot_mat;
@@ -84,12 +88,19 @@ public:
 	void setMask(UINT num, UINT bits) {
 		meshRenderer_->SetMask(num, bits);
 	}
+	void setWorldToSensorMatrix(glm::mat4 wts) {
+		WorldToSensor_ = wts;
+	}
 
 	//getter
+	glm::mat4 getWorldToSensorMatrix() {
+		return WorldToSensor_;
+	}
 	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
 	Texture *getVolumeTex() { return tex_volume; }
 	Texture *getBakedTex() { return tex_baked; }
 	bool isDirty();
+	bool getVolumePose(glm::vec3& pos, glm::quat& rot, float& scale);
 	//glm::mat4 getFrameModelMat() { return Frame_model_mat; }
 	ID3D11RasterizerState *m_render_state_front, *m_render_state_back;
 	glm::mat4 getCameraExtrinsicsMat(int id) {
@@ -99,12 +110,29 @@ public:
 		pos = PosVec3_; scale = ScaleVec3_;
 	}
 
+	void setVolumePose(glm::vec3& pos, glm::quat& rot, float scale) {
+		PosVec3_ = pos;
+		RotateMat_ = glm::mat4_cast(rot);
+		uniScale = scale;
+	}
+
+	// x100
+	glm::mat4 getSensorMatrixAtTime(uint64_t time);
+
+	DX::OXRManager* oxrManager;
+
+	bool isInteracting() const {
+		return m_IsPressed_left || m_IsPressed_right || m_IsPressed;
+	}
+
+
 private:
 	static vrController *myPtr_;
 
 	screenQuadRenderer* screen_quad;
 	raycastVolumeRenderer* raycast_renderer;
-	textureBasedVolumeRenderer* texvrRenderer_;
+	//textureBasedVolumeRenderer* texvrRenderer_;
+	viewAlignedSlicingRenderer* texvrRenderer_;
 	cuttingController* cutter_;
 	dataBoard* data_board_;
 	organMeshRenderer* meshRenderer_;
@@ -124,8 +152,9 @@ private:
 	ID3D11Buffer *m_compute_constbuff = nullptr;
 
 	//glm::mat4 Frame_model_mat;
+	glm::mat4 WorldToSensor_;
 	glm::mat4 SpaceMat_;
-	glm::mat4 ModelMat_, RotateMat_;
+	glm::mat4 ModelMat_, RotateMat_, ScaleMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer m_all_buff_Data;
 	std::map<std::string, reservedStatus> rStates_;
@@ -145,7 +174,7 @@ private:
 
 	glm::vec3 vector_old;
 	float distance_old = 0;
-	float uniScale = 1.0f;
+	float uniScale = 1.f;
 
 	glm::fvec2 Mouse_old;
 	std::string cst_name;
@@ -178,5 +207,8 @@ private:
 	void updateVolumeModelMat();
 	void precompute();
 	void AlignModelMatToTraversalPlane();
+
+	//
+	bool dirty_since_last_query = false;
 };
 #endif

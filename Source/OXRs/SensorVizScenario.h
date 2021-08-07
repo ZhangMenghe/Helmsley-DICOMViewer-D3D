@@ -20,7 +20,7 @@ public:
 
     void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {
       m_LFCameraRenderer->SetupReferenceFrame(referenceFrame);
-      m_RFCameraRenderer->SetupReferenceFrame(referenceFrame);
+      //m_RFCameraRenderer->SetupReferenceFrame(referenceFrame);
     }
     void IntializeSensors();
     void IntializeScene();
@@ -37,6 +37,8 @@ public:
     static void CamAccessOnComplete(ResearchModeSensorConsent consent);
     static void ImuAccessOnComplete(ResearchModeSensorConsent consent);
     void onSingle3DTouchDown(float x, float y, float z, int side);
+
+    void getGuid(GUID * guid);
 protected:
     IResearchModeSensorDevice* m_pSensorDevice;
     IResearchModeSensorDeviceConsent* m_pSensorDeviceConsent;

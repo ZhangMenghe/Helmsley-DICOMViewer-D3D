@@ -8,13 +8,13 @@ quadRenderer::quadRenderer(ID3D11Device* device)
 :baseRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso",
 	quad_vertices_pos_w_tex, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
-	this->initialize();
+	//this->initialize();
 }
 quadRenderer::quadRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color, const float* vdata)
 :baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso", 
 	vdata, quad_indices, 12, 6),
 	m_input_layout_id(dvr::INPUT_POS_3D){
-	this->initialize();
+	//this->initialize();
 
 	CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	dvr::ColorConstantBuffer tdata;
@@ -31,19 +31,19 @@ quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wch
 : baseRenderer(device, vname, pname,
 	quad_vertices_pos_w_tex, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D) {
-	this->initialize();
+	//this->initialize();
 }
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata)
 	:baseRenderer(device, vname, pname,
 		vdata, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D) {
-	this->initialize();
+	//this->initialize();
 }
 quadRenderer::quadRenderer(ID3D11Device* device, const wchar_t* vname, const wchar_t* pname, const float* vdata, const unsigned short* idata, UINT vertice_num, UINT idx_num, dvr::INPUT_LAYOUT_IDS layout_id)
 	:baseRenderer(device, vname, pname,
 		vdata, idata, vertice_num, idx_num),
 	m_input_layout_id(layout_id){
-	this->initialize();
+	//this->initialize();
 }
 // Renders one frame using the vertex and pixel shaders.
 bool quadRenderer::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat){

@@ -84,6 +84,7 @@ public:
     void update(const DirectX::XMMATRIX pose, const DirectX::XMMATRIX proj) {
       _viewMat = DirectX::XMMatrixTranspose(pose);
       auto mat = glm::inverse(xmmatrix2mat4(pose));
+      auto mat2 = (xmmatrix2mat4(pose));
       if (dvr::PRINT_CAMERA_MATRIX){
         TCHAR buf[1024];
         size_t cbDest = 1024 * sizeof(TCHAR);

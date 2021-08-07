@@ -56,6 +56,7 @@ void baseRenderer::initialize_vertices(ID3D11Device* device, const float* vdata)
 	vertexBufferData.SysMemPitch = 0;
 	vertexBufferData.SysMemSlicePitch = 0;
 	CD3D11_BUFFER_DESC vertexBufferDesc(m_vertice_count * sizeof(float), D3D11_BIND_VERTEX_BUFFER);
+	//m_vertexBuffer = nullptr;
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&vertexBufferDesc,
@@ -177,4 +178,10 @@ void baseRenderer::Draw(ID3D11DeviceContext* context, D3D11_PRIMITIVE_TOPOLOGY t
 	// Draw the objects.
 	if(m_index_count > 0)context->DrawIndexed(m_index_count,0,0);
 	else context->Draw(m_vertice_count, 0);
+}
+
+void baseRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
+}
+
+void baseRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 }

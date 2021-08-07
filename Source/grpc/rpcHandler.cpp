@@ -50,6 +50,24 @@ void rpcHandler::Run() {
             initialized = true;
         }
 
+        if(!vr_->isInteracting()) {
+
+          glm::vec3 pos;
+          glm::quat rot;
+          float s = 1.f;
+
+          bool flag = vr_->getVolumePose(pos, rot, s);
+          if(!flag) {
+            // Update pose info from the server
+            getVolumePose(pos, rot, s);
+
+            vr_->setVolumePose(pos, rot, s);
+          }else {
+            // Send update to server
+            setVolumePose(pos, rot, s);
+          }
+        }
+
         auto msg = getUpdates();
         int gid = 0, tid = 0, cid = 0;
         bool gesture_finished = false;
@@ -83,6 +101,62 @@ void rpcHandler::Run() {
             }
         }
     }
+}
+
+void rpcHandler::getVolumePose(glm::vec3& pos, glm::quat& rot, float& scale) {
+  VPMsg response;
+  ClientContext context;
+  VPMsg request;
+  request.set_client_id(CLIENT_ID);
+  request.set_req_type(ReqType::GET);
+
+  // position
+  request.set_volume_pose_type(VPMsg_VPType_POS);
+  syncer_->gsVolumePose(&context, request, &response);
+  pos.x = response.values(0);
+  pos.y = response.values(1);
+  pos.z = response.values(2);
+
+  // rotation
+  request.set_volume_pose_type(VPMsg_VPType_ROT);
+  syncer_->gsVolumePose(&context, request, &response);
+  rot.x = response.values(0);
+  rot.y = response.values(1);
+  rot.z = response.values(2);
+  rot.w = response.values(3);
+
+  // scale
+  request.set_volume_pose_type(VPMsg_VPType_SCALE);
+  syncer_->gsVolumePose(&context, request, &response);
+  scale = response.values(0);
+}
+
+void rpcHandler::setVolumePose(glm::vec3& pos, glm::quat& rot, float& scale) {
+  VPMsg response;
+  ClientContext context;
+  VPMsg request;
+  request.set_client_id(CLIENT_ID);
+  request.set_req_type(ReqType::SET);
+
+  // position
+  request.set_volume_pose_type(VPMsg_VPType_POS);
+  syncer_->gsVolumePose(&context, request, &response);
+  request.set_values(0, pos.x);
+  request.set_values(1, pos.y);
+  request.set_values(2, pos.z);
+
+  // rotation
+  request.set_volume_pose_type(VPMsg_VPType_ROT);
+  syncer_->gsVolumePose(&context, request, &response);
+  request.set_values(0, rot.x);
+  request.set_values(1, rot.y);
+  request.set_values(2, rot.z);
+  request.set_values(3, rot.w);
+
+  // scale
+  request.set_volume_pose_type(VPMsg_VPType_SCALE);
+  syncer_->gsVolumePose(&context, request, &response);
+  request.set_values(0, scale);
 }
 
 void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets) {

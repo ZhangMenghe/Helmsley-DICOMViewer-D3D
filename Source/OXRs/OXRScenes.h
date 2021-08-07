@@ -14,7 +14,7 @@ class OXRScenes : public xr::Scene{
 public:
 	OXRScenes(const std::shared_ptr<xr::XrContext>& context);
 	void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame) {
-		//m_scenario->SetupReferenceFrame(referenceFrame);
+		m_scenario->SetupReferenceFrame(referenceFrame);
 	}
 
 	//override
@@ -39,10 +39,14 @@ public:
 		winrt::com_ptr<ID3D11DepthStencilView> depth_target, float depth_value) {
 		m_deviceResources->saveCurrentTargetViews(render_target, depth_target, depth_value);
 	}
+
+	SensorVizScenario * getScenario() {
+		return m_scenario.get();
+	}
 private:
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
-	//std::unique_ptr<SensorVizScenario> m_scenario;
+	std::unique_ptr<SensorVizScenario> m_scenario;
 	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
 	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "OXRManager.h"
+#include "OXRScenes.h"
 #include <thread> // sleep_for
 #include <Common/Manager.h>
 #include <Common/DirectXHelper.h>
@@ -63,6 +64,7 @@ const char* RequestedExtensions[] = {
     XR_EXT_HAND_TRACKING_EXTENSION_NAME,
     XR_MSFT_HAND_INTERACTION_EXTENSION_NAME,
     XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME,
+    XR_MSFT_SPATIAL_GRAPH_BRIDGE_EXTENSION_NAME
 };
 
 OXRManager::OXRManager()
@@ -127,6 +129,9 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     uint32_t blend_count = 0;
     xrEnumerateEnvironmentBlendModes(xr_instance, system.Id, app_config_view, 1, &blend_count, &xr_blend);
 
+    xrGetInstanceProcAddr(xr_instance, "xrCreateSpatialGraphNodeSpaceMSFT",
+      reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrCreateSpatialGraphNodeSpaceMSFT));
+
     //setup binding
     auto [d3d11Binding, device, deviceContext] = DX::CreateD3D11Binding(
         xr_instance, 
@@ -168,18 +173,26 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         m_viewConfigStates.emplace(viewConfigurationType,
             xr::CreateViewConfigurationState(viewConfigurationType, instance.Handle, system.Id));
     }
-    
+
+    // Enum reference space type
+    uint32_t spaceCount = 0;
+    CHECK_XRCMD(xrEnumerateReferenceSpaces(session.Handle, 0, &spaceCount, NULL));
+
+    std::vector<XrReferenceSpaceType> supportedReferenceSpaceType;
+    supportedReferenceSpaceType.resize(spaceCount);
+
+    CHECK_XRCMD(xrEnumerateReferenceSpaces(session.Handle, spaceCount, &spaceCount, supportedReferenceSpaceType.data()));
+
     // Create view app space
     XrReferenceSpaceCreateInfo spaceCreateInfo{ XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
     spaceCreateInfo.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_VIEW;
     spaceCreateInfo.poseInReferenceSpace = xr::math::Pose::Identity();
     CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_viewSpace.Put()));
 
-    //Create main app space
-    spaceCreateInfo.referenceSpaceType =
-        extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT : XR_REFERENCE_SPACE_TYPE_LOCAL;
-    CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put()));
 
+    //Create main app space
+    spaceCreateInfo.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL; // extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT :
+    CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put()));
 
     //setup reference frame
     auto locator = SpatialLocator::GetDefault();
@@ -719,6 +732,22 @@ void OXRManager::AddSceneFinished() {
         for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
         scene->on3DTouchReleased(side);
     };
+
+    GUID rigguid;
+    ((OXRScenes*)m_scenes[0].get())->getScenario()->getGuid(&rigguid);
+
+    XrSpatialGraphNodeSpaceCreateInfoMSFT createInfo;
+    createInfo.type = XR_TYPE_SPATIAL_GRAPH_NODE_SPACE_CREATE_INFO_MSFT;
+    createInfo.next = NULL;
+    createInfo.nodeType = XR_SPATIAL_GRAPH_NODE_TYPE_DYNAMIC_MSFT;
+    memset(createInfo.nodeId, 0, 16);
+    memcpy(createInfo.nodeId, &(rigguid.Data1), 16);
+
+    createInfo.pose = xr::math::Pose::Identity();
+
+    CHECK_XRCMD(ext_xrCreateSpatialGraphNodeSpaceMSFT(m_context->Session.Handle, &createInfo, m_sensorSpace.Put()));
+
+    vrController::instance()->oxrManager = this; //setWorldSpace(wts);
 }
 
 XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
@@ -749,6 +778,20 @@ XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
 }
 
 XrSpace* DX::OXRManager::getAppSpace() { return (XrSpace*)m_appSpace.Get(); }
+
+glm::mat4 DX::OXRManager::getSensorMatrixAtTime(uint64_t time)
+{
+  // Locate the rigNode space in the app space
+  XrSpaceLocation rigLocation{ XR_TYPE_SPACE_LOCATION };
+  CHECK_XRCMD(xrLocateSpace(m_sensorSpace.Get(), m_appSpace.Get(), time, &rigLocation));
+
+  if (!xr::math::Pose::IsPoseValid(rigLocation)) {
+    return glm::mat4(1);
+  }
+
+  glm::mat4 stw = xmmatrix2mat4(xr::math::LoadXrPose(rigLocation.pose));
+  return stw;
+}
 
 void OXRManager::openxr_poll_events() {
     auto xr_session = XrContext().Session.Handle;
@@ -1234,6 +1277,18 @@ void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& pro
         }
     }
 
+    // Locate the rigNode space in the app space
+    XrSpaceLocation rigLocation{ XR_TYPE_SPACE_LOCATION };
+    CHECK_XRCMD(xrLocateSpace(m_sensorSpace.Get(), m_appSpace.Get(), m_currentFrameTime.PredictedDisplayTime - 20 * m_currentFrameTime.PredictedDisplayPeriod, &rigLocation));
+   
+    if (!xr::math::Pose::IsPoseValid(rigLocation)) {
+        return;
+    }
+
+    glm::mat4 wts = xmmatrix2mat4(xr::math::LoadXrPose(rigLocation.pose));
+    vrController::instance()->setWorldToSensorMatrix(wts);
+
+
     // Locate the VIEW space in the app space to get the "camera" pose and combine the per-view offsets with the camera pose.
     XrSpaceLocation viewLocation{ XR_TYPE_SPACE_LOCATION };
     CHECK_XRCMD(xrLocateSpace(m_viewSpace.Get(), m_appSpace.Get(), m_currentFrameTime.PredictedDisplayTime, &viewLocation));
@@ -1260,7 +1315,6 @@ void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& pro
         }
     });
 }
-
 
 void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
     if (xr_session_state != XR_SESSION_STATE_FOCUSED)

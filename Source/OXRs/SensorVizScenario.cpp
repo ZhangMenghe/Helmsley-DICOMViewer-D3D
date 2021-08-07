@@ -2,6 +2,7 @@
 #include "SensorVizScenario.h"
 #include <vrController.h>
 #include <Utils/TypeConvertUtils.h>
+#include <OXRs/XrUtility/XrMath.h>
 #include <fstream>
 
 static ResearchModeSensorConsent camAccessCheck;
@@ -91,9 +92,16 @@ void SensorVizScenario::IntializeSensors() {
 
         if (sensorDescriptor.sensorType == RIGHT_FRONT)
         {
-            winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pRFCameraSensor));
+            //winrt::check_hresult(m_pSensorDevice->GetSensor(sensorDescriptor.sensorType, &m_pRFCameraSensor));
         }
     }
+}
+
+void SensorVizScenario::getGuid(GUID * guid) {
+  IResearchModeSensorDevicePerception* pSensorDevicePerception;
+  HRESULT hr = S_OK;
+  hr = m_pSensorDevice->QueryInterface(IID_PPV_ARGS(&pSensorDevicePerception));
+  hr = pSensorDevicePerception->GetRigNodeId(guid);
 }
 
 void SensorVizScenario::IntializeScene() {
@@ -108,9 +116,21 @@ void SensorVizScenario::IntializeScene() {
     m_LFCameraRenderer->SetGUID(guid);
 
 
-    m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_context->Device.get(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
+    /*XrSpatialGraphNodeSpaceCreateInfoMSFT createInfo;
+    createInfo.type = XR_TYPE_SPATIAL_GRAPH_NODE_SPACE_CREATE_INFO_MSFT;
+    createInfo.next = NULL;
+    createInfo.nodeType = XR_SPATIAL_GRAPH_NODE_TYPE_DYNAMIC_MSFT;
+    memset(createInfo.nodeId, 0, 16);
+    memcpy(createInfo.nodeId, guid.Data4, 8);
+
+    createInfo.pose = xr::math::Pose::Identity();
+
+    CHECK_XRCMD(xrCreateSpatialGraphNodeSpaceMSFT(session.Handle, &spaceCreateInfo, m_appSpace.Put()));*/
+
+
+    /*m_RFCameraRenderer = std::make_shared<SlateCameraRenderer>(m_context->Device.get(), m_pRFCameraSensor, camConsentGiven, &camAccessCheck);
     m_RFCameraRenderer->setPosition(glm::vec3(0.2, .0, .0));
-    m_RFCameraRenderer->SetGUID(guid);
+    m_RFCameraRenderer->SetGUID(guid);*/
 
     D3D11_TEXTURE2D_DESC texDesc;
     texDesc.Width = 760;
@@ -134,14 +154,16 @@ void SensorVizScenario::IntializeScene() {
     m_rgbTex->Initialize(m_context->Device.get(), texDesc, view_desc);
 
     m_rgbRender = new quadRenderer(m_context->Device.get());
+    m_rgbRender->initialize();
     m_rgbRender->setTexture(m_rgbTex.get());
 }
 void SensorVizScenario::Update(DX::StepTimer& timer) {
+    m_LFCameraRenderer->Update(m_context->DeviceContext.get());
     //m_LFCameraRenderer->Update(m_deviceResources->GetD3DDeviceContext());
 }
 bool SensorVizScenario::Render() {
     //auto model_mat = vrController::instance()->getFrameModelMat();
-    return m_LFCameraRenderer->Update(m_context->DeviceContext.get());
+    //return m_LFCameraRenderer->Update(m_context->DeviceContext.get());
     //if (m_LFCameraRenderer->Update(m_context->DeviceContext.get()))
     //    m_RFCameraRenderer->UpdateExtrinsicsMatrix();
     //else
@@ -150,6 +172,7 @@ bool SensorVizScenario::Render() {
     //m_LFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_RFCameraRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), model_mat);
     //m_rgbRender->Draw(m_deviceResources->GetD3DDeviceContext(), mat42xmmatrix(model_mat));
+  return true;
 }
 void SensorVizScenario::OnDeviceLost() {
 

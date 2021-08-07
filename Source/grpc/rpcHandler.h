@@ -34,7 +34,7 @@ private:
     std::string DATA_PATH = "dicom-data/";
     std::unique_ptr<helmsley::inspectorSync::Stub> syncer_;
     std::unique_ptr<helmsley::dataTransfer::Stub> stub_;
-    Request req;
+    helmsley::Request req;
     helmsley::FrameUpdateMsg update_msg;
     helmsley::DataMsg m_req_data;
     
@@ -70,8 +70,11 @@ public:
     void setDataPath(std::string path) { DATA_PATH = path; }
     void Run();
 
+    void getVolumePose(glm::vec3& pos, glm::quat& rot, float& scale);
+    void setVolumePose(glm::vec3& pos, glm::quat& rot, float& scale);
+
     void getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets);
-    void getVolumeFromDataset(const std::string& dataset_name, std::vector<volumeInfo>& ret);
+    void getVolumeFromDataset(const std::string& dataset_name, std::vector<helmsley::volumeInfo>& ret);
     std::vector<configResponse::configInfo> getAvailableConfigFiles();
     void exportConfigs(std::string content);
 
@@ -80,7 +83,7 @@ public:
     Concurrency::task<void> DownloadMasksAndCenterlinesAsync(const std::string& folder_path);
 
     void DownloadMasksAndCenterlines(const std::string& folder_name);
-    void DownloadCenterlines(Request req);
+    void DownloadCenterlines(helmsley::Request req);
     helmsley::DataMsg GetNewDataRequest() { return m_req_data; }
 };
 #endif

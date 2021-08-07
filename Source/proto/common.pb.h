@@ -55,6 +55,7 @@ struct TableStruct_common_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2eproto;
+namespace helmsley {
 class Request;
 class RequestDefaultTypeInternal;
 extern RequestDefaultTypeInternal _Request_default_instance_;
@@ -67,12 +68,14 @@ extern scoreInfoDefaultTypeInternal _scoreInfo_default_instance_;
 class volumeInfo;
 class volumeInfoDefaultTypeInternal;
 extern volumeInfoDefaultTypeInternal _volumeInfo_default_instance_;
+}  // namespace helmsley
 PROTOBUF_NAMESPACE_OPEN
-template<> ::Request* Arena::CreateMaybeMessage<::Request>(Arena*);
-template<> ::commonResponse* Arena::CreateMaybeMessage<::commonResponse>(Arena*);
-template<> ::scoreInfo* Arena::CreateMaybeMessage<::scoreInfo>(Arena*);
-template<> ::volumeInfo* Arena::CreateMaybeMessage<::volumeInfo>(Arena*);
+template<> ::helmsley::Request* Arena::CreateMaybeMessage<::helmsley::Request>(Arena*);
+template<> ::helmsley::commonResponse* Arena::CreateMaybeMessage<::helmsley::commonResponse>(Arena*);
+template<> ::helmsley::scoreInfo* Arena::CreateMaybeMessage<::helmsley::scoreInfo>(Arena*);
+template<> ::helmsley::volumeInfo* Arena::CreateMaybeMessage<::helmsley::volumeInfo>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
+namespace helmsley {
 
 enum volumeInfo_DataSource : int {
   volumeInfo_DataSource_LOCAL = 0,
@@ -103,7 +106,7 @@ inline bool volumeInfo_DataSource_Parse(
 // ===================================================================
 
 class Request PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Request) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.Request) */ {
  public:
   inline Request() : Request(nullptr) {}
   virtual ~Request();
@@ -192,7 +195,7 @@ class Request PROTOBUF_FINAL :
   void InternalSwap(Request* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "Request";
+    return "helmsley.Request";
   }
   protected:
   explicit Request(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -243,7 +246,7 @@ class Request PROTOBUF_FINAL :
   void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:Request)
+  // @@protoc_insertion_point(class_scope:helmsley.Request)
  private:
   class _Internal;
 
@@ -258,7 +261,7 @@ class Request PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class commonResponse PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:commonResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.commonResponse) */ {
  public:
   inline commonResponse() : commonResponse(nullptr) {}
   virtual ~commonResponse();
@@ -347,7 +350,7 @@ class commonResponse PROTOBUF_FINAL :
   void InternalSwap(commonResponse* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "commonResponse";
+    return "helmsley.commonResponse";
   }
   protected:
   explicit commonResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -398,7 +401,7 @@ class commonResponse PROTOBUF_FINAL :
   void _internal_set_success(bool value);
   public:
 
-  // @@protoc_insertion_point(class_scope:commonResponse)
+  // @@protoc_insertion_point(class_scope:helmsley.commonResponse)
  private:
   class _Internal;
 
@@ -413,7 +416,7 @@ class commonResponse PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class scoreInfo PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:scoreInfo) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.scoreInfo) */ {
  public:
   inline scoreInfo() : scoreInfo(nullptr) {}
   virtual ~scoreInfo();
@@ -502,7 +505,7 @@ class scoreInfo PROTOBUF_FINAL :
   void InternalSwap(scoreInfo* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "scoreInfo";
+    return "helmsley.scoreInfo";
   }
   protected:
   explicit scoreInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -602,7 +605,7 @@ class scoreInfo PROTOBUF_FINAL :
   void _internal_set_rank_score(float value);
   public:
 
-  // @@protoc_insertion_point(class_scope:scoreInfo)
+  // @@protoc_insertion_point(class_scope:helmsley.scoreInfo)
  private:
   class _Internal;
 
@@ -622,7 +625,7 @@ class scoreInfo PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class volumeInfo PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:volumeInfo) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.volumeInfo) */ {
  public:
   inline volumeInfo() : volumeInfo(nullptr) {}
   virtual ~volumeInfo();
@@ -711,7 +714,7 @@ class volumeInfo PROTOBUF_FINAL :
   void InternalSwap(volumeInfo* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "volumeInfo";
+    return "helmsley.volumeInfo";
   }
   protected:
   explicit volumeInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -891,23 +894,23 @@ class volumeInfo PROTOBUF_FINAL :
   std::string* _internal_mutable_sample_img();
   public:
 
-  // .scoreInfo scores = 10;
+  // .helmsley.scoreInfo scores = 10;
   bool has_scores() const;
   private:
   bool _internal_has_scores() const;
   public:
   void clear_scores();
-  const ::scoreInfo& scores() const;
-  ::scoreInfo* release_scores();
-  ::scoreInfo* mutable_scores();
-  void set_allocated_scores(::scoreInfo* scores);
+  const ::helmsley::scoreInfo& scores() const;
+  ::helmsley::scoreInfo* release_scores();
+  ::helmsley::scoreInfo* mutable_scores();
+  void set_allocated_scores(::helmsley::scoreInfo* scores);
   private:
-  const ::scoreInfo& _internal_scores() const;
-  ::scoreInfo* _internal_mutable_scores();
+  const ::helmsley::scoreInfo& _internal_scores() const;
+  ::helmsley::scoreInfo* _internal_mutable_scores();
   public:
   void unsafe_arena_set_allocated_scores(
-      ::scoreInfo* scores);
-  ::scoreInfo* unsafe_arena_release_scores();
+      ::helmsley::scoreInfo* scores);
+  ::helmsley::scoreInfo* unsafe_arena_release_scores();
 
   // float volume_loc_range = 6;
   void clear_volume_loc_range();
@@ -927,16 +930,16 @@ class volumeInfo PROTOBUF_FINAL :
   void _internal_set_with_mask(bool value);
   public:
 
-  // .volumeInfo.DataSource data_source = 8;
+  // .helmsley.volumeInfo.DataSource data_source = 8;
   void clear_data_source();
-  ::volumeInfo_DataSource data_source() const;
-  void set_data_source(::volumeInfo_DataSource value);
+  ::helmsley::volumeInfo_DataSource data_source() const;
+  void set_data_source(::helmsley::volumeInfo_DataSource value);
   private:
-  ::volumeInfo_DataSource _internal_data_source() const;
-  void _internal_set_data_source(::volumeInfo_DataSource value);
+  ::helmsley::volumeInfo_DataSource _internal_data_source() const;
+  void _internal_set_data_source(::helmsley::volumeInfo_DataSource value);
   public:
 
-  // @@protoc_insertion_point(class_scope:volumeInfo)
+  // @@protoc_insertion_point(class_scope:helmsley.volumeInfo)
  private:
   class _Internal;
 
@@ -952,7 +955,7 @@ class volumeInfo PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr folder_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr folder_path_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sample_img_;
-  ::scoreInfo* scores_;
+  ::helmsley::scoreInfo* scores_;
   float volume_loc_range_;
   bool with_mask_;
   int data_source_;
@@ -978,7 +981,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 Request::_internal_client_id() const {
   return client_id_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Request::client_id() const {
-  // @@protoc_insertion_point(field_get:Request.client_id)
+  // @@protoc_insertion_point(field_get:helmsley.Request.client_id)
   return _internal_client_id();
 }
 inline void Request::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -987,7 +990,7 @@ inline void Request::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 valu
 }
 inline void Request::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_client_id(value);
-  // @@protoc_insertion_point(field_set:Request.client_id)
+  // @@protoc_insertion_point(field_set:helmsley.Request.client_id)
 }
 
 // string req_msg = 2;
@@ -995,15 +998,15 @@ inline void Request::clear_req_msg() {
   req_msg_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& Request::req_msg() const {
-  // @@protoc_insertion_point(field_get:Request.req_msg)
+  // @@protoc_insertion_point(field_get:helmsley.Request.req_msg)
   return _internal_req_msg();
 }
 inline void Request::set_req_msg(const std::string& value) {
   _internal_set_req_msg(value);
-  // @@protoc_insertion_point(field_set:Request.req_msg)
+  // @@protoc_insertion_point(field_set:helmsley.Request.req_msg)
 }
 inline std::string* Request::mutable_req_msg() {
-  // @@protoc_insertion_point(field_mutable:Request.req_msg)
+  // @@protoc_insertion_point(field_mutable:helmsley.Request.req_msg)
   return _internal_mutable_req_msg();
 }
 inline const std::string& Request::_internal_req_msg() const {
@@ -1017,28 +1020,28 @@ inline void Request::set_req_msg(std::string&& value) {
   
   req_msg_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:Request.req_msg)
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.Request.req_msg)
 }
 inline void Request::set_req_msg(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   req_msg_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:Request.req_msg)
+  // @@protoc_insertion_point(field_set_char:helmsley.Request.req_msg)
 }
 inline void Request::set_req_msg(const char* value,
     size_t size) {
   
   req_msg_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:Request.req_msg)
+  // @@protoc_insertion_point(field_set_pointer:helmsley.Request.req_msg)
 }
 inline std::string* Request::_internal_mutable_req_msg() {
   
   return req_msg_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* Request::release_req_msg() {
-  // @@protoc_insertion_point(field_release:Request.req_msg)
+  // @@protoc_insertion_point(field_release:helmsley.Request.req_msg)
   return req_msg_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void Request::set_allocated_req_msg(std::string* req_msg) {
@@ -1049,7 +1052,7 @@ inline void Request::set_allocated_req_msg(std::string* req_msg) {
   }
   req_msg_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), req_msg,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:Request.req_msg)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.Request.req_msg)
 }
 
 // -------------------------------------------------------------------
@@ -1064,7 +1067,7 @@ inline bool commonResponse::_internal_success() const {
   return success_;
 }
 inline bool commonResponse::success() const {
-  // @@protoc_insertion_point(field_get:commonResponse.success)
+  // @@protoc_insertion_point(field_get:helmsley.commonResponse.success)
   return _internal_success();
 }
 inline void commonResponse::_internal_set_success(bool value) {
@@ -1073,7 +1076,7 @@ inline void commonResponse::_internal_set_success(bool value) {
 }
 inline void commonResponse::set_success(bool value) {
   _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:commonResponse.success)
+  // @@protoc_insertion_point(field_set:helmsley.commonResponse.success)
 }
 
 // string res_msg = 2;
@@ -1081,15 +1084,15 @@ inline void commonResponse::clear_res_msg() {
   res_msg_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& commonResponse::res_msg() const {
-  // @@protoc_insertion_point(field_get:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_get:helmsley.commonResponse.res_msg)
   return _internal_res_msg();
 }
 inline void commonResponse::set_res_msg(const std::string& value) {
   _internal_set_res_msg(value);
-  // @@protoc_insertion_point(field_set:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_set:helmsley.commonResponse.res_msg)
 }
 inline std::string* commonResponse::mutable_res_msg() {
-  // @@protoc_insertion_point(field_mutable:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_mutable:helmsley.commonResponse.res_msg)
   return _internal_mutable_res_msg();
 }
 inline const std::string& commonResponse::_internal_res_msg() const {
@@ -1103,28 +1106,28 @@ inline void commonResponse::set_res_msg(std::string&& value) {
   
   res_msg_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.commonResponse.res_msg)
 }
 inline void commonResponse::set_res_msg(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   res_msg_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_set_char:helmsley.commonResponse.res_msg)
 }
 inline void commonResponse::set_res_msg(const char* value,
     size_t size) {
   
   res_msg_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_set_pointer:helmsley.commonResponse.res_msg)
 }
 inline std::string* commonResponse::_internal_mutable_res_msg() {
   
   return res_msg_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* commonResponse::release_res_msg() {
-  // @@protoc_insertion_point(field_release:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_release:helmsley.commonResponse.res_msg)
   return res_msg_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void commonResponse::set_allocated_res_msg(std::string* res_msg) {
@@ -1135,7 +1138,7 @@ inline void commonResponse::set_allocated_res_msg(std::string* res_msg) {
   }
   res_msg_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), res_msg,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:commonResponse.res_msg)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.commonResponse.res_msg)
 }
 
 // -------------------------------------------------------------------
@@ -1150,7 +1153,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 scoreInfo::_internal_rgroup_id() const {
   return rgroup_id_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 scoreInfo::rgroup_id() const {
-  // @@protoc_insertion_point(field_get:scoreInfo.rgroup_id)
+  // @@protoc_insertion_point(field_get:helmsley.scoreInfo.rgroup_id)
   return _internal_rgroup_id();
 }
 inline void scoreInfo::_internal_set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -1159,7 +1162,7 @@ inline void scoreInfo::_internal_set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 va
 }
 inline void scoreInfo::set_rgroup_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_rgroup_id(value);
-  // @@protoc_insertion_point(field_set:scoreInfo.rgroup_id)
+  // @@protoc_insertion_point(field_set:helmsley.scoreInfo.rgroup_id)
 }
 
 // int32 rank_id = 2;
@@ -1170,7 +1173,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 scoreInfo::_internal_rank_id() const {
   return rank_id_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 scoreInfo::rank_id() const {
-  // @@protoc_insertion_point(field_get:scoreInfo.rank_id)
+  // @@protoc_insertion_point(field_get:helmsley.scoreInfo.rank_id)
   return _internal_rank_id();
 }
 inline void scoreInfo::_internal_set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -1179,7 +1182,7 @@ inline void scoreInfo::_internal_set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 valu
 }
 inline void scoreInfo::set_rank_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_rank_id(value);
-  // @@protoc_insertion_point(field_set:scoreInfo.rank_id)
+  // @@protoc_insertion_point(field_set:helmsley.scoreInfo.rank_id)
 }
 
 // float rank_score = 3;
@@ -1190,7 +1193,7 @@ inline float scoreInfo::_internal_rank_score() const {
   return rank_score_;
 }
 inline float scoreInfo::rank_score() const {
-  // @@protoc_insertion_point(field_get:scoreInfo.rank_score)
+  // @@protoc_insertion_point(field_get:helmsley.scoreInfo.rank_score)
   return _internal_rank_score();
 }
 inline void scoreInfo::_internal_set_rank_score(float value) {
@@ -1199,7 +1202,7 @@ inline void scoreInfo::_internal_set_rank_score(float value) {
 }
 inline void scoreInfo::set_rank_score(float value) {
   _internal_set_rank_score(value);
-  // @@protoc_insertion_point(field_set:scoreInfo.rank_score)
+  // @@protoc_insertion_point(field_set:helmsley.scoreInfo.rank_score)
 }
 
 // repeated float raw_score = 4;
@@ -1216,19 +1219,19 @@ inline float scoreInfo::_internal_raw_score(int index) const {
   return raw_score_.Get(index);
 }
 inline float scoreInfo::raw_score(int index) const {
-  // @@protoc_insertion_point(field_get:scoreInfo.raw_score)
+  // @@protoc_insertion_point(field_get:helmsley.scoreInfo.raw_score)
   return _internal_raw_score(index);
 }
 inline void scoreInfo::set_raw_score(int index, float value) {
   raw_score_.Set(index, value);
-  // @@protoc_insertion_point(field_set:scoreInfo.raw_score)
+  // @@protoc_insertion_point(field_set:helmsley.scoreInfo.raw_score)
 }
 inline void scoreInfo::_internal_add_raw_score(float value) {
   raw_score_.Add(value);
 }
 inline void scoreInfo::add_raw_score(float value) {
   _internal_add_raw_score(value);
-  // @@protoc_insertion_point(field_add:scoreInfo.raw_score)
+  // @@protoc_insertion_point(field_add:helmsley.scoreInfo.raw_score)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 scoreInfo::_internal_raw_score() const {
@@ -1236,7 +1239,7 @@ scoreInfo::_internal_raw_score() const {
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 scoreInfo::raw_score() const {
-  // @@protoc_insertion_point(field_list:scoreInfo.raw_score)
+  // @@protoc_insertion_point(field_list:helmsley.scoreInfo.raw_score)
   return _internal_raw_score();
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
@@ -1245,7 +1248,7 @@ scoreInfo::_internal_mutable_raw_score() {
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
 scoreInfo::mutable_raw_score() {
-  // @@protoc_insertion_point(field_mutable_list:scoreInfo.raw_score)
+  // @@protoc_insertion_point(field_mutable_list:helmsley.scoreInfo.raw_score)
   return _internal_mutable_raw_score();
 }
 
@@ -1263,19 +1266,19 @@ inline float scoreInfo::_internal_vol_score(int index) const {
   return vol_score_.Get(index);
 }
 inline float scoreInfo::vol_score(int index) const {
-  // @@protoc_insertion_point(field_get:scoreInfo.vol_score)
+  // @@protoc_insertion_point(field_get:helmsley.scoreInfo.vol_score)
   return _internal_vol_score(index);
 }
 inline void scoreInfo::set_vol_score(int index, float value) {
   vol_score_.Set(index, value);
-  // @@protoc_insertion_point(field_set:scoreInfo.vol_score)
+  // @@protoc_insertion_point(field_set:helmsley.scoreInfo.vol_score)
 }
 inline void scoreInfo::_internal_add_vol_score(float value) {
   vol_score_.Add(value);
 }
 inline void scoreInfo::add_vol_score(float value) {
   _internal_add_vol_score(value);
-  // @@protoc_insertion_point(field_add:scoreInfo.vol_score)
+  // @@protoc_insertion_point(field_add:helmsley.scoreInfo.vol_score)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 scoreInfo::_internal_vol_score() const {
@@ -1283,7 +1286,7 @@ scoreInfo::_internal_vol_score() const {
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 scoreInfo::vol_score() const {
-  // @@protoc_insertion_point(field_list:scoreInfo.vol_score)
+  // @@protoc_insertion_point(field_list:helmsley.scoreInfo.vol_score)
   return _internal_vol_score();
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
@@ -1292,7 +1295,7 @@ scoreInfo::_internal_mutable_vol_score() {
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
 scoreInfo::mutable_vol_score() {
-  // @@protoc_insertion_point(field_mutable_list:scoreInfo.vol_score)
+  // @@protoc_insertion_point(field_mutable_list:helmsley.scoreInfo.vol_score)
   return _internal_mutable_vol_score();
 }
 
@@ -1305,15 +1308,15 @@ inline void volumeInfo::clear_folder_name() {
   folder_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& volumeInfo::folder_name() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.folder_name)
   return _internal_folder_name();
 }
 inline void volumeInfo::set_folder_name(const std::string& value) {
   _internal_set_folder_name(value);
-  // @@protoc_insertion_point(field_set:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.folder_name)
 }
 inline std::string* volumeInfo::mutable_folder_name() {
-  // @@protoc_insertion_point(field_mutable:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_mutable:helmsley.volumeInfo.folder_name)
   return _internal_mutable_folder_name();
 }
 inline const std::string& volumeInfo::_internal_folder_name() const {
@@ -1327,28 +1330,28 @@ inline void volumeInfo::set_folder_name(std::string&& value) {
   
   folder_name_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeInfo.folder_name)
 }
 inline void volumeInfo::set_folder_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   folder_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_set_char:helmsley.volumeInfo.folder_name)
 }
 inline void volumeInfo::set_folder_name(const char* value,
     size_t size) {
   
   folder_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeInfo.folder_name)
 }
 inline std::string* volumeInfo::_internal_mutable_folder_name() {
   
   return folder_name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* volumeInfo::release_folder_name() {
-  // @@protoc_insertion_point(field_release:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_release:helmsley.volumeInfo.folder_name)
   return folder_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void volumeInfo::set_allocated_folder_name(std::string* folder_name) {
@@ -1359,7 +1362,7 @@ inline void volumeInfo::set_allocated_folder_name(std::string* folder_name) {
   }
   folder_name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), folder_name,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:volumeInfo.folder_name)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeInfo.folder_name)
 }
 
 // string folder_path = 2;
@@ -1367,15 +1370,15 @@ inline void volumeInfo::clear_folder_path() {
   folder_path_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& volumeInfo::folder_path() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.folder_path)
   return _internal_folder_path();
 }
 inline void volumeInfo::set_folder_path(const std::string& value) {
   _internal_set_folder_path(value);
-  // @@protoc_insertion_point(field_set:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.folder_path)
 }
 inline std::string* volumeInfo::mutable_folder_path() {
-  // @@protoc_insertion_point(field_mutable:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_mutable:helmsley.volumeInfo.folder_path)
   return _internal_mutable_folder_path();
 }
 inline const std::string& volumeInfo::_internal_folder_path() const {
@@ -1389,28 +1392,28 @@ inline void volumeInfo::set_folder_path(std::string&& value) {
   
   folder_path_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeInfo.folder_path)
 }
 inline void volumeInfo::set_folder_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   folder_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_set_char:helmsley.volumeInfo.folder_path)
 }
 inline void volumeInfo::set_folder_path(const char* value,
     size_t size) {
   
   folder_path_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeInfo.folder_path)
 }
 inline std::string* volumeInfo::_internal_mutable_folder_path() {
   
   return folder_path_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* volumeInfo::release_folder_path() {
-  // @@protoc_insertion_point(field_release:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_release:helmsley.volumeInfo.folder_path)
   return folder_path_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void volumeInfo::set_allocated_folder_path(std::string* folder_path) {
@@ -1421,7 +1424,7 @@ inline void volumeInfo::set_allocated_folder_path(std::string* folder_path) {
   }
   folder_path_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), folder_path,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:volumeInfo.folder_path)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeInfo.folder_path)
 }
 
 // repeated int32 dims = 3;
@@ -1438,19 +1441,19 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 volumeInfo::_internal_dims(int index) cons
   return dims_.Get(index);
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 volumeInfo::dims(int index) const {
-  // @@protoc_insertion_point(field_get:volumeInfo.dims)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.dims)
   return _internal_dims(index);
 }
 inline void volumeInfo::set_dims(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
   dims_.Set(index, value);
-  // @@protoc_insertion_point(field_set:volumeInfo.dims)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.dims)
 }
 inline void volumeInfo::_internal_add_dims(::PROTOBUF_NAMESPACE_ID::int32 value) {
   dims_.Add(value);
 }
 inline void volumeInfo::add_dims(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_add_dims(value);
-  // @@protoc_insertion_point(field_add:volumeInfo.dims)
+  // @@protoc_insertion_point(field_add:helmsley.volumeInfo.dims)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
 volumeInfo::_internal_dims() const {
@@ -1458,7 +1461,7 @@ volumeInfo::_internal_dims() const {
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
 volumeInfo::dims() const {
-  // @@protoc_insertion_point(field_list:volumeInfo.dims)
+  // @@protoc_insertion_point(field_list:helmsley.volumeInfo.dims)
   return _internal_dims();
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
@@ -1467,7 +1470,7 @@ volumeInfo::_internal_mutable_dims() {
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
 volumeInfo::mutable_dims() {
-  // @@protoc_insertion_point(field_mutable_list:volumeInfo.dims)
+  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeInfo.dims)
   return _internal_mutable_dims();
 }
 
@@ -1485,19 +1488,19 @@ inline float volumeInfo::_internal_orientation(int index) const {
   return orientation_.Get(index);
 }
 inline float volumeInfo::orientation(int index) const {
-  // @@protoc_insertion_point(field_get:volumeInfo.orientation)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.orientation)
   return _internal_orientation(index);
 }
 inline void volumeInfo::set_orientation(int index, float value) {
   orientation_.Set(index, value);
-  // @@protoc_insertion_point(field_set:volumeInfo.orientation)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.orientation)
 }
 inline void volumeInfo::_internal_add_orientation(float value) {
   orientation_.Add(value);
 }
 inline void volumeInfo::add_orientation(float value) {
   _internal_add_orientation(value);
-  // @@protoc_insertion_point(field_add:volumeInfo.orientation)
+  // @@protoc_insertion_point(field_add:helmsley.volumeInfo.orientation)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 volumeInfo::_internal_orientation() const {
@@ -1505,7 +1508,7 @@ volumeInfo::_internal_orientation() const {
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 volumeInfo::orientation() const {
-  // @@protoc_insertion_point(field_list:volumeInfo.orientation)
+  // @@protoc_insertion_point(field_list:helmsley.volumeInfo.orientation)
   return _internal_orientation();
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
@@ -1514,7 +1517,7 @@ volumeInfo::_internal_mutable_orientation() {
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
 volumeInfo::mutable_orientation() {
-  // @@protoc_insertion_point(field_mutable_list:volumeInfo.orientation)
+  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeInfo.orientation)
   return _internal_mutable_orientation();
 }
 
@@ -1532,19 +1535,19 @@ inline float volumeInfo::_internal_resolution(int index) const {
   return resolution_.Get(index);
 }
 inline float volumeInfo::resolution(int index) const {
-  // @@protoc_insertion_point(field_get:volumeInfo.resolution)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.resolution)
   return _internal_resolution(index);
 }
 inline void volumeInfo::set_resolution(int index, float value) {
   resolution_.Set(index, value);
-  // @@protoc_insertion_point(field_set:volumeInfo.resolution)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.resolution)
 }
 inline void volumeInfo::_internal_add_resolution(float value) {
   resolution_.Add(value);
 }
 inline void volumeInfo::add_resolution(float value) {
   _internal_add_resolution(value);
-  // @@protoc_insertion_point(field_add:volumeInfo.resolution)
+  // @@protoc_insertion_point(field_add:helmsley.volumeInfo.resolution)
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 volumeInfo::_internal_resolution() const {
@@ -1552,7 +1555,7 @@ volumeInfo::_internal_resolution() const {
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >&
 volumeInfo::resolution() const {
-  // @@protoc_insertion_point(field_list:volumeInfo.resolution)
+  // @@protoc_insertion_point(field_list:helmsley.volumeInfo.resolution)
   return _internal_resolution();
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
@@ -1561,7 +1564,7 @@ volumeInfo::_internal_mutable_resolution() {
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
 volumeInfo::mutable_resolution() {
-  // @@protoc_insertion_point(field_mutable_list:volumeInfo.resolution)
+  // @@protoc_insertion_point(field_mutable_list:helmsley.volumeInfo.resolution)
   return _internal_mutable_resolution();
 }
 
@@ -1573,7 +1576,7 @@ inline float volumeInfo::_internal_volume_loc_range() const {
   return volume_loc_range_;
 }
 inline float volumeInfo::volume_loc_range() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.volume_loc_range)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.volume_loc_range)
   return _internal_volume_loc_range();
 }
 inline void volumeInfo::_internal_set_volume_loc_range(float value) {
@@ -1582,7 +1585,7 @@ inline void volumeInfo::_internal_set_volume_loc_range(float value) {
 }
 inline void volumeInfo::set_volume_loc_range(float value) {
   _internal_set_volume_loc_range(value);
-  // @@protoc_insertion_point(field_set:volumeInfo.volume_loc_range)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.volume_loc_range)
 }
 
 // bool with_mask = 7;
@@ -1593,7 +1596,7 @@ inline bool volumeInfo::_internal_with_mask() const {
   return with_mask_;
 }
 inline bool volumeInfo::with_mask() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.with_mask)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.with_mask)
   return _internal_with_mask();
 }
 inline void volumeInfo::_internal_set_with_mask(bool value) {
@@ -1602,27 +1605,27 @@ inline void volumeInfo::_internal_set_with_mask(bool value) {
 }
 inline void volumeInfo::set_with_mask(bool value) {
   _internal_set_with_mask(value);
-  // @@protoc_insertion_point(field_set:volumeInfo.with_mask)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.with_mask)
 }
 
-// .volumeInfo.DataSource data_source = 8;
+// .helmsley.volumeInfo.DataSource data_source = 8;
 inline void volumeInfo::clear_data_source() {
   data_source_ = 0;
 }
-inline ::volumeInfo_DataSource volumeInfo::_internal_data_source() const {
-  return static_cast< ::volumeInfo_DataSource >(data_source_);
+inline ::helmsley::volumeInfo_DataSource volumeInfo::_internal_data_source() const {
+  return static_cast< ::helmsley::volumeInfo_DataSource >(data_source_);
 }
-inline ::volumeInfo_DataSource volumeInfo::data_source() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.data_source)
+inline ::helmsley::volumeInfo_DataSource volumeInfo::data_source() const {
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.data_source)
   return _internal_data_source();
 }
-inline void volumeInfo::_internal_set_data_source(::volumeInfo_DataSource value) {
+inline void volumeInfo::_internal_set_data_source(::helmsley::volumeInfo_DataSource value) {
   
   data_source_ = value;
 }
-inline void volumeInfo::set_data_source(::volumeInfo_DataSource value) {
+inline void volumeInfo::set_data_source(::helmsley::volumeInfo_DataSource value) {
   _internal_set_data_source(value);
-  // @@protoc_insertion_point(field_set:volumeInfo.data_source)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.data_source)
 }
 
 // bytes sample_img = 9;
@@ -1630,15 +1633,15 @@ inline void volumeInfo::clear_sample_img() {
   sample_img_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& volumeInfo::sample_img() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.sample_img)
   return _internal_sample_img();
 }
 inline void volumeInfo::set_sample_img(const std::string& value) {
   _internal_set_sample_img(value);
-  // @@protoc_insertion_point(field_set:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_set:helmsley.volumeInfo.sample_img)
 }
 inline std::string* volumeInfo::mutable_sample_img() {
-  // @@protoc_insertion_point(field_mutable:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_mutable:helmsley.volumeInfo.sample_img)
   return _internal_mutable_sample_img();
 }
 inline const std::string& volumeInfo::_internal_sample_img() const {
@@ -1652,28 +1655,28 @@ inline void volumeInfo::set_sample_img(std::string&& value) {
   
   sample_img_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_set_rvalue:helmsley.volumeInfo.sample_img)
 }
 inline void volumeInfo::set_sample_img(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   sample_img_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_set_char:helmsley.volumeInfo.sample_img)
 }
 inline void volumeInfo::set_sample_img(const void* value,
     size_t size) {
   
   sample_img_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_set_pointer:helmsley.volumeInfo.sample_img)
 }
 inline std::string* volumeInfo::_internal_mutable_sample_img() {
   
   return sample_img_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* volumeInfo::release_sample_img() {
-  // @@protoc_insertion_point(field_release:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_release:helmsley.volumeInfo.sample_img)
   return sample_img_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void volumeInfo::set_allocated_sample_img(std::string* sample_img) {
@@ -1684,10 +1687,10 @@ inline void volumeInfo::set_allocated_sample_img(std::string* sample_img) {
   }
   sample_img_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), sample_img,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:volumeInfo.sample_img)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeInfo.sample_img)
 }
 
-// .scoreInfo scores = 10;
+// .helmsley.scoreInfo scores = 10;
 inline bool volumeInfo::_internal_has_scores() const {
   return this != internal_default_instance() && scores_ != nullptr;
 }
@@ -1700,17 +1703,17 @@ inline void volumeInfo::clear_scores() {
   }
   scores_ = nullptr;
 }
-inline const ::scoreInfo& volumeInfo::_internal_scores() const {
-  const ::scoreInfo* p = scores_;
-  return p != nullptr ? *p : *reinterpret_cast<const ::scoreInfo*>(
-      &::_scoreInfo_default_instance_);
+inline const ::helmsley::scoreInfo& volumeInfo::_internal_scores() const {
+  const ::helmsley::scoreInfo* p = scores_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::helmsley::scoreInfo*>(
+      &::helmsley::_scoreInfo_default_instance_);
 }
-inline const ::scoreInfo& volumeInfo::scores() const {
-  // @@protoc_insertion_point(field_get:volumeInfo.scores)
+inline const ::helmsley::scoreInfo& volumeInfo::scores() const {
+  // @@protoc_insertion_point(field_get:helmsley.volumeInfo.scores)
   return _internal_scores();
 }
 inline void volumeInfo::unsafe_arena_set_allocated_scores(
-    ::scoreInfo* scores) {
+    ::helmsley::scoreInfo* scores) {
   if (GetArena() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(scores_);
   }
@@ -1720,37 +1723,37 @@ inline void volumeInfo::unsafe_arena_set_allocated_scores(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:volumeInfo.scores)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:helmsley.volumeInfo.scores)
 }
-inline ::scoreInfo* volumeInfo::release_scores() {
+inline ::helmsley::scoreInfo* volumeInfo::release_scores() {
   
-  ::scoreInfo* temp = scores_;
+  ::helmsley::scoreInfo* temp = scores_;
   scores_ = nullptr;
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::scoreInfo* volumeInfo::unsafe_arena_release_scores() {
-  // @@protoc_insertion_point(field_release:volumeInfo.scores)
+inline ::helmsley::scoreInfo* volumeInfo::unsafe_arena_release_scores() {
+  // @@protoc_insertion_point(field_release:helmsley.volumeInfo.scores)
   
-  ::scoreInfo* temp = scores_;
+  ::helmsley::scoreInfo* temp = scores_;
   scores_ = nullptr;
   return temp;
 }
-inline ::scoreInfo* volumeInfo::_internal_mutable_scores() {
+inline ::helmsley::scoreInfo* volumeInfo::_internal_mutable_scores() {
   
   if (scores_ == nullptr) {
-    auto* p = CreateMaybeMessage<::scoreInfo>(GetArena());
+    auto* p = CreateMaybeMessage<::helmsley::scoreInfo>(GetArena());
     scores_ = p;
   }
   return scores_;
 }
-inline ::scoreInfo* volumeInfo::mutable_scores() {
-  // @@protoc_insertion_point(field_mutable:volumeInfo.scores)
+inline ::helmsley::scoreInfo* volumeInfo::mutable_scores() {
+  // @@protoc_insertion_point(field_mutable:helmsley.volumeInfo.scores)
   return _internal_mutable_scores();
 }
-inline void volumeInfo::set_allocated_scores(::scoreInfo* scores) {
+inline void volumeInfo::set_allocated_scores(::helmsley::scoreInfo* scores) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
     delete scores_;
@@ -1767,7 +1770,7 @@ inline void volumeInfo::set_allocated_scores(::scoreInfo* scores) {
     
   }
   scores_ = scores;
-  // @@protoc_insertion_point(field_set_allocated:volumeInfo.scores)
+  // @@protoc_insertion_point(field_set_allocated:helmsley.volumeInfo.scores)
 }
 
 #ifdef __GNUC__
@@ -1782,13 +1785,14 @@ inline void volumeInfo::set_allocated_scores(::scoreInfo* scores) {
 
 // @@protoc_insertion_point(namespace_scope)
 
+}  // namespace helmsley
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::volumeInfo_DataSource> : ::std::true_type {};
+template <> struct is_proto_enum< ::helmsley::volumeInfo_DataSource> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::volumeInfo_DataSource>() {
-  return ::volumeInfo_DataSource_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::helmsley::volumeInfo_DataSource>() {
+  return ::helmsley::volumeInfo_DataSource_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

@@ -45,6 +45,7 @@ void cuttingController::init_plane_renderer(ID3D11Device* device) {
     plane_render_ = new quadRenderer(device,
         L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso",
         m_quad_vertices, indices, 63, 60, dvr::INPUT_POS_3D);
+    plane_render_->initialize();
 
     CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
     dvr::ColorConstantBuffer tdata;

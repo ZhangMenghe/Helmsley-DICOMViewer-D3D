@@ -250,6 +250,9 @@
       <Filter>Source\OXRs\XrSceneLib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\XrSceneLib\Scene.cpp" />
+    <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -461,6 +464,9 @@
       <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Common\StepTimer.h" />
+    <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -550,6 +556,12 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\SimpleColorPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\viewSlicingPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\viewSlicingVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

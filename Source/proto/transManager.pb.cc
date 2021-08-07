@@ -287,27 +287,32 @@ const char descriptor_table_protodef_transManager_2eproto[] PROTOBUF_SECTION_VAR
   "nfo\032s\n\013datasetInfo\022\023\n\013folder_name\030\001 \001(\t\022"
   "\024\n\014patient_name\030\002 \001(\t\022\014\n\004date\030\003 \001(\t\022\025\n\rp"
   "hysican_name\030\004 \001(\t\022\024\n\014mask_folders\030\005 \003(\t"
-  "\".\n\016volumeResponse\022\034\n\007volumes\030\001 \003(\0132\013.vo"
-  "lumeInfo\"#\n\023volumeWholeResponse\022\014\n\004data\030"
-  "\001 \001(\014\"\036\n\016centerlineData\022\014\n\004data\030\001 \003(\002\"9\n"
-  "\010dcmImage\022\r\n\005dcmID\030\001 \001(\005\022\020\n\010position\030\002 \001"
-  "(\002\022\014\n\004data\030\003 \001(\014\"K\n\022RequestWholeVolume\022\021"
-  "\n\tclient_id\030\001 \001(\005\022\017\n\007req_msg\030\002 \001(\t\022\021\n\tun"
-  "it_size\030\003 \001(\0052\240\004\n\014dataTransfer\0229\n\023getAva"
-  "ilableConfigs\022\010.Request\032\030.helmsley.confi"
-  "gResponse\022*\n\rexportConfigs\022\010.Request\032\017.c"
-  "ommonResponse\022;\n\024getAvailableDatasets\022\010."
-  "Request\032\031.helmsley.datasetResponse\022<\n\024ge"
-  "tVolumeFromDataset\022\010.Request\032\030.helmsley."
-  "volumeResponse0\001\022*\n\010Download\022\010.Request\032\022"
-  ".helmsley.dcmImage0\001\022O\n\016DownloadVolume\022\034"
-  ".helmsley.RequestWholeVolume\032\035.helmsley."
-  "volumeWholeResponse0\001\022/\n\rDownloadMasks\022\010"
-  ".Request\032\022.helmsley.dcmImage0\001\022@\n\023Downlo"
-  "adMasksVolume\022\010.Request\032\035.helmsley.volum"
-  "eWholeResponse0\001\022>\n\026DownloadCenterLineDa"
-  "ta\022\010.Request\032\030.helmsley.centerlineData0\001"
-  "b\006proto3"
+  "\"7\n\016volumeResponse\022%\n\007volumes\030\001 \003(\0132\024.he"
+  "lmsley.volumeInfo\"#\n\023volumeWholeResponse"
+  "\022\014\n\004data\030\001 \001(\014\"\036\n\016centerlineData\022\014\n\004data"
+  "\030\001 \003(\002\"9\n\010dcmImage\022\r\n\005dcmID\030\001 \001(\005\022\020\n\010pos"
+  "ition\030\002 \001(\002\022\014\n\004data\030\003 \001(\014\"K\n\022RequestWhol"
+  "eVolume\022\021\n\tclient_id\030\001 \001(\005\022\017\n\007req_msg\030\002 "
+  "\001(\t\022\021\n\tunit_size\030\003 \001(\0052\313\005\n\014dataTransfer\022"
+  "B\n\023getAvailableConfigs\022\021.helmsley.Reques"
+  "t\032\030.helmsley.configResponse\022<\n\rexportCon"
+  "figs\022\021.helmsley.Request\032\030.helmsley.commo"
+  "nResponse\022D\n\024getAvailableDatasets\022\021.helm"
+  "sley.Request\032\031.helmsley.datasetResponse\022"
+  "E\n\024getVolumeFromDataset\022\021.helmsley.Reque"
+  "st\032\030.helmsley.volumeResponse0\001\0223\n\010Downlo"
+  "ad\022\021.helmsley.Request\032\022.helmsley.dcmImag"
+  "e0\001\022O\n\016DownloadVolume\022\034.helmsley.Request"
+  "WholeVolume\032\035.helmsley.volumeWholeRespon"
+  "se0\001\022X\n\027DownloadVolumeProcessed\022\034.helmsl"
+  "ey.RequestWholeVolume\032\035.helmsley.volumeW"
+  "holeResponse0\001\0228\n\rDownloadMasks\022\021.helmsl"
+  "ey.Request\032\022.helmsley.dcmImage0\001\022I\n\023Down"
+  "loadMasksVolume\022\021.helmsley.Request\032\035.hel"
+  "msley.volumeWholeResponse0\001\022G\n\026DownloadC"
+  "enterLineData\022\021.helmsley.Request\032\030.helms"
+  "ley.centerlineData0\001B.\n\021helmsley.vr.prot"
+  "oB\021transManagerProtoP\001\242\002\003TRPb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_transManager_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
@@ -325,7 +330,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_tra
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_transManager_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_transManager_2eproto = {
-  false, false, descriptor_table_protodef_transManager_2eproto, "transManager.proto", 1168,
+  false, false, descriptor_table_protodef_transManager_2eproto, "transManager.proto", 1396,
   &descriptor_table_transManager_2eproto_once, descriptor_table_transManager_2eproto_sccs, descriptor_table_transManager_2eproto_deps, 9, 1,
   schemas, file_default_instances, TableStruct_transManager_2eproto::offsets,
   file_level_metadata_transManager_2eproto, 9, file_level_enum_descriptors_transManager_2eproto, file_level_service_descriptors_transManager_2eproto,
@@ -1420,7 +1425,7 @@ const char* volumeResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // repeated .volumeInfo volumes = 1;
+      // repeated .helmsley.volumeInfo volumes = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr -= 1;
@@ -1460,7 +1465,7 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .volumeInfo volumes = 1;
+  // repeated .helmsley.volumeInfo volumes = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->_internal_volumes_size()); i < n; i++) {
     target = stream->EnsureSpace(target);
@@ -1484,7 +1489,7 @@ size_t volumeResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .volumeInfo volumes = 1;
+  // repeated .helmsley.volumeInfo volumes = 1;
   total_size += 1UL * this->_internal_volumes_size();
   for (const auto& msg : this->volumes_) {
     total_size +=

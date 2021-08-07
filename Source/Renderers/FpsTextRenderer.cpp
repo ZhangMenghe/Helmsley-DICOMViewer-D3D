@@ -15,6 +15,7 @@ FpsTextRenderer::FpsTextRenderer(const std::shared_ptr<DX::DeviceResources>& dev
 	m_text_texture = new TextTexture(deviceResources, textInfo);
 
 	m_tex_quad = new quadRenderer(deviceResources->GetD3DDevice());
+	m_tex_quad->initialize();
 	m_tex_quad->setTexture(m_text_texture);
 }
 

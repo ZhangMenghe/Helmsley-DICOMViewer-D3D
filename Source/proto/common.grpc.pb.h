@@ -26,5 +26,9 @@
 #include <grpcpp/impl/codegen/stub_options.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 
+namespace helmsley {
+
+}  // namespace helmsley
+
 
 #endif  // GRPC_common_2eproto__INCLUDED

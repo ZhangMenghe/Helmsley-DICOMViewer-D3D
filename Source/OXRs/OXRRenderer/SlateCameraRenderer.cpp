@@ -329,6 +329,12 @@ void SlateCameraRenderer::update_marker_position()
 		init = true;
 	}
 
+	//glm::mat4 cachedSensorMatrix = //glm::mat4(1.0f);
+	/*{
+		std::lock_guard<std::mutex> guard(this->m_mutex);
+		cachedSensorMatrix = rig_mat;
+	}*/
+
 	ResearchModeSensorResolution resolution;
 	IResearchModeSensorVLCFrame* pVLCFrame = nullptr;
 	//const BYTE* pImage = nullptr;
@@ -367,15 +373,12 @@ void SlateCameraRenderer::update_marker_position()
 	// Get position infos
 	auto location = locator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
 	auto camLocation = camLocator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
-	glm::mat4 cachedViewMatrix = glm::mat4(1.0f);
-	{
-	  std::lock_guard<std::mutex> guard(this->m_mutex);
-	  cachedViewMatrix = glm::inverse(xmmatrix2mat4(viewMatrix));
-	}
-	if (location) {
+	glm::mat4 cachedSensorMatrix = vrController::instance()->getSensorMatrixAtTime(timeStamp.HostTicks * 100);
+	
+	if (location && camLocation) {
 
 		auto sensorCameraToWorld = xmmatrix2mat4(spatialLocationToMatrix(location));
-		//auto cameraToWorld = xmmatrix2mat4(spatialLocationToMatrix(camLocation));
+		auto cameraToWorld = xmmatrix2mat4(spatialLocationToMatrix(camLocation));
 
 		//try estimate marker
 		static cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
@@ -400,7 +403,7 @@ void SlateCameraRenderer::update_marker_position()
 			glm::translate(glm::mat4(1.0), glm::vec3(tvec[0], tvec[1], tvec[2])) * rot_mat;
 
 		std::lock_guard<std::mutex> guard(this->m_mutex);
-		markerMatrix = sensorCameraToWorld * model_mat; //cachedViewMatrix * glm::inverse(cameraToWorld) * 
+		markerMatrix = cachedSensorMatrix * model_mat; //cachedViewMatrix * glm::inverse(cameraToWorld) * 
 	}
 }
 
@@ -425,6 +428,8 @@ bool SlateCameraRenderer::Update(ID3D11DeviceContext* context) {
 	std::lock_guard<std::mutex> guard(this->m_mutex);
 	viewMatrix = Manager::instance()->camera->getViewMat();
 	vrController::instance()->setPosition(markerMatrix); //
+
+	rig_mat = vrController::instance()->getWorldToSensorMatrix();
 
 	return true;
 }

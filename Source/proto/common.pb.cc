@@ -15,6 +15,7 @@
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 extern PROTOBUF_INTERNAL_EXPORT_common_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_scoreInfo_common_2eproto;
+namespace helmsley {
 class RequestDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Request> _instance;
@@ -31,15 +32,16 @@ class volumeInfoDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<volumeInfo> _instance;
 } _volumeInfo_default_instance_;
+}  // namespace helmsley
 static void InitDefaultsscc_info_Request_common_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::_Request_default_instance_;
-    new (ptr) ::Request();
+    void* ptr = &::helmsley::_Request_default_instance_;
+    new (ptr) ::helmsley::Request();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::Request::InitAsDefaultInstance();
+  ::helmsley::Request::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Request_common_2eproto =
@@ -49,11 +51,11 @@ static void InitDefaultsscc_info_commonResponse_common_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::_commonResponse_default_instance_;
-    new (ptr) ::commonResponse();
+    void* ptr = &::helmsley::_commonResponse_default_instance_;
+    new (ptr) ::helmsley::commonResponse();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::commonResponse::InitAsDefaultInstance();
+  ::helmsley::commonResponse::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_commonResponse_common_2eproto =
@@ -63,11 +65,11 @@ static void InitDefaultsscc_info_scoreInfo_common_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::_scoreInfo_default_instance_;
-    new (ptr) ::scoreInfo();
+    void* ptr = &::helmsley::_scoreInfo_default_instance_;
+    new (ptr) ::helmsley::scoreInfo();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::scoreInfo::InitAsDefaultInstance();
+  ::helmsley::scoreInfo::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_scoreInfo_common_2eproto =
@@ -77,11 +79,11 @@ static void InitDefaultsscc_info_volumeInfo_common_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::_volumeInfo_default_instance_;
-    new (ptr) ::volumeInfo();
+    void* ptr = &::helmsley::_volumeInfo_default_instance_;
+    new (ptr) ::helmsley::volumeInfo();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::volumeInfo::InitAsDefaultInstance();
+  ::helmsley::volumeInfo::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_volumeInfo_common_2eproto =
@@ -94,74 +96,75 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_s
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_common_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::Request, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::Request, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::Request, client_id_),
-  PROTOBUF_FIELD_OFFSET(::Request, req_msg_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::Request, client_id_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::Request, req_msg_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::commonResponse, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::commonResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::commonResponse, success_),
-  PROTOBUF_FIELD_OFFSET(::commonResponse, res_msg_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::commonResponse, success_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::commonResponse, res_msg_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::scoreInfo, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::scoreInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::scoreInfo, rgroup_id_),
-  PROTOBUF_FIELD_OFFSET(::scoreInfo, rank_id_),
-  PROTOBUF_FIELD_OFFSET(::scoreInfo, rank_score_),
-  PROTOBUF_FIELD_OFFSET(::scoreInfo, raw_score_),
-  PROTOBUF_FIELD_OFFSET(::scoreInfo, vol_score_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::scoreInfo, rgroup_id_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::scoreInfo, rank_id_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::scoreInfo, rank_score_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::scoreInfo, raw_score_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::scoreInfo, vol_score_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, folder_name_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, folder_path_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, dims_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, orientation_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, resolution_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, volume_loc_range_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, with_mask_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, data_source_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, sample_img_),
-  PROTOBUF_FIELD_OFFSET(::volumeInfo, scores_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, folder_name_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, folder_path_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, dims_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, orientation_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, resolution_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, volume_loc_range_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, with_mask_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, data_source_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, sample_img_),
+  PROTOBUF_FIELD_OFFSET(::helmsley::volumeInfo, scores_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::Request)},
-  { 7, -1, sizeof(::commonResponse)},
-  { 14, -1, sizeof(::scoreInfo)},
-  { 24, -1, sizeof(::volumeInfo)},
+  { 0, -1, sizeof(::helmsley::Request)},
+  { 7, -1, sizeof(::helmsley::commonResponse)},
+  { 14, -1, sizeof(::helmsley::scoreInfo)},
+  { 24, -1, sizeof(::helmsley::volumeInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_Request_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_commonResponse_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_scoreInfo_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::_volumeInfo_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_Request_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_commonResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_scoreInfo_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_volumeInfo_default_instance_),
 };
 
 const char descriptor_table_protodef_common_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014common.proto\"-\n\007Request\022\021\n\tclient_id\030\001"
-  " \001(\005\022\017\n\007req_msg\030\002 \001(\t\"2\n\016commonResponse\022"
-  "\017\n\007success\030\001 \001(\010\022\017\n\007res_msg\030\002 \001(\t\"i\n\tsco"
-  "reInfo\022\021\n\trgroup_id\030\001 \001(\005\022\017\n\007rank_id\030\002 \001"
-  "(\005\022\022\n\nrank_score\030\003 \001(\002\022\021\n\traw_score\030\004 \003("
-  "\002\022\021\n\tvol_score\030\005 \003(\002\"\250\002\n\nvolumeInfo\022\023\n\013f"
-  "older_name\030\001 \001(\t\022\023\n\013folder_path\030\002 \001(\t\022\014\n"
-  "\004dims\030\003 \003(\005\022\023\n\013orientation\030\004 \003(\002\022\022\n\nreso"
-  "lution\030\005 \003(\002\022\030\n\020volume_loc_range\030\006 \001(\002\022\021"
-  "\n\twith_mask\030\007 \001(\010\022+\n\013data_source\030\010 \001(\0162\026"
-  ".volumeInfo.DataSource\022\022\n\nsample_img\030\t \001"
-  "(\014\022\032\n\006scores\030\n \001(\0132\n.scoreInfo\"/\n\nDataSo"
-  "urce\022\t\n\005LOCAL\020\000\022\n\n\006SERVER\020\001\022\n\n\006DEVICE\020\002b"
-  "\006proto3"
+  "\n\014common.proto\022\010helmsley\"-\n\007Request\022\021\n\tc"
+  "lient_id\030\001 \001(\005\022\017\n\007req_msg\030\002 \001(\t\"2\n\016commo"
+  "nResponse\022\017\n\007success\030\001 \001(\010\022\017\n\007res_msg\030\002 "
+  "\001(\t\"i\n\tscoreInfo\022\021\n\trgroup_id\030\001 \001(\005\022\017\n\007r"
+  "ank_id\030\002 \001(\005\022\022\n\nrank_score\030\003 \001(\002\022\021\n\traw_"
+  "score\030\004 \003(\002\022\021\n\tvol_score\030\005 \003(\002\"\272\002\n\nvolum"
+  "eInfo\022\023\n\013folder_name\030\001 \001(\t\022\023\n\013folder_pat"
+  "h\030\002 \001(\t\022\014\n\004dims\030\003 \003(\005\022\023\n\013orientation\030\004 \003"
+  "(\002\022\022\n\nresolution\030\005 \003(\002\022\030\n\020volume_loc_ran"
+  "ge\030\006 \001(\002\022\021\n\twith_mask\030\007 \001(\010\0224\n\013data_sour"
+  "ce\030\010 \001(\0162\037.helmsley.volumeInfo.DataSourc"
+  "e\022\022\n\nsample_img\030\t \001(\014\022#\n\006scores\030\n \001(\0132\023."
+  "helmsley.scoreInfo\"/\n\nDataSource\022\t\n\005LOCA"
+  "L\020\000\022\n\n\006SERVER\020\001\022\n\n\006DEVICE\020\002B(\n\021helmsley."
+  "vr.protoB\013commonProtoP\001\242\002\003TRPb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2eproto_deps[1] = {
 };
@@ -173,7 +176,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_com
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2eproto = {
-  false, false, descriptor_table_protodef_common_2eproto, "common.proto", 527,
+  false, false, descriptor_table_protodef_common_2eproto, "common.proto", 597,
   &descriptor_table_common_2eproto_once, descriptor_table_common_2eproto_sccs, descriptor_table_common_2eproto_deps, 4, 0,
   schemas, file_default_instances, TableStruct_common_2eproto::offsets,
   file_level_metadata_common_2eproto, 4, file_level_enum_descriptors_common_2eproto, file_level_service_descriptors_common_2eproto,
@@ -181,6 +184,7 @@ const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common
 
 // Force running AddDescriptors() at dynamic initialization time.
 static bool dynamic_init_dummy_common_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_common_2eproto)), true);
+namespace helmsley {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* volumeInfo_DataSource_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_common_2eproto);
   return file_level_enum_descriptors_common_2eproto[0];
@@ -217,7 +221,7 @@ Request::Request(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:Request)
+  // @@protoc_insertion_point(arena_constructor:helmsley.Request)
 }
 Request::Request(const Request& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
@@ -228,7 +232,7 @@ Request::Request(const Request& from)
       GetArena());
   }
   client_id_ = from.client_id_;
-  // @@protoc_insertion_point(copy_constructor:Request)
+  // @@protoc_insertion_point(copy_constructor:helmsley.Request)
 }
 
 void Request::SharedCtor() {
@@ -238,7 +242,7 @@ void Request::SharedCtor() {
 }
 
 Request::~Request() {
-  // @@protoc_insertion_point(destructor:Request)
+  // @@protoc_insertion_point(destructor:helmsley.Request)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -264,7 +268,7 @@ const Request& Request::default_instance() {
 
 
 void Request::Clear() {
-// @@protoc_insertion_point(message_clear_start:Request)
+// @@protoc_insertion_point(message_clear_start:helmsley.Request)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -294,7 +298,7 @@ const char* Request::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_req_msg();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Request.req_msg"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.Request.req_msg"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -322,7 +326,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* Request::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:Request)
+  // @@protoc_insertion_point(serialize_to_array_start:helmsley.Request)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -337,7 +341,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_req_msg().data(), static_cast<int>(this->_internal_req_msg().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "Request.req_msg");
+      "helmsley.Request.req_msg");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_req_msg(), target);
   }
@@ -346,12 +350,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:Request)
+  // @@protoc_insertion_point(serialize_to_array_end:helmsley.Request)
   return target;
 }
 
 size_t Request::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:Request)
+// @@protoc_insertion_point(message_byte_size_start:helmsley.Request)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -382,22 +386,22 @@ size_t Request::ByteSizeLong() const {
 }
 
 void Request::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:Request)
+// @@protoc_insertion_point(generalized_merge_from_start:helmsley.Request)
   GOOGLE_DCHECK_NE(&from, this);
   const Request* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Request>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:Request)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.Request)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:Request)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.Request)
     MergeFrom(*source);
   }
 }
 
 void Request::MergeFrom(const Request& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:Request)
+// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.Request)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -412,14 +416,14 @@ void Request::MergeFrom(const Request& from) {
 }
 
 void Request::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:Request)
+// @@protoc_insertion_point(generalized_copy_from_start:helmsley.Request)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void Request::CopyFrom(const Request& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:Request)
+// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.Request)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -453,7 +457,7 @@ commonResponse::commonResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:commonResponse)
+  // @@protoc_insertion_point(arena_constructor:helmsley.commonResponse)
 }
 commonResponse::commonResponse(const commonResponse& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
@@ -464,7 +468,7 @@ commonResponse::commonResponse(const commonResponse& from)
       GetArena());
   }
   success_ = from.success_;
-  // @@protoc_insertion_point(copy_constructor:commonResponse)
+  // @@protoc_insertion_point(copy_constructor:helmsley.commonResponse)
 }
 
 void commonResponse::SharedCtor() {
@@ -474,7 +478,7 @@ void commonResponse::SharedCtor() {
 }
 
 commonResponse::~commonResponse() {
-  // @@protoc_insertion_point(destructor:commonResponse)
+  // @@protoc_insertion_point(destructor:helmsley.commonResponse)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -500,7 +504,7 @@ const commonResponse& commonResponse::default_instance() {
 
 
 void commonResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:commonResponse)
+// @@protoc_insertion_point(message_clear_start:helmsley.commonResponse)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -530,7 +534,7 @@ const char* commonResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_res_msg();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "commonResponse.res_msg"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.commonResponse.res_msg"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -558,7 +562,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* commonResponse::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:commonResponse)
+  // @@protoc_insertion_point(serialize_to_array_start:helmsley.commonResponse)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -573,7 +577,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_res_msg().data(), static_cast<int>(this->_internal_res_msg().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "commonResponse.res_msg");
+      "helmsley.commonResponse.res_msg");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_res_msg(), target);
   }
@@ -582,12 +586,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:commonResponse)
+  // @@protoc_insertion_point(serialize_to_array_end:helmsley.commonResponse)
   return target;
 }
 
 size_t commonResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:commonResponse)
+// @@protoc_insertion_point(message_byte_size_start:helmsley.commonResponse)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -616,22 +620,22 @@ size_t commonResponse::ByteSizeLong() const {
 }
 
 void commonResponse::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:commonResponse)
+// @@protoc_insertion_point(generalized_merge_from_start:helmsley.commonResponse)
   GOOGLE_DCHECK_NE(&from, this);
   const commonResponse* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<commonResponse>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:commonResponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.commonResponse)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:commonResponse)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.commonResponse)
     MergeFrom(*source);
   }
 }
 
 void commonResponse::MergeFrom(const commonResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:commonResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.commonResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -646,14 +650,14 @@ void commonResponse::MergeFrom(const commonResponse& from) {
 }
 
 void commonResponse::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:commonResponse)
+// @@protoc_insertion_point(generalized_copy_from_start:helmsley.commonResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void commonResponse::CopyFrom(const commonResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:commonResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.commonResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -689,7 +693,7 @@ scoreInfo::scoreInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   vol_score_(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:scoreInfo)
+  // @@protoc_insertion_point(arena_constructor:helmsley.scoreInfo)
 }
 scoreInfo::scoreInfo(const scoreInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
@@ -699,7 +703,7 @@ scoreInfo::scoreInfo(const scoreInfo& from)
   ::memcpy(&rgroup_id_, &from.rgroup_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&rank_score_) -
     reinterpret_cast<char*>(&rgroup_id_)) + sizeof(rank_score_));
-  // @@protoc_insertion_point(copy_constructor:scoreInfo)
+  // @@protoc_insertion_point(copy_constructor:helmsley.scoreInfo)
 }
 
 void scoreInfo::SharedCtor() {
@@ -709,7 +713,7 @@ void scoreInfo::SharedCtor() {
 }
 
 scoreInfo::~scoreInfo() {
-  // @@protoc_insertion_point(destructor:scoreInfo)
+  // @@protoc_insertion_point(destructor:helmsley.scoreInfo)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -734,7 +738,7 @@ const scoreInfo& scoreInfo::default_instance() {
 
 
 void scoreInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:scoreInfo)
+// @@protoc_insertion_point(message_clear_start:helmsley.scoreInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -820,7 +824,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* scoreInfo::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:scoreInfo)
+  // @@protoc_insertion_point(serialize_to_array_start:helmsley.scoreInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -856,12 +860,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:scoreInfo)
+  // @@protoc_insertion_point(serialize_to_array_end:helmsley.scoreInfo)
   return target;
 }
 
 size_t scoreInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:scoreInfo)
+// @@protoc_insertion_point(message_byte_size_start:helmsley.scoreInfo)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -927,22 +931,22 @@ size_t scoreInfo::ByteSizeLong() const {
 }
 
 void scoreInfo::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:scoreInfo)
+// @@protoc_insertion_point(generalized_merge_from_start:helmsley.scoreInfo)
   GOOGLE_DCHECK_NE(&from, this);
   const scoreInfo* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<scoreInfo>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:scoreInfo)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.scoreInfo)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:scoreInfo)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.scoreInfo)
     MergeFrom(*source);
   }
 }
 
 void scoreInfo::MergeFrom(const scoreInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:scoreInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.scoreInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -962,14 +966,14 @@ void scoreInfo::MergeFrom(const scoreInfo& from) {
 }
 
 void scoreInfo::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:scoreInfo)
+// @@protoc_insertion_point(generalized_copy_from_start:helmsley.scoreInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void scoreInfo::CopyFrom(const scoreInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:scoreInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.scoreInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1000,15 +1004,15 @@ void scoreInfo::InternalSwap(scoreInfo* other) {
 // ===================================================================
 
 void volumeInfo::InitAsDefaultInstance() {
-  ::_volumeInfo_default_instance_._instance.get_mutable()->scores_ = const_cast< ::scoreInfo*>(
-      ::scoreInfo::internal_default_instance());
+  ::helmsley::_volumeInfo_default_instance_._instance.get_mutable()->scores_ = const_cast< ::helmsley::scoreInfo*>(
+      ::helmsley::scoreInfo::internal_default_instance());
 }
 class volumeInfo::_Internal {
  public:
-  static const ::scoreInfo& scores(const volumeInfo* msg);
+  static const ::helmsley::scoreInfo& scores(const volumeInfo* msg);
 };
 
-const ::scoreInfo&
+const ::helmsley::scoreInfo&
 volumeInfo::_Internal::scores(const volumeInfo* msg) {
   return *msg->scores_;
 }
@@ -1019,7 +1023,7 @@ volumeInfo::volumeInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   resolution_(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:volumeInfo)
+  // @@protoc_insertion_point(arena_constructor:helmsley.volumeInfo)
 }
 volumeInfo::volumeInfo(const volumeInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
@@ -1043,14 +1047,14 @@ volumeInfo::volumeInfo(const volumeInfo& from)
       GetArena());
   }
   if (from._internal_has_scores()) {
-    scores_ = new ::scoreInfo(*from.scores_);
+    scores_ = new ::helmsley::scoreInfo(*from.scores_);
   } else {
     scores_ = nullptr;
   }
   ::memcpy(&volume_loc_range_, &from.volume_loc_range_,
     static_cast<size_t>(reinterpret_cast<char*>(&data_source_) -
     reinterpret_cast<char*>(&volume_loc_range_)) + sizeof(data_source_));
-  // @@protoc_insertion_point(copy_constructor:volumeInfo)
+  // @@protoc_insertion_point(copy_constructor:helmsley.volumeInfo)
 }
 
 void volumeInfo::SharedCtor() {
@@ -1064,7 +1068,7 @@ void volumeInfo::SharedCtor() {
 }
 
 volumeInfo::~volumeInfo() {
-  // @@protoc_insertion_point(destructor:volumeInfo)
+  // @@protoc_insertion_point(destructor:helmsley.volumeInfo)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1093,7 +1097,7 @@ const volumeInfo& volumeInfo::default_instance() {
 
 
 void volumeInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:volumeInfo)
+// @@protoc_insertion_point(message_clear_start:helmsley.volumeInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1127,7 +1131,7 @@ const char* volumeInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           auto str = _internal_mutable_folder_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "volumeInfo.folder_name"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.volumeInfo.folder_name"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1136,7 +1140,7 @@ const char* volumeInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_folder_path();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "volumeInfo.folder_path"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.volumeInfo.folder_path"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1184,12 +1188,12 @@ const char* volumeInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .volumeInfo.DataSource data_source = 8;
+      // .helmsley.volumeInfo.DataSource data_source = 8;
       case 8:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_data_source(static_cast<::volumeInfo_DataSource>(val));
+          _internal_set_data_source(static_cast<::helmsley::volumeInfo_DataSource>(val));
         } else goto handle_unusual;
         continue;
       // bytes sample_img = 9;
@@ -1200,7 +1204,7 @@ const char* volumeInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .scoreInfo scores = 10;
+      // .helmsley.scoreInfo scores = 10;
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
           ptr = ctx->ParseMessage(_internal_mutable_scores(), ptr);
@@ -1231,7 +1235,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* volumeInfo::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:volumeInfo)
+  // @@protoc_insertion_point(serialize_to_array_start:helmsley.volumeInfo)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1240,7 +1244,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_folder_name().data(), static_cast<int>(this->_internal_folder_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "volumeInfo.folder_name");
+      "helmsley.volumeInfo.folder_name");
     target = stream->WriteStringMaybeAliased(
         1, this->_internal_folder_name(), target);
   }
@@ -1250,7 +1254,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_folder_path().data(), static_cast<int>(this->_internal_folder_path().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "volumeInfo.folder_path");
+      "helmsley.volumeInfo.folder_path");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_folder_path(), target);
   }
@@ -1286,7 +1290,7 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(7, this->_internal_with_mask(), target);
   }
 
-  // .volumeInfo.DataSource data_source = 8;
+  // .helmsley.volumeInfo.DataSource data_source = 8;
   if (this->data_source() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
@@ -1299,7 +1303,7 @@ failure:
         9, this->_internal_sample_img(), target);
   }
 
-  // .scoreInfo scores = 10;
+  // .helmsley.scoreInfo scores = 10;
   if (this->has_scores()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -1311,12 +1315,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:volumeInfo)
+  // @@protoc_insertion_point(serialize_to_array_end:helmsley.volumeInfo)
   return target;
 }
 
 size_t volumeInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:volumeInfo)
+// @@protoc_insertion_point(message_byte_size_start:helmsley.volumeInfo)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -1389,7 +1393,7 @@ size_t volumeInfo::ByteSizeLong() const {
         this->_internal_sample_img());
   }
 
-  // .scoreInfo scores = 10;
+  // .helmsley.scoreInfo scores = 10;
   if (this->has_scores()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -1406,7 +1410,7 @@ size_t volumeInfo::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // .volumeInfo.DataSource data_source = 8;
+  // .helmsley.volumeInfo.DataSource data_source = 8;
   if (this->data_source() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_data_source());
@@ -1422,22 +1426,22 @@ size_t volumeInfo::ByteSizeLong() const {
 }
 
 void volumeInfo::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:volumeInfo)
+// @@protoc_insertion_point(generalized_merge_from_start:helmsley.volumeInfo)
   GOOGLE_DCHECK_NE(&from, this);
   const volumeInfo* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<volumeInfo>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:volumeInfo)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.volumeInfo)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:volumeInfo)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.volumeInfo)
     MergeFrom(*source);
   }
 }
 
 void volumeInfo::MergeFrom(const volumeInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:volumeInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.volumeInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -1456,7 +1460,7 @@ void volumeInfo::MergeFrom(const volumeInfo& from) {
     _internal_set_sample_img(from._internal_sample_img());
   }
   if (from.has_scores()) {
-    _internal_mutable_scores()->::scoreInfo::MergeFrom(from._internal_scores());
+    _internal_mutable_scores()->::helmsley::scoreInfo::MergeFrom(from._internal_scores());
   }
   if (!(from.volume_loc_range() <= 0 && from.volume_loc_range() >= 0)) {
     _internal_set_volume_loc_range(from._internal_volume_loc_range());
@@ -1470,14 +1474,14 @@ void volumeInfo::MergeFrom(const volumeInfo& from) {
 }
 
 void volumeInfo::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:volumeInfo)
+// @@protoc_insertion_point(generalized_copy_from_start:helmsley.volumeInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void volumeInfo::CopyFrom(const volumeInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:volumeInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.volumeInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1510,18 +1514,19 @@ void volumeInfo::InternalSwap(volumeInfo* other) {
 
 
 // @@protoc_insertion_point(namespace_scope)
+}  // namespace helmsley
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::Request* Arena::CreateMaybeMessage< ::Request >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::Request >(arena);
+template<> PROTOBUF_NOINLINE ::helmsley::Request* Arena::CreateMaybeMessage< ::helmsley::Request >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::helmsley::Request >(arena);
 }
-template<> PROTOBUF_NOINLINE ::commonResponse* Arena::CreateMaybeMessage< ::commonResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::commonResponse >(arena);
+template<> PROTOBUF_NOINLINE ::helmsley::commonResponse* Arena::CreateMaybeMessage< ::helmsley::commonResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::helmsley::commonResponse >(arena);
 }
-template<> PROTOBUF_NOINLINE ::scoreInfo* Arena::CreateMaybeMessage< ::scoreInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::scoreInfo >(arena);
+template<> PROTOBUF_NOINLINE ::helmsley::scoreInfo* Arena::CreateMaybeMessage< ::helmsley::scoreInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::helmsley::scoreInfo >(arena);
 }
-template<> PROTOBUF_NOINLINE ::volumeInfo* Arena::CreateMaybeMessage< ::volumeInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::volumeInfo >(arena);
+template<> PROTOBUF_NOINLINE ::helmsley::volumeInfo* Arena::CreateMaybeMessage< ::helmsley::volumeInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::helmsley::volumeInfo >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

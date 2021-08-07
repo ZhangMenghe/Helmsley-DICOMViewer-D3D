@@ -1,51 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<Package
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
-  IgnorableNamespaces="uap mp uap2">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+         xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+         xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         IgnorableNamespaces="uap mp uap2 iot uap6 rescap">
 
-  <Identity
-    Name="f07fa7ec-74b0-46e1-be8e-36a14ebd7baf"
-    Publisher="CN=vcucsd"
-    Version="0.1.4.0" />
-  <mp:PhoneIdentity PhoneProductId="f07fa7ec-74b0-46e1-be8e-36a14ebd7baf" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+    <Identity Name="f07fa7ec-74b0-46e1-be8e-36a14ebd7baf"
+              Publisher="CN=vcucsd"
+              Version="0.1.4.0" />
+    <mp:PhoneIdentity PhoneProductId="f07fa7ec-74b0-46e1-be8e-36a14ebd7baf" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
 
-  <Properties>
-    <DisplayName>Helmsley-DICOMViewer</DisplayName>
-    <PublisherDisplayName>vcucsd</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
-  </Properties>
+    <Properties>
+        <DisplayName>Helmsley-DICOMViewer</DisplayName>
+        <PublisherDisplayName>vcucsd</PublisherDisplayName>
+        <Logo>Assets\StoreLogo.png</Logo>
+    </Properties>
 
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
-  </Dependencies>
+    <Dependencies>
+        <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    </Dependencies>
 
-  <Resources>
-    <Resource Language="x-generate"/>
-  </Resources>
+    <Resources>
+        <Resource Language="x-generate" />
+    </Resources>
 
-  <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="OpenXR.App">
-      <uap:VisualElements
-        DisplayName="Helmsley-DICOMViewer"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="DICOM Viewer on Hololens 2. Developed with OpenXR + D3D11"
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Helmsley"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
-      </uap:VisualElements>
-    </Application>
-  </Applications>
+    <Applications>
+        <Application Id="App"
+                     Executable="$targetnametoken$.exe"
+                     EntryPoint="OpenXR.App">
+            <uap:VisualElements DisplayName="Helmsley-DICOMViewer"
+                                Square150x150Logo="Assets\Square150x150Logo.png"
+                                Square44x44Logo="Assets\Square44x44Logo.png"
+                                Description="DICOM Viewer on Hololens 2. Developed with OpenXR + D3D11"
+                                BackgroundColor="transparent">
+                <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Helmsley" />
+                <uap:SplashScreen Image="Assets\SplashScreen.png" />
+            </uap:VisualElements>
+        </Application>
+    </Applications>
 
-  <Capabilities>
-    <Capability Name="internetClient" />
-    <uap2:Capability Name="spatialPerception"/>
-    <DeviceCapability Name="webcam"/>
-  </Capabilities>
+    <Capabilities>
+        <Capability Name="internetClient" />
+        <uap2:Capability Name="spatialPerception" />
+        <iot:Capability Name="lowLevelDevices" />
+        <uap6:Capability Name="graphicsCapture" />
+        <DeviceCapability Name="webcam" />
+        <DeviceCapability Name="proximity" />
+        <DeviceCapability Name="lowLevel" />
+        <DeviceCapability Name="perceptionSensorsExperimental" />
+    </Capabilities>
 </Package>

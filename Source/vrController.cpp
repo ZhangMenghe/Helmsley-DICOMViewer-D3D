@@ -4,6 +4,7 @@
 #include <Common/DirectXHelper.h>
 #include <Utils/MathUtils.h>
 #include <Utils/TypeConvertUtils.h>
+#include <OXRs/OXRManager.h>
 using namespace dvr;
 using namespace DirectX;
 //using namespace winrt::Windows::Foundation;
@@ -22,17 +23,22 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	myPtr_ = this;
 	auto device = deviceResources->GetD3DDevice();
 	screen_quad = new screenQuadRenderer(device);
-	//raycast_renderer = new raycastVolumeRenderer(device);
-	texvrRenderer_ = new textureBasedVolumeRenderer(device);
-	//cutter_ = new cuttingController(device);
-	//data_board_ = new dataBoard(device);
-	//meshRenderer_ = new organMeshRenderer(device);
+	raycast_renderer = new raycastVolumeRenderer(device);
+	texvrRenderer_ = new viewAlignedSlicingRenderer(device);// TODO: new textureBasedVolumeRenderer(device);
+	cutter_ = new cuttingController(device);
+	data_board_ = new dataBoard(device);
+	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 	onReset();
 }
+
+glm::mat4 vrController::getSensorMatrixAtTime(uint64_t time) {
+	return oxrManager->getSensorMatrixAtTime(time);
+}
+
 void vrController::onReset()
 {
 	SpaceMat_ = glm::mat4(1.0f);
@@ -69,8 +75,8 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 
 void vrController::InitOXRScene()
 {
-	uniScale = 0.5f;
-	PosVec3_.z = -1.0f;
+	uniScale = 0.1f;
+	//PosVec3_.z = -1.0f;
 	volume_model_dirty = true;
 }
 
@@ -108,7 +114,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
 		m_manager->setDimension(vol_dimension_);
 		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
-		//cutter_->setDimension(pd, vol_dim_scale_.z);
+		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
 
 	if (tex_volume != nullptr)
@@ -148,7 +154,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 	Manager::baked_dirty_ = true;
 
-	//meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
 }
 
 void vrController::init_texture()
@@ -306,14 +312,16 @@ void vrController::precompute()
 	// Disable Compute Shader
 	context->CSSetShader(nullptr, nullptr, 0);
 
-	//data_board_->Update(m_deviceResources->GetD3DDevice(), context);
+	data_board_->Update(m_deviceResources->GetD3DDevice(), context);
 	Manager::baked_dirty_ = false;
 }
 
 void vrController::render_scene(int view_id)
 {
+	
 	if (volume_model_dirty)
 	{
+		dirty_since_last_query = true;
 		updateVolumeModelMat();
 		volume_model_dirty = false;
 	}
@@ -322,8 +330,11 @@ void vrController::render_scene(int view_id)
 	//front or back
 	DirectX::XMFLOAT4X4 m_rot_mat;
 	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-	auto model_mat_tex = m_use_space_mat ? SpaceMat_ * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)) : ModelMat_;
+	//auto model_mat_tex = m_use_space_mat ? SpaceMat_ * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)) : ModelMat_;
+	auto model_mat_tex = ModelMat_ * glm::translate(glm::mat4(1.0f), glm::vec3(SpaceMat_[3])) * RotateMat_ * glm::translate(glm::mat4(1.0f), -glm::vec3(SpaceMat_[3])) * SpaceMat_ * ScaleMat_;//ModelMat_ * glm::translate(glm::mat4(1.0f), glm::vec3(SpaceMat_[3])) * RotateMat_ * glm::translate(glm::mat4(1.0f), -glm::vec3(SpaceMat_[3])) * SpaceMat_ *  ScaleMat_;
 	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
+
+	texvrRenderer_->updateVertices(context, model_mat_tex);
 
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
@@ -495,7 +506,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 	{
 		// Update cutting plane
 		glm::vec3 normal = glm::vec3(-1, 0, 0);
-		auto inv_model_mat = glm::inverse(SpaceMat_ * ModelMat_ * vol_dim_scale_mat_);
+		auto inv_model_mat = glm::inverse(ModelMat_ * glm::translate(glm::mat4(1.0f), glm::vec3(SpaceMat_[3])) * RotateMat_ * glm::translate(glm::mat4(1.0f), -glm::vec3(SpaceMat_[3])) * SpaceMat_ * ScaleMat_ * vol_dim_scale_mat_);
 		normal = glm::mat3(inv_model_mat) * glm::mat3(rot) * normal;
 
 		glm::vec3 pos = glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1)); //glm::vec3(x, y, z);//glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));
@@ -705,8 +716,9 @@ void vrController::onPan(float x, float y)
 }
 void vrController::updateVolumeModelMat()
 {
+	ScaleMat_ = glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale));
 	ModelMat_ =
-			glm::translate(glm::mat4(1.0), PosVec3_) * RotateMat_ * glm::scale(glm::mat4(1.0), ScaleVec3_) * glm::scale(glm::mat4(1.0), glm::vec3(uniScale));
+		glm::translate(glm::mat4(1.0), PosVec3_); // * RotateMat_
 }
 
 bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)
@@ -773,7 +785,6 @@ void vrController::setupCenterLine(int id, float *data)
 }
 void vrController::setCuttingPlane(float value)
 {
-	return;
 	if (Manager::param_bool[dvr::CHECK_CUTTING])
 	{
 		if (!Manager::isRayCasting())
@@ -795,7 +806,6 @@ void vrController::setCuttingPlane(float value)
 }
 void vrController::setCuttingPlane(int id, int delta)
 {
-	return;
 	if (Manager::param_bool[dvr::CHECK_CUTTING])
 	{
 		cutter_->setCuttingPlaneDelta(delta);
@@ -815,13 +825,11 @@ void vrController::setCuttingPlane(int id, int delta)
 }
 void vrController::setCuttingPlane(glm::vec3 pp, glm::vec3 pn)
 {
-	return;
 	cutter_->setCutPlane(pp, pn);
 	m_scene_dirty = true;
 }
 void vrController::switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id)
 {
-	return;
 	cutter_->SwitchCuttingPlane(cut_plane_id);
 	if (Manager::param_bool[dvr::CHECK_TRAVERSAL_VIEW])
 		AlignModelMatToTraversalPlane();
@@ -847,7 +855,6 @@ bool vrController::isDirty()
 }
 void vrController::AlignModelMatToTraversalPlane()
 {
-	return;
 	glm::vec3 pp, pn;
 	cutter_->getCurrentTraversalInfo(pp, pn);
 	pn = glm::normalize(pn);
@@ -855,4 +862,13 @@ void vrController::AlignModelMatToTraversalPlane()
 	RotateMat_ = glm::toMat4(glm::rotation(pn, glm::vec3(.0, .0, -1.0f)));
 
 	volume_model_dirty = true;
+}
+
+bool vrController::getVolumePose(glm::vec3& pos, glm::quat& rot, float& scale) {
+	pos = this->PosVec3_;
+	rot = glm::quat_cast(this->RotateMat_);
+	scale = this->uniScale;
+	bool flag = dirty_since_last_query;
+	dirty_since_last_query = false;
+	return flag;
 }

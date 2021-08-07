@@ -896,22 +896,22 @@ class volumeResponse PROTOBUF_FINAL :
   enum : int {
     kVolumesFieldNumber = 1,
   };
-  // repeated .volumeInfo volumes = 1;
+  // repeated .helmsley.volumeInfo volumes = 1;
   int volumes_size() const;
   private:
   int _internal_volumes_size() const;
   public:
   void clear_volumes();
-  ::volumeInfo* mutable_volumes(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >*
+  ::helmsley::volumeInfo* mutable_volumes(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeInfo >*
       mutable_volumes();
   private:
-  const ::volumeInfo& _internal_volumes(int index) const;
-  ::volumeInfo* _internal_add_volumes();
+  const ::helmsley::volumeInfo& _internal_volumes(int index) const;
+  ::helmsley::volumeInfo* _internal_add_volumes();
   public:
-  const ::volumeInfo& volumes(int index) const;
-  ::volumeInfo* add_volumes();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >&
+  const ::helmsley::volumeInfo& volumes(int index) const;
+  ::helmsley::volumeInfo* add_volumes();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeInfo >&
       volumes() const;
 
   // @@protoc_insertion_point(class_scope:helmsley.volumeResponse)
@@ -921,7 +921,7 @@ class volumeResponse PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo > volumes_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeInfo > volumes_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_transManager_2eproto;
 };
@@ -2103,37 +2103,37 @@ datasetResponse::datasets() const {
 
 // volumeResponse
 
-// repeated .volumeInfo volumes = 1;
+// repeated .helmsley.volumeInfo volumes = 1;
 inline int volumeResponse::_internal_volumes_size() const {
   return volumes_.size();
 }
 inline int volumeResponse::volumes_size() const {
   return _internal_volumes_size();
 }
-inline ::volumeInfo* volumeResponse::mutable_volumes(int index) {
+inline ::helmsley::volumeInfo* volumeResponse::mutable_volumes(int index) {
   // @@protoc_insertion_point(field_mutable:helmsley.volumeResponse.volumes)
   return volumes_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeInfo >*
 volumeResponse::mutable_volumes() {
   // @@protoc_insertion_point(field_mutable_list:helmsley.volumeResponse.volumes)
   return &volumes_;
 }
-inline const ::volumeInfo& volumeResponse::_internal_volumes(int index) const {
+inline const ::helmsley::volumeInfo& volumeResponse::_internal_volumes(int index) const {
   return volumes_.Get(index);
 }
-inline const ::volumeInfo& volumeResponse::volumes(int index) const {
+inline const ::helmsley::volumeInfo& volumeResponse::volumes(int index) const {
   // @@protoc_insertion_point(field_get:helmsley.volumeResponse.volumes)
   return _internal_volumes(index);
 }
-inline ::volumeInfo* volumeResponse::_internal_add_volumes() {
+inline ::helmsley::volumeInfo* volumeResponse::_internal_add_volumes() {
   return volumes_.Add();
 }
-inline ::volumeInfo* volumeResponse::add_volumes() {
+inline ::helmsley::volumeInfo* volumeResponse::add_volumes() {
   // @@protoc_insertion_point(field_add:helmsley.volumeResponse.volumes)
   return _internal_add_volumes();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::volumeInfo >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::volumeInfo >&
 volumeResponse::volumes() const {
   // @@protoc_insertion_point(field_list:helmsley.volumeResponse.volumes)
   return volumes_;

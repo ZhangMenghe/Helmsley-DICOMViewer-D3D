@@ -62,6 +62,7 @@ void dataBoard::onReset(ID3D11Device* device){
     //CREATE NEW
     if (!m_initialized) {
         m_board_quad = new quadRenderer(device, { 0.086f, 0.098f, 0.23f, 1.0f });
+        m_board_quad->initialize();
 
         //color bar
         m_color_vertices = new float[24];
@@ -77,7 +78,7 @@ void dataBoard::onReset(ID3D11Device* device){
         }
 
         m_color_bar = new quadRenderer(device, L"QuadVertexShader.cso", L"QuadPixelShader.cso", m_color_vertices);
-
+        m_color_bar->initialize();
         //compute shader
 
         auto loadCSTask = DX::ReadDataAsync(L"colorTransferCompute.cso");
@@ -187,10 +188,12 @@ void dataBoard::Update(ID3D11Device* device, ID3D11DeviceContext* context) {
             m_opacity_graphs[dirty_wid]->updateVertexBuffer(context, m_opacity_vertices[dirty_wid]);
             break;
         case 1:
-            m_opacity_graphs.push_back(new quadRenderer(device,
-                L"Naive3DVertexShader.cso", L"ClippedColorPixelShader.cso",
-                nullptr, m_opacity_indices, 0, 12, dvr::INPUT_POS_3D
-            ));
+          auto graph = new quadRenderer(device,
+            L"Naive3DVertexShader.cso", L"ClippedColorPixelShader.cso",
+            nullptr, m_opacity_indices, 0, 12, dvr::INPUT_POS_3D
+          );
+            graph->initialize();
+            m_opacity_graphs.push_back(graph);
 
             m_opacity_vertices.push_back(new float[18]);
             if (m_default_opacity_data == nullptr)

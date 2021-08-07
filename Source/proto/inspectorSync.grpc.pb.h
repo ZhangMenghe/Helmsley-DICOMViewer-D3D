@@ -36,151 +36,151 @@ class inspectorSync final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status startBroadcast(::grpc::ClientContext* context, const ::Request& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncstartBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncstartBroadcastRaw(context, request, cq));
+    virtual ::grpc::Status startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncstartBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncstartBroadcastRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncstartBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncstartBroadcastRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncstartBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncstartBroadcastRaw(context, request, cq));
     }
-    virtual ::grpc::Status startReceiveBroadcast(::grpc::ClientContext* context, const ::Request& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncstartReceiveBroadcastRaw(context, request, cq));
+    virtual ::grpc::Status startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncstartReceiveBroadcastRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncstartReceiveBroadcastRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncstartReceiveBroadcastRaw(context, request, cq));
     }
-    virtual ::grpc::Status gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncgsVolumePoseRaw(context, request, cq));
+    virtual ::grpc::Status gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::helmsley::VPMsg* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::VPMsg>> AsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::VPMsg>>(AsyncgsVolumePoseRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncgsVolumePoseRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::VPMsg>> PrepareAsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::VPMsg>>(PrepareAsyncgsVolumePoseRaw(context, request, cq));
     }
-    virtual ::grpc::Status getOperations(::grpc::ClientContext* context, const ::Request& request, ::helmsley::OperationBatch* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>> AsyncgetOperations(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    virtual ::grpc::Status getOperations(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::OperationBatch* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>> AsyncgetOperations(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>>(AsyncgetOperationsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>> PrepareAsyncgetOperations(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>> PrepareAsyncgetOperations(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>>(PrepareAsyncgetOperationsRaw(context, request, cq));
     }
-    virtual ::grpc::Status getUpdates(::grpc::ClientContext* context, const ::Request& request, ::helmsley::FrameUpdateMsg* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>> AsyncgetUpdates(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    virtual ::grpc::Status getUpdates(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::FrameUpdateMsg* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>> AsyncgetUpdates(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>>(AsyncgetUpdatesRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>> PrepareAsyncgetUpdates(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>> PrepareAsyncgetUpdates(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>>(PrepareAsyncgetUpdatesRaw(context, request, cq));
     }
-    virtual ::grpc::Status reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncreqestResetRaw(context, request, cq));
+    virtual ::grpc::Status reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncreqestResetRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncreqestResetRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncreqestResetRaw(context, request, cq));
     }
-    virtual ::grpc::Status setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncsetGestureOpRaw(context, request, cq));
+    virtual ::grpc::Status setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncsetGestureOpRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncsetGestureOpRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncsetGestureOpRaw(context, request, cq));
     }
-    virtual ::grpc::Status setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncsetTuneParamsRaw(context, request, cq));
+    virtual ::grpc::Status setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncsetTuneParamsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncsetTuneParamsRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncsetTuneParamsRaw(context, request, cq));
     }
-    virtual ::grpc::Status setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncsetCheckParamsRaw(context, request, cq));
+    virtual ::grpc::Status setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncsetCheckParamsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncsetCheckParamsRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncsetCheckParamsRaw(context, request, cq));
     }
-    virtual ::grpc::Status setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncsetMaskParamsRaw(context, request, cq));
+    virtual ::grpc::Status setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncsetMaskParamsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncsetMaskParamsRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncsetMaskParamsRaw(context, request, cq));
     }
-    virtual ::grpc::Status setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::commonResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> AsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(AsyncsetDisplayVolumeRaw(context, request, cq));
+    virtual ::grpc::Status setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::helmsley::commonResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> AsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(AsyncsetDisplayVolumeRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>> PrepareAsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>>(PrepareAsyncsetDisplayVolumeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>> PrepareAsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>>(PrepareAsyncsetDisplayVolumeRaw(context, request, cq));
     }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
-      virtual void startBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void startBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void startBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void startReceiveBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void startReceiveBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void startReceiveBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void getOperations(::grpc::ClientContext* context, const ::Request* request, ::helmsley::OperationBatch* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void getOperations(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void getOperations(::grpc::ClientContext* context, const ::Request* request, ::helmsley::OperationBatch* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void getOperations(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void getOperations(::grpc::ClientContext* context, const ::Request* request, ::helmsley::OperationBatch* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void getOperations(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void getUpdates(::grpc::ClientContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void getUpdates(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void getUpdates(::grpc::ClientContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void getUpdates(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void getUpdates(::grpc::ClientContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void getUpdates(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -191,177 +191,177 @@ class inspectorSync final {
     #endif
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>* AsyncgetOperationsRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>* PrepareAsyncgetOperationsRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>* AsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>* PrepareAsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* AsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::commonResponse>* PrepareAsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::VPMsg>* AsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::VPMsg>* PrepareAsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>* AsyncgetOperationsRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::OperationBatch>* PrepareAsyncgetOperationsRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>* AsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::FrameUpdateMsg>* PrepareAsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* AsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::helmsley::commonResponse>* PrepareAsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
-    ::grpc::Status startBroadcast(::grpc::ClientContext* context, const ::Request& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncstartBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncstartBroadcastRaw(context, request, cq));
+    ::grpc::Status startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncstartBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncstartBroadcastRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncstartBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncstartBroadcastRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncstartBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncstartBroadcastRaw(context, request, cq));
     }
-    ::grpc::Status startReceiveBroadcast(::grpc::ClientContext* context, const ::Request& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncstartReceiveBroadcastRaw(context, request, cq));
+    ::grpc::Status startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncstartReceiveBroadcastRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncstartReceiveBroadcastRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncstartReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncstartReceiveBroadcastRaw(context, request, cq));
     }
-    ::grpc::Status gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncgsVolumePoseRaw(context, request, cq));
+    ::grpc::Status gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::helmsley::VPMsg* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::VPMsg>> AsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::VPMsg>>(AsyncgsVolumePoseRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncgsVolumePoseRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::VPMsg>> PrepareAsyncgsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::VPMsg>>(PrepareAsyncgsVolumePoseRaw(context, request, cq));
     }
-    ::grpc::Status getOperations(::grpc::ClientContext* context, const ::Request& request, ::helmsley::OperationBatch* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>> AsyncgetOperations(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    ::grpc::Status getOperations(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::OperationBatch* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>> AsyncgetOperations(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>>(AsyncgetOperationsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>> PrepareAsyncgetOperations(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>> PrepareAsyncgetOperations(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>>(PrepareAsyncgetOperationsRaw(context, request, cq));
     }
-    ::grpc::Status getUpdates(::grpc::ClientContext* context, const ::Request& request, ::helmsley::FrameUpdateMsg* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>> AsyncgetUpdates(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    ::grpc::Status getUpdates(::grpc::ClientContext* context, const ::helmsley::Request& request, ::helmsley::FrameUpdateMsg* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>> AsyncgetUpdates(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>>(AsyncgetUpdatesRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>> PrepareAsyncgetUpdates(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>> PrepareAsyncgetUpdates(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>>(PrepareAsyncgetUpdatesRaw(context, request, cq));
     }
-    ::grpc::Status reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncreqestResetRaw(context, request, cq));
+    ::grpc::Status reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncreqestResetRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncreqestResetRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncreqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncreqestResetRaw(context, request, cq));
     }
-    ::grpc::Status setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncsetGestureOpRaw(context, request, cq));
+    ::grpc::Status setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncsetGestureOpRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncsetGestureOpRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncsetGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncsetGestureOpRaw(context, request, cq));
     }
-    ::grpc::Status setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncsetTuneParamsRaw(context, request, cq));
+    ::grpc::Status setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncsetTuneParamsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncsetTuneParamsRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncsetTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncsetTuneParamsRaw(context, request, cq));
     }
-    ::grpc::Status setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncsetCheckParamsRaw(context, request, cq));
+    ::grpc::Status setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncsetCheckParamsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncsetCheckParamsRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncsetCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncsetCheckParamsRaw(context, request, cq));
     }
-    ::grpc::Status setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncsetMaskParamsRaw(context, request, cq));
+    ::grpc::Status setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncsetMaskParamsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncsetMaskParamsRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncsetMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncsetMaskParamsRaw(context, request, cq));
     }
-    ::grpc::Status setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::commonResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> AsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(AsyncsetDisplayVolumeRaw(context, request, cq));
+    ::grpc::Status setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::helmsley::commonResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> AsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(AsyncsetDisplayVolumeRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>> PrepareAsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::commonResponse>>(PrepareAsyncsetDisplayVolumeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>> PrepareAsyncsetDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>>(PrepareAsyncsetDisplayVolumeRaw(context, request, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
-      void startBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void startBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void startBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void startBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void startReceiveBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void startReceiveBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void startReceiveBroadcast(::grpc::ClientContext* context, const ::Request* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void startReceiveBroadcast(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void getOperations(::grpc::ClientContext* context, const ::Request* request, ::helmsley::OperationBatch* response, std::function<void(::grpc::Status)>) override;
+      void getOperations(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void getOperations(::grpc::ClientContext* context, const ::Request* request, ::helmsley::OperationBatch* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void getOperations(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void getOperations(::grpc::ClientContext* context, const ::Request* request, ::helmsley::OperationBatch* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void getOperations(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void getUpdates(::grpc::ClientContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response, std::function<void(::grpc::Status)>) override;
+      void getUpdates(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void getUpdates(::grpc::ClientContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void getUpdates(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void getUpdates(::grpc::ClientContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void getUpdates(::grpc::ClientContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void setGestureOp(::grpc::ClientContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void setTuneParams(::grpc::ClientContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void setCheckParams(::grpc::ClientContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void setMaskParams(::grpc::ClientContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)>) override;
+      void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void setDisplayVolume(::grpc::ClientContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
      private:
       friend class Stub;
@@ -374,28 +374,28 @@ class inspectorSync final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class experimental_async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>* AsyncgetOperationsRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>* PrepareAsyncgetOperationsRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>* AsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>* PrepareAsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* AsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::commonResponse>* PrepareAsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncstartBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncstartReceiveBroadcastRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::VPMsg>* AsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::VPMsg>* PrepareAsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>* AsyncgetOperationsRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::OperationBatch>* PrepareAsyncgetOperationsRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>* AsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>* PrepareAsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::helmsley::Request& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncsetGestureOpRaw(::grpc::ClientContext* context, const ::helmsley::GestureOp& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncsetTuneParamsRaw(::grpc::ClientContext* context, const ::helmsley::TuneMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncsetCheckParamsRaw(::grpc::ClientContext* context, const ::helmsley::CheckMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncsetMaskParamsRaw(::grpc::ClientContext* context, const ::helmsley::MaskMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* AsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::helmsley::commonResponse>* PrepareAsyncsetDisplayVolumeRaw(::grpc::ClientContext* context, const ::helmsley::DataMsg& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_startBroadcast_;
     const ::grpc::internal::RpcMethod rpcmethod_startReceiveBroadcast_;
     const ::grpc::internal::RpcMethod rpcmethod_gsVolumePose_;
@@ -414,17 +414,17 @@ class inspectorSync final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status startBroadcast(::grpc::ServerContext* context, const ::Request* request, ::commonResponse* response);
-    virtual ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* context, const ::Request* request, ::commonResponse* response);
-    virtual ::grpc::Status gsVolumePose(::grpc::ServerContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response);
-    virtual ::grpc::Status getOperations(::grpc::ServerContext* context, const ::Request* request, ::helmsley::OperationBatch* response);
-    virtual ::grpc::Status getUpdates(::grpc::ServerContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response);
-    virtual ::grpc::Status reqestReset(::grpc::ServerContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response);
-    virtual ::grpc::Status setGestureOp(::grpc::ServerContext* context, const ::helmsley::GestureOp* request, ::commonResponse* response);
-    virtual ::grpc::Status setTuneParams(::grpc::ServerContext* context, const ::helmsley::TuneMsg* request, ::commonResponse* response);
-    virtual ::grpc::Status setCheckParams(::grpc::ServerContext* context, const ::helmsley::CheckMsg* request, ::commonResponse* response);
-    virtual ::grpc::Status setMaskParams(::grpc::ServerContext* context, const ::helmsley::MaskMsg* request, ::commonResponse* response);
-    virtual ::grpc::Status setDisplayVolume(::grpc::ServerContext* context, const ::helmsley::DataMsg* request, ::commonResponse* response);
+    virtual ::grpc::Status startBroadcast(::grpc::ServerContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* context, const ::helmsley::Request* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status gsVolumePose(::grpc::ServerContext* context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response);
+    virtual ::grpc::Status getOperations(::grpc::ServerContext* context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response);
+    virtual ::grpc::Status getUpdates(::grpc::ServerContext* context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response);
+    virtual ::grpc::Status reqestReset(::grpc::ServerContext* context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status setGestureOp(::grpc::ServerContext* context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status setTuneParams(::grpc::ServerContext* context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status setCheckParams(::grpc::ServerContext* context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status setMaskParams(::grpc::ServerContext* context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response);
+    virtual ::grpc::Status setDisplayVolume(::grpc::ServerContext* context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_startBroadcast : public BaseClass {
@@ -438,11 +438,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequeststartBroadcast(::grpc::ServerContext* context, ::Request* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequeststartBroadcast(::grpc::ServerContext* context, ::helmsley::Request* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -458,11 +458,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequeststartReceiveBroadcast(::grpc::ServerContext* context, ::Request* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequeststartReceiveBroadcast(::grpc::ServerContext* context, ::helmsley::Request* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -478,11 +478,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestgsVolumePose(::grpc::ServerContext* context, ::helmsley::VPMsg* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestgsVolumePose(::grpc::ServerContext* context, ::helmsley::VPMsg* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::VPMsg>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -498,11 +498,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
+    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestgetOperations(::grpc::ServerContext* context, ::Request* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::OperationBatch>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestgetOperations(::grpc::ServerContext* context, ::helmsley::Request* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::OperationBatch>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -518,11 +518,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
+    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestgetUpdates(::grpc::ServerContext* context, ::Request* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::FrameUpdateMsg>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestgetUpdates(::grpc::ServerContext* context, ::helmsley::Request* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::FrameUpdateMsg>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -538,11 +538,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestreqestReset(::grpc::ServerContext* context, ::helmsley::ResetMsg* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestreqestReset(::grpc::ServerContext* context, ::helmsley::ResetMsg* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -558,11 +558,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestsetGestureOp(::grpc::ServerContext* context, ::helmsley::GestureOp* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestsetGestureOp(::grpc::ServerContext* context, ::helmsley::GestureOp* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -578,11 +578,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestsetTuneParams(::grpc::ServerContext* context, ::helmsley::TuneMsg* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestsetTuneParams(::grpc::ServerContext* context, ::helmsley::TuneMsg* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -598,11 +598,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestsetCheckParams(::grpc::ServerContext* context, ::helmsley::CheckMsg* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestsetCheckParams(::grpc::ServerContext* context, ::helmsley::CheckMsg* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -618,11 +618,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestsetMaskParams(::grpc::ServerContext* context, ::helmsley::MaskMsg* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestsetMaskParams(::grpc::ServerContext* context, ::helmsley::MaskMsg* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -638,11 +638,11 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestsetDisplayVolume(::grpc::ServerContext* context, ::helmsley::DataMsg* request, ::grpc::ServerAsyncResponseWriter< ::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestsetDisplayVolume(::grpc::ServerContext* context, ::helmsley::DataMsg* request, ::grpc::ServerAsyncResponseWriter< ::helmsley::commonResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -659,38 +659,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::Request, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::Request* request, ::commonResponse* response) { return this->startBroadcast(context, request, response); }));}
+                     context, const ::helmsley::Request* request, ::helmsley::commonResponse* response) { return this->startBroadcast(context, request, response); }));}
     void SetMessageAllocatorFor_startBroadcast(
-        ::grpc::experimental::MessageAllocator< ::Request, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::Request, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::Request, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_startBroadcast() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* startBroadcast(
-      ::grpc::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* startBroadcast(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -706,38 +706,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::Request, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::Request* request, ::commonResponse* response) { return this->startReceiveBroadcast(context, request, response); }));}
+                     context, const ::helmsley::Request* request, ::helmsley::commonResponse* response) { return this->startReceiveBroadcast(context, request, response); }));}
     void SetMessageAllocatorFor_startReceiveBroadcast(
-        ::grpc::experimental::MessageAllocator< ::Request, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::Request, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(1);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::Request, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_startReceiveBroadcast() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* startReceiveBroadcast(
-      ::grpc::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* startReceiveBroadcast(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -753,38 +753,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(2,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::VPMsg, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::VPMsg, ::helmsley::VPMsg>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::VPMsg* request, ::commonResponse* response) { return this->gsVolumePose(context, request, response); }));}
+                     context, const ::helmsley::VPMsg* request, ::helmsley::VPMsg* response) { return this->gsVolumePose(context, request, response); }));}
     void SetMessageAllocatorFor_gsVolumePose(
-        ::grpc::experimental::MessageAllocator< ::helmsley::VPMsg, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::VPMsg, ::helmsley::VPMsg>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(2);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::VPMsg, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::VPMsg, ::helmsley::VPMsg>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_gsVolumePose() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* gsVolumePose(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* gsVolumePose(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -800,38 +800,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(3,
-          new ::grpc::internal::CallbackUnaryHandler< ::Request, ::helmsley::OperationBatch>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::OperationBatch>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::Request* request, ::helmsley::OperationBatch* response) { return this->getOperations(context, request, response); }));}
+                     context, const ::helmsley::Request* request, ::helmsley::OperationBatch* response) { return this->getOperations(context, request, response); }));}
     void SetMessageAllocatorFor_getOperations(
-        ::grpc::experimental::MessageAllocator< ::Request, ::helmsley::OperationBatch>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::Request, ::helmsley::OperationBatch>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(3);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::Request, ::helmsley::OperationBatch>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::OperationBatch>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_getOperations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
+    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* getOperations(
-      ::grpc::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* getOperations(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -847,38 +847,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(4,
-          new ::grpc::internal::CallbackUnaryHandler< ::Request, ::helmsley::FrameUpdateMsg>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::FrameUpdateMsg>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::Request* request, ::helmsley::FrameUpdateMsg* response) { return this->getUpdates(context, request, response); }));}
+                     context, const ::helmsley::Request* request, ::helmsley::FrameUpdateMsg* response) { return this->getUpdates(context, request, response); }));}
     void SetMessageAllocatorFor_getUpdates(
-        ::grpc::experimental::MessageAllocator< ::Request, ::helmsley::FrameUpdateMsg>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::Request, ::helmsley::FrameUpdateMsg>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(4);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::Request, ::helmsley::FrameUpdateMsg>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::Request, ::helmsley::FrameUpdateMsg>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_getUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
+    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* getUpdates(
-      ::grpc::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* getUpdates(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -894,38 +894,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(5,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::ResetMsg, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::ResetMsg, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::ResetMsg* request, ::commonResponse* response) { return this->reqestReset(context, request, response); }));}
+                     context, const ::helmsley::ResetMsg* request, ::helmsley::commonResponse* response) { return this->reqestReset(context, request, response); }));}
     void SetMessageAllocatorFor_reqestReset(
-        ::grpc::experimental::MessageAllocator< ::helmsley::ResetMsg, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::ResetMsg, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(5);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::ResetMsg, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::ResetMsg, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_reqestReset() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* reqestReset(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* reqestReset(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -941,38 +941,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(6,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::GestureOp, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::GestureOp, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::GestureOp* request, ::commonResponse* response) { return this->setGestureOp(context, request, response); }));}
+                     context, const ::helmsley::GestureOp* request, ::helmsley::commonResponse* response) { return this->setGestureOp(context, request, response); }));}
     void SetMessageAllocatorFor_setGestureOp(
-        ::grpc::experimental::MessageAllocator< ::helmsley::GestureOp, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::GestureOp, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(6);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::GestureOp, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::GestureOp, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_setGestureOp() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* setGestureOp(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* setGestureOp(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -988,38 +988,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(7,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::TuneMsg, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::TuneMsg, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::TuneMsg* request, ::commonResponse* response) { return this->setTuneParams(context, request, response); }));}
+                     context, const ::helmsley::TuneMsg* request, ::helmsley::commonResponse* response) { return this->setTuneParams(context, request, response); }));}
     void SetMessageAllocatorFor_setTuneParams(
-        ::grpc::experimental::MessageAllocator< ::helmsley::TuneMsg, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::TuneMsg, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(7);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::TuneMsg, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::TuneMsg, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_setTuneParams() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* setTuneParams(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* setTuneParams(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -1035,38 +1035,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(8,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::CheckMsg, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::CheckMsg, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::CheckMsg* request, ::commonResponse* response) { return this->setCheckParams(context, request, response); }));}
+                     context, const ::helmsley::CheckMsg* request, ::helmsley::commonResponse* response) { return this->setCheckParams(context, request, response); }));}
     void SetMessageAllocatorFor_setCheckParams(
-        ::grpc::experimental::MessageAllocator< ::helmsley::CheckMsg, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::CheckMsg, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(8);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::CheckMsg, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::CheckMsg, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_setCheckParams() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* setCheckParams(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* setCheckParams(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -1082,38 +1082,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(9,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::MaskMsg, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::MaskMsg, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::MaskMsg* request, ::commonResponse* response) { return this->setMaskParams(context, request, response); }));}
+                     context, const ::helmsley::MaskMsg* request, ::helmsley::commonResponse* response) { return this->setMaskParams(context, request, response); }));}
     void SetMessageAllocatorFor_setMaskParams(
-        ::grpc::experimental::MessageAllocator< ::helmsley::MaskMsg, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::MaskMsg, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(9);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::MaskMsg, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::MaskMsg, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_setMaskParams() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* setMaskParams(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* setMaskParams(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -1129,38 +1129,38 @@ class inspectorSync final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(10,
-          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::DataMsg, ::commonResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::helmsley::DataMsg, ::helmsley::commonResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::helmsley::DataMsg* request, ::commonResponse* response) { return this->setDisplayVolume(context, request, response); }));}
+                     context, const ::helmsley::DataMsg* request, ::helmsley::commonResponse* response) { return this->setDisplayVolume(context, request, response); }));}
     void SetMessageAllocatorFor_setDisplayVolume(
-        ::grpc::experimental::MessageAllocator< ::helmsley::DataMsg, ::commonResponse>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::helmsley::DataMsg, ::helmsley::commonResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(10);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::DataMsg, ::commonResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::helmsley::DataMsg, ::helmsley::commonResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_setDisplayVolume() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* setDisplayVolume(
-      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* setDisplayVolume(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -1181,7 +1181,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1198,7 +1198,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1215,7 +1215,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1232,7 +1232,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
+    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1249,7 +1249,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
+    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1266,7 +1266,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1283,7 +1283,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1300,7 +1300,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1317,7 +1317,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1334,7 +1334,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1351,7 +1351,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1368,7 +1368,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1388,7 +1388,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1408,7 +1408,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1428,7 +1428,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
+    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1448,7 +1448,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
+    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1468,7 +1468,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1488,7 +1488,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1508,7 +1508,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1528,7 +1528,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1548,7 +1548,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1568,7 +1568,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1601,7 +1601,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1639,7 +1639,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1677,7 +1677,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1715,7 +1715,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
+    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1753,7 +1753,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
+    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1791,7 +1791,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1829,7 +1829,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1867,7 +1867,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1905,7 +1905,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1943,7 +1943,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1981,7 +1981,7 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -2002,10 +2002,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_startBroadcast() {
       ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::Request, ::commonResponse>(
+          ::helmsley::Request, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::Request, ::commonResponse>* streamer) {
+                     ::helmsley::Request, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedstartBroadcast(context,
                          streamer);
                   }));
@@ -2014,12 +2014,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedstartBroadcast(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::Request,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedstartBroadcast(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::Request,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_startReceiveBroadcast : public BaseClass {
@@ -2029,10 +2029,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_startReceiveBroadcast() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::Request, ::commonResponse>(
+          ::helmsley::Request, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::Request, ::commonResponse>* streamer) {
+                     ::helmsley::Request, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedstartReceiveBroadcast(context,
                          streamer);
                   }));
@@ -2041,12 +2041,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status startReceiveBroadcast(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedstartReceiveBroadcast(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::Request,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedstartReceiveBroadcast(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::Request,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_gsVolumePose : public BaseClass {
@@ -2056,10 +2056,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_gsVolumePose() {
       ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::VPMsg, ::commonResponse>(
+          ::helmsley::VPMsg, ::helmsley::VPMsg>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::VPMsg, ::commonResponse>* streamer) {
+                     ::helmsley::VPMsg, ::helmsley::VPMsg>* streamer) {
                        return this->StreamedgsVolumePose(context,
                          streamer);
                   }));
@@ -2068,12 +2068,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status gsVolumePose(::grpc::ServerContext* /*context*/, const ::helmsley::VPMsg* /*request*/, ::helmsley::VPMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgsVolumePose(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::VPMsg,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedgsVolumePose(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::VPMsg,::helmsley::VPMsg>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_getOperations : public BaseClass {
@@ -2083,10 +2083,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_getOperations() {
       ::grpc::Service::MarkMethodStreamed(3,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::Request, ::helmsley::OperationBatch>(
+          ::helmsley::Request, ::helmsley::OperationBatch>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::Request, ::helmsley::OperationBatch>* streamer) {
+                     ::helmsley::Request, ::helmsley::OperationBatch>* streamer) {
                        return this->StreamedgetOperations(context,
                          streamer);
                   }));
@@ -2095,12 +2095,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
+    ::grpc::Status getOperations(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::OperationBatch* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetOperations(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::Request,::helmsley::OperationBatch>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedgetOperations(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::Request,::helmsley::OperationBatch>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_getUpdates : public BaseClass {
@@ -2110,10 +2110,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_getUpdates() {
       ::grpc::Service::MarkMethodStreamed(4,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::Request, ::helmsley::FrameUpdateMsg>(
+          ::helmsley::Request, ::helmsley::FrameUpdateMsg>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::Request, ::helmsley::FrameUpdateMsg>* streamer) {
+                     ::helmsley::Request, ::helmsley::FrameUpdateMsg>* streamer) {
                        return this->StreamedgetUpdates(context,
                          streamer);
                   }));
@@ -2122,12 +2122,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
+    ::grpc::Status getUpdates(::grpc::ServerContext* /*context*/, const ::helmsley::Request* /*request*/, ::helmsley::FrameUpdateMsg* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedgetUpdates(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::Request,::helmsley::FrameUpdateMsg>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedgetUpdates(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::Request,::helmsley::FrameUpdateMsg>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_reqestReset : public BaseClass {
@@ -2137,10 +2137,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_reqestReset() {
       ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::ResetMsg, ::commonResponse>(
+          ::helmsley::ResetMsg, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::ResetMsg, ::commonResponse>* streamer) {
+                     ::helmsley::ResetMsg, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedreqestReset(context,
                          streamer);
                   }));
@@ -2149,12 +2149,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status reqestReset(::grpc::ServerContext* /*context*/, const ::helmsley::ResetMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedreqestReset(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::ResetMsg,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedreqestReset(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::ResetMsg,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_setGestureOp : public BaseClass {
@@ -2164,10 +2164,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_setGestureOp() {
       ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::GestureOp, ::commonResponse>(
+          ::helmsley::GestureOp, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::GestureOp, ::commonResponse>* streamer) {
+                     ::helmsley::GestureOp, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedsetGestureOp(context,
                          streamer);
                   }));
@@ -2176,12 +2176,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setGestureOp(::grpc::ServerContext* /*context*/, const ::helmsley::GestureOp* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedsetGestureOp(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::GestureOp,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedsetGestureOp(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::GestureOp,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_setTuneParams : public BaseClass {
@@ -2191,10 +2191,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_setTuneParams() {
       ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::TuneMsg, ::commonResponse>(
+          ::helmsley::TuneMsg, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::TuneMsg, ::commonResponse>* streamer) {
+                     ::helmsley::TuneMsg, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedsetTuneParams(context,
                          streamer);
                   }));
@@ -2203,12 +2203,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setTuneParams(::grpc::ServerContext* /*context*/, const ::helmsley::TuneMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedsetTuneParams(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::TuneMsg,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedsetTuneParams(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::TuneMsg,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_setCheckParams : public BaseClass {
@@ -2218,10 +2218,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_setCheckParams() {
       ::grpc::Service::MarkMethodStreamed(8,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::CheckMsg, ::commonResponse>(
+          ::helmsley::CheckMsg, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::CheckMsg, ::commonResponse>* streamer) {
+                     ::helmsley::CheckMsg, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedsetCheckParams(context,
                          streamer);
                   }));
@@ -2230,12 +2230,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setCheckParams(::grpc::ServerContext* /*context*/, const ::helmsley::CheckMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedsetCheckParams(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::CheckMsg,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedsetCheckParams(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::CheckMsg,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_setMaskParams : public BaseClass {
@@ -2245,10 +2245,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_setMaskParams() {
       ::grpc::Service::MarkMethodStreamed(9,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::MaskMsg, ::commonResponse>(
+          ::helmsley::MaskMsg, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::MaskMsg, ::commonResponse>* streamer) {
+                     ::helmsley::MaskMsg, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedsetMaskParams(context,
                          streamer);
                   }));
@@ -2257,12 +2257,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setMaskParams(::grpc::ServerContext* /*context*/, const ::helmsley::MaskMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedsetMaskParams(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::MaskMsg,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedsetMaskParams(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::MaskMsg,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_setDisplayVolume : public BaseClass {
@@ -2272,10 +2272,10 @@ class inspectorSync final {
     WithStreamedUnaryMethod_setDisplayVolume() {
       ::grpc::Service::MarkMethodStreamed(10,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::helmsley::DataMsg, ::commonResponse>(
+          ::helmsley::DataMsg, ::helmsley::commonResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::helmsley::DataMsg, ::commonResponse>* streamer) {
+                     ::helmsley::DataMsg, ::helmsley::commonResponse>* streamer) {
                        return this->StreamedsetDisplayVolume(context,
                          streamer);
                   }));
@@ -2284,12 +2284,12 @@ class inspectorSync final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::commonResponse* /*response*/) override {
+    ::grpc::Status setDisplayVolume(::grpc::ServerContext* /*context*/, const ::helmsley::DataMsg* /*request*/, ::helmsley::commonResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedsetDisplayVolume(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::DataMsg,::commonResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedsetDisplayVolume(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::helmsley::DataMsg,::helmsley::commonResponse>* server_unary_streamer) = 0;
   };
   typedef WithStreamedUnaryMethod_startBroadcast<WithStreamedUnaryMethod_startReceiveBroadcast<WithStreamedUnaryMethod_gsVolumePose<WithStreamedUnaryMethod_getOperations<WithStreamedUnaryMethod_getUpdates<WithStreamedUnaryMethod_reqestReset<WithStreamedUnaryMethod_setGestureOp<WithStreamedUnaryMethod_setTuneParams<WithStreamedUnaryMethod_setCheckParams<WithStreamedUnaryMethod_setMaskParams<WithStreamedUnaryMethod_setDisplayVolume<Service > > > > > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;

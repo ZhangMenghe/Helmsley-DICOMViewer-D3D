@@ -162,12 +162,13 @@ enum TuneMsg_TuneType : int {
   TuneMsg_TuneType_SET_TARGET = 6,
   TuneMsg_TuneType_CUT_PLANE = 7,
   TuneMsg_TuneType_COLOR_SCHEME = 8,
+  TuneMsg_TuneType_RENDER_METHOD = 9,
   TuneMsg_TuneType_TuneMsg_TuneType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   TuneMsg_TuneType_TuneMsg_TuneType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool TuneMsg_TuneType_IsValid(int value);
 constexpr TuneMsg_TuneType TuneMsg_TuneType_TuneType_MIN = TuneMsg_TuneType_ADD_ONE;
-constexpr TuneMsg_TuneType TuneMsg_TuneType_TuneType_MAX = TuneMsg_TuneType_COLOR_SCHEME;
+constexpr TuneMsg_TuneType TuneMsg_TuneType_TuneType_MAX = TuneMsg_TuneType_RENDER_METHOD;
 constexpr int TuneMsg_TuneType_TuneType_ARRAYSIZE = TuneMsg_TuneType_TuneType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TuneMsg_TuneType_descriptor();
@@ -1175,6 +1176,8 @@ class TuneMsg PROTOBUF_FINAL :
     TuneMsg_TuneType_CUT_PLANE;
   static constexpr TuneType COLOR_SCHEME =
     TuneMsg_TuneType_COLOR_SCHEME;
+  static constexpr TuneType RENDER_METHOD =
+    TuneMsg_TuneType_RENDER_METHOD;
   static inline bool TuneType_IsValid(int value) {
     return TuneMsg_TuneType_IsValid(value);
   }

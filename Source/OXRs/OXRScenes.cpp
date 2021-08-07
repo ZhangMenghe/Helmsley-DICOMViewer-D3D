@@ -11,7 +11,7 @@ void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& 
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 	m_sceneRenderer->InitOXRScene();
 	m_deviceResources = deviceResources;
-	//m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
+	m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
 
 	//m_fpsTextRenderer = std::unique_ptr<FpsTextRenderer>(new FpsTextRenderer(m_deviceResources));
 
@@ -25,10 +25,10 @@ void OXRScenes::setup_volume_server()
 {
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
-	std::vector<volumeInfo> vl;
+	std::vector<helmsley::volumeInfo> vl;
 	m_data_manager->getAvailableVolumes("IRB01", vl, false);
 
-	volumeInfo vInfo;
+	helmsley::volumeInfo vInfo;
 	for (auto vli : vl)
 	{
 		if (vli.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0)
@@ -49,7 +49,7 @@ void OXRScenes::setup_volume_local()
 {
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
 	auto dsName = ds[0].folder_name();
-	std::vector<volumeInfo> vl;
+	std::vector<helmsley::volumeInfo> vl;
 	m_data_manager->getAvailableVolumes(dsName, vl, true);
 
 	auto vInfo = vl[0];
@@ -82,7 +82,7 @@ void OXRScenes::Update(const xr::FrameTime& frameTime)
 {
 	if (m_local_initialized) {
 		if (dvr::CONNECT_TO_SERVER)		{
-			m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
+			m_rpcHandler = std::make_shared<rpcHandler>("192.168.1.74:23333");
 			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
 			m_rpcHandler->setDataLoader(m_dicom_loader);
 			m_rpcHandler->setVRController(m_sceneRenderer.get());
@@ -104,7 +104,7 @@ void OXRScenes::Update(const xr::FrameTime& frameTime)
 	}
 	m_timer.Tick([&]() {
 		m_dicom_loader->onUpdate();
-		//m_scenario->Update(m_timer);
+		m_scenario->Update(m_timer);
 		m_sceneRenderer->Update(m_timer);
 		//m_fpsTextRenderer->Update(m_timer);
 	});

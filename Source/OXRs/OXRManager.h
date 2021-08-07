@@ -52,6 +52,8 @@ namespace DX {
 		XrSpace createAnchorSpace(const XrPosef& poseInScene);
 		XrSpace * getAppSpace();
 
+		glm::mat4 getSensorMatrixAtTime(uint64_t time);
+
 		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem getReferenceFrame() {
 			return m_referenceFrame;
 		}
@@ -85,6 +87,7 @@ namespace DX {
 
 		xr::SpaceHandle m_appSpace;
 		xr::SpaceHandle m_viewSpace;
+		xr::SpaceHandle m_sensorSpace;
 
 		//XrSpace        xr_app_space = {};
 		//XrSpace				xr_view_space = {};
@@ -105,6 +108,7 @@ namespace DX {
 		PFN_xrDestroyDebugUtilsMessengerEXT   ext_xrDestroyDebugUtilsMessengerEXT = nullptr;
 		PFN_xrCreateSpatialAnchorMSFT    ext_xrCreateSpatialAnchorMSFT = nullptr;
 		PFN_xrCreateSpatialAnchorSpaceMSFT    ext_xrCreateSpatialAnchorSpaceMSFT = nullptr;
+		PFN_xrCreateSpatialGraphNodeSpaceMSFT    ext_xrCreateSpatialGraphNodeSpaceMSFT = nullptr;
 
 		std::mutex m_sceneMutex;
 		std::mutex m_secondaryViewConfigActiveMutex;

@@ -54,6 +54,7 @@ message TuneMsg{
         SET_TARGET = 6;
         CUT_PLANE = 7;
         COLOR_SCHEME = 8;
+        RENDER_METHOD = 9;
     }
     TuneType type = 1;
     int32 target = 2;
@@ -94,7 +95,7 @@ message FrameUpdateMsg{
 service inspectorSync{
     rpc startBroadcast(Request) returns(commonResponse);
     rpc startReceiveBroadcast(Request) returns(commonResponse);
-    rpc gsVolumePose(VPMsg) returns(commonResponse);
+    rpc gsVolumePose(VPMsg) returns(VPMsg);
     rpc getOperations(Request) returns(OperationBatch);
     rpc getUpdates(Request) returns(FrameUpdateMsg);
 

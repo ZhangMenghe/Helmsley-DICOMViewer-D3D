@@ -48,7 +48,7 @@ private:
     uint64_t m_sensorRefreshTime = 0;
     uint64_t m_lastHostTicks = 0;
     uint64_t m_qpcTime = 0;
-    const uint64_t refreshTime = 10000;
+    const uint64_t refreshTime = 32;
 
     float m_slateWidth, m_slateHeight;
 
@@ -83,6 +83,8 @@ private:
                    1.0, -1.0, -1.0, 1.0 };
     std::vector<cv::Vec3d> m_rvecs, m_tvecs;
     glm::mat4 m_extrinsics_mat = glm::mat4(1.0);
+
+    glm::mat4 rig_mat = glm::mat4(1);
 
     winrt::Windows::Perception::Spatial::SpatialCoordinateSystem m_referenceFrame = {nullptr};
     winrt::Windows::Perception::Spatial::SpatialLocatorAttachedFrameOfReference m_frameOfReference = { nullptr };
