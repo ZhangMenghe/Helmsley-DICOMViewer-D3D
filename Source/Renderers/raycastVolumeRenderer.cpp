@@ -74,7 +74,7 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 	// Create the texture sampler state.
 	winrt::check_hresult(device->CreateSamplerState(&samplerDesc, &m_sampleState));
 
-	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(raycastConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(raycastVertexBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&constantBufferDesc,
@@ -83,7 +83,7 @@ void raycastVolumeRenderer::create_fragment_shader(ID3D11Device* device, const s
 		)
 	);
 
-	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(raypixConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(raycastPixConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&pixconstantBufferDesc,
@@ -97,8 +97,11 @@ bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	if (!m_loadingComplete) return false;
 	//context->RSSetState(m_render_state);
 	if (m_constantBuffer != nullptr) {
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat,Manager::camera->getVPMat()); //Manager::camera->getVPMat());
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, DirectX::XMMatrixTranspose(modelMat));
+		DirectX::XMStoreFloat4x4(&m_const_buff_data.uMVP.mm,
+			DirectX::XMMatrixMultiply(Manager::camera->getVPMat(), DirectX::XMMatrixTranspose(modelMat)));
+
+			//); //Manager::camera->getVPMat());
+		//DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, DirectX::XMMatrixTranspose(modelMat));
 		auto inv_mat = DirectX::XMMatrixInverse(nullptr, modelMat);
 		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
 		DirectX::XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, //Manager::camera->getCameraPosition()
@@ -117,10 +120,13 @@ bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 	}
 	//update pixel shader const buffer data
 	if (m_pixConstantBuffer != nullptr) {
-		m_pix_const_buff_data.u_sampling_step = 1.0f / m_sample_steps;
-		m_pix_const_buff_data.u_cutplane_realsample = Manager::param_bool[dvr::CUT_PLANE_REAL_SAMPLE];
 		m_pix_const_buff_data.u_cut = Manager::IsCuttingEnabled();
-		if (m_pix_const_buff_data.u_cut) vrController::instance()->getCuttingPlane(m_pix_const_buff_data.u_pp, m_pix_const_buff_data.u_pn);
+		m_pix_const_buff_data.u_sample_param = 1.0f / m_sample_steps;
+		m_pix_const_buff_data.u_cutplane_realsample = Manager::param_bool[dvr::CUT_PLANE_REAL_SAMPLE];
+		if (m_pix_const_buff_data.u_cut) 
+			vrController::instance()->getCuttingPlane(
+				m_pix_const_buff_data.u_plane.pp, 
+				m_pix_const_buff_data.u_plane.pn);
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),
 			0,

@@ -193,8 +193,14 @@ namespace dvr{
         DirectX::XMFLOAT4X4 projection;
         DirectX::XMFLOAT4 uCamPosInObjSpace;
     };
-    struct ModelViewProjectionConstantBuffer
-    {
+    struct cutPlaneConstantBuffer {
+        DirectX::XMFLOAT4 pp;
+        DirectX::XMFLOAT4 pn;
+    };
+    struct MVPConstantBuffer {
+        DirectX::XMFLOAT4X4 mm;
+    };
+    struct ModelViewProjectionConstantBuffer{
         DirectX::XMFLOAT4X4 model;
         DirectX::XMFLOAT4X4 uViewProjMat;
     };

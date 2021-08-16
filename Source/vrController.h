@@ -104,9 +104,9 @@ public:
 
 		if (method < vRenderer_.size())
 			vRenderer_[method]->setRenderingParameters(values);
-		else {
-			Manager::indiv_rendering_params[method] = values[0];
-		}
+		//else {
+		//	Manager::indiv_rendering_params[method] = values[0];
+		//}
 	}
 	//getter
 	void getCuttingPlane(DirectX::XMFLOAT4 &pp, DirectX::XMFLOAT4 &pn) { cutter_->getCuttingPlane(pp, pn); }
