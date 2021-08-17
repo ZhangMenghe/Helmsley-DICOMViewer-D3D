@@ -100,8 +100,6 @@ bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uMVP.mm,
 			DirectX::XMMatrixMultiply(Manager::camera->getVPMat(), DirectX::XMMatrixTranspose(modelMat)));
 
-			//); //Manager::camera->getVPMat());
-		//DirectX::XMStoreFloat4x4(&m_const_buff_data.uModelMat, DirectX::XMMatrixTranspose(modelMat));
 		auto inv_mat = DirectX::XMMatrixInverse(nullptr, modelMat);
 		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
 		DirectX::XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, //Manager::camera->getCameraPosition()

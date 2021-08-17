@@ -8,15 +8,33 @@ using namespace DirectX;
 textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
 	:baseDicomRenderer(device,
 		L"texbasedVertexShader.cso", L"texbasedPixelShader.cso",
-		quad_vertices_pos_w_tex, quad_indices, 24, 6
+		nullptr, nullptr, 0, 0
 	),
 	cut_id(0)
 {
 	this->initialize();
+	initialize_vertices_and_indices(device);
+
 	float tmp[] = { Manager::indiv_rendering_params[0] };
 	setRenderingParameters(tmp);
 }
+void textureBasedVolumeRenderer::initialize_vertices_and_indices(ID3D11Device* device) {
+	m_vertice_count = 12 * MAX_DIMENSIONS;
+	m_vertices_front = new float[m_vertice_count]; m_vertices_back = new float[m_vertice_count];
+	for (int i = 0, idj = 0; i < MAX_DIMENSIONS; i++, idj += 12) {
+		for (int j = 0; j < 12; j++) {
+			m_vertices_front[idj + j] = quad_vertices_3d[j]; m_vertices_back[idj + j] = quad_vertices_3d[j];
+		}
+	}
+	createDynamicVertexBuffer(device, m_vertice_count);
 
+	m_index_count = 6 * MAX_DIMENSIONS;
+	m_indices = new unsigned short[m_index_count];
+	for (int i = 0, idk = 0; i < MAX_DIMENSIONS; i++, idk += 6) {
+		for (int k = 0; k < 6; k++)m_indices[idk + k] = quad_indices[k] + 4 * i;
+	}
+	baseDicomRenderer::initialize_indices(device, m_indices);
+}
 void textureBasedVolumeRenderer::create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
 	winrt::check_hresult(
 		device->CreateVertexShader(
@@ -26,22 +44,16 @@ void textureBasedVolumeRenderer::create_vertex_shader(ID3D11Device* device, cons
 			m_vertexShader.put()
 		)
 	);
-	static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	};
 	winrt::check_hresult(
 		device->CreateInputLayout(
-			vertexDesc,
-			ARRAYSIZE(vertexDesc),
+			dvr::g_vinput_pos_3d_desc,
+			ARRAYSIZE(dvr::g_vinput_pos_3d_desc),
 			&fileData[0],
 			fileData.size(),
 			m_inputLayout.put()
 		)
 	);
-	m_vertex_stride = sizeof(dvr::VertexPosTex2d);
+	m_vertex_stride = sizeof(dvr::VertexPos3d);
 	m_vertex_offset = 0;
 }
 void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) {
@@ -74,7 +86,7 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 	// Create the texture sampler state.
 	winrt::check_hresult(device->CreateSamplerState(&samplerDesc, &m_sampleState));
 
-	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(dvr::ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC constantBufferDesc(sizeof(texbasedVertexBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&constantBufferDesc,
@@ -83,7 +95,7 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 		)
 	);
 
-	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(texPixConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	CD3D11_BUFFER_DESC pixconstantBufferDesc(sizeof(dvr::cutPlaneConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	winrt::check_hresult(
 		device->CreateBuffer(
 			&pixconstantBufferDesc,
@@ -112,97 +124,59 @@ void textureBasedVolumeRenderer::create_fragment_shader(ID3D11Device* device, co
 
 	device->CreateBlendState(&blendDesc, &m_d3dBlendState);
 }
-void textureBasedVolumeRenderer::initialize_mesh_others(ID3D11Device* device){
-	//update instance data
-	if (dimensions == 0) return;
-	//InstanceType* zInfos = new InstanceType[dimensions];
-	zInfos_front = new InstanceType[dimensions];
-	zInfos_back = new InstanceType[dimensions];
-	
-	float zTex = .0f;
-	float step = 1.0f / dimensions;
-	float mappedZVal = -(dimensions - 1) / 2.0f * step;
-	float mappedZVal_back = -mappedZVal;
-	for (int i = 0; i < dimensions; i++) {
-		zInfos_front[i].zinfo.x = mappedZVal * vol_thickness_factor; zInfos_front[i].zinfo.y = zTex;
-		zInfos_back[i].zinfo.x = mappedZVal_back * vol_thickness_factor; zInfos_back[i].zinfo.y = zTex;
-		mappedZVal += step; mappedZVal_back -= step; zTex += dimension_inv;
+void textureBasedVolumeRenderer::update_instance_data(ID3D11DeviceContext* context){
+	if (dimension_draw == 0) return;
+	float mappedZVal = -0.5f;
+	for (int i = 0, id = 0; i < dimension_draw; i++, id += 12) {
+		m_vertices_front[id + 2] = mappedZVal; m_vertices_front[id + 5] = mappedZVal; m_vertices_front[id + 8] = mappedZVal; m_vertices_front[id + 11] = mappedZVal;
+		mappedZVal += dimension_draw_inv;
 	}
-	
-	//initialize instances
-	D3D11_BUFFER_DESC instBuffDesc;
-	ZeroMemory(&instBuffDesc, sizeof(instBuffDesc));
-
-	instBuffDesc.Usage = D3D11_USAGE_DYNAMIC;//D3D11_USAGE_DEFAULT;
-	instBuffDesc.ByteWidth = sizeof(InstanceType) * dimensions;
-	instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	instBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//0;
-	instBuffDesc.MiscFlags = 0;
-
-	//D3D11_SUBRESOURCE_DATA instData;
-	//ZeroMemory(&m_instance_data_front, sizeof(m_instance_data_front));
-	//m_instance_data_front.pSysMem = zInfos;
-	if(m_instanceBuffer_front == nullptr)
-		winrt::check_hresult(device->CreateBuffer(&instBuffDesc,
-				nullptr,
-				//&m_instance_data_front,
-				m_instanceBuffer_front.put()
-			)
-		);
-	if (m_instanceBuffer_back == nullptr)
-		winrt::check_hresult(device->CreateBuffer(&instBuffDesc,
-			nullptr,
-			m_instanceBuffer_back.put()
-		)
-	);
-	//delete[]zInfos;
-	m_data_dirty = true;
+	mappedZVal = 0.5f;
+	for (int i = 0, id = 0; i < dimension_draw; i++, id += 12) {
+		m_vertices_back[id + 2] = m_vertices_back[id + 5] = m_vertices_back[id + 8] = m_vertices_back[id + 11] = mappedZVal;
+		mappedZVal -= dimension_draw_inv;
+	}
 }
 bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front){
 	if (!m_loadingComplete) return false;
+	if (m_instance_data_dirty) {
+		update_instance_data(context);
+		m_instance_data_dirty = false;
+	}
+	updateVertexBuffer(context, is_front ? m_vertices_front : m_vertices_back);
+
 	if (m_constantBuffer != nullptr) {
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.uViewProjMat, Manager::camera->getVPMat());
-		DirectX::XMStoreFloat4x4(&m_const_buff_data.model, DirectX::XMMatrixTranspose(modelMat));
+		DirectX::XMStoreFloat4x4(&m_vertex_const_buff_data.uMVP.mm,
+			DirectX::XMMatrixMultiply(Manager::camera->getVPMat(), 
+				DirectX::XMMatrixTranspose(modelMat)));
+		m_vertex_const_buff_data.u_volume_thickness = vol_thickness_factor;
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
 			m_constantBuffer.get(),
 			0,
 			nullptr,
-			&m_const_buff_data,
+			&m_vertex_const_buff_data,
 			0,
 			0
 		);
-		ID3D11Buffer* constantBufferNeverChanges{ m_constantBuffer.get() };
-		context->VSSetConstantBuffers(0, 1, &constantBufferNeverChanges);
 	}
 	if (m_pixConstantBuffer != nullptr) {
-		m_const_buff_data_pix.u_front = is_front;
-		m_const_buff_data_pix.u_cut = Manager::param_bool[dvr::CHECK_CUTTING];
-		m_const_buff_data_pix.u_cut_texz = is_front ? 1.0f - dimension_inv * cut_id : dimension_inv * cut_id;
+		if (Manager::IsCuttingEnabled()) {
+			vrController::instance()->getCuttingPlane(
+				m_pix_const_buff_data.pp,
+				m_pix_const_buff_data.pn);
+		}else {
+			m_pix_const_buff_data.pn = XMFLOAT4(-1.0f , -1.0f , -1.0f, -1.0f);
+		}
 		context->UpdateSubresource(
 			m_pixConstantBuffer.get(),
 			0,
 			nullptr,
-			&m_const_buff_data_pix,
+			&m_pix_const_buff_data,
 			0,
 			0
 		);
-		ID3D11Buffer* constantBuffer_pix{ m_pixConstantBuffer.get() };
-		context->PSSetConstantBuffers(0, 1, &constantBuffer_pix);
-	}
-	if (m_data_dirty) {
-		D3D11_MAPPED_SUBRESOURCE resource;
-		context->Map(m_instanceBuffer_front.get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-		memcpy(resource.pData, zInfos_front, dimensions * sizeof(InstanceType));
-		context->Unmap(m_instanceBuffer_front.get(), 0);
-
-		D3D11_MAPPED_SUBRESOURCE resource_back;
-		context->Map(m_instanceBuffer_back.get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource_back);
-		memcpy(resource_back.pData, zInfos_back, dimensions * sizeof(InstanceType));
-		context->Unmap(m_instanceBuffer_back.get(), 0);
-
-		m_data_dirty = false;
 	}
 	context->OMSetBlendState(m_d3dBlendState, 0, 0xffffffff);
 
@@ -210,28 +184,8 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 		auto texview = tex->GetTextureView();
 		context->PSSetShaderResources(0, 1, &texview);
 	}
-	//texture sampler
-	if (m_sampleState != nullptr) context->PSSetSamplers(0, 1, &m_sampleState);
 
-	ID3D11Buffer* vertInstBuffers[2] = { m_vertexBuffer.get(), is_front? m_instanceBuffer_front.get(): m_instanceBuffer_back.get() };
-	UINT strides[2] = { sizeof(dvr::VertexPosTex2d), sizeof(InstanceType) };
-	UINT offsets[2] = { 0, 0 };
-	context->IASetVertexBuffers(0, 2, vertInstBuffers, strides, offsets);
-	context->IASetIndexBuffer(
-		m_indexBuffer.get(),
-		DXGI_FORMAT_R16_UINT, // Each index is one 16-bit unsigned integer (short).
-		0);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	if (m_inputLayout != nullptr) context->IASetInputLayout(m_inputLayout.get());
-	
-	// Attach our vertex shader.
-	if (m_vertexShader != nullptr) context->VSSetShader(m_vertexShader.get(), nullptr, 0);
-
-	// Attach our pixel shader.
-	if (m_pixelShader != nullptr) context->PSSetShader(m_pixelShader.get(), nullptr, 0);
-	context->DrawIndexedInstanced(m_index_count, dimensions, 0, 0, 0);
-	
+	baseRenderer::Draw(context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//setback states
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
 	return true;
@@ -239,18 +193,26 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
 	baseDicomRenderer::setDimension(device, vol_dimension, vol_dim_scale);
 
-	dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
+	//dimensions = int(vol_dimension.z * DENSE_FACTOR); dimension_inv = 1.0f / dimensions;
 	vol_thickness_factor = vol_dim_scale.z;// *2.0f;
-	initialize_mesh_others(device);
+	//initialize_mesh_others(device);
+	on_update_dimension_draw();
 }
 void textureBasedVolumeRenderer::setCuttingPlane(float percent) {
-	cut_id = int(dimensions * percent);
+	cut_id = int(dimension_draw * percent);
 	//baked_dirty_ = true;
 }
 void textureBasedVolumeRenderer::setCuttingPlaneDelta(int delta) {
-	cut_id = ((int)fmax(0, cut_id + delta)) % dimensions;
+	cut_id = ((int)fmax(0, cut_id + delta)) % dimension_draw;
 	//baked_dirty_ = true;
 }
 void textureBasedVolumeRenderer::setRenderingParameters(float* values) {
-
+	if (values[0] == dense_factor) return;
+	dense_factor = values[0];
+	on_update_dimension_draw();
+}
+void textureBasedVolumeRenderer::on_update_dimension_draw() {
+	dimension_draw = fmin(float(m_dimensions_origin) * dense_factor, MAX_DIMENSIONS);
+	dimension_draw_inv = 1.0f / float(dimension_draw);
+	m_instance_data_dirty = true;
 }
