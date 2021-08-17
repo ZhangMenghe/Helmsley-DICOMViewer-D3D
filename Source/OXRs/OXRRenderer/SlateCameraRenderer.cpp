@@ -373,7 +373,7 @@ void SlateCameraRenderer::update_marker_position()
 	// Get position infos
 	auto location = locator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
 	auto camLocation = camLocator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
-	glm::mat4 cachedSensorMatrix = vrController::instance()->getSensorMatrixAtTime(timeStamp.HostTicks * 100);
+	glm::mat4 cachedSensorMatrix = glm::mat4(1.0);//vrController::instance()->getSensorMatrixAtTime(timeStamp.HostTicks * 100);
 	
 	if (location && camLocation) {
 

@@ -8,7 +8,7 @@ using namespace glm;
 
 
 viewAlignedSlicingRenderer::viewAlignedSlicingRenderer(ID3D11Device* device)
-	:baseRenderer(device,
+	:baseDicomRenderer(device,
 		L"viewSlicingVertexShader.cso", L"viewSlicingPixelShader.cso",
 		nullptr, nullptr, 0, 0
 	),
@@ -117,7 +117,7 @@ void viewAlignedSlicingRenderer::create_fragment_shader(ID3D11Device* device, co
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.RenderTarget[0] = rtbd;
 
-	device->CreateBlendState(&blendDesc, &d3dBlendState);
+	device->CreateBlendState(&blendDesc, &m_d3dBlendState);
 }
 void viewAlignedSlicingRenderer::initialize_mesh_others(ID3D11Device* device){
 	m_data_dirty = true;
@@ -161,7 +161,7 @@ bool viewAlignedSlicingRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 		context->PSSetConstantBuffers(0, 1, &constantBuffer_pix);
 	}
 	
-	context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
+	context->OMSetBlendState(m_d3dBlendState, 0, 0xffffffff);
 
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
 

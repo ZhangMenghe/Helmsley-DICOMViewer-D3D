@@ -42,8 +42,8 @@ public:
     static dvr::ORGAN_IDS traversal_target_id;
     static int screen_w, screen_h;
     static bool show_ar_ray, volume_ar_hold;
-    static bool isRayCut();
     static bool new_data_available;
+    static float indiv_rendering_params[3];
 
     Manager();
     ~Manager();
@@ -54,7 +54,6 @@ public:
 
     static bool IsCuttingEnabled();
     static bool IsCuttingNeedUpdate();
-    static bool isRayCasting();
     static void setTraversalTargetId(int id);
 
     //getter
@@ -88,6 +87,7 @@ public:
 
 private:
     static Manager* myPtr_;
+
     volumeSetupConstBuffer m_volset_data;
 
     //contrast, brightness, etc

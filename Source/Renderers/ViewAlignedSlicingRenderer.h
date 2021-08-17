@@ -2,7 +2,7 @@
 #define VIEW_ALIGNED_SLICING_RENDERER_H
 
 #include <D3DPipeline/Texture.h>
-#include <Renderers/baseRenderer.h>
+#include <Renderers/baseDicomRenderer.h>
 #include <Common/ConstantAndStruct.h>
 
 struct texSlicingPixConstantBuffer {
@@ -14,7 +14,7 @@ struct texSlicingPixConstantBuffer {
 	alignas(16)DirectX::XMFLOAT4 u_plane_normal;
 };
 
-class viewAlignedSlicingRenderer :public baseRenderer {
+class viewAlignedSlicingRenderer :public baseDicomRenderer {
 public:
 	viewAlignedSlicingRenderer(ID3D11Device* device);
 
@@ -22,13 +22,13 @@ public:
 	void setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale);
 	void setCuttingPlane(float percent);
 	void setCuttingPlaneDelta(int delta);
-	void updateVertices(ID3D11DeviceContext* context, glm::mat4 model_mat);
+	void setRenderingParameters(float* values){}
 
+	void updateVertices(ID3D11DeviceContext* context, glm::mat4 model_mat);
 protected:
 	void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	void initialize_mesh_others(ID3D11Device* device);
-
 private:
 	const float DENSE_FACTOR = 6.f;
 	int dimensions; float dimension_inv;
@@ -61,7 +61,5 @@ private:
 
 	dvr::ModelViewProjectionConstantBuffer m_const_buff_data;
 	texSlicingPixConstantBuffer m_const_buff_data_pix;
-
-	ID3D11BlendState* d3dBlendState;
 };
 #endif

@@ -1,10 +1,9 @@
-
-
 // A constant buffer that stores the three basic column-major matrices for composing geometry.
-
+struct MVPConstantBuffer {
+	matrix mm;
+};
 cbuffer raycastConstantBuffer : register(b0) {
-	matrix uModelMat;
-	matrix uViewProjMat;
+	MVPConstantBuffer uMVP;
 	float4 uCamPosInObjSpace;
 };
 // Per-vertex data used as input to the vertex shader.
@@ -27,10 +26,7 @@ v2f main(VertexShaderInput input){
 	v2f output;
 	output.ro = uCamPosInObjSpace.xyz;
 	output.raydir = input.pos - output.ro;
-	//output.FragPos = mul(float4(input.pos, 1.0f), uModelMat);
-	output.pos = mul(float4(input.pos, 1.0f), uModelMat);
-	output.pos = mul(output.pos, uViewProjMat);
-	//output.screenPos = output.pos.xyw;
+	output.pos = mul(float4(input.pos, 1.0f), uMVP.mm);
 	output.tex = input.tex;
 	return output;
 }

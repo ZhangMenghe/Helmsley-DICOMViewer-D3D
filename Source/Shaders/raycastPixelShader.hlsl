@@ -8,12 +8,15 @@ struct v2f {
 	//float3 FragPos: TEXCOORD2;
 	float3 raydir: TEXCOORD2;
 };
-
-cbuffer raypixConstantBuffer : register(b0) {
+struct Plane {
+	float4 pp;
+	float4 pn;
+};
+cbuffer raycastPixConstantBuffer : register(b0) {
 	bool u_cut : packoffset(c0);
 	bool u_cutplane_realsample : packoffset(c1);
-	float4 u_pp: packoffset(c2);
-	float4 u_pn: packoffset(c3);
+	float1 u_sample_param: packoffset(c2);
+	Plane u_plane : packoffset(c3);
 };
 
 float2 RayCube(float3 ro, float3 rd, float3 extents) {
@@ -61,9 +64,9 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	float4 sum = .0;
 	float pd = .0;
 	uint steps = 0;
-	float usample_step_inverse = 0.01f;
+	float step_size = u_sample_param;
+
 	float high_bound = 0.01;
-	float step_size = usample_step_inverse;
 	bool last_succeeded = true;
 
 	for (float t = head; t < tail && steps<32; steps++ ) {
@@ -84,7 +87,7 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 			}
 		}
 		else {
-			t += 4.0 * usample_step_inverse;
+			t += 4.0 * u_sample_param;
 		}
 	}
 	return float4(sum.rgb, saturate(sum.a));
@@ -105,12 +108,12 @@ float4 main(v2f input) : SV_TARGET{
 	bool blocked_by_plane = false;
 	if (u_cut) {
 		float t;
-		if (dot(u_pn.xyz, -ro) > .0f) {
-			t = RayPlane(ro, rd, u_pp.xyz, u_pn.xyz);
+		if (dot(u_plane.pn.xyz, -ro) > .0f) {
+			t = RayPlane(ro, rd, u_plane.pp.xyz, u_plane.pn.xyz);
 			blocked_by_plane = (t <= intersect.x);
 			intersect.x = max(intersect.x, t);
 		}else {
-			t = RayPlane(ro, rd, u_pp.xyz, -u_pn.xyz); intersect.y = min(intersect.y, t);
+			t = RayPlane(ro, rd, u_plane.pp.xyz, -u_plane.pn.xyz); intersect.y = min(intersect.y, t);
 		}
 		if (blocked_by_plane && intersect.x <= intersect.y) {
 			float4 traced_color = Volume(ro + 0.5, rd, intersect.x, intersect.y);
