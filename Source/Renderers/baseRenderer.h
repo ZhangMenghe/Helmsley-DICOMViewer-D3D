@@ -56,7 +56,7 @@ protected:
 	const wchar_t* vname;
 	const wchar_t* pname;
 	const float* vdata;
-  const unsigned short* idata;
+    const unsigned short* idata;
 
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData);
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData);

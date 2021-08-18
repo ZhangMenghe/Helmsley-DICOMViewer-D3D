@@ -7,6 +7,9 @@
 #ifdef OPENXR
 #include <OXRs/OXRManager.h>
 #endif
+#include <Renderers/textureBasedVolumeRenderer.h>
+#include <Renderers/ViewAlignedSlicingRenderer.h>
+#include <Renderers/raycastVolumeRenderer.h>
 using namespace dvr;
 using namespace DirectX;
 //using namespace winrt::Windows::Foundation;
@@ -24,9 +27,13 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 {
 	myPtr_ = this;
 	auto device = deviceResources->GetD3DDevice();
+
+	vRenderer_.reserve(dvr::RENDER_METHOD_END);
+	vRenderer_.emplace_back(new textureBasedVolumeRenderer(device));
+	vRenderer_.emplace_back(new viewAlignedSlicingRenderer(device));
+	vRenderer_.emplace_back(new raycastVolumeRenderer(device));
+
 	screen_quad = new screenQuadRenderer(device);
-	raycast_renderer = new raycastVolumeRenderer(device);
-	texvrRenderer_ = new viewAlignedSlicingRenderer(device);// TODO: new textureBasedVolumeRenderer(device);
 	cutter_ = new cuttingController(device);
 	data_board_ = new dataBoard(device);
 	meshRenderer_ = new organMeshRenderer(device);
@@ -55,7 +62,7 @@ void vrController::onReset()
 	addStatus("default_status");
 	setMVPStatus("default_status");
 
-	volume_model_dirty = true;
+	volume_model_dirty = true; volume_rotate_dirty = true;
 	if (cutter_)
 		cutter_->onReset(m_deviceResources->GetD3DDevice());
 }
@@ -76,14 +83,13 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 	setMVPStatus("template");
 	if (cutter_)
 		cutter_->onReset(m_deviceResources->GetD3DDevice());
-	volume_model_dirty = false;
+	volume_model_dirty = false; volume_rotate_dirty = true;
 }
 
-void vrController::InitOXRScene()
-{
+void vrController::InitOXRScene(){
 	uniScale = 0.1f;
-	//PosVec3_.z = -1.0f;
-	volume_model_dirty = true;
+	PosVec3_.z = -1.0f;
+	volume_model_dirty = true; volume_rotate_dirty = true;
 }
 
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num)
@@ -119,7 +125,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		}
 		vol_dim_scale_mat_ = glm::scale(glm::mat4(1.0f), vol_dim_scale_);
 		m_manager->setDimension(vol_dimension_);
-		texvrRenderer_->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
+		for (auto render : vRenderer_)render->setDimension(m_deviceResources->GetD3DDevice(), vol_dimension_, vol_dim_scale_);
 		cutter_->setDimension(pd, vol_dim_scale_.z);
 	}
 
@@ -269,13 +275,13 @@ void vrController::Render(int view_id)
 		return;
 	}
 
-	auto context = m_deviceResources->GetD3DDeviceContext();
-	if (true) //(true) // TODO: debug
-	{
+	//auto context = m_deviceResources->GetD3DDeviceContext();
+	//if (true) //(true) // TODO: debug
+	//{
 		/*screen_quad->SetToDrawTarget(context, m_deviceResources.get());
 		render_scene(view_id);
 		m_deviceResources->removeCurrentTargetViews();*/
-	}
+	//}
 	//m_deviceResources->SetBackBufferRenderTarget();
 	//screen_quad->Draw(context);
 	render_scene(view_id);
@@ -340,8 +346,6 @@ void vrController::render_scene(int view_id)
 	auto model_mat_tex = ModelMat_ * glm::translate(glm::mat4(1.0f), glm::vec3(SpaceMat_[3])) * RotateMat_ * glm::translate(glm::mat4(1.0f), -glm::vec3(SpaceMat_[3])) * SpaceMat_ * ScaleMat_;//ModelMat_ * glm::translate(glm::mat4(1.0f), glm::vec3(SpaceMat_[3])) * RotateMat_ * glm::translate(glm::mat4(1.0f), -glm::vec3(SpaceMat_[3])) * SpaceMat_ *  ScaleMat_;
 	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
 
-	texvrRenderer_->updateVertices(context, model_mat_tex);
-
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
 	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
 
@@ -360,12 +364,22 @@ void vrController::render_scene(int view_id)
 	precompute();
 
 	//////   VOLUME   //////
-	if (m_manager->isDrawVolume())
-	{
-		if (Manager::isRayCasting())
-			render_complete &= raycast_renderer->Draw(context, tex_baked, mat42xmmatrix(model_mat));
-		else
-			render_complete &= texvrRenderer_->Draw(context, tex_baked, mat42xmmatrix(model_mat_tex), is_front);
+	if (m_manager->isDrawVolume()){
+		switch (m_rmethod_id) {
+		case dvr::TEXTURE_BASED:
+			render_complete &= vRenderer_[m_rmethod_id]->Draw(context, tex_baked, mat42xmmatrix(model_mat_tex), is_front);
+			break;
+		case dvr::VIEW_ALIGN_SLICING:
+			//if (volume_rotate_dirty || vRenderer_[m_rmethod_id]->isVerticesDirty()) {
+				vRenderer_[m_rmethod_id]->UpdateVertices(model_mat_tex);
+			//}
+			//volume_rotate_dirty = false;
+		case dvr::RAYCASTING:
+			render_complete &= vRenderer_[m_rmethod_id]->Draw(context, tex_baked, mat42xmmatrix(model_mat));
+			break;
+		default:
+			break;
+		}
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 
@@ -503,7 +517,7 @@ void vrController::onTouchMove(float x, float y)
 		return;
 	}
 	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
-	volume_model_dirty = true;
+	volume_model_dirty = true; volume_rotate_dirty = true;
 }
 
 void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side)
@@ -624,7 +638,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 
 			distance_old = distance;
 			Mouse3D_old_right = {x, y, z};
-			volume_model_dirty = true;
+			volume_model_dirty = true; volume_rotate_dirty = true;
 		}
 
 		// move
@@ -791,17 +805,12 @@ void vrController::setupCenterLine(int id, float *data)
 }
 void vrController::setCuttingPlane(float value)
 {
-	if (Manager::param_bool[dvr::CHECK_CUTTING])
-	{
-		if (!Manager::isRayCasting())
-		{
-			cutter_->setCutPlane(value);
-			texvrRenderer_->setCuttingPlane(value);
-			m_scene_dirty = true;
-		}
-	}
-	else if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
-	{
+	if (Manager::param_bool[dvr::CHECK_CUTTING] && !isRayCasting()){
+		cutter_->setCutPlane(value);
+		vRenderer_[0]->setCuttingPlane(value);
+		vRenderer_[1]->setCuttingPlane(value);
+		m_scene_dirty = true;
+	}else if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]){
 		if (!cutter_->IsCenterLineAvailable())
 			return;
 		cutter_->setCenterLinePos((int)(value * 4000.0f));
@@ -812,11 +821,8 @@ void vrController::setCuttingPlane(float value)
 }
 void vrController::setCuttingPlane(int id, int delta)
 {
-	if (Manager::param_bool[dvr::CHECK_CUTTING])
-	{
+	if (Manager::param_bool[dvr::CHECK_CUTTING]){
 		cutter_->setCuttingPlaneDelta(delta);
-		if (!Manager::isRayCasting())
-			texvrRenderer_->setCuttingPlaneDelta(delta);
 		m_scene_dirty = true;
 	}
 	else if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
@@ -843,20 +849,14 @@ void vrController::switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id)
 }
 void vrController::ReleaseDeviceDependentResources()
 {
-	raycast_renderer->Clear();
-	//screen_quad->Clear();
-	//texture
-	if (tex_volume)
-		delete tex_volume;
-	if (tex_baked)
-		delete tex_baked;
+	for (auto render : vRenderer_)delete render;
+	delete tex_volume;
+	delete tex_baked;
 	rStates_.clear();
 }
 
-bool vrController::isDirty()
-{
-	if (!tex_volume)
-		return false;
+bool vrController::isDirty(){
+	if (!tex_volume) return false;
 	return (Manager::baked_dirty_ || volume_model_dirty || m_scene_dirty);
 }
 void vrController::AlignModelMatToTraversalPlane()

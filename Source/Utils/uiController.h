@@ -25,5 +25,6 @@ public:
     void setTuneWidgetById(int id);
     void setCuttingPlane(int id, float value);
     void setColorScheme(int id);
+    void setRenderingMethod(int id);
 };
 #endif

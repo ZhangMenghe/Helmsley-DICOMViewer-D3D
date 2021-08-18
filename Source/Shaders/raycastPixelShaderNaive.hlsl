@@ -9,13 +9,16 @@ struct v2f {
 	float3 raydir: TEXCOORD2;
 };
 
-cbuffer raypixConstantBuffer : register(b0) {
+struct Plane {
+	float4 pp;
+	float4 pn;
+};
+cbuffer raycastPixConstantBuffer : register(b0) {
 	bool u_cut : packoffset(c0);
 	bool u_cutplane_realsample : packoffset(c1);
-	float4 u_pp: packoffset(c2);
-	float4 u_pn: packoffset(c3);
+	float1 u_sample_param: packoffset(c2);
+	Plane u_plane : packoffset(c3);
 };
-
 // A pass-through function for the (interpolated) color data.
 float4 main(v2f input) : SV_TARGET{
 	return float4(input.tex, 1.0);
