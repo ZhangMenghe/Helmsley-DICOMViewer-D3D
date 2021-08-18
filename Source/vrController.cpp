@@ -4,7 +4,9 @@
 #include <Common/DirectXHelper.h>
 #include <Utils/MathUtils.h>
 #include <Utils/TypeConvertUtils.h>
+#ifdef OPENXR
 #include <OXRs/OXRManager.h>
+#endif
 using namespace dvr;
 using namespace DirectX;
 //using namespace winrt::Windows::Foundation;
@@ -36,7 +38,11 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 }
 
 glm::mat4 vrController::getSensorMatrixAtTime(uint64_t time) {
+#ifdef OPENXR
 	return oxrManager->getSensorMatrixAtTime(time);
+#else
+	return glm::mat4(1);
+#endif
 }
 
 void vrController::onReset()
