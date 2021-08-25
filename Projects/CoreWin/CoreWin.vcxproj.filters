@@ -202,6 +202,9 @@
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CoreWinMain.h" />
@@ -326,6 +329,9 @@
     <ClInclude Include="..\..\Source\Renderers\baseDicomRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h">
+      <Filter>Source\Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -392,6 +398,12 @@
       <Filter>Source\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\viewSlicingPixelShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\viewSlicingVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -6,7 +6,7 @@ void uiController::InitAll(){
     AddTuneParams();
     InitAllTuneParam();
     InitCheckParam();
-    setRenderingMethod(0);
+    setRenderingMethod(1);
     setMaskBits(7,8);
     setColorScheme(0);
     // setMaskBits(7,2+4+8+16+32+64);

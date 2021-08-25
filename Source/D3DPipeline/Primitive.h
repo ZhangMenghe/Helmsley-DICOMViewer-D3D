@@ -14,17 +14,26 @@ static const float quad_vertices_pos_w_tex[] = {
 };
 
 static const float quad_vertices_3d[] = {
-        -0.5f,  0.5f, .0f,
-         0.5f,  0.5f, .0f,
-         0.5f, -0.5f, .0f,
-        -0.5f, -0.5f, .0f,
+    -0.5f,  0.5f, .0f,
+    0.5f,  0.5f, .0f,
+    0.5f, -0.5f, .0f,
+    -0.5f, -0.5f, .0f,
 };
 static const unsigned short quad_indices[] = {
     //0,1,3,1,2,3
     3,0,1,3,1,2
 };
-static const float cube_vertices_pos_w_tex[] =
-{
+static const float cube_vertices[24] = {
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f,  0.5f,
+    0.5f,  -0.5f, -0.5f,
+    0.5f,  -0.5f,  0.5f,
+    0.5f,   0.5f, -0.5f,
+    0.5f,   0.5f,  0.5f,
+};
+static const float cube_vertices_pos_w_tex[] = {
     -0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 0.0f,
     -0.5f, -0.5f,  0.5f,    0.0f, 0.0f, 1.0f,
     -0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 0.0f,
@@ -35,8 +44,7 @@ static const float cube_vertices_pos_w_tex[] =
     0.5f,   0.5f,  0.5f,    1.0f, 1.0f, 1.0f,
 };
 
-static const unsigned short cube_indices[] =
-{
+static const unsigned short cube_indices[] = {
     0,2,1, // -x
     1,2,3,
 
@@ -55,6 +63,7 @@ static const unsigned short cube_indices[] =
     1,3,7, // +z
     1,7,5,
 };
+
 const int triangle_table[256][16] = {
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
             {0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},

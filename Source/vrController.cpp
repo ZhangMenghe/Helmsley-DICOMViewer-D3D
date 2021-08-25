@@ -5,6 +5,7 @@
 #include <Utils/MathUtils.h>
 #include <Utils/TypeConvertUtils.h>
 #include <Renderers/textureBasedVolumeRenderer.h>
+#include <Renderers/ViewAlignedSlicingRenderer.h>
 #include <Renderers/raycastVolumeRenderer.h>
 using namespace dvr;
 using namespace DirectX;
@@ -27,7 +28,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 
 	vRenderer_.reserve(dvr::RENDER_METHOD_END);
 	vRenderer_.emplace_back(new textureBasedVolumeRenderer(device));
-	vRenderer_.emplace_back(new textureBasedVolumeRenderer(device));
+	vRenderer_.emplace_back(new viewAlignedSlicingRenderer(device));
 	vRenderer_.emplace_back(new raycastVolumeRenderer(device));
 
 	screen_quad = new screenQuadRenderer(device);
@@ -341,7 +342,7 @@ void vrController::render_scene(int view_id){
 			break;
 		case dvr::VIEW_ALIGN_SLICING:
 			if (volume_rotate_dirty || vRenderer_[m_rmethod_id]->isVerticesDirty()) {
-				vRenderer_[m_rmethod_id]->UpdateVertices(RotateMat_);
+				vRenderer_[m_rmethod_id]->updateVertices(context, model_mat_tex);
 			}
 			volume_rotate_dirty = false;
 		case dvr::RAYCASTING:

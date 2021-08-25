@@ -16,7 +16,8 @@ public:
 	}
 	virtual void setCuttingPlane(float percent) {}
 	virtual void setCuttingPlaneDelta(int delta) {}
-	virtual void UpdateVertices(glm::mat4 model_mat) { m_vertices_dirty = false; }
+	//virtual void UpdateVertices(glm::mat4 model_mat) { m_vertices_dirty = false; }
+	virtual void updateVertices(ID3D11DeviceContext* context, glm::mat4 model_mat) { m_vertices_dirty = false; }
 	virtual bool isVerticesDirty() { return m_vertices_dirty; }
 	virtual void setRenderingParameters(float* values) = 0;
 	virtual bool Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front = true) = 0;
