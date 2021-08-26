@@ -37,6 +37,7 @@ namespace DX {
 	class OXRManager : public DeviceResources {
 	public:
 		OXRManager();
+		static OXRManager* instance();
 		int64_t GetSwapchainFmt()const { return d3d_swapchain_fmt; }
 		bool InitOxrSession(const char* app_name);
 		void InitOxrActions();
@@ -66,8 +67,9 @@ namespace DX {
 		std::function<void(int)> on3DTouchReleased;
 
 	private:
-		std::vector<std::unique_ptr<xr::Scene>> m_scenes;
+		static OXRManager* myPtr_;
 
+		std::vector<std::unique_ptr<xr::Scene>> m_scenes;
 
 		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 		const XrFormFactor app_config_form = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;

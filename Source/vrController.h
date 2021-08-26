@@ -14,9 +14,9 @@
 #include <Renderers/LineRenderer.h>
 #include <SceneObjs/dataVisualizer.h>
 
-//namespace DX {
-//	class OXRManager;
-//}
+namespace DX {
+	class OXRManager;
+}
 struct reservedStatus
 {
 	glm::mat4 model_mat, rot_mat;
@@ -136,12 +136,13 @@ public:
 		PosVec3_ = pos;
 		RotateMat_ = glm::mat4_cast(rot);
 		uniScale = scale;
+		volume_model_dirty = true; volume_rotate_dirty = true;
 	}
 
 	// x100
 	//glm::mat4 getSensorMatrixAtTime(uint64_t time);
 
-	//DX::OXRManager* oxrManager;
+	DX::OXRManager* oxrManager;
 
 	bool isInteracting() const {
 		return m_IsPressed_left || m_IsPressed_right || m_IsPressed;

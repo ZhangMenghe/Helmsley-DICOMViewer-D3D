@@ -15,7 +15,7 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/calib3d.hpp>
 #include <glm/gtx/rotate_vector.hpp> 
-#include <vrController.h>
+#include <OXRs/OXRManager.h>
 #include <glm/gtx/component_wise.hpp>
 
 #include <winrt/Windows.Globalization.h>
@@ -373,7 +373,7 @@ void SlateCameraRenderer::update_marker_position()
 	// Get position infos
 	auto location = locator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
 	auto camLocation = camLocator.TryLocateAtTimestamp(timestamp, m_referenceFrame);
-	glm::mat4 cachedSensorMatrix = glm::mat4(1.0);//vrController::instance()->getSensorMatrixAtTime(timeStamp.HostTicks * 100);
+	glm::mat4 cachedSensorMatrix = DX::OXRManager::instance()->getSensorMatrixAtTime(timeStamp.HostTicks * 100);
 	
 	if (location && camLocation) {
 

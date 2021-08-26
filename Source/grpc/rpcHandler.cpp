@@ -15,7 +15,8 @@ using namespace concurrency;
 bool rpcHandler::new_data_request = false;
 
 rpcHandler::rpcHandler(const std::string& host) {
-    auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
+  this->host = host;
+    channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
     syncer_ = inspectorSync::NewStub(channel);
     stub_ = dataTransfer::NewStub(channel);
 
@@ -42,27 +43,37 @@ void rpcHandler::receiver_register() {
 
 void rpcHandler::Run() {
     while (true) {
+      //continue;
+        if(channel->GetState(true) != GRPC_CHANNEL_READY) {
+            continue;
+        }
+
         if (ui_ == nullptr || manager_ == nullptr || vr_ == nullptr || m_dicom_loader == nullptr)
             continue;
         //debug only: start to listen directly
         if (!initialized) {
-            receiver_register();
-            initialized = true;
+          receiver_register();
+          initialized = true;
         }
 
-        if(!vr_->isInteracting()) {
+        glm::vec3 pos;
+        glm::quat rot;
+        float s = 1.f;
 
-          glm::vec3 pos;
-          glm::quat rot;
-          float s = 1.f;
+        if (!vr_->isInteracting()) {
 
           bool flag = vr_->getVolumePose(pos, rot, s);
-          if(!flag) {
+          if (!flag) {
             // Update pose info from the server
             getVolumePose(pos, rot, s);
 
             vr_->setVolumePose(pos, rot, s);
-          }else {
+          }
+        }
+        else {
+
+          bool flag = vr_->getVolumePose(pos, rot, s);
+          if (flag) {
             // Send update to server
             setVolumePose(pos, rot, s);
           }
@@ -76,7 +87,7 @@ void rpcHandler::Run() {
             switch (type) {
             case FrameUpdateMsg_MsgType_GESTURE:
                 if (!gesture_finished) {
-                    tackle_gesture_msg(msg.gestures());
+                    //tackle_gesture_msg(msg.gestures());
                     gesture_finished = true;
                 }
                 break;
@@ -105,58 +116,89 @@ void rpcHandler::Run() {
 
 void rpcHandler::getVolumePose(glm::vec3& pos, glm::quat& rot, float& scale) {
   VPMsg response;
-  ClientContext context;
-  VPMsg request;
-  request.set_client_id(CLIENT_ID);
-  request.set_req_type(ReqType::GET);
+  
+  
 
   // position
-  request.set_volume_pose_type(VPMsg_VPType_POS);
-  syncer_->gsVolumePose(&context, request, &response);
-  pos.x = response.values(0);
-  pos.y = response.values(1);
-  pos.z = response.values(2);
+  {
+    ClientContext context;
+    VPMsg request;
+    request.set_client_id(CLIENT_ID);
+    request.set_req_type(ReqType::GET);
+    request.set_volume_pose_type(VPMsg_VPType_POS);
+    syncer_->gsVolumePose(&context, request, &response);
+    pos.x = response.values(0);
+    pos.y = response.values(1);
+    pos.z = response.values(2);
+  }
 
   // rotation
-  request.set_volume_pose_type(VPMsg_VPType_ROT);
-  syncer_->gsVolumePose(&context, request, &response);
-  rot.x = response.values(0);
-  rot.y = response.values(1);
-  rot.z = response.values(2);
-  rot.w = response.values(3);
-
+  {
+    ClientContext context;
+    VPMsg request;
+    request.set_client_id(CLIENT_ID);
+    request.set_req_type(ReqType::GET);
+    request.set_volume_pose_type(VPMsg_VPType_ROT);
+    syncer_->gsVolumePose(&context, request, &response);
+    rot.x = response.values(0);
+    rot.y = response.values(1);
+    rot.z = response.values(2);
+    rot.w = response.values(3);
+  }
   // scale
-  request.set_volume_pose_type(VPMsg_VPType_SCALE);
-  syncer_->gsVolumePose(&context, request, &response);
-  scale = response.values(0);
+  {
+    ClientContext context;
+    VPMsg request;
+    request.set_client_id(CLIENT_ID);
+    request.set_req_type(ReqType::GET);
+    request.set_volume_pose_type(VPMsg_VPType_SCALE);
+    syncer_->gsVolumePose(&context, request, &response);
+    scale = response.values(0);
+  }
 }
 
 void rpcHandler::setVolumePose(glm::vec3& pos, glm::quat& rot, float& scale) {
   VPMsg response;
   ClientContext context;
-  VPMsg request;
-  request.set_client_id(CLIENT_ID);
-  request.set_req_type(ReqType::SET);
+  
 
   // position
-  request.set_volume_pose_type(VPMsg_VPType_POS);
-  syncer_->gsVolumePose(&context, request, &response);
-  request.set_values(0, pos.x);
-  request.set_values(1, pos.y);
-  request.set_values(2, pos.z);
+  {
+    ClientContext context;
+    VPMsg request;
+    request.set_client_id(CLIENT_ID);
+    request.set_req_type(ReqType::SET);
+    request.set_volume_pose_type(VPMsg_VPType_POS);
+    request.add_values(pos.x);
+    request.add_values(pos.y);
+    request.add_values(pos.z);
+    syncer_->gsVolumePose(&context, request, &response);
+  }
 
   // rotation
-  request.set_volume_pose_type(VPMsg_VPType_ROT);
-  syncer_->gsVolumePose(&context, request, &response);
-  request.set_values(0, rot.x);
-  request.set_values(1, rot.y);
-  request.set_values(2, rot.z);
-  request.set_values(3, rot.w);
+  {
+    ClientContext context;
+    VPMsg request;
+    request.set_client_id(CLIENT_ID);
+    request.set_req_type(ReqType::SET);
+    request.set_volume_pose_type(VPMsg_VPType_ROT);
+    request.add_values(rot.x);
+    request.add_values(rot.y);
+    request.add_values(rot.z);
+    request.add_values(rot.w);
+    syncer_->gsVolumePose(&context, request, &response);
+  }
 
   // scale
-  request.set_volume_pose_type(VPMsg_VPType_SCALE);
-  syncer_->gsVolumePose(&context, request, &response);
-  request.set_values(0, scale);
+  {
+    ClientContext context;
+    VPMsg request;
+    request.set_client_id(CLIENT_ID);
+    request.set_req_type(ReqType::SET);
+    request.set_volume_pose_type(VPMsg_VPType_SCALE);
+    request.add_values(scale);
+    syncer_->gsVolumePose(&context, request, &response);
+  }
 }
 
 void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets) {
@@ -410,7 +452,7 @@ void rpcHandler::tackle_volume_msg(helmsley::DataMsg msg) {
 
 void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     //manager_->onReset();
-
+    return; //TODO
     //checks
     auto f = msg.check_keys();
     auto cvs = msg.check_values();

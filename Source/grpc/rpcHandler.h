@@ -31,6 +31,9 @@ using helmsley::volumeResponse;
 
 class rpcHandler{
 private:
+    std::string host;
+    std::shared_ptr<grpc::Channel> channel;
+
     std::string DATA_PATH = "dicom-data/";
     std::unique_ptr<helmsley::inspectorSync::Stub> syncer_;
     std::unique_ptr<helmsley::dataTransfer::Stub> stub_;

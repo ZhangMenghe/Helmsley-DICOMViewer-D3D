@@ -4,9 +4,7 @@
 #include <Common/DirectXHelper.h>
 #include <Utils/MathUtils.h>
 #include <Utils/TypeConvertUtils.h>
-#ifdef OPENXR
-#include <OXRs/OXRManager.h>
-#endif
+
 #include <Renderers/textureBasedVolumeRenderer.h>
 #include <Renderers/ViewAlignedSlicingRenderer.h>
 #include <Renderers/raycastVolumeRenderer.h>
@@ -44,13 +42,13 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	onReset();
 }
 
-glm::mat4 vrController::getSensorMatrixAtTime(uint64_t time) {
-#ifdef OPENXR
-	return oxrManager->getSensorMatrixAtTime(time);
-#else
-	return glm::mat4(1);
-#endif
-}
+//glm::mat4 vrController::getSensorMatrixAtTime(uint64_t time) {
+//#ifdef OPENXR
+//	return oxrManager->getSensorMatrixAtTime(time);
+//#else
+//	return glm::mat4(1);
+//#endif
+//}
 
 void vrController::onReset()
 {
@@ -333,7 +331,6 @@ void vrController::render_scene(int view_id)
 	
 	if (volume_model_dirty)
 	{
-		dirty_since_last_query = true;
 		updateVolumeModelMat();
 		volume_model_dirty = false;
 	}
@@ -362,7 +359,7 @@ void vrController::render_scene(int view_id)
 	}
 
 	precompute();
-
+	m_rmethod_id = 1;
 	//////   VOLUME   //////
 	if (m_manager->isDrawVolume()){
 		switch (m_rmethod_id) {
@@ -371,9 +368,12 @@ void vrController::render_scene(int view_id)
 			break;
 		case dvr::VIEW_ALIGN_SLICING:
 			//if (volume_rotate_dirty || vRenderer_[m_rmethod_id]->isVerticesDirty()) {
-				vRenderer_[m_rmethod_id]->UpdateVertices(model_mat_tex);
+				((viewAlignedSlicingRenderer*)vRenderer_[m_rmethod_id])->updateVertices(context, model_mat_tex);
+				render_complete &= vRenderer_[m_rmethod_id]->Draw(context, tex_baked, mat42xmmatrix(model_mat_tex), is_front);
+
 			//}
 			//volume_rotate_dirty = false;
+				break;
 		case dvr::RAYCASTING:
 			render_complete &= vRenderer_[m_rmethod_id]->Draw(context, tex_baked, mat42xmmatrix(model_mat));
 			break;
@@ -518,6 +518,7 @@ void vrController::onTouchMove(float x, float y)
 	}
 	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
 	volume_model_dirty = true; volume_rotate_dirty = true;
+	dirty_since_last_query = true;
 }
 
 void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side)
@@ -570,6 +571,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 
 				Mouse3D_old_left = {x, y, z};
 				volume_model_dirty = true;
+
 			}
 		}
 		else
@@ -586,6 +588,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 
 				Mouse3D_old_right = {x, y, z};
 				volume_model_dirty = true;
+				dirty_since_last_query = true;
 			}
 		}
 	}
@@ -616,6 +619,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 			distance_old = distance;
 			Mouse3D_old_left = {x, y, z};
 			volume_model_dirty = true;
+			dirty_since_last_query = true;
 		}
 		else
 		{
@@ -639,6 +643,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 			distance_old = distance;
 			Mouse3D_old_right = {x, y, z};
 			volume_model_dirty = true; volume_rotate_dirty = true;
+			dirty_since_last_query = true;
 		}
 
 		// move
@@ -715,8 +720,9 @@ void vrController::onScale(float sx, float sy)
 	}
 	else
 	{
-		ScaleVec3_ = ScaleVec3_ * sx;
+		uniScale = uniScale * sx;
 		volume_model_dirty = true;
+		dirty_since_last_query = true;
 	}
 }
 

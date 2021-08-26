@@ -67,8 +67,16 @@ const char* RequestedExtensions[] = {
     XR_MSFT_SPATIAL_GRAPH_BRIDGE_EXTENSION_NAME
 };
 
+OXRManager* OXRManager::myPtr_ = nullptr;
+
+OXRManager* OXRManager::instance()
+{
+  return myPtr_;
+}
+
 OXRManager::OXRManager()
     :DeviceResources(true) {
+    myPtr_ = this;
     m_d3dFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 }
 
