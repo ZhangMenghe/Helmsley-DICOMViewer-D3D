@@ -49,7 +49,7 @@ struct TableStruct_inspectorSync_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[10]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -84,6 +84,9 @@ extern TuneMsgDefaultTypeInternal _TuneMsg_default_instance_;
 class VPMsg;
 class VPMsgDefaultTypeInternal;
 extern VPMsgDefaultTypeInternal _VPMsg_default_instance_;
+class VolumePoseBatch;
+class VolumePoseBatchDefaultTypeInternal;
+extern VolumePoseBatchDefaultTypeInternal _VolumePoseBatch_default_instance_;
 }  // namespace helmsley
 PROTOBUF_NAMESPACE_OPEN
 template<> ::helmsley::CheckMsg* Arena::CreateMaybeMessage<::helmsley::CheckMsg>(Arena*);
@@ -95,6 +98,7 @@ template<> ::helmsley::OperationBatch* Arena::CreateMaybeMessage<::helmsley::Ope
 template<> ::helmsley::ResetMsg* Arena::CreateMaybeMessage<::helmsley::ResetMsg>(Arena*);
 template<> ::helmsley::TuneMsg* Arena::CreateMaybeMessage<::helmsley::TuneMsg>(Arena*);
 template<> ::helmsley::VPMsg* Arena::CreateMaybeMessage<::helmsley::VPMsg>(Arena*);
+template<> ::helmsley::VolumePoseBatch* Arena::CreateMaybeMessage<::helmsley::VolumePoseBatch>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace helmsley {
 
@@ -388,7 +392,7 @@ class VPMsg PROTOBUF_FINAL :
   enum : int {
     kValuesFieldNumber = 4,
     kClientIdFieldNumber = 1,
-    kReqTypeFieldNumber = 2,
+    kGidFieldNumber = 2,
     kVolumePoseTypeFieldNumber = 3,
   };
   // repeated float values = 4;
@@ -422,13 +426,13 @@ class VPMsg PROTOBUF_FINAL :
   void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // .helmsley.ReqType req_type = 2;
-  void clear_req_type();
-  ::helmsley::ReqType req_type() const;
-  void set_req_type(::helmsley::ReqType value);
+  // int32 gid = 2;
+  void clear_gid();
+  ::PROTOBUF_NAMESPACE_ID::int32 gid() const;
+  void set_gid(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::helmsley::ReqType _internal_req_type() const;
-  void _internal_set_req_type(::helmsley::ReqType value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_gid() const;
+  void _internal_set_gid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // .helmsley.VPMsg.VPType volume_pose_type = 3;
@@ -450,7 +454,7 @@ class VPMsg PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > values_;
   mutable std::atomic<int> _values_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
-  int req_type_;
+  ::PROTOBUF_NAMESPACE_ID::int32 gid_;
   int volume_pose_type_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
@@ -820,6 +824,163 @@ class OperationBatch PROTOBUF_FINAL :
 };
 // -------------------------------------------------------------------
 
+class VolumePoseBatch PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.VolumePoseBatch) */ {
+ public:
+  inline VolumePoseBatch() : VolumePoseBatch(nullptr) {}
+  virtual ~VolumePoseBatch();
+
+  VolumePoseBatch(const VolumePoseBatch& from);
+  VolumePoseBatch(VolumePoseBatch&& from) noexcept
+    : VolumePoseBatch() {
+    *this = ::std::move(from);
+  }
+
+  inline VolumePoseBatch& operator=(const VolumePoseBatch& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline VolumePoseBatch& operator=(VolumePoseBatch&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const VolumePoseBatch& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const VolumePoseBatch* internal_default_instance() {
+    return reinterpret_cast<const VolumePoseBatch*>(
+               &_VolumePoseBatch_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(VolumePoseBatch& a, VolumePoseBatch& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(VolumePoseBatch* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(VolumePoseBatch* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline VolumePoseBatch* New() const final {
+    return CreateMaybeMessage<VolumePoseBatch>(nullptr);
+  }
+
+  VolumePoseBatch* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<VolumePoseBatch>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const VolumePoseBatch& from);
+  void MergeFrom(const VolumePoseBatch& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(VolumePoseBatch* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "helmsley.VolumePoseBatch";
+  }
+  protected:
+  explicit VolumePoseBatch(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_inspectorSync_2eproto);
+    return ::descriptor_table_inspectorSync_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPoseMsgsFieldNumber = 2,
+    kBidFieldNumber = 1,
+  };
+  // repeated .helmsley.VPMsg pose_msgs = 2;
+  int pose_msgs_size() const;
+  private:
+  int _internal_pose_msgs_size() const;
+  public:
+  void clear_pose_msgs();
+  ::helmsley::VPMsg* mutable_pose_msgs(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::VPMsg >*
+      mutable_pose_msgs();
+  private:
+  const ::helmsley::VPMsg& _internal_pose_msgs(int index) const;
+  ::helmsley::VPMsg* _internal_add_pose_msgs();
+  public:
+  const ::helmsley::VPMsg& pose_msgs(int index) const;
+  ::helmsley::VPMsg* add_pose_msgs();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::VPMsg >&
+      pose_msgs() const;
+
+  // float bid = 1;
+  void clear_bid();
+  float bid() const;
+  void set_bid(float value);
+  private:
+  float _internal_bid() const;
+  void _internal_set_bid(float value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:helmsley.VolumePoseBatch)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::VPMsg > pose_msgs_;
+  float bid_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_inspectorSync_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ResetMsg PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.ResetMsg) */ {
  public:
@@ -862,7 +1023,7 @@ class ResetMsg PROTOBUF_FINAL :
                &_ResetMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(ResetMsg& a, ResetMsg& b) {
     a.Swap(&b);
@@ -1089,7 +1250,7 @@ class TuneMsg PROTOBUF_FINAL :
                &_TuneMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(TuneMsg& a, TuneMsg& b) {
     a.Swap(&b);
@@ -1330,7 +1491,7 @@ class CheckMsg PROTOBUF_FINAL :
                &_CheckMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(CheckMsg& a, CheckMsg& b) {
     a.Swap(&b);
@@ -1485,7 +1646,7 @@ class MaskMsg PROTOBUF_FINAL :
                &_MaskMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(MaskMsg& a, MaskMsg& b) {
     a.Swap(&b);
@@ -1633,7 +1794,7 @@ class DataMsg PROTOBUF_FINAL :
                &_DataMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(DataMsg& a, DataMsg& b) {
     a.Swap(&b);
@@ -1795,7 +1956,7 @@ class FrameUpdateMsg PROTOBUF_FINAL :
                &_FrameUpdateMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(FrameUpdateMsg& a, FrameUpdateMsg& b) {
     a.Swap(&b);
@@ -2086,24 +2247,24 @@ inline void VPMsg::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:helmsley.VPMsg.client_id)
 }
 
-// .helmsley.ReqType req_type = 2;
-inline void VPMsg::clear_req_type() {
-  req_type_ = 0;
+// int32 gid = 2;
+inline void VPMsg::clear_gid() {
+  gid_ = 0;
 }
-inline ::helmsley::ReqType VPMsg::_internal_req_type() const {
-  return static_cast< ::helmsley::ReqType >(req_type_);
+inline ::PROTOBUF_NAMESPACE_ID::int32 VPMsg::_internal_gid() const {
+  return gid_;
 }
-inline ::helmsley::ReqType VPMsg::req_type() const {
-  // @@protoc_insertion_point(field_get:helmsley.VPMsg.req_type)
-  return _internal_req_type();
+inline ::PROTOBUF_NAMESPACE_ID::int32 VPMsg::gid() const {
+  // @@protoc_insertion_point(field_get:helmsley.VPMsg.gid)
+  return _internal_gid();
 }
-inline void VPMsg::_internal_set_req_type(::helmsley::ReqType value) {
+inline void VPMsg::_internal_set_gid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  req_type_ = value;
+  gid_ = value;
 }
-inline void VPMsg::set_req_type(::helmsley::ReqType value) {
-  _internal_set_req_type(value);
-  // @@protoc_insertion_point(field_set:helmsley.VPMsg.req_type)
+inline void VPMsg::set_gid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_gid(value);
+  // @@protoc_insertion_point(field_set:helmsley.VPMsg.gid)
 }
 
 // .helmsley.VPMsg.VPType volume_pose_type = 3;
@@ -2318,6 +2479,69 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::GestureOp >&
 OperationBatch::gesture_op() const {
   // @@protoc_insertion_point(field_list:helmsley.OperationBatch.gesture_op)
   return gesture_op_;
+}
+
+// -------------------------------------------------------------------
+
+// VolumePoseBatch
+
+// float bid = 1;
+inline void VolumePoseBatch::clear_bid() {
+  bid_ = 0;
+}
+inline float VolumePoseBatch::_internal_bid() const {
+  return bid_;
+}
+inline float VolumePoseBatch::bid() const {
+  // @@protoc_insertion_point(field_get:helmsley.VolumePoseBatch.bid)
+  return _internal_bid();
+}
+inline void VolumePoseBatch::_internal_set_bid(float value) {
+  
+  bid_ = value;
+}
+inline void VolumePoseBatch::set_bid(float value) {
+  _internal_set_bid(value);
+  // @@protoc_insertion_point(field_set:helmsley.VolumePoseBatch.bid)
+}
+
+// repeated .helmsley.VPMsg pose_msgs = 2;
+inline int VolumePoseBatch::_internal_pose_msgs_size() const {
+  return pose_msgs_.size();
+}
+inline int VolumePoseBatch::pose_msgs_size() const {
+  return _internal_pose_msgs_size();
+}
+inline void VolumePoseBatch::clear_pose_msgs() {
+  pose_msgs_.Clear();
+}
+inline ::helmsley::VPMsg* VolumePoseBatch::mutable_pose_msgs(int index) {
+  // @@protoc_insertion_point(field_mutable:helmsley.VolumePoseBatch.pose_msgs)
+  return pose_msgs_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::VPMsg >*
+VolumePoseBatch::mutable_pose_msgs() {
+  // @@protoc_insertion_point(field_mutable_list:helmsley.VolumePoseBatch.pose_msgs)
+  return &pose_msgs_;
+}
+inline const ::helmsley::VPMsg& VolumePoseBatch::_internal_pose_msgs(int index) const {
+  return pose_msgs_.Get(index);
+}
+inline const ::helmsley::VPMsg& VolumePoseBatch::pose_msgs(int index) const {
+  // @@protoc_insertion_point(field_get:helmsley.VolumePoseBatch.pose_msgs)
+  return _internal_pose_msgs(index);
+}
+inline ::helmsley::VPMsg* VolumePoseBatch::_internal_add_pose_msgs() {
+  return pose_msgs_.Add();
+}
+inline ::helmsley::VPMsg* VolumePoseBatch::add_pose_msgs() {
+  // @@protoc_insertion_point(field_add:helmsley.VolumePoseBatch.pose_msgs)
+  return _internal_add_pose_msgs();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::helmsley::VPMsg >&
+VolumePoseBatch::pose_msgs() const {
+  // @@protoc_insertion_point(field_list:helmsley.VolumePoseBatch.pose_msgs)
+  return pose_msgs_;
 }
 
 // -------------------------------------------------------------------
@@ -3344,6 +3568,8 @@ inline void FrameUpdateMsg::set_allocated_data_value(::helmsley::DataMsg* data_v
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

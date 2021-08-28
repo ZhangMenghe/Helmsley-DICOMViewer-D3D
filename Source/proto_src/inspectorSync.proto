@@ -9,7 +9,7 @@ enum ReqType{
 }
 message VPMsg{
     int32 client_id = 1;
-    ReqType req_type = 2;
+    int32 gid = 2;
     enum VPType{
         POS = 0;
         SCALE = 1;
@@ -35,6 +35,10 @@ message GestureOp{
 message OperationBatch{
     float bid = 1;
     repeated GestureOp gesture_op = 2;
+}
+message VolumePoseBatch{
+    float bid = 1;
+    repeated VPMsg pose_msgs = 2;
 }
 message ResetMsg{
     repeated string check_keys = 1;
@@ -95,11 +99,13 @@ message FrameUpdateMsg{
 service inspectorSync{
     rpc startBroadcast(Request) returns(commonResponse);
     rpc startReceiveBroadcast(Request) returns(commonResponse);
-    rpc gsVolumePose(VPMsg) returns(commonResponse);
+    rpc reqestReset(ResetMsg) returns(commonResponse);
+
+    rpc getVolumePoses(Request) returns(VolumePoseBatch);
     rpc getOperations(Request) returns(OperationBatch);
     rpc getUpdates(Request) returns(FrameUpdateMsg);
 
-    rpc reqestReset(ResetMsg) returns(commonResponse);
+    rpc setVolumePose(VPMsg) returns(commonResponse);
     rpc setGestureOp(GestureOp) returns(commonResponse);
     rpc setTuneParams(TuneMsg) returns(commonResponse);
     rpc setCheckParams(CheckMsg) returns(commonResponse);

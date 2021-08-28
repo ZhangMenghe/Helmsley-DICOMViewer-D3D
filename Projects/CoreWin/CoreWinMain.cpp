@@ -27,10 +27,10 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 void CoreWinMain::setup_volume_server(){
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
-	std::vector<volumeInfo> vl;
+	std::vector<helmsley::volumeInfo> vl;
 	m_data_manager->getAvailableVolumes("IRB01", vl, false);
 
-	volumeInfo vInfo;
+	helmsley::volumeInfo vInfo;
 	for (auto vli : vl) {
 		if (vli.folder_name().compare("series_3_optional__trufi_1_cine") == 0) {
 			vInfo = vli; break;
@@ -48,7 +48,7 @@ void CoreWinMain::setup_volume_local() {
 	//test asset demo
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
 	auto dsName = ds[0].folder_name();
-	std::vector<volumeInfo> vl;
+	std::vector<helmsley::volumeInfo> vl;
 	m_data_manager->getAvailableVolumes(dsName, vl, true);
 
 	auto vInfo = vl[0];

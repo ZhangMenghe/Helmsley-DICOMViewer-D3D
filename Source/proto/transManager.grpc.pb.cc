@@ -28,6 +28,7 @@ static const char* dataTransfer_method_names[] = {
   "/helmsley.dataTransfer/getVolumeFromDataset",
   "/helmsley.dataTransfer/Download",
   "/helmsley.dataTransfer/DownloadVolume",
+  "/helmsley.dataTransfer/DownloadVolumeProcessed",
   "/helmsley.dataTransfer/DownloadMasks",
   "/helmsley.dataTransfer/DownloadMasksVolume",
   "/helmsley.dataTransfer/DownloadCenterLineData",
@@ -46,9 +47,10 @@ dataTransfer::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chann
   , rpcmethod_getVolumeFromDataset_(dataTransfer_method_names[3], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   , rpcmethod_Download_(dataTransfer_method_names[4], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   , rpcmethod_DownloadVolume_(dataTransfer_method_names[5], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_DownloadMasks_(dataTransfer_method_names[6], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_DownloadMasksVolume_(dataTransfer_method_names[7], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_DownloadCenterLineData_(dataTransfer_method_names[8], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_DownloadVolumeProcessed_(dataTransfer_method_names[6], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_DownloadMasks_(dataTransfer_method_names[7], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_DownloadMasksVolume_(dataTransfer_method_names[8], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_DownloadCenterLineData_(dataTransfer_method_names[9], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status dataTransfer::Stub::getAvailableConfigs(::grpc::ClientContext* context, const ::Request& request, ::helmsley::configResponse* response) {
@@ -168,6 +170,22 @@ void dataTransfer::Stub::experimental_async::DownloadVolume(::grpc::ClientContex
   return ::grpc::internal::ClientAsyncReaderFactory< ::helmsley::volumeWholeResponse>::Create(channel_.get(), cq, rpcmethod_DownloadVolume_, context, request, false, nullptr);
 }
 
+::grpc::ClientReader< ::helmsley::volumeWholeResponse>* dataTransfer::Stub::DownloadVolumeProcessedRaw(::grpc::ClientContext* context, const ::helmsley::RequestWholeVolume& request) {
+  return ::grpc::internal::ClientReaderFactory< ::helmsley::volumeWholeResponse>::Create(channel_.get(), rpcmethod_DownloadVolumeProcessed_, context, request);
+}
+
+void dataTransfer::Stub::experimental_async::DownloadVolumeProcessed(::grpc::ClientContext* context, ::helmsley::RequestWholeVolume* request, ::grpc::experimental::ClientReadReactor< ::helmsley::volumeWholeResponse>* reactor) {
+  ::grpc::internal::ClientCallbackReaderFactory< ::helmsley::volumeWholeResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_DownloadVolumeProcessed_, context, request, reactor);
+}
+
+::grpc::ClientAsyncReader< ::helmsley::volumeWholeResponse>* dataTransfer::Stub::AsyncDownloadVolumeProcessedRaw(::grpc::ClientContext* context, const ::helmsley::RequestWholeVolume& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::helmsley::volumeWholeResponse>::Create(channel_.get(), cq, rpcmethod_DownloadVolumeProcessed_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::helmsley::volumeWholeResponse>* dataTransfer::Stub::PrepareAsyncDownloadVolumeProcessedRaw(::grpc::ClientContext* context, const ::helmsley::RequestWholeVolume& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::helmsley::volumeWholeResponse>::Create(channel_.get(), cq, rpcmethod_DownloadVolumeProcessed_, context, request, false, nullptr);
+}
+
 ::grpc::ClientReader< ::helmsley::dcmImage>* dataTransfer::Stub::DownloadMasksRaw(::grpc::ClientContext* context, const ::Request& request) {
   return ::grpc::internal::ClientReaderFactory< ::helmsley::dcmImage>::Create(channel_.get(), rpcmethod_DownloadMasks_, context, request);
 }
@@ -280,6 +298,16 @@ dataTransfer::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       dataTransfer_method_names[6],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< dataTransfer::Service, ::helmsley::RequestWholeVolume, ::helmsley::volumeWholeResponse>(
+          [](dataTransfer::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::helmsley::RequestWholeVolume* req,
+             ::grpc::ServerWriter<::helmsley::volumeWholeResponse>* writer) {
+               return service->DownloadVolumeProcessed(ctx, req, writer);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      dataTransfer_method_names[7],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< dataTransfer::Service, ::Request, ::helmsley::dcmImage>(
           [](dataTransfer::Service* service,
              ::grpc::ServerContext* ctx,
@@ -288,7 +316,7 @@ dataTransfer::Service::Service() {
                return service->DownloadMasks(ctx, req, writer);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      dataTransfer_method_names[7],
+      dataTransfer_method_names[8],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< dataTransfer::Service, ::Request, ::helmsley::volumeWholeResponse>(
           [](dataTransfer::Service* service,
@@ -298,7 +326,7 @@ dataTransfer::Service::Service() {
                return service->DownloadMasksVolume(ctx, req, writer);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      dataTransfer_method_names[8],
+      dataTransfer_method_names[9],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< dataTransfer::Service, ::Request, ::helmsley::centerlineData>(
           [](dataTransfer::Service* service,
@@ -348,6 +376,13 @@ dataTransfer::Service::~Service() {
 }
 
 ::grpc::Status dataTransfer::Service::DownloadVolume(::grpc::ServerContext* context, const ::helmsley::RequestWholeVolume* request, ::grpc::ServerWriter< ::helmsley::volumeWholeResponse>* writer) {
+  (void) context;
+  (void) request;
+  (void) writer;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status dataTransfer::Service::DownloadVolumeProcessed(::grpc::ServerContext* context, const ::helmsley::RequestWholeVolume* request, ::grpc::ServerWriter< ::helmsley::volumeWholeResponse>* writer) {
   (void) context;
   (void) request;
   (void) writer;

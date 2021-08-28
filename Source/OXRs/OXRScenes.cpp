@@ -25,10 +25,10 @@ void OXRScenes::setup_volume_server()
 {
 	//test remote
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(false);
-	std::vector<volumeInfo> vl;
+	std::vector<helmsley::volumeInfo> vl;
 	m_data_manager->getAvailableVolumes("IRB01", vl, false);
 
-	volumeInfo vInfo;
+	helmsley::volumeInfo vInfo;
 	for (auto vli : vl)
 	{
 		if (vli.folder_name().compare("2100_FATPOSTCORLAVAFLEX20secs") == 0)
@@ -49,7 +49,7 @@ void OXRScenes::setup_volume_local()
 {
 	std::vector<datasetResponse::datasetInfo> ds = m_data_manager->getAvailableDataset(true);
 	auto dsName = ds[0].folder_name();
-	std::vector<volumeInfo> vl;
+	std::vector<helmsley::volumeInfo> vl;
 	m_data_manager->getAvailableVolumes(dsName, vl, true);
 
 	auto vInfo = vl[0];
@@ -82,7 +82,7 @@ void OXRScenes::Update(const xr::FrameTime& frameTime)
 {
 	if (m_local_initialized) {
 		if (dvr::CONNECT_TO_SERVER)		{
-			m_rpcHandler = std::make_shared<rpcHandler>("10.68.2.105:23333");
+			m_rpcHandler = std::make_shared<rpcHandler>("192.168.0.178:23333");
 			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
 			m_rpcHandler->setDataLoader(m_dicom_loader);
 			m_rpcHandler->setVRController(m_sceneRenderer.get());

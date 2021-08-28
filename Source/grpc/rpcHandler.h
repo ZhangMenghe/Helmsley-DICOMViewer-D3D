@@ -71,7 +71,7 @@ public:
     void Run();
 
     void getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets);
-    void getVolumeFromDataset(const std::string& dataset_name, std::vector<volumeInfo>& ret);
+    void getVolumeFromDataset(const std::string& dataset_name, std::vector<helmsley::volumeInfo>& ret);
     std::vector<configResponse::configInfo> getAvailableConfigFiles();
     void exportConfigs(std::string content);
 

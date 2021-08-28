@@ -18,7 +18,7 @@ dataManager::dataManager(const std::shared_ptr<dicomLoader>& dicom_loader,
 	setup_local_datasets();
 }
 
-bool dataManager::removeLocalData(std::string dsName, volumeInfo vInfo) {
+bool dataManager::removeLocalData(std::string dsName, helmsley::volumeInfo vInfo) {
 	if (m_local_dv_map.count(dsName) == 0) return false;
 	//remove from index file
 
@@ -89,7 +89,7 @@ bool dataManager::loadData(std::string dsName, std::string vlName) {
 		if (ds.folder_name().compare(dsName) == 0) {
 			std::string path = dsName + "/" + vlName;
 			//check if volume exists remotely
-			std::vector<volumeInfo> remote_vls;
+			std::vector<helmsley::volumeInfo> remote_vls;
 			m_rpc_handler->getVolumeFromDataset(dsName, remote_vls);
 			for (auto vInfo : remote_vls) {
 				if (vInfo.folder_name().compare(vlName) == 0) {
@@ -125,7 +125,7 @@ void dataManager::prepare_target_volume() {
 		spacing[0] * dims[0], spacing[1] * dims[1], m_target_vl.volume_loc_range(),
 		m_target_vl.with_mask());
 }
-bool dataManager::loadData(std::string dsName, volumeInfo vInfo, bool isLocal) {
+bool dataManager::loadData(std::string dsName, helmsley::volumeInfo vInfo, bool isLocal) {
 	if (dsName.compare(m_target_ds.folder_name()) != 0)return false;
 	m_target_vl = vInfo;
 	std::string vl_path = dvr::CACHE_FOLDER_NAME + "\\" + dsName + "\\" + vInfo.folder_name() + "\\";
@@ -158,7 +158,7 @@ bool dataManager::loadData(std::string dsName, volumeInfo vInfo, bool isLocal) {
 std::vector<datasetResponse::datasetInfo> dataManager::getAvailableDataset(bool isLocal) {
 	return isLocal ? m_local_datasets : m_remote_datasets;
 }
-void dataManager::getAvailableVolumes(std::string dsname, std::vector<volumeInfo>& ret, bool isLocal) {
+void dataManager::getAvailableVolumes(std::string dsname, std::vector<helmsley::volumeInfo>& ret, bool isLocal) {
 	if (isLocal) {
 		for (auto tInfo : m_local_datasets) {
 			if (tInfo.folder_name().compare(dsname) == 0) {
@@ -187,7 +187,7 @@ void dataManager::setup_local_datasets() {
 	std::vector<std::string> linfo(50);
 
 	datasetResponse::datasetInfo tinfo;
-	volumeInfo vinfo;
+	helmsley::volumeInfo vinfo;
 	for (int idx = 0; idx < fileData.size(); idx++) {
 		std::stringstream ssv(fileData[idx]);
 		if (idx % 2 == 0) {
@@ -203,7 +203,7 @@ void dataManager::setup_local_datasets() {
 			vinfo.set_folder_path(linfo[4]);
 			vinfo.set_volume_loc_range(std::stof(linfo[8]));
 			vinfo.set_with_mask(linfo[9].compare("true") == 0);
-			vinfo.set_data_source((volumeInfo::DataSource) std::stoi(linfo[10]));
+			vinfo.set_data_source((helmsley::volumeInfo::DataSource) std::stoi(linfo[10]));
 			//set dimension
 			std::stringstream ssd(linfo[5]);
 			while (ssd.good()) {
@@ -230,7 +230,7 @@ void dataManager::setup_local_datasets() {
 				std::getline(ssv, linfo[ids], '#');
 
 			//group/rank/rscore/...../volscore*3
-			scoreInfo sInfo;
+			helmsley::scoreInfo sInfo;
 			sInfo.set_rgroup_id(std::stoi(linfo[0]));
 			sInfo.set_rank_id(std::stoi(linfo[1]));
 			sInfo.set_rank_score(std::stof(linfo[2]));
@@ -249,13 +249,13 @@ void dataManager::setup_local_datasets() {
 	m_local_initialized = true;
 	linfo.clear();
 }
-void dataManager::update_local_info(datasetResponse::datasetInfo tInfo, volumeInfo vInfo) {
+void dataManager::update_local_info(datasetResponse::datasetInfo tInfo, helmsley::volumeInfo vInfo) {
 	std::string dsname = tInfo.folder_name();
 	if (m_local_dv_map.count(dsname) == 0) m_local_datasets.push_back(tInfo);
 
 	auto itr = std::find_if(m_local_dv_map[dsname].begin(),
 		m_local_dv_map[dsname].end(), 
-		[vInfo](const volumeInfo& s) { return s.folder_name().compare(vInfo.folder_name()) == 0; });
+		[vInfo](const helmsley::volumeInfo& s) { return s.folder_name().compare(vInfo.folder_name()) == 0; });
 	if (itr == m_local_dv_map[dsname].end()) m_local_dv_map[dsname].push_back(vInfo);
 	else *itr = vInfo;
 }

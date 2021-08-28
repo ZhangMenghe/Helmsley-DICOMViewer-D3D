@@ -95,7 +95,7 @@ void rpcHandler::getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& da
         datasets.push_back(ds);
 }
 
-void rpcHandler::getVolumeFromDataset(const std::string& dataset_name, std::vector<volumeInfo>& ret) {
+void rpcHandler::getVolumeFromDataset(const std::string& dataset_name, std::vector<helmsley::volumeInfo>& ret) {
     ret.clear();
     Request req;
     req.set_client_id(CLIENT_ID);

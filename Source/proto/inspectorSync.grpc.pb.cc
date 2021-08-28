@@ -24,10 +24,11 @@ namespace helmsley {
 static const char* inspectorSync_method_names[] = {
   "/helmsley.inspectorSync/startBroadcast",
   "/helmsley.inspectorSync/startReceiveBroadcast",
-  "/helmsley.inspectorSync/gsVolumePose",
+  "/helmsley.inspectorSync/reqestReset",
+  "/helmsley.inspectorSync/getVolumePoses",
   "/helmsley.inspectorSync/getOperations",
   "/helmsley.inspectorSync/getUpdates",
-  "/helmsley.inspectorSync/reqestReset",
+  "/helmsley.inspectorSync/setVolumePose",
   "/helmsley.inspectorSync/setGestureOp",
   "/helmsley.inspectorSync/setTuneParams",
   "/helmsley.inspectorSync/setCheckParams",
@@ -44,15 +45,16 @@ std::unique_ptr< inspectorSync::Stub> inspectorSync::NewStub(const std::shared_p
 inspectorSync::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_startBroadcast_(inspectorSync_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_startReceiveBroadcast_(inspectorSync_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_gsVolumePose_(inspectorSync_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getOperations_(inspectorSync_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_getUpdates_(inspectorSync_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_reqestReset_(inspectorSync_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setGestureOp_(inspectorSync_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setTuneParams_(inspectorSync_method_names[7], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setCheckParams_(inspectorSync_method_names[8], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setMaskParams_(inspectorSync_method_names[9], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setDisplayVolume_(inspectorSync_method_names[10], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_reqestReset_(inspectorSync_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getVolumePoses_(inspectorSync_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getOperations_(inspectorSync_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getUpdates_(inspectorSync_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setVolumePose_(inspectorSync_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setGestureOp_(inspectorSync_method_names[7], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setTuneParams_(inspectorSync_method_names[8], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setCheckParams_(inspectorSync_method_names[9], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setMaskParams_(inspectorSync_method_names[10], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setDisplayVolume_(inspectorSync_method_names[11], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status inspectorSync::Stub::startBroadcast(::grpc::ClientContext* context, const ::Request& request, ::commonResponse* response) {
@@ -101,25 +103,48 @@ void inspectorSync::Stub::experimental_async::startReceiveBroadcast(::grpc::Clie
   return result;
 }
 
-::grpc::Status inspectorSync::Stub::gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::commonResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_gsVolumePose_, context, request, response);
+::grpc::Status inspectorSync::Stub::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::commonResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_reqestReset_, context, request, response);
 }
 
-void inspectorSync::Stub::experimental_async::gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_gsVolumePose_, context, request, response, std::move(f));
+void inspectorSync::Stub::experimental_async::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_reqestReset_, context, request, response, std::move(f));
 }
 
-void inspectorSync::Stub::experimental_async::gsVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_gsVolumePose_, context, request, response, reactor);
+void inspectorSync::Stub::experimental_async::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_reqestReset_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_gsVolumePose_, context, request, false);
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_reqestReset_, context, request, false);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncgsVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncgsVolumePoseRaw(context, request, cq);
+    this->PrepareAsyncreqestResetRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status inspectorSync::Stub::getVolumePoses(::grpc::ClientContext* context, const ::Request& request, ::helmsley::VolumePoseBatch* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_getVolumePoses_, context, request, response);
+}
+
+void inspectorSync::Stub::experimental_async::getVolumePoses(::grpc::ClientContext* context, const ::Request* request, ::helmsley::VolumePoseBatch* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_getVolumePoses_, context, request, response, std::move(f));
+}
+
+void inspectorSync::Stub::experimental_async::getVolumePoses(::grpc::ClientContext* context, const ::Request* request, ::helmsley::VolumePoseBatch* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_getVolumePoses_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::helmsley::VolumePoseBatch>* inspectorSync::Stub::PrepareAsyncgetVolumePosesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::helmsley::VolumePoseBatch>::Create(channel_.get(), cq, rpcmethod_getVolumePoses_, context, request, false);
+}
+
+::grpc::ClientAsyncResponseReader< ::helmsley::VolumePoseBatch>* inspectorSync::Stub::AsyncgetVolumePosesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncgetVolumePosesRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -170,25 +195,25 @@ void inspectorSync::Stub::experimental_async::getUpdates(::grpc::ClientContext* 
   return result;
 }
 
-::grpc::Status inspectorSync::Stub::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::commonResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_reqestReset_, context, request, response);
+::grpc::Status inspectorSync::Stub::setVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::commonResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_setVolumePose_, context, request, response);
 }
 
-void inspectorSync::Stub::experimental_async::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_reqestReset_, context, request, response, std::move(f));
+void inspectorSync::Stub::experimental_async::setVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_setVolumePose_, context, request, response, std::move(f));
 }
 
-void inspectorSync::Stub::experimental_async::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_reqestReset_, context, request, response, reactor);
+void inspectorSync::Stub::experimental_async::setVolumePose(::grpc::ClientContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_setVolumePose_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_reqestReset_, context, request, false);
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncsetVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_setVolumePose_, context, request, false);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncsetVolumePoseRaw(::grpc::ClientContext* context, const ::helmsley::VPMsg& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncreqestResetRaw(context, request, cq);
+    this->PrepareAsyncsetVolumePoseRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -332,15 +357,25 @@ inspectorSync::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       inspectorSync_method_names[2],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::VPMsg, ::commonResponse>(
+      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::ResetMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::helmsley::VPMsg* req,
+             const ::helmsley::ResetMsg* req,
              ::commonResponse* resp) {
-               return service->gsVolumePose(ctx, req, resp);
+               return service->reqestReset(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       inspectorSync_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::Request, ::helmsley::VolumePoseBatch>(
+          [](inspectorSync::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::Request* req,
+             ::helmsley::VolumePoseBatch* resp) {
+               return service->getVolumePoses(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      inspectorSync_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::Request, ::helmsley::OperationBatch>(
           [](inspectorSync::Service* service,
@@ -350,7 +385,7 @@ inspectorSync::Service::Service() {
                return service->getOperations(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[4],
+      inspectorSync_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::Request, ::helmsley::FrameUpdateMsg>(
           [](inspectorSync::Service* service,
@@ -360,17 +395,17 @@ inspectorSync::Service::Service() {
                return service->getUpdates(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[5],
+      inspectorSync_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::ResetMsg, ::commonResponse>(
+      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::VPMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::helmsley::ResetMsg* req,
+             const ::helmsley::VPMsg* req,
              ::commonResponse* resp) {
-               return service->reqestReset(ctx, req, resp);
+               return service->setVolumePose(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[6],
+      inspectorSync_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::GestureOp, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -380,7 +415,7 @@ inspectorSync::Service::Service() {
                return service->setGestureOp(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[7],
+      inspectorSync_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::TuneMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -390,7 +425,7 @@ inspectorSync::Service::Service() {
                return service->setTuneParams(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[8],
+      inspectorSync_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::CheckMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -400,7 +435,7 @@ inspectorSync::Service::Service() {
                return service->setCheckParams(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[9],
+      inspectorSync_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::MaskMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -410,7 +445,7 @@ inspectorSync::Service::Service() {
                return service->setMaskParams(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[10],
+      inspectorSync_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::DataMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -438,7 +473,14 @@ inspectorSync::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status inspectorSync::Service::gsVolumePose(::grpc::ServerContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response) {
+::grpc::Status inspectorSync::Service::reqestReset(::grpc::ServerContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status inspectorSync::Service::getVolumePoses(::grpc::ServerContext* context, const ::Request* request, ::helmsley::VolumePoseBatch* response) {
   (void) context;
   (void) request;
   (void) response;
@@ -459,7 +501,7 @@ inspectorSync::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status inspectorSync::Service::reqestReset(::grpc::ServerContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response) {
+::grpc::Status inspectorSync::Service::setVolumePose(::grpc::ServerContext* context, const ::helmsley::VPMsg* request, ::commonResponse* response) {
   (void) context;
   (void) request;
   (void) response;
