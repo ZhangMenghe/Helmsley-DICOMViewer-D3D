@@ -14,7 +14,7 @@ viewAlignedSlicingRenderer::viewAlignedSlicingRenderer(ID3D11Device* device)
 	),
 	cut_id(0)
 {
-	this->initialize();
+	initialize();
 	createDynamicVertexBuffer(device, 36 * MAX_DIMENSIONS);
 }
 

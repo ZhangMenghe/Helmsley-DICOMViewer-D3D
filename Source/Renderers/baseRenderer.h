@@ -53,9 +53,10 @@ protected:
 	const float* vdata;
     const unsigned short* idata;
 
-	virtual void initialize();
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
+
+	void initialize();
 	void initialize_vertices(ID3D11Device* device, const float* vdata);
 	void initialize_indices(ID3D11Device* device, const unsigned short* idata);
 	void initialize_mesh_others(ID3D11Device* device){}

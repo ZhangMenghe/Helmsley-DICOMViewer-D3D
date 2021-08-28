@@ -137,7 +137,7 @@ SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device)
 :baseRenderer(device, L"QuadVertexShader.cso", L"NaiveColorPixelShader.cso",
 	quad_vertices_pos_w_tex, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
-	this->initialize();
+	initialize();
 	vrController::instance()->setUseSpaceMat(true);
 }
 SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,

@@ -60,8 +60,8 @@ private:
 	std::thread *m_rpcThread;
 
 	//XR
-	XrSpace* space;
-	XrSpace* app_space;
+	XrSpace* m_space;
+	XrSpace* m_app_space;
 
 	// Rendering loop timer.
 	DX::StepTimer m_timer;

@@ -7,7 +7,7 @@ using namespace DirectX;
 
 organMeshRenderer::organMeshRenderer(ID3D11Device* device)
 	:baseRenderer(device, L"mesh3DVertexShader.cso", L"mesh3DPixelShader.cso"){
-	this->initialize();
+	initialize();
 
 	//setup rasterization state
 	D3D11_RASTERIZER_DESC desc;

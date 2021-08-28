@@ -6,7 +6,7 @@ using namespace DirectX;
 lineRenderer::lineRenderer(ID3D11Device* device, int uid)
 :baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso"),
 m_uid(uid){
-	this->initialize();
+	initialize();
 
 	D3D11_BLEND_DESC omDesc;
 	ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));

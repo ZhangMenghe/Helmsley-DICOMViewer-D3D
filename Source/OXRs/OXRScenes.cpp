@@ -75,8 +75,8 @@ void OXRScenes::onViewChanged(){
 	m_sceneRenderer->CreateWindowSizeDependentResources();
 }
 void OXRScenes::setSpaces(XrSpace *space, XrSpace *app_space){
-	this->space = space;
-	this->app_space = app_space;
+	m_space = space;
+	m_app_space = app_space;
 }
 void OXRScenes::Update(const xr::FrameTime& frameTime)
 {

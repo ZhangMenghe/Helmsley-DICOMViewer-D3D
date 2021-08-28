@@ -12,7 +12,7 @@ raycastVolumeRenderer::raycastVolumeRenderer(ID3D11Device* device)
 		48, 36
 	)
 {
-	this->initialize();
+	initialize();
 	m_sample_steps = Manager::indiv_rendering_params[dvr::RAYCASTING];
 }
 

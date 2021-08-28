@@ -12,7 +12,7 @@ textureBasedVolumeRenderer::textureBasedVolumeRenderer(ID3D11Device* device)
 	),
 	cut_id(0)
 {
-	this->initialize();
+	initialize();
 	initialize_vertices_and_indices(device);
 
 	float tmp[] = { Manager::indiv_rendering_params[0] };
