@@ -11,9 +11,11 @@ namespace dvr{
     {
         CHECK_RAYCAST = 0,
         CHECK_OVERLAY,
+        CHECK_CLAHE,
         CHECK_CUTTING,
         CHECK_FREEZE_VOLUME,
-        CHECK_FREEZE_CPLANE,
+        //        CHECK_FREEZE_CPLANE,
+        CHECK_SHOW_CPLANE,
         CUT_PLANE_REAL_SAMPLE,
         CHECK_CENTER_LINE_TRAVEL,
         CHECK_TRAVERSAL_VIEW,
@@ -24,8 +26,10 @@ namespace dvr{
         CHECK_POLYGON_WIREFRAME,
         CHECK_CENTER_LINE,
         CHECK_AR_ENABLED,
+        CHECK_AR_USE_ARCORE,
         CHECK_AR_DRAW_POINT,
         CHECK_AR_DRAW_PLANE,
+        CHECK_AR_3D_POINTER
     };
     enum PARAM_TID {
         TID_OPACITY = 0,
@@ -114,7 +118,9 @@ namespace dvr{
     enum TEX_IDS
     {
         BAKED_TEX_ID = 0,
+        CLAHE_TEX_ID,
         SCREEN_QUAD_TEX_ID,
+        COLOR_VIZ_QUAD_TEX_ID,
         BACK_GROUND_AR_ID,
         PLANE_AR_ID,
     };

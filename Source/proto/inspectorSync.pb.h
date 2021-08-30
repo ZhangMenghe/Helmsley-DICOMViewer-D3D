@@ -610,12 +610,13 @@ class GestureOp PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kGidFieldNumber = 1,
-    kTypeFieldNumber = 2,
-    kXFieldNumber = 3,
-    kYFieldNumber = 4,
+    kGidFieldNumber = 2,
+    kClientIdFieldNumber = 1,
+    kTypeFieldNumber = 3,
+    kXFieldNumber = 4,
+    kYFieldNumber = 5,
   };
-  // int64 gid = 1;
+  // int64 gid = 2;
   void clear_gid();
   ::PROTOBUF_NAMESPACE_ID::int64 gid() const;
   void set_gid(::PROTOBUF_NAMESPACE_ID::int64 value);
@@ -624,7 +625,16 @@ class GestureOp PROTOBUF_FINAL :
   void _internal_set_gid(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // .helmsley.GestureOp.OPType type = 2;
+  // int32 client_id = 1;
+  void clear_client_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id() const;
+  void set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_client_id() const;
+  void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // .helmsley.GestureOp.OPType type = 3;
   void clear_type();
   ::helmsley::GestureOp_OPType type() const;
   void set_type(::helmsley::GestureOp_OPType value);
@@ -633,7 +643,7 @@ class GestureOp PROTOBUF_FINAL :
   void _internal_set_type(::helmsley::GestureOp_OPType value);
   public:
 
-  // float x = 3;
+  // float x = 4;
   void clear_x();
   float x() const;
   void set_x(float value);
@@ -642,7 +652,7 @@ class GestureOp PROTOBUF_FINAL :
   void _internal_set_x(float value);
   public:
 
-  // float y = 4;
+  // float y = 5;
   void clear_y();
   float y() const;
   void set_y(float value);
@@ -659,6 +669,7 @@ class GestureOp PROTOBUF_FINAL :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::int64 gid_;
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
   int type_;
   float x_;
   float y_;
@@ -1094,12 +1105,13 @@ class ResetMsg PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kCheckKeysFieldNumber = 1,
-    kCheckValuesFieldNumber = 2,
-    kVolumePoseFieldNumber = 3,
-    kCameraPoseFieldNumber = 4,
+    kCheckKeysFieldNumber = 2,
+    kCheckValuesFieldNumber = 3,
+    kVolumePoseFieldNumber = 4,
+    kCameraPoseFieldNumber = 5,
+    kClientIdFieldNumber = 1,
   };
-  // repeated string check_keys = 1;
+  // repeated string check_keys = 2;
   int check_keys_size() const;
   private:
   int _internal_check_keys_size() const;
@@ -1123,7 +1135,7 @@ class ResetMsg PROTOBUF_FINAL :
   std::string* _internal_add_check_keys();
   public:
 
-  // repeated bool check_values = 2;
+  // repeated bool check_values = 3;
   int check_values_size() const;
   private:
   int _internal_check_values_size() const;
@@ -1145,7 +1157,7 @@ class ResetMsg PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< bool >*
       mutable_check_values();
 
-  // repeated float volume_pose = 3;
+  // repeated float volume_pose = 4;
   int volume_pose_size() const;
   private:
   int _internal_volume_pose_size() const;
@@ -1167,7 +1179,7 @@ class ResetMsg PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
       mutable_volume_pose();
 
-  // repeated float camera_pose = 4;
+  // repeated float camera_pose = 5;
   int camera_pose_size() const;
   private:
   int _internal_camera_pose_size() const;
@@ -1189,6 +1201,15 @@ class ResetMsg PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
       mutable_camera_pose();
 
+  // int32 client_id = 1;
+  void clear_client_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id() const;
+  void set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_client_id() const;
+  void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:helmsley.ResetMsg)
  private:
   class _Internal;
@@ -1203,6 +1224,7 @@ class ResetMsg PROTOBUF_FINAL :
   mutable std::atomic<int> _volume_pose_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > camera_pose_;
   mutable std::atomic<int> _camera_pose_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
 };
@@ -1367,13 +1389,14 @@ class TuneMsg PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kValuesFieldNumber = 5,
-    kTypeFieldNumber = 1,
-    kTargetFieldNumber = 2,
-    kSubTargetFieldNumber = 3,
-    kValueFieldNumber = 4,
+    kValuesFieldNumber = 6,
+    kClientIdFieldNumber = 1,
+    kTypeFieldNumber = 2,
+    kTargetFieldNumber = 3,
+    kSubTargetFieldNumber = 4,
+    kValueFieldNumber = 5,
   };
-  // repeated float values = 5;
+  // repeated float values = 6;
   int values_size() const;
   private:
   int _internal_values_size() const;
@@ -1395,7 +1418,16 @@ class TuneMsg PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float >*
       mutable_values();
 
-  // .helmsley.TuneMsg.TuneType type = 1;
+  // int32 client_id = 1;
+  void clear_client_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id() const;
+  void set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_client_id() const;
+  void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // .helmsley.TuneMsg.TuneType type = 2;
   void clear_type();
   ::helmsley::TuneMsg_TuneType type() const;
   void set_type(::helmsley::TuneMsg_TuneType value);
@@ -1404,7 +1436,7 @@ class TuneMsg PROTOBUF_FINAL :
   void _internal_set_type(::helmsley::TuneMsg_TuneType value);
   public:
 
-  // int32 target = 2;
+  // int32 target = 3;
   void clear_target();
   ::PROTOBUF_NAMESPACE_ID::int32 target() const;
   void set_target(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -1413,7 +1445,7 @@ class TuneMsg PROTOBUF_FINAL :
   void _internal_set_target(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 sub_target = 3;
+  // int32 sub_target = 4;
   void clear_sub_target();
   ::PROTOBUF_NAMESPACE_ID::int32 sub_target() const;
   void set_sub_target(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -1422,7 +1454,7 @@ class TuneMsg PROTOBUF_FINAL :
   void _internal_set_sub_target(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // float value = 4;
+  // float value = 5;
   void clear_value();
   float value() const;
   void set_value(float value);
@@ -1440,6 +1472,7 @@ class TuneMsg PROTOBUF_FINAL :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedField< float > values_;
   mutable std::atomic<int> _values_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
   int type_;
   ::PROTOBUF_NAMESPACE_ID::int32 target_;
   ::PROTOBUF_NAMESPACE_ID::int32 sub_target_;
@@ -1562,10 +1595,11 @@ class CheckMsg PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kKeyFieldNumber = 1,
-    kValueFieldNumber = 2,
+    kKeyFieldNumber = 2,
+    kClientIdFieldNumber = 1,
+    kValueFieldNumber = 3,
   };
-  // string key = 1;
+  // string key = 2;
   void clear_key();
   const std::string& key() const;
   void set_key(const std::string& value);
@@ -1581,7 +1615,16 @@ class CheckMsg PROTOBUF_FINAL :
   std::string* _internal_mutable_key();
   public:
 
-  // bool value = 2;
+  // int32 client_id = 1;
+  void clear_client_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id() const;
+  void set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_client_id() const;
+  void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // bool value = 3;
   void clear_value();
   bool value() const;
   void set_value(bool value);
@@ -1598,6 +1641,7 @@ class CheckMsg PROTOBUF_FINAL :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr key_;
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
   bool value_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
@@ -1717,10 +1761,20 @@ class MaskMsg PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNumFieldNumber = 1,
-    kMbitsFieldNumber = 2,
+    kClientIdFieldNumber = 1,
+    kNumFieldNumber = 2,
+    kMbitsFieldNumber = 3,
   };
-  // int32 num = 1;
+  // int32 client_id = 1;
+  void clear_client_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id() const;
+  void set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_client_id() const;
+  void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 num = 2;
   void clear_num();
   ::PROTOBUF_NAMESPACE_ID::int32 num() const;
   void set_num(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -1729,7 +1783,7 @@ class MaskMsg PROTOBUF_FINAL :
   void _internal_set_num(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 mbits = 2;
+  // int32 mbits = 3;
   void clear_mbits();
   ::PROTOBUF_NAMESPACE_ID::int32 mbits() const;
   void set_mbits(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -1745,6 +1799,7 @@ class MaskMsg PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
   ::PROTOBUF_NAMESPACE_ID::int32 num_;
   ::PROTOBUF_NAMESPACE_ID::int32 mbits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -1865,10 +1920,11 @@ class DataMsg PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kDsNameFieldNumber = 1,
-    kVolumeNameFieldNumber = 2,
+    kDsNameFieldNumber = 2,
+    kVolumeNameFieldNumber = 3,
+    kClientIdFieldNumber = 1,
   };
-  // string ds_name = 1;
+  // string ds_name = 2;
   void clear_ds_name();
   const std::string& ds_name() const;
   void set_ds_name(const std::string& value);
@@ -1884,7 +1940,7 @@ class DataMsg PROTOBUF_FINAL :
   std::string* _internal_mutable_ds_name();
   public:
 
-  // string volume_name = 2;
+  // string volume_name = 3;
   void clear_volume_name();
   const std::string& volume_name() const;
   void set_volume_name(const std::string& value);
@@ -1900,6 +1956,15 @@ class DataMsg PROTOBUF_FINAL :
   std::string* _internal_mutable_volume_name();
   public:
 
+  // int32 client_id = 1;
+  void clear_client_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id() const;
+  void set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_client_id() const;
+  void _internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:helmsley.DataMsg)
  private:
   class _Internal;
@@ -1909,6 +1974,7 @@ class DataMsg PROTOBUF_FINAL :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ds_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr volume_name_;
+  ::PROTOBUF_NAMESPACE_ID::int32 client_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
 };
@@ -2338,7 +2404,27 @@ VPMsg::mutable_values() {
 
 // GestureOp
 
-// int64 gid = 1;
+// int32 client_id = 1;
+inline void GestureOp::clear_client_id() {
+  client_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GestureOp::_internal_client_id() const {
+  return client_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 GestureOp::client_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.GestureOp.client_id)
+  return _internal_client_id();
+}
+inline void GestureOp::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  client_id_ = value;
+}
+inline void GestureOp::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.GestureOp.client_id)
+}
+
+// int64 gid = 2;
 inline void GestureOp::clear_gid() {
   gid_ = PROTOBUF_LONGLONG(0);
 }
@@ -2358,7 +2444,7 @@ inline void GestureOp::set_gid(::PROTOBUF_NAMESPACE_ID::int64 value) {
   // @@protoc_insertion_point(field_set:helmsley.GestureOp.gid)
 }
 
-// .helmsley.GestureOp.OPType type = 2;
+// .helmsley.GestureOp.OPType type = 3;
 inline void GestureOp::clear_type() {
   type_ = 0;
 }
@@ -2378,7 +2464,7 @@ inline void GestureOp::set_type(::helmsley::GestureOp_OPType value) {
   // @@protoc_insertion_point(field_set:helmsley.GestureOp.type)
 }
 
-// float x = 3;
+// float x = 4;
 inline void GestureOp::clear_x() {
   x_ = 0;
 }
@@ -2398,7 +2484,7 @@ inline void GestureOp::set_x(float value) {
   // @@protoc_insertion_point(field_set:helmsley.GestureOp.x)
 }
 
-// float y = 4;
+// float y = 5;
 inline void GestureOp::clear_y() {
   y_ = 0;
 }
@@ -2548,7 +2634,27 @@ VolumePoseBatch::pose_msgs() const {
 
 // ResetMsg
 
-// repeated string check_keys = 1;
+// int32 client_id = 1;
+inline void ResetMsg::clear_client_id() {
+  client_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 ResetMsg::_internal_client_id() const {
+  return client_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 ResetMsg::client_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.ResetMsg.client_id)
+  return _internal_client_id();
+}
+inline void ResetMsg::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  client_id_ = value;
+}
+inline void ResetMsg::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.ResetMsg.client_id)
+}
+
+// repeated string check_keys = 2;
 inline int ResetMsg::_internal_check_keys_size() const {
   return check_keys_.size();
 }
@@ -2622,7 +2728,7 @@ ResetMsg::mutable_check_keys() {
   return &check_keys_;
 }
 
-// repeated bool check_values = 2;
+// repeated bool check_values = 3;
 inline int ResetMsg::_internal_check_values_size() const {
   return check_values_.size();
 }
@@ -2669,7 +2775,7 @@ ResetMsg::mutable_check_values() {
   return _internal_mutable_check_values();
 }
 
-// repeated float volume_pose = 3;
+// repeated float volume_pose = 4;
 inline int ResetMsg::_internal_volume_pose_size() const {
   return volume_pose_.size();
 }
@@ -2716,7 +2822,7 @@ ResetMsg::mutable_volume_pose() {
   return _internal_mutable_volume_pose();
 }
 
-// repeated float camera_pose = 4;
+// repeated float camera_pose = 5;
 inline int ResetMsg::_internal_camera_pose_size() const {
   return camera_pose_.size();
 }
@@ -2767,7 +2873,27 @@ ResetMsg::mutable_camera_pose() {
 
 // TuneMsg
 
-// .helmsley.TuneMsg.TuneType type = 1;
+// int32 client_id = 1;
+inline void TuneMsg::clear_client_id() {
+  client_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TuneMsg::_internal_client_id() const {
+  return client_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 TuneMsg::client_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.TuneMsg.client_id)
+  return _internal_client_id();
+}
+inline void TuneMsg::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  client_id_ = value;
+}
+inline void TuneMsg::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.TuneMsg.client_id)
+}
+
+// .helmsley.TuneMsg.TuneType type = 2;
 inline void TuneMsg::clear_type() {
   type_ = 0;
 }
@@ -2787,7 +2913,7 @@ inline void TuneMsg::set_type(::helmsley::TuneMsg_TuneType value) {
   // @@protoc_insertion_point(field_set:helmsley.TuneMsg.type)
 }
 
-// int32 target = 2;
+// int32 target = 3;
 inline void TuneMsg::clear_target() {
   target_ = 0;
 }
@@ -2807,7 +2933,7 @@ inline void TuneMsg::set_target(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:helmsley.TuneMsg.target)
 }
 
-// int32 sub_target = 3;
+// int32 sub_target = 4;
 inline void TuneMsg::clear_sub_target() {
   sub_target_ = 0;
 }
@@ -2827,7 +2953,7 @@ inline void TuneMsg::set_sub_target(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:helmsley.TuneMsg.sub_target)
 }
 
-// float value = 4;
+// float value = 5;
 inline void TuneMsg::clear_value() {
   value_ = 0;
 }
@@ -2847,7 +2973,7 @@ inline void TuneMsg::set_value(float value) {
   // @@protoc_insertion_point(field_set:helmsley.TuneMsg.value)
 }
 
-// repeated float values = 5;
+// repeated float values = 6;
 inline int TuneMsg::_internal_values_size() const {
   return values_.size();
 }
@@ -2898,7 +3024,27 @@ TuneMsg::mutable_values() {
 
 // CheckMsg
 
-// string key = 1;
+// int32 client_id = 1;
+inline void CheckMsg::clear_client_id() {
+  client_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CheckMsg::_internal_client_id() const {
+  return client_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CheckMsg::client_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.CheckMsg.client_id)
+  return _internal_client_id();
+}
+inline void CheckMsg::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  client_id_ = value;
+}
+inline void CheckMsg::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.CheckMsg.client_id)
+}
+
+// string key = 2;
 inline void CheckMsg::clear_key() {
   key_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -2960,7 +3106,7 @@ inline void CheckMsg::set_allocated_key(std::string* key) {
   // @@protoc_insertion_point(field_set_allocated:helmsley.CheckMsg.key)
 }
 
-// bool value = 2;
+// bool value = 3;
 inline void CheckMsg::clear_value() {
   value_ = false;
 }
@@ -2984,7 +3130,27 @@ inline void CheckMsg::set_value(bool value) {
 
 // MaskMsg
 
-// int32 num = 1;
+// int32 client_id = 1;
+inline void MaskMsg::clear_client_id() {
+  client_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 MaskMsg::_internal_client_id() const {
+  return client_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 MaskMsg::client_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.MaskMsg.client_id)
+  return _internal_client_id();
+}
+inline void MaskMsg::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  client_id_ = value;
+}
+inline void MaskMsg::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.MaskMsg.client_id)
+}
+
+// int32 num = 2;
 inline void MaskMsg::clear_num() {
   num_ = 0;
 }
@@ -3004,7 +3170,7 @@ inline void MaskMsg::set_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:helmsley.MaskMsg.num)
 }
 
-// int32 mbits = 2;
+// int32 mbits = 3;
 inline void MaskMsg::clear_mbits() {
   mbits_ = 0;
 }
@@ -3028,7 +3194,27 @@ inline void MaskMsg::set_mbits(::PROTOBUF_NAMESPACE_ID::int32 value) {
 
 // DataMsg
 
-// string ds_name = 1;
+// int32 client_id = 1;
+inline void DataMsg::clear_client_id() {
+  client_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 DataMsg::_internal_client_id() const {
+  return client_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 DataMsg::client_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.DataMsg.client_id)
+  return _internal_client_id();
+}
+inline void DataMsg::_internal_set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  client_id_ = value;
+}
+inline void DataMsg::set_client_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_client_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.DataMsg.client_id)
+}
+
+// string ds_name = 2;
 inline void DataMsg::clear_ds_name() {
   ds_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
@@ -3090,7 +3276,7 @@ inline void DataMsg::set_allocated_ds_name(std::string* ds_name) {
   // @@protoc_insertion_point(field_set_allocated:helmsley.DataMsg.ds_name)
 }
 
-// string volume_name = 2;
+// string volume_name = 3;
 inline void DataMsg::clear_volume_name() {
   volume_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }

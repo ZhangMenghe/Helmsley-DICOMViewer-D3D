@@ -24,7 +24,7 @@ namespace helmsley {
 static const char* inspectorSync_method_names[] = {
   "/helmsley.inspectorSync/startBroadcast",
   "/helmsley.inspectorSync/startReceiveBroadcast",
-  "/helmsley.inspectorSync/reqestReset",
+  "/helmsley.inspectorSync/requestReset",
   "/helmsley.inspectorSync/getVolumePoses",
   "/helmsley.inspectorSync/getOperations",
   "/helmsley.inspectorSync/getUpdates",
@@ -45,7 +45,7 @@ std::unique_ptr< inspectorSync::Stub> inspectorSync::NewStub(const std::shared_p
 inspectorSync::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_startBroadcast_(inspectorSync_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_startReceiveBroadcast_(inspectorSync_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_reqestReset_(inspectorSync_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_requestReset_(inspectorSync_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_getVolumePoses_(inspectorSync_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_getOperations_(inspectorSync_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_getUpdates_(inspectorSync_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
@@ -103,25 +103,25 @@ void inspectorSync::Stub::experimental_async::startReceiveBroadcast(::grpc::Clie
   return result;
 }
 
-::grpc::Status inspectorSync::Stub::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::commonResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_reqestReset_, context, request, response);
+::grpc::Status inspectorSync::Stub::requestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::commonResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_requestReset_, context, request, response);
 }
 
-void inspectorSync::Stub::experimental_async::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_reqestReset_, context, request, response, std::move(f));
+void inspectorSync::Stub::experimental_async::requestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_requestReset_, context, request, response, std::move(f));
 }
 
-void inspectorSync::Stub::experimental_async::reqestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_reqestReset_, context, request, response, reactor);
+void inspectorSync::Stub::experimental_async::requestReset(::grpc::ClientContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_requestReset_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_reqestReset_, context, request, false);
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::PrepareAsyncrequestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::commonResponse>::Create(channel_.get(), cq, rpcmethod_requestReset_, context, request, false);
 }
 
-::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncreqestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::commonResponse>* inspectorSync::Stub::AsyncrequestResetRaw(::grpc::ClientContext* context, const ::helmsley::ResetMsg& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncreqestResetRaw(context, request, cq);
+    this->PrepareAsyncrequestResetRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -362,7 +362,7 @@ inspectorSync::Service::Service() {
              ::grpc::ServerContext* ctx,
              const ::helmsley::ResetMsg* req,
              ::commonResponse* resp) {
-               return service->reqestReset(ctx, req, resp);
+               return service->requestReset(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       inspectorSync_method_names[3],
@@ -473,7 +473,7 @@ inspectorSync::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status inspectorSync::Service::reqestReset(::grpc::ServerContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response) {
+::grpc::Status inspectorSync::Service::requestReset(::grpc::ServerContext* context, const ::helmsley::ResetMsg* request, ::commonResponse* response) {
   (void) context;
   (void) request;
   (void) response;

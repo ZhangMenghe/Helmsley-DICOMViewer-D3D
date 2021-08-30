@@ -29,6 +29,11 @@ void cuttingController::onReset(ID3D11Device* device) {
     p_norm_ = vec3(.0, .0, -1.0);
     p_rotate_mat_ = rotMatFromDir(p_norm_);
     update_plane_(device);
+
+    rt.point = glm::vec3(1000);
+    rt.scale = glm::vec3(.0f);
+    rt.rotate_mat = glm::mat4(1.0f);
+    rt.move_value = .0f;
 }
 void cuttingController::init_plane_renderer(ID3D11Device* device) {
     for (int a = 0, i = 0; a < 360; a += 360 / 20, i++) {
@@ -98,7 +103,8 @@ void cuttingController::setCutPlane(float value) {
     baked_dirty = true;
 }
 bool cuttingController::keep_cutting_position() {
-    return Manager::param_bool[dvr::CHECK_FREEZE_CPLANE];
+    //return Manager::param_bool[dvr::CHECK_FREEZE_CPLANE];
+    return false;
 }
 void cuttingController::setCutPlane(glm::vec3 normal) {}
 void cuttingController::setCutPlane(glm::vec3 pp, glm::vec3 normal) {

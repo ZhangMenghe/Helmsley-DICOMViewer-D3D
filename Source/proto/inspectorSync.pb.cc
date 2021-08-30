@@ -230,6 +230,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::GestureOp, client_id_),
   PROTOBUF_FIELD_OFFSET(::helmsley::GestureOp, gid_),
   PROTOBUF_FIELD_OFFSET(::helmsley::GestureOp, type_),
   PROTOBUF_FIELD_OFFSET(::helmsley::GestureOp, x_),
@@ -253,6 +254,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::ResetMsg, client_id_),
   PROTOBUF_FIELD_OFFSET(::helmsley::ResetMsg, check_keys_),
   PROTOBUF_FIELD_OFFSET(::helmsley::ResetMsg, check_values_),
   PROTOBUF_FIELD_OFFSET(::helmsley::ResetMsg, volume_pose_),
@@ -262,6 +264,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::TuneMsg, client_id_),
   PROTOBUF_FIELD_OFFSET(::helmsley::TuneMsg, type_),
   PROTOBUF_FIELD_OFFSET(::helmsley::TuneMsg, target_),
   PROTOBUF_FIELD_OFFSET(::helmsley::TuneMsg, sub_target_),
@@ -272,6 +275,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::CheckMsg, client_id_),
   PROTOBUF_FIELD_OFFSET(::helmsley::CheckMsg, key_),
   PROTOBUF_FIELD_OFFSET(::helmsley::CheckMsg, value_),
   ~0u,  // no _has_bits_
@@ -279,6 +283,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::MaskMsg, client_id_),
   PROTOBUF_FIELD_OFFSET(::helmsley::MaskMsg, num_),
   PROTOBUF_FIELD_OFFSET(::helmsley::MaskMsg, mbits_),
   ~0u,  // no _has_bits_
@@ -286,6 +291,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::DataMsg, client_id_),
   PROTOBUF_FIELD_OFFSET(::helmsley::DataMsg, ds_name_),
   PROTOBUF_FIELD_OFFSET(::helmsley::DataMsg, volume_name_),
   ~0u,  // no _has_bits_
@@ -304,14 +310,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::helmsley::VPMsg)},
   { 9, -1, sizeof(::helmsley::GestureOp)},
-  { 18, -1, sizeof(::helmsley::OperationBatch)},
-  { 25, -1, sizeof(::helmsley::VolumePoseBatch)},
-  { 32, -1, sizeof(::helmsley::ResetMsg)},
-  { 41, -1, sizeof(::helmsley::TuneMsg)},
-  { 51, -1, sizeof(::helmsley::CheckMsg)},
-  { 58, -1, sizeof(::helmsley::MaskMsg)},
-  { 65, -1, sizeof(::helmsley::DataMsg)},
-  { 72, -1, sizeof(::helmsley::FrameUpdateMsg)},
+  { 19, -1, sizeof(::helmsley::OperationBatch)},
+  { 26, -1, sizeof(::helmsley::VolumePoseBatch)},
+  { 33, -1, sizeof(::helmsley::ResetMsg)},
+  { 43, -1, sizeof(::helmsley::TuneMsg)},
+  { 54, -1, sizeof(::helmsley::CheckMsg)},
+  { 62, -1, sizeof(::helmsley::MaskMsg)},
+  { 70, -1, sizeof(::helmsley::DataMsg)},
+  { 78, -1, sizeof(::helmsley::FrameUpdateMsg)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -332,54 +338,57 @@ const char descriptor_table_protodef_inspectorSync_2eproto[] PROTOBUF_SECTION_VA
   "proto\"\220\001\n\005VPMsg\022\021\n\tclient_id\030\001 \001(\005\022\013\n\003gi"
   "d\030\002 \001(\005\0220\n\020volume_pose_type\030\003 \001(\0162\026.helm"
   "sley.VPMsg.VPType\022\016\n\006values\030\004 \003(\002\"%\n\006VPT"
-  "ype\022\007\n\003POS\020\000\022\t\n\005SCALE\020\001\022\007\n\003ROT\020\002\"\244\001\n\tGes"
-  "tureOp\022\013\n\003gid\030\001 \001(\003\022(\n\004type\030\002 \001(\0162\032.helm"
-  "sley.GestureOp.OPType\022\t\n\001x\030\003 \001(\002\022\t\n\001y\030\004 "
-  "\001(\002\"J\n\006OPType\022\016\n\nTOUCH_DOWN\020\000\022\014\n\010TOUCH_U"
-  "P\020\001\022\016\n\nTOUCH_MOVE\020\002\022\t\n\005SCALE\020\003\022\007\n\003PAN\020\004\""
-  "F\n\016OperationBatch\022\013\n\003bid\030\001 \001(\002\022\'\n\ngestur"
-  "e_op\030\002 \003(\0132\023.helmsley.GestureOp\"B\n\017Volum"
-  "ePoseBatch\022\013\n\003bid\030\001 \001(\002\022\"\n\tpose_msgs\030\002 \003"
-  "(\0132\017.helmsley.VPMsg\"^\n\010ResetMsg\022\022\n\ncheck"
-  "_keys\030\001 \003(\t\022\024\n\014check_values\030\002 \003(\010\022\023\n\013vol"
-  "ume_pose\030\003 \003(\002\022\023\n\013camera_pose\030\004 \003(\002\"\237\002\n\007"
-  "TuneMsg\022(\n\004type\030\001 \001(\0162\032.helmsley.TuneMsg"
-  ".TuneType\022\016\n\006target\030\002 \001(\005\022\022\n\nsub_target\030"
-  "\003 \001(\005\022\r\n\005value\030\004 \001(\002\022\016\n\006values\030\005 \003(\002\"\246\001\n"
-  "\010TuneType\022\013\n\007ADD_ONE\020\000\022\016\n\nREMOVE_ONE\020\001\022\016"
-  "\n\nREMOTE_ALL\020\002\022\013\n\007SET_ONE\020\003\022\013\n\007SET_ALL\020\004"
-  "\022\017\n\013SET_VISIBLE\020\005\022\016\n\nSET_TARGET\020\006\022\r\n\tCUT"
-  "_PLANE\020\007\022\020\n\014COLOR_SCHEME\020\010\022\021\n\rRENDER_MET"
-  "HOD\020\t\"&\n\010CheckMsg\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030"
-  "\002 \001(\010\"%\n\007MaskMsg\022\013\n\003num\030\001 \001(\005\022\r\n\005mbits\030\002"
-  " \001(\005\"/\n\007DataMsg\022\017\n\007ds_name\030\001 \001(\t\022\023\n\013volu"
-  "me_name\030\002 \001(\t\"\361\002\n\016FrameUpdateMsg\022/\n\005type"
-  "s\030\001 \003(\0162 .helmsley.FrameUpdateMsg.MsgTyp"
-  "e\022%\n\010gestures\030\002 \003(\0132\023.helmsley.GestureOp"
-  "\022 \n\005tunes\030\003 \003(\0132\021.helmsley.TuneMsg\022\"\n\006ch"
-  "ecks\030\004 \003(\0132\022.helmsley.CheckMsg\022%\n\nmask_v"
-  "alue\030\005 \001(\0132\021.helmsley.MaskMsg\022\'\n\013reset_v"
-  "alue\030\006 \001(\0132\022.helmsley.ResetMsg\022%\n\ndata_v"
-  "alue\030\007 \001(\0132\021.helmsley.DataMsg\"J\n\007MsgType"
-  "\022\013\n\007GESTURE\020\000\022\010\n\004TUNE\020\001\022\t\n\005CHECK\020\002\022\010\n\004MA"
-  "SK\020\003\022\t\n\005RESET\020\004\022\010\n\004DATA\020\005*\033\n\007ReqType\022\007\n\003"
-  "SET\020\000\022\007\n\003GET\020\0012\204\005\n\rinspectorSync\022+\n\016star"
-  "tBroadcast\022\010.Request\032\017.commonResponse\0222\n"
-  "\025startReceiveBroadcast\022\010.Request\032\017.commo"
-  "nResponse\0222\n\013reqestReset\022\022.helmsley.Rese"
-  "tMsg\032\017.commonResponse\0225\n\016getVolumePoses\022"
-  "\010.Request\032\031.helmsley.VolumePoseBatch\0223\n\r"
-  "getOperations\022\010.Request\032\030.helmsley.Opera"
-  "tionBatch\0220\n\ngetUpdates\022\010.Request\032\030.helm"
-  "sley.FrameUpdateMsg\0221\n\rsetVolumePose\022\017.h"
-  "elmsley.VPMsg\032\017.commonResponse\0224\n\014setGes"
-  "tureOp\022\023.helmsley.GestureOp\032\017.commonResp"
-  "onse\0223\n\rsetTuneParams\022\021.helmsley.TuneMsg"
-  "\032\017.commonResponse\0225\n\016setCheckParams\022\022.he"
-  "lmsley.CheckMsg\032\017.commonResponse\0223\n\rsetM"
-  "askParams\022\021.helmsley.MaskMsg\032\017.commonRes"
-  "ponse\0226\n\020setDisplayVolume\022\021.helmsley.Dat"
-  "aMsg\032\017.commonResponseb\006proto3"
+  "ype\022\007\n\003POS\020\000\022\t\n\005SCALE\020\001\022\007\n\003ROT\020\002\"\267\001\n\tGes"
+  "tureOp\022\021\n\tclient_id\030\001 \001(\005\022\013\n\003gid\030\002 \001(\003\022("
+  "\n\004type\030\003 \001(\0162\032.helmsley.GestureOp.OPType"
+  "\022\t\n\001x\030\004 \001(\002\022\t\n\001y\030\005 \001(\002\"J\n\006OPType\022\016\n\nTOUC"
+  "H_DOWN\020\000\022\014\n\010TOUCH_UP\020\001\022\016\n\nTOUCH_MOVE\020\002\022\t"
+  "\n\005SCALE\020\003\022\007\n\003PAN\020\004\"F\n\016OperationBatch\022\013\n\003"
+  "bid\030\001 \001(\002\022\'\n\ngesture_op\030\002 \003(\0132\023.helmsley"
+  ".GestureOp\"B\n\017VolumePoseBatch\022\013\n\003bid\030\001 \001"
+  "(\002\022\"\n\tpose_msgs\030\002 \003(\0132\017.helmsley.VPMsg\"q"
+  "\n\010ResetMsg\022\021\n\tclient_id\030\001 \001(\005\022\022\n\ncheck_k"
+  "eys\030\002 \003(\t\022\024\n\014check_values\030\003 \003(\010\022\023\n\013volum"
+  "e_pose\030\004 \003(\002\022\023\n\013camera_pose\030\005 \003(\002\"\262\002\n\007Tu"
+  "neMsg\022\021\n\tclient_id\030\001 \001(\005\022(\n\004type\030\002 \001(\0162\032"
+  ".helmsley.TuneMsg.TuneType\022\016\n\006target\030\003 \001"
+  "(\005\022\022\n\nsub_target\030\004 \001(\005\022\r\n\005value\030\005 \001(\002\022\016\n"
+  "\006values\030\006 \003(\002\"\246\001\n\010TuneType\022\013\n\007ADD_ONE\020\000\022"
+  "\016\n\nREMOVE_ONE\020\001\022\016\n\nREMOTE_ALL\020\002\022\013\n\007SET_O"
+  "NE\020\003\022\013\n\007SET_ALL\020\004\022\017\n\013SET_VISIBLE\020\005\022\016\n\nSE"
+  "T_TARGET\020\006\022\r\n\tCUT_PLANE\020\007\022\020\n\014COLOR_SCHEM"
+  "E\020\010\022\021\n\rRENDER_METHOD\020\t\"9\n\010CheckMsg\022\021\n\tcl"
+  "ient_id\030\001 \001(\005\022\013\n\003key\030\002 \001(\t\022\r\n\005value\030\003 \001("
+  "\010\"8\n\007MaskMsg\022\021\n\tclient_id\030\001 \001(\005\022\013\n\003num\030\002"
+  " \001(\005\022\r\n\005mbits\030\003 \001(\005\"B\n\007DataMsg\022\021\n\tclient"
+  "_id\030\001 \001(\005\022\017\n\007ds_name\030\002 \001(\t\022\023\n\013volume_nam"
+  "e\030\003 \001(\t\"\361\002\n\016FrameUpdateMsg\022/\n\005types\030\001 \003("
+  "\0162 .helmsley.FrameUpdateMsg.MsgType\022%\n\010g"
+  "estures\030\002 \003(\0132\023.helmsley.GestureOp\022 \n\005tu"
+  "nes\030\003 \003(\0132\021.helmsley.TuneMsg\022\"\n\006checks\030\004"
+  " \003(\0132\022.helmsley.CheckMsg\022%\n\nmask_value\030\005"
+  " \001(\0132\021.helmsley.MaskMsg\022\'\n\013reset_value\030\006"
+  " \001(\0132\022.helmsley.ResetMsg\022%\n\ndata_value\030\007"
+  " \001(\0132\021.helmsley.DataMsg\"J\n\007MsgType\022\013\n\007GE"
+  "STURE\020\000\022\010\n\004TUNE\020\001\022\t\n\005CHECK\020\002\022\010\n\004MASK\020\003\022\t"
+  "\n\005RESET\020\004\022\010\n\004DATA\020\005*\033\n\007ReqType\022\007\n\003SET\020\000\022"
+  "\007\n\003GET\020\0012\205\005\n\rinspectorSync\022+\n\016startBroad"
+  "cast\022\010.Request\032\017.commonResponse\0222\n\025start"
+  "ReceiveBroadcast\022\010.Request\032\017.commonRespo"
+  "nse\0223\n\014requestReset\022\022.helmsley.ResetMsg\032"
+  "\017.commonResponse\0225\n\016getVolumePoses\022\010.Req"
+  "uest\032\031.helmsley.VolumePoseBatch\0223\n\rgetOp"
+  "erations\022\010.Request\032\030.helmsley.OperationB"
+  "atch\0220\n\ngetUpdates\022\010.Request\032\030.helmsley."
+  "FrameUpdateMsg\0221\n\rsetVolumePose\022\017.helmsl"
+  "ey.VPMsg\032\017.commonResponse\0224\n\014setGestureO"
+  "p\022\023.helmsley.GestureOp\032\017.commonResponse\022"
+  "3\n\rsetTuneParams\022\021.helmsley.TuneMsg\032\017.co"
+  "mmonResponse\0225\n\016setCheckParams\022\022.helmsle"
+  "y.CheckMsg\032\017.commonResponse\0223\n\rsetMaskPa"
+  "rams\022\021.helmsley.MaskMsg\032\017.commonResponse"
+  "\0226\n\020setDisplayVolume\022\021.helmsley.DataMsg\032"
+  "\017.commonResponseb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_inspectorSync_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
@@ -398,7 +407,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ins
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_inspectorSync_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_inspectorSync_2eproto = {
-  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 2069,
+  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 2184,
   &descriptor_table_inspectorSync_2eproto_once, descriptor_table_inspectorSync_2eproto_sccs, descriptor_table_inspectorSync_2eproto_deps, 10, 1,
   schemas, file_default_instances, TableStruct_inspectorSync_2eproto::offsets,
   file_level_metadata_inspectorSync_2eproto, 10, file_level_enum_descriptors_inspectorSync_2eproto, file_level_service_descriptors_inspectorSync_2eproto,
@@ -902,31 +911,38 @@ const char* GestureOp::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // int64 gid = 1;
+      // int32 client_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          client_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int64 gid = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           gid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .helmsley.GestureOp.OPType type = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+      // .helmsley.GestureOp.OPType type = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_type(static_cast<::helmsley::GestureOp_OPType>(val));
         } else goto handle_unusual;
         continue;
-      // float x = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29)) {
+      // float x = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
           x_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
-      // float y = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
+      // float y = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45)) {
           y_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else goto handle_unusual;
@@ -959,29 +975,35 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int64 gid = 1;
-  if (this->gid() != 0) {
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_gid(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_client_id(), target);
   }
 
-  // .helmsley.GestureOp.OPType type = 2;
+  // int64 gid = 2;
+  if (this->gid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(2, this->_internal_gid(), target);
+  }
+
+  // .helmsley.GestureOp.OPType type = 3;
   if (this->type() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      2, this->_internal_type(), target);
+      3, this->_internal_type(), target);
   }
 
-  // float x = 3;
+  // float x = 4;
   if (!(this->x() <= 0 && this->x() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(3, this->_internal_x(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_x(), target);
   }
 
-  // float y = 4;
+  // float y = 5;
   if (!(this->y() <= 0 && this->y() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_y(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(5, this->_internal_y(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1000,25 +1022,32 @@ size_t GestureOp::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // int64 gid = 1;
+  // int64 gid = 2;
   if (this->gid() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
         this->_internal_gid());
   }
 
-  // .helmsley.GestureOp.OPType type = 2;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_client_id());
+  }
+
+  // .helmsley.GestureOp.OPType type = 3;
   if (this->type() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
   }
 
-  // float x = 3;
+  // float x = 4;
   if (!(this->x() <= 0 && this->x() >= 0)) {
     total_size += 1 + 4;
   }
 
-  // float y = 4;
+  // float y = 5;
   if (!(this->y() <= 0 && this->y() >= 0)) {
     total_size += 1 + 4;
   }
@@ -1056,6 +1085,9 @@ void GestureOp::MergeFrom(const GestureOp& from) {
 
   if (from.gid() != 0) {
     _internal_set_gid(from._internal_gid());
+  }
+  if (from.client_id() != 0) {
+    _internal_set_client_id(from._internal_client_id());
   }
   if (from.type() != 0) {
     _internal_set_type(from._internal_type());
@@ -1583,11 +1615,13 @@ ResetMsg::ResetMsg(const ResetMsg& from)
       volume_pose_(from.volume_pose_),
       camera_pose_(from.camera_pose_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  client_id_ = from.client_id_;
   // @@protoc_insertion_point(copy_constructor:helmsley.ResetMsg)
 }
 
 void ResetMsg::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_ResetMsg_inspectorSync_2eproto.base);
+  client_id_ = 0;
 }
 
 ResetMsg::~ResetMsg() {
@@ -1625,6 +1659,7 @@ void ResetMsg::Clear() {
   check_values_.Clear();
   volume_pose_.Clear();
   camera_pose_.Clear();
+  client_id_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1636,9 +1671,16 @@ const char* ResetMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // repeated string check_keys = 1;
+      // int32 client_id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          client_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated string check_keys = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
@@ -1647,35 +1689,35 @@ const char* ResetMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
             CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.ResetMsg.check_keys"));
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
         } else goto handle_unusual;
         continue;
-      // repeated bool check_values = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+      // repeated bool check_values = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedBoolParser(_internal_mutable_check_values(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24) {
           _internal_add_check_values(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // repeated float volume_pose = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+      // repeated float volume_pose = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_volume_pose(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37) {
           _internal_add_volume_pose(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
           ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
-      // repeated float camera_pose = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+      // repeated float camera_pose = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_camera_pose(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45) {
           _internal_add_camera_pose(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
           ptr += sizeof(float);
         } else goto handle_unusual;
@@ -1708,29 +1750,35 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated string check_keys = 1;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_client_id(), target);
+  }
+
+  // repeated string check_keys = 2;
   for (int i = 0, n = this->_internal_check_keys_size(); i < n; i++) {
     const auto& s = this->_internal_check_keys(i);
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       s.data(), static_cast<int>(s.length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "helmsley.ResetMsg.check_keys");
-    target = stream->WriteString(1, s, target);
+    target = stream->WriteString(2, s, target);
   }
 
-  // repeated bool check_values = 2;
+  // repeated bool check_values = 3;
   if (this->_internal_check_values_size() > 0) {
-    target = stream->WriteFixedPacked(2, _internal_check_values(), target);
+    target = stream->WriteFixedPacked(3, _internal_check_values(), target);
   }
 
-  // repeated float volume_pose = 3;
+  // repeated float volume_pose = 4;
   if (this->_internal_volume_pose_size() > 0) {
-    target = stream->WriteFixedPacked(3, _internal_volume_pose(), target);
+    target = stream->WriteFixedPacked(4, _internal_volume_pose(), target);
   }
 
-  // repeated float camera_pose = 4;
+  // repeated float camera_pose = 5;
   if (this->_internal_camera_pose_size() > 0) {
-    target = stream->WriteFixedPacked(4, _internal_camera_pose(), target);
+    target = stream->WriteFixedPacked(5, _internal_camera_pose(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1749,7 +1797,7 @@ size_t ResetMsg::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated string check_keys = 1;
+  // repeated string check_keys = 2;
   total_size += 1 *
       ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(check_keys_.size());
   for (int i = 0, n = check_keys_.size(); i < n; i++) {
@@ -1757,7 +1805,7 @@ size_t ResetMsg::ByteSizeLong() const {
       check_keys_.Get(i));
   }
 
-  // repeated bool check_values = 2;
+  // repeated bool check_values = 3;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_check_values_size());
     size_t data_size = 1UL * count;
@@ -1772,7 +1820,7 @@ size_t ResetMsg::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // repeated float volume_pose = 3;
+  // repeated float volume_pose = 4;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_volume_pose_size());
     size_t data_size = 4UL * count;
@@ -1787,7 +1835,7 @@ size_t ResetMsg::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // repeated float camera_pose = 4;
+  // repeated float camera_pose = 5;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_camera_pose_size());
     size_t data_size = 4UL * count;
@@ -1800,6 +1848,13 @@ size_t ResetMsg::ByteSizeLong() const {
     _camera_pose_cached_byte_size_.store(cached_size,
                                     std::memory_order_relaxed);
     total_size += data_size;
+  }
+
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_client_id());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1837,6 +1892,9 @@ void ResetMsg::MergeFrom(const ResetMsg& from) {
   check_values_.MergeFrom(from.check_values_);
   volume_pose_.MergeFrom(from.volume_pose_);
   camera_pose_.MergeFrom(from.camera_pose_);
+  if (from.client_id() != 0) {
+    _internal_set_client_id(from._internal_client_id());
+  }
 }
 
 void ResetMsg::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -1864,6 +1922,7 @@ void ResetMsg::InternalSwap(ResetMsg* other) {
   check_values_.InternalSwap(&other->check_values_);
   volume_pose_.InternalSwap(&other->volume_pose_);
   camera_pose_.InternalSwap(&other->camera_pose_);
+  swap(client_id_, other->client_id_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResetMsg::GetMetadata() const {
@@ -1890,16 +1949,16 @@ TuneMsg::TuneMsg(const TuneMsg& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       values_(from.values_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&type_, &from.type_,
+  ::memcpy(&client_id_, &from.client_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&value_) -
-    reinterpret_cast<char*>(&type_)) + sizeof(value_));
+    reinterpret_cast<char*>(&client_id_)) + sizeof(value_));
   // @@protoc_insertion_point(copy_constructor:helmsley.TuneMsg)
 }
 
 void TuneMsg::SharedCtor() {
-  ::memset(&type_, 0, static_cast<size_t>(
+  ::memset(&client_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&value_) -
-      reinterpret_cast<char*>(&type_)) + sizeof(value_));
+      reinterpret_cast<char*>(&client_id_)) + sizeof(value_));
 }
 
 TuneMsg::~TuneMsg() {
@@ -1934,9 +1993,9 @@ void TuneMsg::Clear() {
   (void) cached_has_bits;
 
   values_.Clear();
-  ::memset(&type_, 0, static_cast<size_t>(
+  ::memset(&client_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&value_) -
-      reinterpret_cast<char*>(&type_)) + sizeof(value_));
+      reinterpret_cast<char*>(&client_id_)) + sizeof(value_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1948,41 +2007,48 @@ const char* TuneMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // .helmsley.TuneMsg.TuneType type = 1;
+      // int32 client_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          client_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .helmsley.TuneMsg.TuneType type = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_type(static_cast<::helmsley::TuneMsg_TuneType>(val));
         } else goto handle_unusual;
         continue;
-      // int32 target = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+      // int32 target = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           target_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int32 sub_target = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+      // int32 sub_target = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
           sub_target_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // float value = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
+      // float value = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45)) {
           value_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else goto handle_unusual;
         continue;
-      // repeated float values = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+      // repeated float values = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_values(), ptr, ctx);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45) {
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 53) {
           _internal_add_values(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
           ptr += sizeof(float);
         } else goto handle_unusual;
@@ -2015,34 +2081,40 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .helmsley.TuneMsg.TuneType type = 1;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_client_id(), target);
+  }
+
+  // .helmsley.TuneMsg.TuneType type = 2;
   if (this->type() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      1, this->_internal_type(), target);
+      2, this->_internal_type(), target);
   }
 
-  // int32 target = 2;
+  // int32 target = 3;
   if (this->target() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_target(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_target(), target);
   }
 
-  // int32 sub_target = 3;
+  // int32 sub_target = 4;
   if (this->sub_target() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_sub_target(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_sub_target(), target);
   }
 
-  // float value = 4;
+  // float value = 5;
   if (!(this->value() <= 0 && this->value() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_value(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(5, this->_internal_value(), target);
   }
 
-  // repeated float values = 5;
+  // repeated float values = 6;
   if (this->_internal_values_size() > 0) {
-    target = stream->WriteFixedPacked(5, _internal_values(), target);
+    target = stream->WriteFixedPacked(6, _internal_values(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2061,7 +2133,7 @@ size_t TuneMsg::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated float values = 5;
+  // repeated float values = 6;
   {
     unsigned int count = static_cast<unsigned int>(this->_internal_values_size());
     size_t data_size = 4UL * count;
@@ -2076,27 +2148,34 @@ size_t TuneMsg::ByteSizeLong() const {
     total_size += data_size;
   }
 
-  // .helmsley.TuneMsg.TuneType type = 1;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_client_id());
+  }
+
+  // .helmsley.TuneMsg.TuneType type = 2;
   if (this->type() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
   }
 
-  // int32 target = 2;
+  // int32 target = 3;
   if (this->target() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
         this->_internal_target());
   }
 
-  // int32 sub_target = 3;
+  // int32 sub_target = 4;
   if (this->sub_target() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
         this->_internal_sub_target());
   }
 
-  // float value = 4;
+  // float value = 5;
   if (!(this->value() <= 0 && this->value() >= 0)) {
     total_size += 1 + 4;
   }
@@ -2133,6 +2212,9 @@ void TuneMsg::MergeFrom(const TuneMsg& from) {
   (void) cached_has_bits;
 
   values_.MergeFrom(from.values_);
+  if (from.client_id() != 0) {
+    _internal_set_client_id(from._internal_client_id());
+  }
   if (from.type() != 0) {
     _internal_set_type(from._internal_type());
   }
@@ -2172,9 +2254,9 @@ void TuneMsg::InternalSwap(TuneMsg* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(TuneMsg, value_)
       + sizeof(TuneMsg::value_)
-      - PROTOBUF_FIELD_OFFSET(TuneMsg, type_)>(
-          reinterpret_cast<char*>(&type_),
-          reinterpret_cast<char*>(&other->type_));
+      - PROTOBUF_FIELD_OFFSET(TuneMsg, client_id_)>(
+          reinterpret_cast<char*>(&client_id_),
+          reinterpret_cast<char*>(&other->client_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TuneMsg::GetMetadata() const {
@@ -2204,14 +2286,18 @@ CheckMsg::CheckMsg(const CheckMsg& from)
     key_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_key(),
       GetArena());
   }
-  value_ = from.value_;
+  ::memcpy(&client_id_, &from.client_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&value_) -
+    reinterpret_cast<char*>(&client_id_)) + sizeof(value_));
   // @@protoc_insertion_point(copy_constructor:helmsley.CheckMsg)
 }
 
 void CheckMsg::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_CheckMsg_inspectorSync_2eproto.base);
   key_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  value_ = false;
+  ::memset(&client_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&value_) -
+      reinterpret_cast<char*>(&client_id_)) + sizeof(value_));
 }
 
 CheckMsg::~CheckMsg() {
@@ -2247,7 +2333,9 @@ void CheckMsg::Clear() {
   (void) cached_has_bits;
 
   key_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  value_ = false;
+  ::memset(&client_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&value_) -
+      reinterpret_cast<char*>(&client_id_)) + sizeof(value_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2259,18 +2347,25 @@ const char* CheckMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // string key = 1;
+      // int32 client_id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          client_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string key = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_key();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.CheckMsg.key"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // bool value = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+      // bool value = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
@@ -2303,20 +2398,26 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string key = 1;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_client_id(), target);
+  }
+
+  // string key = 2;
   if (this->key().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_key().data(), static_cast<int>(this->_internal_key().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "helmsley.CheckMsg.key");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_key(), target);
+        2, this->_internal_key(), target);
   }
 
-  // bool value = 2;
+  // bool value = 3;
   if (this->value() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(2, this->_internal_value(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(3, this->_internal_value(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2335,14 +2436,21 @@ size_t CheckMsg::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string key = 1;
+  // string key = 2;
   if (this->key().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_key());
   }
 
-  // bool value = 2;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_client_id());
+  }
+
+  // bool value = 3;
   if (this->value() != 0) {
     total_size += 1 + 1;
   }
@@ -2381,6 +2489,9 @@ void CheckMsg::MergeFrom(const CheckMsg& from) {
   if (from.key().size() > 0) {
     _internal_set_key(from._internal_key());
   }
+  if (from.client_id() != 0) {
+    _internal_set_client_id(from._internal_client_id());
+  }
   if (from.value() != 0) {
     _internal_set_value(from._internal_value());
   }
@@ -2408,7 +2519,12 @@ void CheckMsg::InternalSwap(CheckMsg* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   key_.Swap(&other->key_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  swap(value_, other->value_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(CheckMsg, value_)
+      + sizeof(CheckMsg::value_)
+      - PROTOBUF_FIELD_OFFSET(CheckMsg, client_id_)>(
+          reinterpret_cast<char*>(&client_id_),
+          reinterpret_cast<char*>(&other->client_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CheckMsg::GetMetadata() const {
@@ -2433,16 +2549,16 @@ MaskMsg::MaskMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 MaskMsg::MaskMsg(const MaskMsg& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&num_, &from.num_,
+  ::memcpy(&client_id_, &from.client_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&mbits_) -
-    reinterpret_cast<char*>(&num_)) + sizeof(mbits_));
+    reinterpret_cast<char*>(&client_id_)) + sizeof(mbits_));
   // @@protoc_insertion_point(copy_constructor:helmsley.MaskMsg)
 }
 
 void MaskMsg::SharedCtor() {
-  ::memset(&num_, 0, static_cast<size_t>(
+  ::memset(&client_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&mbits_) -
-      reinterpret_cast<char*>(&num_)) + sizeof(mbits_));
+      reinterpret_cast<char*>(&client_id_)) + sizeof(mbits_));
 }
 
 MaskMsg::~MaskMsg() {
@@ -2476,9 +2592,9 @@ void MaskMsg::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&num_, 0, static_cast<size_t>(
+  ::memset(&client_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&mbits_) -
-      reinterpret_cast<char*>(&num_)) + sizeof(mbits_));
+      reinterpret_cast<char*>(&client_id_)) + sizeof(mbits_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2490,16 +2606,23 @@ const char* MaskMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // int32 num = 1;
+      // int32 client_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          client_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 num = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           num_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int32 mbits = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+      // int32 mbits = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           mbits_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
@@ -2532,16 +2655,22 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 num = 1;
-  if (this->num() != 0) {
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_num(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_client_id(), target);
   }
 
-  // int32 mbits = 2;
+  // int32 num = 2;
+  if (this->num() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_num(), target);
+  }
+
+  // int32 mbits = 3;
   if (this->mbits() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_mbits(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_mbits(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2560,14 +2689,21 @@ size_t MaskMsg::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // int32 num = 1;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_client_id());
+  }
+
+  // int32 num = 2;
   if (this->num() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
         this->_internal_num());
   }
 
-  // int32 mbits = 2;
+  // int32 mbits = 3;
   if (this->mbits() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -2605,6 +2741,9 @@ void MaskMsg::MergeFrom(const MaskMsg& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.client_id() != 0) {
+    _internal_set_client_id(from._internal_client_id());
+  }
   if (from.num() != 0) {
     _internal_set_num(from._internal_num());
   }
@@ -2637,9 +2776,9 @@ void MaskMsg::InternalSwap(MaskMsg* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(MaskMsg, mbits_)
       + sizeof(MaskMsg::mbits_)
-      - PROTOBUF_FIELD_OFFSET(MaskMsg, num_)>(
-          reinterpret_cast<char*>(&num_),
-          reinterpret_cast<char*>(&other->num_));
+      - PROTOBUF_FIELD_OFFSET(MaskMsg, client_id_)>(
+          reinterpret_cast<char*>(&client_id_),
+          reinterpret_cast<char*>(&other->client_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata MaskMsg::GetMetadata() const {
@@ -2674,6 +2813,7 @@ DataMsg::DataMsg(const DataMsg& from)
     volume_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_volume_name(),
       GetArena());
   }
+  client_id_ = from.client_id_;
   // @@protoc_insertion_point(copy_constructor:helmsley.DataMsg)
 }
 
@@ -2681,6 +2821,7 @@ void DataMsg::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_DataMsg_inspectorSync_2eproto.base);
   ds_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   volume_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  client_id_ = 0;
 }
 
 DataMsg::~DataMsg() {
@@ -2718,6 +2859,7 @@ void DataMsg::Clear() {
 
   ds_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   volume_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  client_id_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2729,18 +2871,25 @@ const char* DataMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // string ds_name = 1;
+      // int32 client_id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          client_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string ds_name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           auto str = _internal_mutable_ds_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.DataMsg.ds_name"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // string volume_name = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+      // string volume_name = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           auto str = _internal_mutable_volume_name();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "helmsley.DataMsg.volume_name"));
@@ -2775,24 +2924,30 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string ds_name = 1;
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_client_id(), target);
+  }
+
+  // string ds_name = 2;
   if (this->ds_name().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_ds_name().data(), static_cast<int>(this->_internal_ds_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "helmsley.DataMsg.ds_name");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_ds_name(), target);
+        2, this->_internal_ds_name(), target);
   }
 
-  // string volume_name = 2;
+  // string volume_name = 3;
   if (this->volume_name().size() > 0) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_volume_name().data(), static_cast<int>(this->_internal_volume_name().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "helmsley.DataMsg.volume_name");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_volume_name(), target);
+        3, this->_internal_volume_name(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2811,18 +2966,25 @@ size_t DataMsg::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string ds_name = 1;
+  // string ds_name = 2;
   if (this->ds_name().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_ds_name());
   }
 
-  // string volume_name = 2;
+  // string volume_name = 3;
   if (this->volume_name().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_volume_name());
+  }
+
+  // int32 client_id = 1;
+  if (this->client_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_client_id());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2862,6 +3024,9 @@ void DataMsg::MergeFrom(const DataMsg& from) {
   if (from.volume_name().size() > 0) {
     _internal_set_volume_name(from._internal_volume_name());
   }
+  if (from.client_id() != 0) {
+    _internal_set_client_id(from._internal_client_id());
+  }
 }
 
 void DataMsg::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -2887,6 +3052,7 @@ void DataMsg::InternalSwap(DataMsg* other) {
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   ds_name_.Swap(&other->ds_name_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   volume_name_.Swap(&other->volume_name_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  swap(client_id_, other->client_id_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DataMsg::GetMetadata() const {

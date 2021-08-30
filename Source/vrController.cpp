@@ -327,7 +327,7 @@ void vrController::render_scene(int view_id){
 	bool render_complete = true;
 	
 	////  CUTTING PLANE  //////
-	if (Manager::param_bool[dvr::CHECK_CUTTING]){
+	if (Manager::param_bool[dvr::CHECK_CUTTING] && Manager::param_bool[dvr::CHECK_SHOW_CPLANE]){
 		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext());
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
@@ -371,7 +371,7 @@ void vrController::render_scene(int view_id){
 	}
 
 	/// CENTERLINE TRAVERSAL PLANE////
-	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL])
+	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL] && Manager::param_bool[dvr::CHECK_SHOW_CPLANE])
 	{
 		render_complete &= cutter_->Draw(m_deviceResources->GetD3DDeviceContext(), is_front);
 		m_deviceResources->ClearCurrentDepthBuffer();
@@ -775,12 +775,13 @@ void vrController::setupCenterLine(int id, float *data)
 }
 void vrController::setCuttingPlane(float value)
 {
-	if (Manager::param_bool[dvr::CHECK_CUTTING] && !isRayCasting()){
+	/*if (Manager::param_bool[dvr::CHECK_CUTTING] && !isRayCasting()){
 		cutter_->setCutPlane(value);
 		vRenderer_[0]->setCuttingPlane(value);
 		vRenderer_[1]->setCuttingPlane(value);
 		m_scene_dirty = true;
-	}else if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]){
+	}else*/
+	if (Manager::param_bool[dvr::CHECK_CENTER_LINE_TRAVEL]){
 		if (!cutter_->IsCenterLineAvailable())
 			return;
 		cutter_->setCenterLinePos((int)(value * 4000.0f));

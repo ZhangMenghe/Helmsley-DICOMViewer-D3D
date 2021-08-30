@@ -49,11 +49,12 @@ void uiController::InitCheckParam(){
     std::vector<std::string> keys{
         "Raycasting",
         "Overlays",
+        "Apply CLAHE",
         "Cutting",
         "Freeze Volume",
-        "Freeze Plane",
+        "Show Plane",
         "Real Value",
-        "Center Line Travel",
+        "Traversal",
         "Traversal View",
         "Apply",
         "Recolor",
@@ -61,36 +62,39 @@ void uiController::InitCheckParam(){
         "Mesh",
         "Wireframe",
         "Center Line",
-        "Show",
         "AR Enabled",
+        "Use ARCore",
         "Points",
-        "Planes"
+        "Planes",
+        "3D Pointer"
     };
     std::vector<bool> values{
-    false, //"Raycasting",
-    true, //"Overlays",
+        false, //"Raycasting",
+        true, //"Overlays",//android is false
+        false, //"Apply CLAHE",
 
-    //cutting
-    false, //"Cutting",
-    false, //"Freeze Volume",
-    false, //"Freeze Plane",
-    false, //"Real Value(Cutting Plane Real Sample)",
-    false, //"Center Line Travel",
-    false, //"Traversal View",
-    
-    //mask
-    false, //"Apply",
-    true, //"Recolor",
-    true, //"Volume",
-    false, //"Mesh",
-    false, //"Wireframe",
-    false, //"Center Line",
-    
-    //ar
-    false, //"Show",
-    false, //"AR Enabled",
-    false, //"Points",
-    false, //"Planes"
+        //cutting
+        false, //"Cutting",
+        false, //"Freeze Volume",
+        false, //"Show Plane",
+        false, //"Real Value",
+        false, //"Traversal",
+        false, //"Traversal View",
+        
+        //mask
+        false, //"Apply",
+        true, //"Recolor",
+        true, //"Volume",
+        false, //"Mesh",
+        false, //"Wireframe",
+        false, //"Center Line",
+
+        //AR
+        false, //"AR Enabled",
+        false, //"Use ARCore",
+        true, //"Points",
+        true, //"Planes",
+        false, //"3D Pointer"
     };
     Manager::instance()->InitCheckParams(keys, values);
 }
