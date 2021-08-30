@@ -26,6 +26,8 @@ cuttingController::cuttingController(ID3D11Device* device, DirectX::XMFLOAT3 ps,
 
 void cuttingController::onReset(ID3D11Device* device) {
     p_start_ = vec3(.0, .0, 0.6f);
+    //debug
+    //p_start_ = vec3(.0, .0, 0.f);
     p_norm_ = vec3(.0, .0, -1.0);
     p_rotate_mat_ = rotMatFromDir(p_norm_);
     update_plane_(device);
@@ -193,7 +195,7 @@ void cuttingController::update_plane_(glm::mat4 vm_inv, glm::vec3 pNorm) {
     //cloest point
     p_start_ = cloestVertexToPlane(cube_vertices_pos_w_tex, pNorm, vp_obj) - p_norm_ * 0.1f;
     //debug
-//   p_start_ = cloestVertexToPlane(pNorm, vp_obj) + p_norm_*0.5f;
+    //p_start_ = cloestVertexToPlane(cube_vertices_pos_w_tex, pNorm, vp_obj) + p_norm_*0.5f;
 }
 void cuttingController::SwitchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id) {
     if (cut_plane_id == last_mode)return;

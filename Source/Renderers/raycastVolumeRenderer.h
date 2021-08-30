@@ -13,7 +13,7 @@ struct raycastPixConstantBuffer{
 	alignas(16)bool u_cut;
 	alignas(16)bool u_cutplane_realsample;
 	alignas(16)float u_sample_param;
-	dvr::cutPlaneConstantBuffer u_plane;
+	alignas(16)dvr::cutPlaneConstantBuffer u_plane;
 };
 
 class raycastVolumeRenderer:public baseDicomRenderer {

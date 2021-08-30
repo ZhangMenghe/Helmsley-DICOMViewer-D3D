@@ -17,11 +17,13 @@ struct VertexPos3d{
 struct v2f{
 	float4 pos : SV_POSITION;
 	float3 tex : TEXCOORD0;
+	float3 pos_model : TEXCOORD1;
 };
 
 // Simple shader to do vertex processing on the GPU.
 v2f main(VertexPos3d input){
 	v2f output;
+	output.pos_model = input.pos;
 	output.tex = input.pos + 0.5f;
 	output.pos = mul(float4(input.pos.xy, input.pos.z * u_volume_thickness, 1.0f), uMVP.mm);
 	return output;
