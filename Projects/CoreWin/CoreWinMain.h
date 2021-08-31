@@ -1,8 +1,8 @@
 ﻿#ifndef CORE_WIN_MAIN_H
 #define CORE_WIN_MAIN_H
-#include <Renderers/FpsTextRenderer.h>
+//#include <Renderers/FpsTextRenderer.h>
 #include <Utils/dataManager.h>
-
+#include <SceneObjs/overUIBoard.h>
 namespace CoreWin {
 	class CoreWinMain : public DX::IDeviceNotify
 	{
@@ -20,6 +20,8 @@ namespace CoreWin {
 		void OnPointerPressed(float x, float y);
 		void OnPointerMoved(float x, float y);
 		void OnPointerReleased();
+
+		void onMainButtonClicked(){}
 	private:
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
@@ -27,8 +29,9 @@ namespace CoreWin {
 		std::shared_ptr<Manager> m_manager;
 		std::unique_ptr<vrController> m_sceneRenderer;
 
-		std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
-
+		//std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
+		std::unique_ptr<overUIBoard> m_ui_board;
+		
 		uiController m_uiController;
 
 		dataManager* m_data_manager;
@@ -46,6 +49,7 @@ namespace CoreWin {
 
 		const bool m_overwrite_index_file = false;
 		bool m_local_initialized = false;
+		bool m_waitfor_operation = true;
 
 		void setup_volume_server();
 		void setup_volume_local();

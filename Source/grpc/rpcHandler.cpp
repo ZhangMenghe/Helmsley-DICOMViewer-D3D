@@ -13,6 +13,7 @@ using namespace std;
 using namespace concurrency;
 
 bool rpcHandler::new_data_request = false;
+bool rpcHandler::G_JOIN_SYNC = false, rpcHandler::G_STATUS_SENDER=false;
 
 rpcHandler::rpcHandler(const std::string& host) {
     auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
@@ -20,6 +21,7 @@ rpcHandler::rpcHandler(const std::string& host) {
     stub_ = dataTransfer::NewStub(channel);
 
     req.set_client_id(CLIENT_ID);
+    m_gesture_req.set_client_id(CLIENT_ID);
 }
 
 FrameUpdateMsg rpcHandler::getUpdates() {
@@ -38,10 +40,35 @@ void rpcHandler::receiver_register() {
     commonResponse resp;
     ClientContext context;
     syncer_->startReceiveBroadcast(&context, req, &resp);
+    G_JOIN_SYNC = true;
+}
+void rpcHandler::onBroadCastChanged() {
+    G_STATUS_SENDER = !G_STATUS_SENDER;
+    
+    ClientContext context;
+    if (G_STATUS_SENDER) syncer_->startBroadcast(&context, req, &m_resp);
+    else syncer_->startReceiveBroadcast(&context, req, &m_resp);
+    
+    m_condition_variable.notify_all();
+}
+void rpcHandler::setGestureOp(GestureOp::OPType type, float x, float y) {
+    ClientContext context;
+    m_gesture_req.set_gid((m_gid++)%10000);
+    m_gesture_req.set_type(type);
+    m_gesture_req.set_x(x); m_gesture_req.set_y(y);
+    syncer_->setGestureOp(&context, m_gesture_req, &m_resp);
 }
 
 void rpcHandler::Run() {
     while (true) {
+        if (G_STATUS_SENDER) {
+            std::unique_lock<std::mutex> lk(m_cv_mutex);
+            auto now = std::chrono::system_clock::now();
+            if (m_condition_variable.wait_until(lk, now + 100000ms, []() {return G_STATUS_SENDER == false; })) {
+                OutputDebugString(L"====GET NOTIFIED OF FALSE====\n ");
+            }
+        }
+        //OutputDebugString(L"====GET UPDATES====\n ");
         if (ui_ == nullptr || manager_ == nullptr || vr_ == nullptr || m_dicom_loader == nullptr)
             continue;
         //debug only: start to listen directly

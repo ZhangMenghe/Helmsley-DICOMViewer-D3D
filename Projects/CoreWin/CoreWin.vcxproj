@@ -302,7 +302,6 @@
     <ClInclude Include="..\..\Source\proto\transManager.pb.h" />
     <ClInclude Include="..\..\Source\Renderers\baseDicomRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h" />
-    <ClInclude Include="..\..\Source\Renderers\FpsTextRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\lineRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
@@ -312,6 +311,7 @@
     <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
+    <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h" />
     <ClInclude Include="..\..\Source\Utils\dataManager.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
@@ -355,7 +355,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp" />
-    <ClCompile Include="..\..\Source\Renderers\FpsTextRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\lineRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\quadRenderer.cpp" />
@@ -365,6 +364,7 @@
     <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp" />
+    <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp" />
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp" />
     <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp" />
     <ClCompile Include="..\..\Source\Utils\uiController.cpp">

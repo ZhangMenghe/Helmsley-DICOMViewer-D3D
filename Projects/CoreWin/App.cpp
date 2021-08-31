@@ -6,18 +6,24 @@
 #include "CoreWinMain.h"
 #include <Common/DeviceResources.h>
 #include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Foundation.Numerics.h>
+
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.UI.Core.h>
 #include <winrt/Windows.UI.Input.h>
+#include <winrt/Windows.UI.Composition.h>
 
 namespace windows {
 	using namespace winrt::Windows::ApplicationModel;
 	using namespace winrt::Windows::ApplicationModel::Activation;
 	using namespace winrt::Windows::ApplicationModel::Core;
+	using namespace winrt::Windows::UI;
 	using namespace winrt::Windows::UI::Core;
+	using namespace winrt::Windows::UI::Composition;
 	using namespace winrt::Windows::Graphics::Display;
 	using namespace winrt::Windows::Foundation;
+	using namespace winrt::Windows::Foundation::Numerics;
 } // namespace windows
 
 namespace CoreWin
@@ -62,6 +68,14 @@ namespace CoreWin
 		std::unique_ptr<CoreWinMain> m_main;
 		bool m_windowClosed;
 		bool m_windowVisible;
+
+		//tmp button solution
+		windows::CompositionTarget m_target{ nullptr };
+		windows::Visual m_selected{ nullptr };
+		windows::VisualCollection m_visuals{ nullptr };
+		windows::float2 m_offset{}; windows::float2 m_size{};
+		void AddVisual(windows::float2 const point);
+
 	};
 
 	App::App() :
@@ -80,6 +94,13 @@ namespace CoreWin
 
 	// Called when the CoreWindow object is created (or re-created).
 	void App::SetWindow(winrt::Windows::UI::Core::CoreWindow const& window) {
+		windows::Compositor compositor;
+		windows::ContainerVisual root = compositor.CreateContainerVisual();
+		//m_target = compositor.CreateTargetForCurrentView();
+		//m_target.Root(root);
+		m_visuals = root.Children();
+		AddVisual(windows::float2(100.0f, 100.0f));
+
 		window.SizeChanged({ this, &App::OnWindowSizeChanged });
 
 		window.Closed({ this, &App::OnWindowClosed });
@@ -193,13 +214,61 @@ namespace CoreWin
 	}
 
 	void App::OnPointerPressed(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
-		if (m_main != nullptr) m_main->OnPointerPressed(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y);
+		windows::float2 const point = args.CurrentPoint().Position();
+		if (m_main != nullptr) m_main->OnPointerPressed(point.x, point.y);
+
+		//check button
+		if (point.x >= m_offset.x &&
+			point.x < m_offset.x + m_size.x &&
+			point.y >= m_offset.y &&
+			point.y < m_offset.y + m_size.y) {
+			OutputDebugString(L"============clicked===========");
+			if (m_main != nullptr)m_main->onMainButtonClicked();
+		}
 	}
 	void App::OnPointerMoved(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
 		if (m_main != nullptr) m_main->OnPointerMoved(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y);
 	}
 	void App::OnPointerReleased(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
 		if (m_main != nullptr) m_main->OnPointerReleased();
+	}
+	void App::AddVisual(windows::float2 const point) {
+		windows::Compositor compositor = m_visuals.Compositor();
+		windows::SpriteVisual visual = compositor.CreateSpriteVisual();
+
+		static windows::Color colors[] =
+		{
+			{ 0xDC, 0x5B, 0x9B, 0xD5 },
+			{ 0xDC, 0xED, 0x7D, 0x31 },
+			{ 0xDC, 0x70, 0xAD, 0x47 },
+			{ 0xDC, 0xFF, 0xC0, 0x00 }
+		};
+
+		static unsigned last = 0;
+		unsigned const next = ++last % _countof(colors);
+		visual.Brush(compositor.CreateColorBrush(colors[next]));
+
+		float const BlockSize = 100.0f;
+
+		visual.Size(
+			{
+				BlockSize,
+				BlockSize
+			});
+
+		visual.Offset(
+			{
+				point.x - BlockSize / 2.0f,
+				point.y - BlockSize / 2.0f,
+				0.0f,
+			});
+
+		m_visuals.InsertAtTop(visual);
+
+		m_selected = visual;
+		m_offset.x = -BlockSize / 2.0f;
+		m_offset.y = -BlockSize / 2.0f;
+		m_size = visual.Size();
 	}
 }
 

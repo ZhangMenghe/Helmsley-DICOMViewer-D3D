@@ -20,7 +20,7 @@
 #include <utils/dicomLoader.h>
 #include <vrController.h>
 #include <Common/Manager.h>
-
+#include <condition_variable>
 template <class T>
 using RPCVector = google::protobuf::RepeatedPtrField<T>;
 using helmsley::configResponse;
@@ -35,6 +35,10 @@ private:
     std::unique_ptr<helmsley::inspectorSync::Stub> syncer_;
     std::unique_ptr<helmsley::dataTransfer::Stub> stub_;
     Request req;
+    commonResponse m_resp;
+    int m_gid = 0;
+    helmsley::GestureOp m_gesture_req;
+
     helmsley::FrameUpdateMsg update_msg;
     helmsley::DataMsg m_req_data;
     
@@ -44,6 +48,9 @@ private:
     vrController* vr_ = nullptr;
     std::shared_ptr<dicomLoader> m_dicom_loader;
     uiController* ui_ = nullptr;
+
+    std::condition_variable m_condition_variable;
+    std::mutex m_cv_mutex;
 
     std::vector<datasetResponse::datasetInfo> availableRemoteDatasets;
     std::vector<datasetResponse::datasetInfo> availableLocalDatasets;
@@ -59,28 +66,34 @@ private:
     void receiver_register();
 public:
     static bool new_data_request;
-    rpcHandler(const std::string& host);
-    const RPCVector<helmsley::GestureOp> getOperations();
+    static bool G_JOIN_SYNC, G_STATUS_SENDER;
 
-    /*void setUIController(uiController* ui){ui_ = ui;}*/
+    rpcHandler(const std::string& host);
+    void Run();
+
+    //DATA
+    helmsley::DataMsg GetNewDataRequest() { return m_req_data; }
+    void getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets);
+    void getVolumeFromDataset(const std::string& dataset_name, std::vector<helmsley::volumeInfo>& ret);
+    std::vector<configResponse::configInfo> getAvailableConfigFiles();
+
+    Concurrency::task<void> DownloadVolumeAsync(const std::string& folder_path);
+    Concurrency::task<void> DownloadMasksAndCenterlinesAsync(const std::string& folder_path);
+    void DownloadVolume(const std::string& folder_path);
+    void DownloadMasksAndCenterlines(const std::string& folder_name);
+    void DownloadCenterlines(Request req);
+    void exportConfigs(std::string content);
+
+    //SYNC
+    const RPCVector<helmsley::GestureOp> getOperations();
+    void setGestureOp(helmsley::GestureOp::OPType type, float x, float y);
+    void onBroadCastChanged();
+
+    //SETTERS
     void setManager(Manager* manager) { manager_ = manager; }
     void setVRController(vrController* vr) { vr_ = vr; }
     void setDataLoader(const std::shared_ptr<dicomLoader>& loader) { m_dicom_loader = loader; }
     void setUIController(uiController* ui) { ui_ = ui; }
     void setDataPath(std::string path) { DATA_PATH = path; }
-    void Run();
-
-    void getRemoteDatasets(std::vector<datasetResponse::datasetInfo>& datasets);
-    void getVolumeFromDataset(const std::string& dataset_name, std::vector<helmsley::volumeInfo>& ret);
-    std::vector<configResponse::configInfo> getAvailableConfigFiles();
-    void exportConfigs(std::string content);
-
-    void DownloadVolume(const std::string& folder_path);
-    Concurrency::task<void> DownloadVolumeAsync(const std::string& folder_path);
-    Concurrency::task<void> DownloadMasksAndCenterlinesAsync(const std::string& folder_path);
-
-    void DownloadMasksAndCenterlines(const std::string& folder_name);
-    void DownloadCenterlines(Request req);
-    helmsley::DataMsg GetNewDataRequest() { return m_req_data; }
 };
 #endif

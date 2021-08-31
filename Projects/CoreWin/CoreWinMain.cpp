@@ -14,7 +14,11 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_manager = std::make_shared<Manager>();
 
 	m_sceneRenderer = std::make_unique<vrController>(m_deviceResources, m_manager);
-	m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
+	//m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
+	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
+	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, .0), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
+	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, .0), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
+	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
@@ -83,6 +87,7 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 	m_sceneRenderer->CreateWindowSizeDependentResources();
 	auto outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
+	m_ui_board->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
 }
 
 // Updates the application state once per frame.
@@ -116,7 +121,9 @@ void CoreWinMain::Update(){
 		m_dicom_loader->onUpdate();
 		// TODO: Replace this with your app's content update functions.
 		m_sceneRenderer->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
+		//m_fpsTextRenderer->Update(m_timer);
+		uint32 fps = m_timer.GetFramesPerSecond();
+		m_ui_board->Update("fps", (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS");
 	});
 }
 
@@ -146,7 +153,8 @@ bool CoreWinMain::Render(){
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
 	m_sceneRenderer->Render(0);
-	m_fpsTextRenderer->Render();
+	//m_fpsTextRenderer->Render();
+	m_ui_board->Render();
 
 	return true;
 }
@@ -155,22 +163,37 @@ bool CoreWinMain::Render(){
 void CoreWinMain::OnDeviceLost()
 {
 	m_sceneRenderer->ReleaseDeviceDependentResources();
-	m_fpsTextRenderer->ReleaseDeviceDependentResources();
+	//m_fpsTextRenderer->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.
 void CoreWinMain::OnDeviceRestored()
 {
 	m_sceneRenderer->CreateDeviceDependentResources();
-	m_fpsTextRenderer->CreateDeviceDependentResources();
+	//m_fpsTextRenderer->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
-	m_sceneRenderer->onSingleTouchDown(x, y);
+	m_waitfor_operation = !m_ui_board->CheckHit("broadcast", x, y);
+	if (m_waitfor_operation) {
+		m_sceneRenderer->onSingleTouchDown(x, y);
+		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+	}else{
+		m_rpcHandler->onBroadCastChanged();
+		m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER? L"Broadcast" : L"Listen");
+		m_waitfor_operation = false;
+	}
+
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {
-	m_sceneRenderer->onTouchMove(x, y);
+	if (m_waitfor_operation) {
+		m_sceneRenderer->onTouchMove(x, y);
+		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_MOVE, x, y);
+	}
 }
 void CoreWinMain::OnPointerReleased() {
-	m_sceneRenderer->onTouchReleased();
+	if (m_waitfor_operation) {
+		m_sceneRenderer->onTouchReleased();
+		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
+	}
 }
