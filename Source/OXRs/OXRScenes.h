@@ -2,7 +2,7 @@
 #define OXR_SCENES_H
 #include <Common/Manager.h>
 #include <vrController.h>
-#include <Renderers/FpsTextRenderer.h>
+#include <SceneObjs/overUIBoard.h>
 #include <Utils/dicomLoader.h>
 #include <Utils/uiController.h>
 #include <Utils/dataManager.h>
@@ -45,7 +45,7 @@ private:
 	//std::unique_ptr<SensorVizScenario> m_scenario;
 	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
-	std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
+	std::unique_ptr<overUIBoard> m_ui_board;
 	
 	uiController m_uiController;
 

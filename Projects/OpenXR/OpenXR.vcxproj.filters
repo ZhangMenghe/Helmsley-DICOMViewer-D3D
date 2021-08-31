@@ -171,9 +171,6 @@
     <ClCompile Include="..\..\Source\Common\Manager.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Renderers\FpsTextRenderer.cpp">
-      <Filter>Source\Renderers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Common\TextTexture.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
@@ -253,6 +250,9 @@
     <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp">
+      <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -319,9 +319,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Utils\MathUtils.h">
       <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Renderers\FpsTextRenderer.h">
-      <Filter>Source\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Common\TextTexture.h">
       <Filter>Source\Common</Filter>
@@ -466,6 +463,9 @@
     <ClInclude Include="..\..\Source\Common\StepTimer.h" />
     <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h">
       <Filter>Source\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h">
+      <Filter>Source\SceneObjs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
