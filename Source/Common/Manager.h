@@ -57,7 +57,8 @@ public:
     static void setTraversalTargetId(int id);
 
     //getter
-    volumeSetupConstBuffer *getVolumeSetupConstData() { return &m_volset_data; }
+    void getVolumeSetupConstData(volumeSetupConstBuffer& vd) { vd = m_volset_data; }
+    
     UINT getMaskBits() { return m_volset_data.u_maskbits; }
     bool getCheck(dvr::PARAM_BOOL id) { return param_bool[id]; }
     bool isDrawVolume() { return !param_bool[dvr::CHECK_MASKON] || param_bool[dvr::CHECK_VOLUME_ON]; }

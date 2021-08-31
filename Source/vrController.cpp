@@ -282,12 +282,14 @@ void vrController::precompute()
 	context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
 
 	if (m_compute_created)	{
+		volumeSetupConstBuffer vol_setup;
+		m_manager->getVolumeSetupConstData(vol_setup);
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(
 				m_compute_constbuff,
 				0,
 				nullptr,
-				m_manager->getVolumeSetupConstData(),
+				&vol_setup,
 				0,
 				0);
 		context->CSSetConstantBuffers(0, 1, &m_compute_constbuff);

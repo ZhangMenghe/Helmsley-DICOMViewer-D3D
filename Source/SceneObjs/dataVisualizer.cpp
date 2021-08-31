@@ -163,15 +163,16 @@ void dataBoard::onViewChange(int width, int height){
 }
 
 void dataBoard::Update(ID3D11Device* device, ID3D11DeviceContext* context) {
-    volumeSetupConstBuffer* vol_setup = Manager::instance()->getVolumeSetupConstData();
-    if (vol_setup->u_widget_num == 0) {
+    volumeSetupConstBuffer vol_setup;
+    Manager::instance()->getVolumeSetupConstData(vol_setup);
+    if (vol_setup.u_widget_num == 0) {
         for (auto renderer : m_opacity_graphs) delete renderer;
         for (auto data : m_opacity_vertices) { delete[]data; data = nullptr; }
     }
     else{
         int dirty_wid = Manager::instance()->getDirtyOpacityId();
         if (dirty_wid < 0)return;
-        switch (vol_setup->u_widget_num - m_opacity_graphs.size()) {
+        switch (vol_setup.u_widget_num - m_opacity_graphs.size()) {
             //remove graph at dirty wid
         case -1:
             m_opacity_graphs.erase(m_opacity_graphs.begin() + dirty_wid);
@@ -242,13 +243,16 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
     context->CSSetShaderResources(0, 1, &texview);
     context->CSSetUnorderedAccessViews(0, 1, &m_textureUAV, nullptr);
 
+    volumeSetupConstBuffer vol_setup;
+    Manager::instance()->getVolumeSetupConstData(vol_setup);
+
     if (m_compute_constbuff != nullptr) {
         // Prepare the constant buffer to send it to the graphics device.
         context->UpdateSubresource(
             m_compute_constbuff,
             0,
             nullptr,
-            Manager::instance()->getVolumeSetupConstData(),
+            &vol_setup,
             0,
             0
         );
