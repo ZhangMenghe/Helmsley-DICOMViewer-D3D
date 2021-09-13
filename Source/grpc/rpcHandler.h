@@ -66,7 +66,7 @@ private:
     void receiver_register();
 public:
     static bool new_data_request;
-    static bool G_JOIN_SYNC, G_STATUS_SENDER;
+    static bool G_JOIN_SYNC, G_STATUS_SENDER, G_FORCED_STOP_BROADCAST;
 
     rpcHandler(const std::string& host);
     void Run();

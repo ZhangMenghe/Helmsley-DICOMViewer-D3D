@@ -13,7 +13,7 @@ using namespace std;
 using namespace concurrency;
 
 bool rpcHandler::new_data_request = false;
-bool rpcHandler::G_JOIN_SYNC = false, rpcHandler::G_STATUS_SENDER=false;
+bool rpcHandler::G_JOIN_SYNC = false, rpcHandler::G_STATUS_SENDER=false, rpcHandler::G_FORCED_STOP_BROADCAST=false;
 
 rpcHandler::rpcHandler(const std::string& host) {
     auto channel = grpc::CreateChannel(host, grpc::InsecureChannelCredentials());
@@ -64,8 +64,12 @@ void rpcHandler::Run() {
         if (G_STATUS_SENDER) {
             std::unique_lock<std::mutex> lk(m_cv_mutex);
             auto now = std::chrono::system_clock::now();
-            if (m_condition_variable.wait_until(lk, now + 100000ms, []() {return G_STATUS_SENDER == false; })) {
-                OutputDebugString(L"====GET NOTIFIED OF FALSE====\n ");
+            if (m_condition_variable.wait_until(lk, now + 100ms, []() {return G_STATUS_SENDER; })) {
+                //OutputDebugString(L"====GET NOTIFIED OF FALSE====\n ");
+                StatusMsg smsg;
+                ClientContext context;
+                syncer_->getStatusMessage(&context, req, &smsg);
+                if (smsg.host_id() != CLIENT_ID) { G_STATUS_SENDER = false; G_FORCED_STOP_BROADCAST = true; }
             }
         }
         //OutputDebugString(L"====GET UPDATES====\n ");

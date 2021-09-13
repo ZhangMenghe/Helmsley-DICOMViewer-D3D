@@ -115,6 +115,10 @@ void CoreWinMain::Update(){
 		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
 		rpcHandler::new_data_request = false;
 	}
+	if (rpcHandler::G_FORCED_STOP_BROADCAST) {
+		m_ui_board->Update("broadcast", L"Listen");
+		rpcHandler::G_FORCED_STOP_BROADCAST = false;
+	}
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{

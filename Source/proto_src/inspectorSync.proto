@@ -101,6 +101,9 @@ message FrameUpdateMsg{
     ResetMsg reset_value = 6;
     DataMsg data_value = 7;
 }
+message StatusMsg{
+    int32 host_id = 1;
+}
 service inspectorSync{
     rpc startBroadcast(Request) returns(commonResponse);
     rpc startReceiveBroadcast(Request) returns(commonResponse);
@@ -109,6 +112,7 @@ service inspectorSync{
     rpc getVolumePoses(Request) returns(VolumePoseBatch);
     rpc getOperations(Request) returns(OperationBatch);
     rpc getUpdates(Request) returns(FrameUpdateMsg);
+    rpc getStatusMessage(Request) returns(StatusMsg);
 
     rpc setVolumePose(VPMsg) returns(commonResponse);
     rpc setGestureOp(GestureOp) returns(commonResponse);

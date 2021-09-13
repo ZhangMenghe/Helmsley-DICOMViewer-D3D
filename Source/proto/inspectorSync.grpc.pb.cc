@@ -28,6 +28,7 @@ static const char* inspectorSync_method_names[] = {
   "/helmsley.inspectorSync/getVolumePoses",
   "/helmsley.inspectorSync/getOperations",
   "/helmsley.inspectorSync/getUpdates",
+  "/helmsley.inspectorSync/getStatusMessage",
   "/helmsley.inspectorSync/setVolumePose",
   "/helmsley.inspectorSync/setGestureOp",
   "/helmsley.inspectorSync/setTuneParams",
@@ -49,12 +50,13 @@ inspectorSync::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chan
   , rpcmethod_getVolumePoses_(inspectorSync_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_getOperations_(inspectorSync_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_getUpdates_(inspectorSync_method_names[5], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setVolumePose_(inspectorSync_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setGestureOp_(inspectorSync_method_names[7], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setTuneParams_(inspectorSync_method_names[8], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setCheckParams_(inspectorSync_method_names[9], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setMaskParams_(inspectorSync_method_names[10], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_setDisplayVolume_(inspectorSync_method_names[11], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_getStatusMessage_(inspectorSync_method_names[6], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setVolumePose_(inspectorSync_method_names[7], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setGestureOp_(inspectorSync_method_names[8], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setTuneParams_(inspectorSync_method_names[9], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setCheckParams_(inspectorSync_method_names[10], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setMaskParams_(inspectorSync_method_names[11], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_setDisplayVolume_(inspectorSync_method_names[12], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status inspectorSync::Stub::startBroadcast(::grpc::ClientContext* context, const ::Request& request, ::commonResponse* response) {
@@ -191,6 +193,29 @@ void inspectorSync::Stub::experimental_async::getUpdates(::grpc::ClientContext* 
 ::grpc::ClientAsyncResponseReader< ::helmsley::FrameUpdateMsg>* inspectorSync::Stub::AsyncgetUpdatesRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncgetUpdatesRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status inspectorSync::Stub::getStatusMessage(::grpc::ClientContext* context, const ::Request& request, ::helmsley::StatusMsg* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_getStatusMessage_, context, request, response);
+}
+
+void inspectorSync::Stub::experimental_async::getStatusMessage(::grpc::ClientContext* context, const ::Request* request, ::helmsley::StatusMsg* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_getStatusMessage_, context, request, response, std::move(f));
+}
+
+void inspectorSync::Stub::experimental_async::getStatusMessage(::grpc::ClientContext* context, const ::Request* request, ::helmsley::StatusMsg* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_getStatusMessage_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::helmsley::StatusMsg>* inspectorSync::Stub::PrepareAsyncgetStatusMessageRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::helmsley::StatusMsg>::Create(channel_.get(), cq, rpcmethod_getStatusMessage_, context, request, false);
+}
+
+::grpc::ClientAsyncResponseReader< ::helmsley::StatusMsg>* inspectorSync::Stub::AsyncgetStatusMessageRaw(::grpc::ClientContext* context, const ::Request& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncgetStatusMessageRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -397,6 +422,16 @@ inspectorSync::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       inspectorSync_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::Request, ::helmsley::StatusMsg>(
+          [](inspectorSync::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::Request* req,
+             ::helmsley::StatusMsg* resp) {
+               return service->getStatusMessage(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      inspectorSync_method_names[7],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::VPMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
              ::grpc::ServerContext* ctx,
@@ -405,7 +440,7 @@ inspectorSync::Service::Service() {
                return service->setVolumePose(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[7],
+      inspectorSync_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::GestureOp, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -415,7 +450,7 @@ inspectorSync::Service::Service() {
                return service->setGestureOp(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[8],
+      inspectorSync_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::TuneMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -425,7 +460,7 @@ inspectorSync::Service::Service() {
                return service->setTuneParams(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[9],
+      inspectorSync_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::CheckMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -435,7 +470,7 @@ inspectorSync::Service::Service() {
                return service->setCheckParams(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[10],
+      inspectorSync_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::MaskMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -445,7 +480,7 @@ inspectorSync::Service::Service() {
                return service->setMaskParams(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      inspectorSync_method_names[11],
+      inspectorSync_method_names[12],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< inspectorSync::Service, ::helmsley::DataMsg, ::commonResponse>(
           [](inspectorSync::Service* service,
@@ -495,6 +530,13 @@ inspectorSync::Service::~Service() {
 }
 
 ::grpc::Status inspectorSync::Service::getUpdates(::grpc::ServerContext* context, const ::Request* request, ::helmsley::FrameUpdateMsg* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status inspectorSync::Service::getStatusMessage(::grpc::ServerContext* context, const ::Request* request, ::helmsley::StatusMsg* response) {
   (void) context;
   (void) request;
   (void) response;

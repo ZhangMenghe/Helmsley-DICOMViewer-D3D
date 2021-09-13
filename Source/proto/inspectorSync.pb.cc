@@ -62,6 +62,10 @@ class FrameUpdateMsgDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<FrameUpdateMsg> _instance;
 } _FrameUpdateMsg_default_instance_;
+class StatusMsgDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<StatusMsg> _instance;
+} _StatusMsg_default_instance_;
 }  // namespace helmsley
 static void InitDefaultsscc_info_CheckMsg_inspectorSync_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -168,6 +172,20 @@ static void InitDefaultsscc_info_ResetMsg_inspectorSync_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ResetMsg_inspectorSync_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_ResetMsg_inspectorSync_2eproto}, {}};
 
+static void InitDefaultsscc_info_StatusMsg_inspectorSync_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::helmsley::_StatusMsg_default_instance_;
+    new (ptr) ::helmsley::StatusMsg();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::helmsley::StatusMsg::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_StatusMsg_inspectorSync_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_StatusMsg_inspectorSync_2eproto}, {}};
+
 static void InitDefaultsscc_info_TuneMsg_inspectorSync_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -211,7 +229,7 @@ static void InitDefaultsscc_info_VolumePoseBatch_inspectorSync_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_VolumePoseBatch_inspectorSync_2eproto}, {
       &scc_info_VPMsg_inspectorSync_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_inspectorSync_2eproto[10];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_inspectorSync_2eproto[11];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_inspectorSync_2eproto[5];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_inspectorSync_2eproto = nullptr;
 
@@ -306,6 +324,12 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_inspectorSync_2eproto::offsets
   PROTOBUF_FIELD_OFFSET(::helmsley::FrameUpdateMsg, mask_value_),
   PROTOBUF_FIELD_OFFSET(::helmsley::FrameUpdateMsg, reset_value_),
   PROTOBUF_FIELD_OFFSET(::helmsley::FrameUpdateMsg, data_value_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::helmsley::StatusMsg, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::helmsley::StatusMsg, host_id_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::helmsley::VPMsg)},
@@ -318,6 +342,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 62, -1, sizeof(::helmsley::MaskMsg)},
   { 70, -1, sizeof(::helmsley::DataMsg)},
   { 78, -1, sizeof(::helmsley::FrameUpdateMsg)},
+  { 90, -1, sizeof(::helmsley::StatusMsg)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -331,6 +356,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_MaskMsg_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_DataMsg_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_FrameUpdateMsg_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::helmsley::_StatusMsg_default_instance_),
 };
 
 const char descriptor_table_protodef_inspectorSync_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -371,29 +397,31 @@ const char descriptor_table_protodef_inspectorSync_2eproto[] PROTOBUF_SECTION_VA
   " \001(\0132\022.helmsley.ResetMsg\022%\n\ndata_value\030\007"
   " \001(\0132\021.helmsley.DataMsg\"J\n\007MsgType\022\013\n\007GE"
   "STURE\020\000\022\010\n\004TUNE\020\001\022\t\n\005CHECK\020\002\022\010\n\004MASK\020\003\022\t"
-  "\n\005RESET\020\004\022\010\n\004DATA\020\005*\033\n\007ReqType\022\007\n\003SET\020\000\022"
-  "\007\n\003GET\020\0012\205\005\n\rinspectorSync\022+\n\016startBroad"
-  "cast\022\010.Request\032\017.commonResponse\0222\n\025start"
-  "ReceiveBroadcast\022\010.Request\032\017.commonRespo"
-  "nse\0223\n\014requestReset\022\022.helmsley.ResetMsg\032"
-  "\017.commonResponse\0225\n\016getVolumePoses\022\010.Req"
-  "uest\032\031.helmsley.VolumePoseBatch\0223\n\rgetOp"
-  "erations\022\010.Request\032\030.helmsley.OperationB"
-  "atch\0220\n\ngetUpdates\022\010.Request\032\030.helmsley."
-  "FrameUpdateMsg\0221\n\rsetVolumePose\022\017.helmsl"
-  "ey.VPMsg\032\017.commonResponse\0224\n\014setGestureO"
-  "p\022\023.helmsley.GestureOp\032\017.commonResponse\022"
-  "3\n\rsetTuneParams\022\021.helmsley.TuneMsg\032\017.co"
-  "mmonResponse\0225\n\016setCheckParams\022\022.helmsle"
-  "y.CheckMsg\032\017.commonResponse\0223\n\rsetMaskPa"
-  "rams\022\021.helmsley.MaskMsg\032\017.commonResponse"
-  "\0226\n\020setDisplayVolume\022\021.helmsley.DataMsg\032"
-  "\017.commonResponseb\006proto3"
+  "\n\005RESET\020\004\022\010\n\004DATA\020\005\"\034\n\tStatusMsg\022\017\n\007host"
+  "_id\030\001 \001(\005*\033\n\007ReqType\022\007\n\003SET\020\000\022\007\n\003GET\020\0012\270"
+  "\005\n\rinspectorSync\022+\n\016startBroadcast\022\010.Req"
+  "uest\032\017.commonResponse\0222\n\025startReceiveBro"
+  "adcast\022\010.Request\032\017.commonResponse\0223\n\014req"
+  "uestReset\022\022.helmsley.ResetMsg\032\017.commonRe"
+  "sponse\0225\n\016getVolumePoses\022\010.Request\032\031.hel"
+  "msley.VolumePoseBatch\0223\n\rgetOperations\022\010"
+  ".Request\032\030.helmsley.OperationBatch\0220\n\nge"
+  "tUpdates\022\010.Request\032\030.helmsley.FrameUpdat"
+  "eMsg\0221\n\020getStatusMessage\022\010.Request\032\023.hel"
+  "msley.StatusMsg\0221\n\rsetVolumePose\022\017.helms"
+  "ley.VPMsg\032\017.commonResponse\0224\n\014setGesture"
+  "Op\022\023.helmsley.GestureOp\032\017.commonResponse"
+  "\0223\n\rsetTuneParams\022\021.helmsley.TuneMsg\032\017.c"
+  "ommonResponse\0225\n\016setCheckParams\022\022.helmsl"
+  "ey.CheckMsg\032\017.commonResponse\0223\n\rsetMaskP"
+  "arams\022\021.helmsley.MaskMsg\032\017.commonRespons"
+  "e\0226\n\020setDisplayVolume\022\021.helmsley.DataMsg"
+  "\032\017.commonResponseb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_inspectorSync_2eproto_deps[1] = {
   &::descriptor_table_common_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_inspectorSync_2eproto_sccs[10] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_inspectorSync_2eproto_sccs[11] = {
   &scc_info_CheckMsg_inspectorSync_2eproto.base,
   &scc_info_DataMsg_inspectorSync_2eproto.base,
   &scc_info_FrameUpdateMsg_inspectorSync_2eproto.base,
@@ -401,16 +429,17 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_ins
   &scc_info_MaskMsg_inspectorSync_2eproto.base,
   &scc_info_OperationBatch_inspectorSync_2eproto.base,
   &scc_info_ResetMsg_inspectorSync_2eproto.base,
+  &scc_info_StatusMsg_inspectorSync_2eproto.base,
   &scc_info_TuneMsg_inspectorSync_2eproto.base,
   &scc_info_VPMsg_inspectorSync_2eproto.base,
   &scc_info_VolumePoseBatch_inspectorSync_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_inspectorSync_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_inspectorSync_2eproto = {
-  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 2184,
-  &descriptor_table_inspectorSync_2eproto_once, descriptor_table_inspectorSync_2eproto_sccs, descriptor_table_inspectorSync_2eproto_deps, 10, 1,
+  false, false, descriptor_table_protodef_inspectorSync_2eproto, "inspectorSync.proto", 2265,
+  &descriptor_table_inspectorSync_2eproto_once, descriptor_table_inspectorSync_2eproto_sccs, descriptor_table_inspectorSync_2eproto_deps, 11, 1,
   schemas, file_default_instances, TableStruct_inspectorSync_2eproto::offsets,
-  file_level_metadata_inspectorSync_2eproto, 10, file_level_enum_descriptors_inspectorSync_2eproto, file_level_service_descriptors_inspectorSync_2eproto,
+  file_level_metadata_inspectorSync_2eproto, 11, file_level_enum_descriptors_inspectorSync_2eproto, file_level_service_descriptors_inspectorSync_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -3505,6 +3534,203 @@ void FrameUpdateMsg::InternalSwap(FrameUpdateMsg* other) {
 }
 
 
+// ===================================================================
+
+void StatusMsg::InitAsDefaultInstance() {
+}
+class StatusMsg::_Internal {
+ public:
+};
+
+StatusMsg::StatusMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
+  // @@protoc_insertion_point(arena_constructor:helmsley.StatusMsg)
+}
+StatusMsg::StatusMsg(const StatusMsg& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  host_id_ = from.host_id_;
+  // @@protoc_insertion_point(copy_constructor:helmsley.StatusMsg)
+}
+
+void StatusMsg::SharedCtor() {
+  host_id_ = 0;
+}
+
+StatusMsg::~StatusMsg() {
+  // @@protoc_insertion_point(destructor:helmsley.StatusMsg)
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+void StatusMsg::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
+}
+
+void StatusMsg::ArenaDtor(void* object) {
+  StatusMsg* _this = reinterpret_cast< StatusMsg* >(object);
+  (void)_this;
+}
+void StatusMsg::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void StatusMsg::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const StatusMsg& StatusMsg::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_StatusMsg_inspectorSync_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void StatusMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:helmsley.StatusMsg)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  host_id_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* StatusMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // int32 host_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          host_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* StatusMsg::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:helmsley.StatusMsg)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 host_id = 1;
+  if (this->host_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_host_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:helmsley.StatusMsg)
+  return target;
+}
+
+size_t StatusMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:helmsley.StatusMsg)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // int32 host_id = 1;
+  if (this->host_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_host_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void StatusMsg::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:helmsley.StatusMsg)
+  GOOGLE_DCHECK_NE(&from, this);
+  const StatusMsg* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<StatusMsg>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:helmsley.StatusMsg)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:helmsley.StatusMsg)
+    MergeFrom(*source);
+  }
+}
+
+void StatusMsg::MergeFrom(const StatusMsg& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:helmsley.StatusMsg)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.host_id() != 0) {
+    _internal_set_host_id(from._internal_host_id());
+  }
+}
+
+void StatusMsg::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:helmsley.StatusMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void StatusMsg::CopyFrom(const StatusMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:helmsley.StatusMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool StatusMsg::IsInitialized() const {
+  return true;
+}
+
+void StatusMsg::InternalSwap(StatusMsg* other) {
+  using std::swap;
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  swap(host_id_, other->host_id_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata StatusMsg::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace helmsley
 PROTOBUF_NAMESPACE_OPEN
@@ -3537,6 +3763,9 @@ template<> PROTOBUF_NOINLINE ::helmsley::DataMsg* Arena::CreateMaybeMessage< ::h
 }
 template<> PROTOBUF_NOINLINE ::helmsley::FrameUpdateMsg* Arena::CreateMaybeMessage< ::helmsley::FrameUpdateMsg >(Arena* arena) {
   return Arena::CreateMessageInternal< ::helmsley::FrameUpdateMsg >(arena);
+}
+template<> PROTOBUF_NOINLINE ::helmsley::StatusMsg* Arena::CreateMaybeMessage< ::helmsley::StatusMsg >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::helmsley::StatusMsg >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

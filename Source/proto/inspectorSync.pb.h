@@ -49,7 +49,7 @@ struct TableStruct_inspectorSync_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[10]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -78,6 +78,9 @@ extern OperationBatchDefaultTypeInternal _OperationBatch_default_instance_;
 class ResetMsg;
 class ResetMsgDefaultTypeInternal;
 extern ResetMsgDefaultTypeInternal _ResetMsg_default_instance_;
+class StatusMsg;
+class StatusMsgDefaultTypeInternal;
+extern StatusMsgDefaultTypeInternal _StatusMsg_default_instance_;
 class TuneMsg;
 class TuneMsgDefaultTypeInternal;
 extern TuneMsgDefaultTypeInternal _TuneMsg_default_instance_;
@@ -96,6 +99,7 @@ template<> ::helmsley::GestureOp* Arena::CreateMaybeMessage<::helmsley::GestureO
 template<> ::helmsley::MaskMsg* Arena::CreateMaybeMessage<::helmsley::MaskMsg>(Arena*);
 template<> ::helmsley::OperationBatch* Arena::CreateMaybeMessage<::helmsley::OperationBatch>(Arena*);
 template<> ::helmsley::ResetMsg* Arena::CreateMaybeMessage<::helmsley::ResetMsg>(Arena*);
+template<> ::helmsley::StatusMsg* Arena::CreateMaybeMessage<::helmsley::StatusMsg>(Arena*);
 template<> ::helmsley::TuneMsg* Arena::CreateMaybeMessage<::helmsley::TuneMsg>(Arena*);
 template<> ::helmsley::VPMsg* Arena::CreateMaybeMessage<::helmsley::VPMsg>(Arena*);
 template<> ::helmsley::VolumePoseBatch* Arena::CreateMaybeMessage<::helmsley::VolumePoseBatch>(Arena*);
@@ -2282,6 +2286,143 @@ class FrameUpdateMsg PROTOBUF_FINAL :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_inspectorSync_2eproto;
 };
+// -------------------------------------------------------------------
+
+class StatusMsg PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:helmsley.StatusMsg) */ {
+ public:
+  inline StatusMsg() : StatusMsg(nullptr) {}
+  virtual ~StatusMsg();
+
+  StatusMsg(const StatusMsg& from);
+  StatusMsg(StatusMsg&& from) noexcept
+    : StatusMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline StatusMsg& operator=(const StatusMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline StatusMsg& operator=(StatusMsg&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const StatusMsg& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const StatusMsg* internal_default_instance() {
+    return reinterpret_cast<const StatusMsg*>(
+               &_StatusMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(StatusMsg& a, StatusMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(StatusMsg* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(StatusMsg* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline StatusMsg* New() const final {
+    return CreateMaybeMessage<StatusMsg>(nullptr);
+  }
+
+  StatusMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<StatusMsg>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const StatusMsg& from);
+  void MergeFrom(const StatusMsg& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(StatusMsg* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "helmsley.StatusMsg";
+  }
+  protected:
+  explicit StatusMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_inspectorSync_2eproto);
+    return ::descriptor_table_inspectorSync_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kHostIdFieldNumber = 1,
+  };
+  // int32 host_id = 1;
+  void clear_host_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 host_id() const;
+  void set_host_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_host_id() const;
+  void _internal_set_host_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:helmsley.StatusMsg)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::int32 host_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_inspectorSync_2eproto;
+};
 // ===================================================================
 
 
@@ -3751,9 +3892,35 @@ inline void FrameUpdateMsg::set_allocated_data_value(::helmsley::DataMsg* data_v
   // @@protoc_insertion_point(field_set_allocated:helmsley.FrameUpdateMsg.data_value)
 }
 
+// -------------------------------------------------------------------
+
+// StatusMsg
+
+// int32 host_id = 1;
+inline void StatusMsg::clear_host_id() {
+  host_id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 StatusMsg::_internal_host_id() const {
+  return host_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 StatusMsg::host_id() const {
+  // @@protoc_insertion_point(field_get:helmsley.StatusMsg.host_id)
+  return _internal_host_id();
+}
+inline void StatusMsg::_internal_set_host_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  host_id_ = value;
+}
+inline void StatusMsg::set_host_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_host_id(value);
+  // @@protoc_insertion_point(field_set:helmsley.StatusMsg.host_id)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
