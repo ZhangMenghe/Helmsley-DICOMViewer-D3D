@@ -14,7 +14,7 @@ class Camera {
 
     const float NEAR_PLANE = 0.01f;//as close as possible
     const float FAR_PLANE = 100.0f;
-    DirectX::XMFLOAT3 ORI_CAM_POS = { 0.0f, .0f, 1.5f };
+    DirectX::XMFLOAT3 ORI_CAM_POS = { 0.0f, .0f, .0f };
     DirectX::XMFLOAT3 ORI_UP = { 0.0f, 1.0f, 0.0f };
     DirectX::XMFLOAT3 ORI_FRONT = { 0.0f, 0.0f, -1.0f };
 

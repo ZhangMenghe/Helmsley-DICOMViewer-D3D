@@ -77,7 +77,6 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 
 void vrController::InitOXRScene(){
 	uniScale = 0.5f;
-	PosVec3_.z = -1.0f;
 	volume_model_dirty = true; volume_rotate_dirty = true;
 }
 
@@ -383,7 +382,8 @@ void vrController::render_scene(int view_id){
 	if (Manager::param_bool[dvr::CHECK_OVERLAY])
 	{
 		render_complete &= data_board_->Draw(m_deviceResources->GetD3DDeviceContext(),
-											DirectX::XMMatrixScaling(1.0, 0.3, 0.1) * DirectX::XMMatrixTranslation(0.8f, 0.8f, .0f),
+											DirectX::XMMatrixScaling(1.0, 0.3, 0.1) 
+											* DirectX::XMMatrixTranslation(0.8f, 0.8f, dvr::DEFAULT_VIEW_Z),
 											is_front);
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
@@ -438,34 +438,19 @@ void vrController::onSingleTouchDown(float x, float y)
 	m_IsPressed = true;
 }
 
-void vrController::onSingle3DTouchDown(float x, float y, float z, int side)
-{
+void vrController::onSingle3DTouchDown(float x, float y, float z, int side){
 	//char debug[256];
 	//sprintf(debug, "Touch %d: %f,%f,%f\n", side, x, y, z);
 	//OutputDebugStringA(debug);
-	if (side == 0)
-	{
-		Mouse3D_old_left = {x, y, z};
-		m_IsPressed_left = true;
-		if (m_IsPressed_right)
-		{
-			// record distance for scaling
-			glm::vec3 delta = {x = Mouse3D_old_right.x, y - Mouse3D_old_right.y, z - Mouse3D_old_right.z};
-			distance_old = glm::length(delta);
-			vector_old = delta;
-		}
-	}
-	else
-	{
-		Mouse3D_old_right = {x, y, z};
-		m_IsPressed_right = true;
-		if (m_IsPressed_left)
-		{
-			// record distance for scaling
-			glm::vec3 delta = {x - Mouse3D_old_left.x, y - Mouse3D_old_left.y, z - Mouse3D_old_left.z};
-			distance_old = glm::length(delta);
-			vector_old = delta;
-		}
+
+	m_IsPressed3D[side] = true;
+	m_Mouse3D_old[side] = { x, y, z };
+
+	// record distance for scaling
+	if (m_IsPressed3D[1 - side]) {
+		glm::vec3 delta = m_Mouse3D_old[side] - m_Mouse3D_old[1 - side];
+		distance_old = glm::length(delta);
+		vector_old = delta;
 	}
 }
 
@@ -503,128 +488,30 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 
 		setCuttingPlane(pos, normal);
 	}
+	glm::vec3 npos = { x, y, z };
+	//Rotate
+	if (m_IsPressed3D[OXR_INPUT_LEFT] && m_IsPressed3D[OXR_INPUT_RIGHT]) {
+		glm::vec3 delta = npos - m_Mouse3D_old[1 - side];
+		if (side == OXR_INPUT_RIGHT) delta = -delta;
+		float distance = glm::length(delta);
+		// Scale
+		float ratio = distance / distance_old;
+		// Midpoint
+		glm::vec3 midpoint = (npos + m_Mouse3D_old[1 - side]) * 0.5f;
+		if (ratio > 0.8f && ratio < 1.2f) uniScale *= ratio;
 
-	if (m_IsPressed_left)
-	{
-		if (side == 0)
-		{
-			//char debug[256];
-			//sprintf(debug, "Touch %d: %f,%f,%f\n", side, x, y, z);
-			//OutputDebugStringA(debug);
-		}
-	}
-	if (m_IsPressed_right)
-	{
-		if (side == 1)
-		{
-			//char debug[256];
-			//sprintf(debug, "Touch %d: %f,%f,%f\n", side, x, y, z);
-			//OutputDebugStringA(debug);
-		}
-	}
-
-	if (!(m_IsPressed_left && m_IsPressed_right))
-	{
-		// not both hand: translate
-		if (side == 0)
-		{
-			if (m_IsPressed_left)
-			{
-				float dx = x - Mouse3D_old_left.x;
-				float dy = y - Mouse3D_old_left.y;
-				float dz = z - Mouse3D_old_left.z;
-
-				PosVec3_.x += dx * sens;
-				PosVec3_.y += dy * sens;
-				PosVec3_.z += dz * sens;
-
-				Mouse3D_old_left = {x, y, z};
-				volume_model_dirty = true;
-			}
-		}
-		else
-		{
-			if (m_IsPressed_right)
-			{
-				float dx = x - Mouse3D_old_right.x;
-				float dy = y - Mouse3D_old_right.y;
-				float dz = z - Mouse3D_old_right.z;
-
-				PosVec3_.x += dx * sens;
-				PosVec3_.y += dy * sens;
-				PosVec3_.z += dz * sens;
-
-				Mouse3D_old_right = {x, y, z};
-				volume_model_dirty = true;
-			}
-		}
-	}
-	else
-	{
-		// both hand: scale
-		glm::vec3 delta;
-		glm::vec3 midpoint;
-		if (side == 0)
-		{
-			delta.x = x - Mouse3D_old_right.x;
-			delta.y = y - Mouse3D_old_right.y;
-			delta.z = z - Mouse3D_old_right.z;
-
-			float distance = glm::length(delta);
-
-			// Scale
-			float ratio = distance / distance_old;
-
-			// Midpoint
-			midpoint = glm::vec3{(x + Mouse3D_old_right.x) / 2.0f, (y + Mouse3D_old_right.y) / 2.0f, (z + Mouse3D_old_right.z) / 2.0f};
-
-			if (ratio > 0.8f && ratio < 1.2f)
-			{
-				uniScale *= ratio;
-			}
-
-			distance_old = distance;
-			Mouse3D_old_left = {x, y, z};
-			volume_model_dirty = true;
-		}
-		else
-		{
-			delta.x = Mouse3D_old_left.x - x;
-			delta.y = Mouse3D_old_left.y - y;
-			delta.z = Mouse3D_old_left.z - z;
-
-			float distance = glm::length(delta);
-
-			// Scale
-			float ratio = distance / distance_old;
-
-			// Midpoint
-			midpoint = glm::vec3{(x + Mouse3D_old_left.x) / 2.0f, (y + Mouse3D_old_left.y) / 2.0f, (z + Mouse3D_old_left.z) / 2.0f};
-
-			if (ratio > 0.8f && ratio < 1.2f)
-			{
-				uniScale *= ratio;
-			}
-
-			distance_old = distance;
-			Mouse3D_old_right = {x, y, z};
-			volume_model_dirty = true; volume_rotate_dirty = true;
-		}
+		m_Mouse3D_old[side] = npos;
+		distance_old = distance;
+		volume_model_dirty = true;
 
 		// move
-		glm::vec3 mid_delta = glm::vec3{midpoint.x - Mouse3D_old_mid.x, midpoint.y - Mouse3D_old_mid.y, midpoint.z - Mouse3D_old_mid.z};
-		if (glm::length(mid_delta) < 0.01f)
-		{
-			PosVec3_.x += mid_delta.x;
-			PosVec3_.y += mid_delta.y;
-			PosVec3_.z += mid_delta.z;
-		}
-
-		Mouse3D_old_mid = {midpoint.x, midpoint.y, midpoint.z};
+		glm::vec3 mid_delta = midpoint - m_Mouse3D_old[OXR_INPUT_MID];
+		if (glm::length(mid_delta) < 0.01f) PosVec3_ += mid_delta;
+		m_Mouse3D_old[OXR_INPUT_MID] = midpoint;
 
 		// rotate
-		glm::vec3 curr = glm::normalize(glm::vec3{delta.x, 0, delta.z});
-		glm::vec3 old = glm::normalize(glm::vec3{vector_old.x, 0, vector_old.z});
+		glm::vec3 curr = glm::normalize(glm::vec3{ delta.x, 0, delta.z });
+		glm::vec3 old = glm::normalize(glm::vec3{ vector_old.x, 0, vector_old.z });
 		glm::vec3 axis = glm::normalize(glm::cross(old, curr));
 		float angle = std::acos(glm::dot(old, curr));
 
@@ -640,6 +527,14 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 		}
 		vector_old = glm::normalize(delta);
 	}
+	//MOVE
+	else if((m_IsPressed3D[OXR_INPUT_LEFT] && side == OXR_INPUT_LEFT)
+		||(m_IsPressed3D[OXR_INPUT_RIGHT] && side == OXR_INPUT_RIGHT)){
+
+		PosVec3_ += (npos - m_Mouse3D_old[side]) * dvr::MOUSE_3D_SENSITIVITY;
+		m_Mouse3D_old[side] = npos;
+		volume_model_dirty = true;
+	}
 }
 
 void vrController::onTouchReleased()
@@ -649,24 +544,7 @@ void vrController::onTouchReleased()
 
 void vrController::on3DTouchReleased(int side)
 {
-	//char debug[256];
-	if (side == 0)
-	{
-		//sprintf(debug, "Release %d: %f,%f,%f\n", side, Mouse3D_old_left.x, Mouse3D_old_left.y, Mouse3D_old_left.z);
-	}
-	else
-	{
-		//sprintf(debug, "Release %d: %f,%f,%f\n", side, Mouse3D_old_right.x, Mouse3D_old_right.y, Mouse3D_old_right.z);
-	}
-	//OutputDebugStringA(debug);
-	if (side == 0)
-	{
-		m_IsPressed_left = false;
-	}
-	else
-	{
-		m_IsPressed_right = false;
-	}
+	m_IsPressed3D[side] = false;
 }
 
 void vrController::onScale(float sx, float sy)

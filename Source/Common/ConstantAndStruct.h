@@ -154,6 +154,7 @@ namespace dvr{
     const float MOUSE_ROTATE_SENSITIVITY = 0.005f;
     const float MOUSE_SCALE_SENSITIVITY = 0.5f;
     const float MOUSE_PAN_SENSITIVITY = 1.2f;
+    const float MOUSE_3D_SENSITIVITY = 1.0f;
 
     //setting
     const bool CONNECT_TO_SERVER = true;
@@ -176,9 +177,10 @@ namespace dvr{
     //const DirectX::XMFLOAT3 DEFAULT_SCALE = { 0.8f, 0.8f, 0.8f };
     //const DirectX::XMFLOAT3 DEFAULT_POS = { .0f, .0f, .0f };
 
+    const float DEFAULT_VIEW_Z = -1.5f;
     const glm::mat4 DEFAULT_ROTATE = glm::mat4(1.0f);
     const glm::vec3 DEFAULT_SCALE = glm::vec3(1.0f);
-    const glm::vec3 DEFAULT_POS = glm::vec3(.0f, .0f, 0.0f);
+    const glm::vec3 DEFAULT_POS = glm::vec3(.0f, .0f, DEFAULT_VIEW_Z);
 
     const float SCREEN_CLEAR_COLOR[4] = {
         0.f, 0.f, 0.f, 0.f};

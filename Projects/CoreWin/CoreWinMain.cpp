@@ -16,8 +16,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_sceneRenderer = std::make_unique<vrController>(m_deviceResources, m_manager);
 	//m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
-	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, .0), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
-	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, .0), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
+	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
+	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
 	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
 	m_dicom_loader = std::make_shared<dicomLoader>();

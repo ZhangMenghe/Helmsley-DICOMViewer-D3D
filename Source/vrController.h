@@ -156,22 +156,21 @@ private:
 	glm::mat4 m_extrinsics_mats[2] = { glm::mat4(1.0) };
 	//UI
 	bool m_IsPressed = false;
-	//DirectX::XMFLOAT2 Mouse_old;
+	glm::fvec2 Mouse_old;
 
-	bool m_IsPressed_left = false;
-	bool m_IsPressed_right = false;
-	glm::vec3 Mouse3D_old_left;
-	glm::vec3 Mouse3D_old_right;
-
-	glm::vec3 Mouse3D_old_mid;
-
-	float sens = 1.0f; // 0.1f;
-
+	enum OXR_INPUT_SIDE {
+		OXR_INPUT_LEFT = 0,
+		OXR_INPUT_RIGHT,
+		OXR_INPUT_MID,
+		OXR_INPUT_END
+	};
+	bool m_IsPressed3D[OXR_INPUT_END] = {false};
+	glm::vec3 m_Mouse3D_old[OXR_INPUT_END];
 	glm::vec3 vector_old;
 	float distance_old = 0;
+	
 	float uniScale = 1.0f;
 
-	glm::fvec2 Mouse_old;
 	std::string cst_name;
 
 	//volume
@@ -193,7 +192,7 @@ private:
 	//flags
 	int frame_num = 0;
 	bool volume_model_dirty, m_scene_dirty, volume_rotate_dirty;
-	bool pre_draw_ = true;
+	bool pre_draw_ = false;
 	bool m_compute_created = false;
 	bool m_use_space_mat = false;
 	void Rotate(float radians);

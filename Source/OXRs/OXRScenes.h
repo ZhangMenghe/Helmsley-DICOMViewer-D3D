@@ -67,7 +67,6 @@ private:
 	DX::StepTimer m_timer;
 
 	bool m_overwrite_index_file = false;
-	bool m_render_scene = true;
 	bool m_local_initialized = false;
 
 	void setup_volume_server();

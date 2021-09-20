@@ -14,8 +14,8 @@ void OXRScenes::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& 
 	//m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
 
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
-	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, .0), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
-	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, .0), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
+	m_ui_board->AddBoard("fps", glm::vec3(0., -0.0, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
+	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
 	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
@@ -122,8 +122,6 @@ void OXRScenes::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 	{
 		return;
 	}
-	if (m_render_scene) {
-		m_sceneRenderer->Render(view_id);
-	}
+	m_sceneRenderer->Render(view_id);
 	m_ui_board->Render();
 }
