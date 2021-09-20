@@ -9,12 +9,12 @@ using namespace dvr;
 dataBoard::dataBoard(ID3D11Device* device){
     onReset(device);
     //todo: seems not working ...
-    ID3D11DepthStencilState* m_DepthStencilState;
+    //ID3D11DepthStencilState* m_DepthStencilState;
     CD3D11_DEPTH_STENCIL_DESC depthStencilDesc(CD3D11_DEFAULT{});
     depthStencilDesc.DepthEnable = true;
     depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
     depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    winrt::check_hresult(device->CreateDepthStencilState(&depthStencilDesc, &m_DepthStencilState));
+    //winrt::check_hresult(device->CreateDepthStencilState(&depthStencilDesc, &m_DepthStencilState));
 
     if (d3dBlendState == nullptr) {
         D3D11_BLEND_DESC omDesc;
@@ -39,7 +39,7 @@ dataBoard::~dataBoard(){
     m_opacity_vertices.clear();
     delete m_board_quad; m_board_quad = nullptr;
     delete m_color_bar; m_color_bar = nullptr;
-    delete m_DepthStencilState; m_DepthStencilState = nullptr;
+    //delete m_DepthStencilState; m_DepthStencilState = nullptr;
     delete d3dBlendState; d3dBlendState = nullptr;
 }
 void getVerticesWithScaleOff(float*& qvertices, DirectX::XMFLOAT3 scale, DirectX::XMFLOAT3 offset, bool is_with_tex) {
@@ -230,9 +230,9 @@ void dataBoard::setup_opacity_widget_vertcies(float* in_data, float*& out_data, 
     }
 }
 bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, bool is_front) {
-    context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
+   /* context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
     context->OMSetDepthStencilState(m_DepthStencilState, 0);
-    if (!is_front) context->RSSetState(vrController::instance()->m_render_state_front);
+    if (!is_front) context->RSSetState(vrController::instance()->m_render_state_front);*/
 
     bool render_complete = true;
 
@@ -275,9 +275,9 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
         render_complete &= m_opacity_graphs[i]->Draw(context, model_mat);
     }
 
-    context->OMSetDepthStencilState(nullptr, 0);
+    //context->OMSetDepthStencilState(nullptr, 0);
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
-    if (!is_front) context->RSSetState(vrController::instance()->m_render_state_back);
+    //if (!is_front) context->RSSetState(vrController::instance()->m_render_state_back);
 
     return render_complete;
 }

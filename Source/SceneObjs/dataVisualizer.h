@@ -46,13 +46,14 @@ private:
     std::vector<quadRenderer*> m_opacity_graphs;
     std::vector<float*> m_opacity_vertices;
     //USHORT m_opacity_indices[12] = { 0,2,1,0,5,2,0,4,5,0,3,4 };
-    USHORT m_opacity_indices[12] = { 0,1,2,
+    USHORT m_opacity_indices[12] = { 
+        0,1,2,
         0,2,5,
         0,5,4,
         0,4,3 };
 
     //rendering
-    ID3D11DepthStencilState* m_DepthStencilState;
+    //ID3D11DepthStencilState* m_DepthStencilState;
     ID3D11BlendState* d3dBlendState;
 
     float* m_default_opacity_data = nullptr;
