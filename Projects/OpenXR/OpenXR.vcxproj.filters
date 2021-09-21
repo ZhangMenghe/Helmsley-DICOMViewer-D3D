@@ -174,9 +174,6 @@
     <ClCompile Include="..\..\Source\Common\TextTexture.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\OXRs\OXRScenes.cpp">
-      <Filter>Source\OXRs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp">
       <Filter>Source\Renderers</Filter>
     </ClCompile>
@@ -253,6 +250,9 @@
     <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\OXRMainScene.cpp">
+      <Filter>Source\OXRs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -322,9 +322,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Common\TextTexture.h">
       <Filter>Source\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OXRs\OXRScenes.h">
-      <Filter>Source\OXRs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h">
       <Filter>Source\Renderers</Filter>
@@ -466,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h">
       <Filter>Source\SceneObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\OXRMainScene.h">
+      <Filter>Source\OXRs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

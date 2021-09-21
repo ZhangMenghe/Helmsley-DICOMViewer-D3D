@@ -150,6 +150,12 @@ namespace dvr{
         INPUT_POS_3D,
         INPUT_LAYOUT_END
     };
+    enum OXR_INPUT_SIDE {
+        OXR_INPUT_LEFT = 0,
+        OXR_INPUT_RIGHT,
+        OXR_INPUT_MID,
+        OXR_INPUT_END
+    };
     //UIs
     const float MOUSE_ROTATE_SENSITIVITY = 0.005f;
     const float MOUSE_SCALE_SENSITIVITY = 0.5f;

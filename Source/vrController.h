@@ -158,14 +158,8 @@ private:
 	bool m_IsPressed = false;
 	glm::fvec2 Mouse_old;
 
-	enum OXR_INPUT_SIDE {
-		OXR_INPUT_LEFT = 0,
-		OXR_INPUT_RIGHT,
-		OXR_INPUT_MID,
-		OXR_INPUT_END
-	};
-	bool m_IsPressed3D[OXR_INPUT_END] = {false};
-	glm::vec3 m_Mouse3D_old[OXR_INPUT_END];
+	bool m_IsPressed3D[dvr::OXR_INPUT_END] = {false};
+	glm::vec3 m_Mouse3D_old[dvr::OXR_INPUT_END];
 	glm::vec3 vector_old;
 	float distance_old = 0;
 	

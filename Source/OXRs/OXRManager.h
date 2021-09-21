@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <Common/DeviceResources.h>
-#include <OXRs/OXRScenes.h>
 #include <OXRs/XrSceneLib/ProjectionLayer.h>
 #include <OXRs/XrSceneLib/Scene.h>
 #include <OXRs/XrSceneLib/CompositionLayers.h>

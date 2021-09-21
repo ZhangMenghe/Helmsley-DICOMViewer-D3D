@@ -4,7 +4,7 @@
 
 #include "pch.h"
 #include "OXRs/OXRManager.h"
-#include <OXRs/OXRScenes.h>
+#include <OXRs/OXRMainScene.h>
 #include <OXRs/XrUtility/XrMath.h>
 
 #include <winrt/Windows.Foundation.h>
@@ -28,7 +28,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	{
 		view.IsEnabled(true);
 	}
-	oxr_manager->AddScene(std::unique_ptr<xr::Scene>(new OXRScenes(std::unique_ptr<xr::XrContext>(&oxr_manager->XrContext()))));
+	oxr_manager->AddScene(std::unique_ptr<xr::Scene>(new OXRMainScene(std::unique_ptr<xr::XrContext>(&oxr_manager->XrContext()))));
 	oxr_manager->AddSceneFinished();
 
 	while (oxr_manager->Update()) {

@@ -356,6 +356,7 @@
     <ClInclude Include="..\..\Source\grpc\rpcHandler.h" />
     <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\DxCommon\DxUtility.h" />
+    <ClInclude Include="..\..\Source\OXRs\OXRMainScene.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.h" />
@@ -389,7 +390,6 @@
     <ClInclude Include="..\..\Source\proto\inspectorSync.pb.h" />
     <ClInclude Include="..\..\Source\proto\transManager.grpc.pb.h" />
     <ClInclude Include="..\..\Source\proto\transManager.pb.h" />
-    <ClInclude Include="..\..\Source\OXRs\OXRScenes.h" />
     <ClInclude Include="..\..\Source\Renderers\baseRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\lineRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\organMeshRenderer.h" />
@@ -424,6 +424,7 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp" />
     <ClCompile Include="..\..\Source\OXRs\DxCommon\DxUtility.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\OXRMainScene.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp" />
@@ -462,7 +463,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Source\OXRs\OXRScenes.cpp" />
     <ClCompile Include="..\..\Source\Renderers\baseRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\lineRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\organMeshRenderer.cpp" />
