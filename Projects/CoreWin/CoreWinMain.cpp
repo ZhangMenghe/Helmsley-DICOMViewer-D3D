@@ -17,7 +17,7 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	//m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
 	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
-	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
+	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::mat4(1.0));
 	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
@@ -83,9 +83,9 @@ CoreWinMain::~CoreWinMain(){
 // Updates application state when the window size changes (e.g. device orientation change)
 void CoreWinMain::CreateWindowSizeDependentResources()
 {
-	// TODO: Replace this with the size-dependent initialization of your app's content.
-	m_sceneRenderer->CreateWindowSizeDependentResources();
-	auto outputSize = m_deviceResources->GetOutputSize();
+	winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
+
+	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_ui_board->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
 }
@@ -173,7 +173,6 @@ void CoreWinMain::OnDeviceLost()
 // Notifies renderers that device resources may now be recreated.
 void CoreWinMain::OnDeviceRestored()
 {
-	m_sceneRenderer->CreateDeviceDependentResources();
 	//m_fpsTextRenderer->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }

@@ -44,9 +44,9 @@ public:
 	void onReset();
 	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam);
 	void InitOXRScene();
+	void onViewChanged(float width, float height);
 
 	void CreateDeviceDependentResources();
-	void CreateWindowSizeDependentResources();
 	void ReleaseDeviceDependentResources();
 	void Update(DX::StepTimer const& timer);
 	//void Update(XrTime time);

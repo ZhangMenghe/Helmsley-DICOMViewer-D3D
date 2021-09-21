@@ -14,8 +14,8 @@ void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources
 	//m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
 
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
-	m_ui_board->AddBoard("fps", glm::vec3(0., -0.0, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
-	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.1, 0.1, 0.2), glm::mat4(1.0));
+	m_ui_board->AddBoard("fps", glm::vec3(0.3, -0.3, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
+	m_ui_board->AddBoard("broadcast", glm::vec3(-0.3, 0.1, -0.1f), glm::vec3(0.15f, 0.1f, 0.1f), glm::mat4(1.0));
 	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
@@ -75,13 +75,15 @@ void OXRMainScene::setup_resource()
 	});
 }
 void OXRMainScene::onViewChanged(){
-	m_sceneRenderer->CreateWindowSizeDependentResources();
+	winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
+	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
+	m_ui_board->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
 }
 void OXRMainScene::Update(const xr::FrameTime& frameTime)
 {
 	if (m_local_initialized) {
 		if (dvr::CONNECT_TO_SERVER)		{
-			m_rpcHandler = std::make_shared<rpcHandler>("192.168.0.178:23333");
+			m_rpcHandler = std::make_shared<rpcHandler>("192.168.0.128:23333");
 			m_rpcThread = new std::thread(&rpcHandler::Run, m_rpcHandler);
 			m_rpcHandler->setDataLoader(m_dicom_loader);
 			m_rpcHandler->setVRController(m_sceneRenderer.get());
@@ -121,3 +123,24 @@ void OXRMainScene::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 	m_sceneRenderer->Render(view_id);
 	m_ui_board->Render();
 }
+
+void OXRMainScene::onSingle3DTouchDown(float x, float y, float z, int side) {
+	//check sphere-plane intersection
+	if (m_ui_board->CheckHit("broadcast", x, y, z)) {
+		m_rpcHandler->onBroadCastChanged();
+		m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
+	}
+	else {
+		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
+		//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+	}
+	//m_scenario->onSingle3DTouchDown(x, y, z, side);
+}
+void OXRMainScene::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) {
+	m_sceneRenderer->on3DTouchMove(x, y, z, rot, side);
+	//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_MOVE, x, y);
+};
+void OXRMainScene::on3DTouchReleased(int side) { 
+	m_sceneRenderer->on3DTouchReleased(side); 
+	//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
+};

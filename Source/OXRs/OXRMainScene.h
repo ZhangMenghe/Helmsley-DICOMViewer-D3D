@@ -24,17 +24,11 @@ public:
 	void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 
 	void onViewChanged();
-	void setSpaces(XrSpace *space, XrSpace *app_space);
 
-	void onSingle3DTouchDown(float x, float y, float z, int side) { 
-		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side); 
-		//m_scenario->onSingle3DTouchDown(x, y, z, side);
-	};
-	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) { m_sceneRenderer->on3DTouchMove(x, y, z, rot, side); };
-	void on3DTouchReleased(int side) { m_sceneRenderer->on3DTouchReleased(side); };
-	//void saveCurrentTargetViews(ID3D11RenderTargetView* render_target, ID3D11DepthStencilView* depth_target) {
-	//	m_deviceResources->saveCurrentTargetViews(render_target, depth_target);
-	//}
+	void onSingle3DTouchDown(float x, float y, float z, int side);
+	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side);
+	void on3DTouchReleased(int side);
+	
 	void saveCurrentTargetViews(winrt::com_ptr <ID3D11RenderTargetView> render_target,
 		winrt::com_ptr<ID3D11DepthStencilView> depth_target, float depth_value) {
 		m_deviceResources->saveCurrentTargetViews(render_target, depth_target, depth_value);
@@ -58,9 +52,6 @@ private:
 
 	// RPC thread
 	std::thread *m_rpcThread;
-
-	//XR
-
 
 	// Rendering loop timer.
 	DX::StepTimer m_timer;

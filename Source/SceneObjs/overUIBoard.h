@@ -12,6 +12,7 @@ struct TextQuad {
 	TextTexture* ttex;
 	glm::vec3 pos;
 	glm::vec3 size;
+	glm::vec3 dir;
 	DirectX::XMMATRIX mat;
 };
 // Renders the current FPS value in the bottom right corner of the screen using Direct2D and DirectWrite.
@@ -23,6 +24,7 @@ public:
 
 	void AddBoard(std::string name, glm::vec3 pos, glm::vec3 scale, glm::mat4 rot);
 	bool CheckHit(std::string name, float x, float y);
+	bool CheckHit(std::string name, float x, float y, float z);
 
 	void Update(std::string name, std::wstring new_content);
 	void Render();

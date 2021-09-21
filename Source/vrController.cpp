@@ -38,7 +38,6 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	Manager::camera = new Camera;
 
 	CreateDeviceDependentResources();
-	CreateWindowSizeDependentResources();
 	onReset();
 }
 void vrController::onReset()
@@ -191,12 +190,10 @@ void vrController::init_texture() {
 }
 
 // Initializes view parameters when the window size changes.
-void vrController::CreateWindowSizeDependentResources()
-{
-	winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
-	if (outputSize.Width == .0)
+void vrController::onViewChanged(float width, float height){
+	if (width == .0)
 		return;
-	DX::ThrowIfFailed(screen_quad->InitializeQuadTex(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), outputSize.Width, outputSize.Height));
+	DX::ThrowIfFailed(screen_quad->InitializeQuadTex(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), width, height));
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
