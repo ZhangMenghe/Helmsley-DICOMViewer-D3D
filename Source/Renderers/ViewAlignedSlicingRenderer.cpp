@@ -161,24 +161,24 @@ bool viewAlignedSlicingRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	
 	context->OMSetBlendState(m_d3dBlendState, 0, 0xffffffff);
 
-	D3D11_DEPTH_STENCIL_DESC dsDesc;
+	//D3D11_DEPTH_STENCIL_DESC dsDesc;
 
-	// Depth test parameters
-	dsDesc.DepthEnable = false;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	//// Depth test parameters
+	//dsDesc.DepthEnable = false;
+	//dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	//dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
-	// Stencil test parameters
-	dsDesc.StencilEnable = false;
-	dsDesc.StencilReadMask = 0xFF;
-	dsDesc.StencilWriteMask = 0xFF;
+	//// Stencil test parameters
+	//dsDesc.StencilEnable = false;
+	//dsDesc.StencilReadMask = 0xFF;
+	//dsDesc.StencilWriteMask = 0xFF;
 
 	// Create depth stencil state
-	ID3D11DepthStencilState* pDSState;
-	device->CreateDepthStencilState(&dsDesc, &pDSState);
+	//ID3D11DepthStencilState* pDSState;
+	//device->CreateDepthStencilState(&dsDesc, &pDSState);
 
 	// Bind depth stencil state
-	context->OMSetDepthStencilState(pDSState, 1);
+	//context->OMSetDepthStencilState(pDSState, 1);
 
 	if (tex != nullptr) {
 		auto texview = tex->GetTextureView();
@@ -210,7 +210,7 @@ bool viewAlignedSlicingRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 
 	//setback states
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
-	context->OMSetDepthStencilState(nullptr, 1);
+	//context->OMSetDepthStencilState(nullptr, 1);
 	return true;
 }
 void viewAlignedSlicingRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {
