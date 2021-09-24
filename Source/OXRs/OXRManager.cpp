@@ -37,17 +37,17 @@ const std::vector<D3D_FEATURE_LEVEL> SupportedFeatureLevels = {
     D3D_FEATURE_LEVEL_10_0,
 };
 const std::vector<DXGI_FORMAT> SupportedColorSwapchainFormats = {
+    DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
     DXGI_FORMAT_R8G8B8A8_UNORM,
     DXGI_FORMAT_B8G8R8A8_UNORM,
-    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-    DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB
 };
 
 const std::vector<DXGI_FORMAT> SupportedDepthSwapchainFormats = {
+    DXGI_FORMAT_D16_UNORM,
     DXGI_FORMAT_D32_FLOAT,
     DXGI_FORMAT_D32_FLOAT_S8X24_UINT,
-    DXGI_FORMAT_D24_UNORM_S8_UINT,
-    DXGI_FORMAT_D16_UNORM,
+    DXGI_FORMAT_D24_UNORM_S8_UINT
 };
 const char* RequestedExtensions[] = {
     XR_KHR_D3D11_ENABLE_EXTENSION_NAME,//Rendering Tool: D3D
@@ -63,10 +63,19 @@ const char* RequestedExtensions[] = {
     XR_EXT_HAND_TRACKING_EXTENSION_NAME,
     XR_MSFT_HAND_INTERACTION_EXTENSION_NAME,
     XR_MSFT_HAND_TRACKING_MESH_EXTENSION_NAME,
+    XR_MSFT_SPATIAL_GRAPH_BRIDGE_EXTENSION_NAME
 };
+
+OXRManager* OXRManager::myPtr_ = nullptr;
+
+OXRManager* OXRManager::instance()
+{
+    return myPtr_;
+}
 
 OXRManager::OXRManager()
     :DeviceResources(true) {
+    myPtr_ = this;
     m_d3dFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 }
 
@@ -129,8 +138,8 @@ bool OXRManager::InitOxrSession(const char* app_name) {
 
     //setup binding
     auto [d3d11Binding, device, deviceContext] = DX::CreateD3D11Binding(
-        xr_instance, 
-        system.Id, 
+        xr_instance,
+        system.Id,
         extensions,
         false, //m_appConfiguration.SingleThreadedD3D11Device, 
         SupportedFeatureLevels);
@@ -168,7 +177,16 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         m_viewConfigStates.emplace(viewConfigurationType,
             xr::CreateViewConfigurationState(viewConfigurationType, instance.Handle, system.Id));
     }
-    
+
+    // Enum reference space type
+    //uint32_t spaceCount = 0;
+    //CHECK_XRCMD(xrEnumerateReferenceSpaces(session.Handle, 0, &spaceCount, NULL));
+
+    //std::vector<XrReferenceSpaceType> supportedReferenceSpaceType;
+    //supportedReferenceSpaceType.resize(spaceCount);
+
+    //CHECK_XRCMD(xrEnumerateReferenceSpaces(session.Handle, spaceCount, &spaceCount, supportedReferenceSpaceType.data()));
+
     // Create view app space
     XrReferenceSpaceCreateInfo spaceCreateInfo{ XR_TYPE_REFERENCE_SPACE_CREATE_INFO };
     spaceCreateInfo.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_VIEW;
@@ -176,224 +194,13 @@ bool OXRManager::InitOxrSession(const char* app_name) {
     CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_viewSpace.Put()));
 
     //Create main app space
-    spaceCreateInfo.referenceSpaceType =
-        extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT : XR_REFERENCE_SPACE_TYPE_LOCAL;
+    spaceCreateInfo.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL; // extensions.SupportsUnboundedSpace ? XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT :
     CHECK_XRCMD(xrCreateReferenceSpace(session.Handle, &spaceCreateInfo, m_appSpace.Put()));
-
 
     //setup reference frame
     auto locator = SpatialLocator::GetDefault();
     m_referenceFrame = locator.CreateStationaryFrameOfReferenceAtCurrentLocation().CoordinateSystem();
-    
-    /*
-    {
-        // Now we need to find all the viewpoints we need to take care of! For a stereo headset, this should be 2.
-        // Similarly, for an AR phone, we'll need 1, and a VR cave could have 6, or even 12!
-        //uint32_t view_count = m_viewConfigStates.at(PrimaryViewConfigurationType).Views.size();
-        //auto xr_config_views = m_viewConfigStates.at(PrimaryViewConfigurationType).ViewConfigViews;
-        uint32_t view_count = 0;
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, app_config_view, 0, &view_count, nullptr);
-        xr_config_views.resize(view_count, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
-        xr_views.resize(view_count, { XR_TYPE_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, app_config_view, view_count, &view_count, xr_config_views.data());
-        for (uint32_t i = 0; i < view_count; i++) {
-            // Create a swapchain for this viewpoint! A swapchain is a set of texture buffers used for displaying to screen,
-            // typically this is a backbuffer and a front buffer, one for rendering data to, and one for displaying on-screen.
-            // A note about swapchain image format here! OpenXR doesn't create a concrete image format for the texture, like 
-            // DXGI_FORMAT_R8G8B8A8_UNORM. Instead, it switches to the TYPELESS variant of the provided texture format, like 
-            // DXGI_FORMAT_R8G8B8A8_TYPELESS. When creating an ID3D11RenderTargetView for the swapchain texture, we must specify
-            // a concrete type like DXGI_FORMAT_R8G8B8A8_UNORM, as attempting to create a TYPELESS view will throw errors, so 
-            // we do need to store the format separately and remember it later.
-            XrViewConfigurationView& view = xr_config_views[i];
-            {
-                XrSwapchainCreateInfo    swapchain_info = { XR_TYPE_SWAPCHAIN_CREATE_INFO };
-                XrSwapchain              handle;
-                swapchain_info.arraySize = 1;
-                swapchain_info.mipCount = 1;
-                swapchain_info.faceCount = 1;
-                swapchain_info.format = d3d_swapchain_fmt;
-                swapchain_info.width = view.recommendedImageRectWidth;
-                swapchain_info.height = view.recommendedImageRectHeight;
-                swapchain_info.sampleCount = view.recommendedSwapchainSampleCount;
-                swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
 
-                XrSecondaryViewConfigurationSwapchainCreateInfoMSFT secondaryViewConfigCreateInfo{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SWAPCHAIN_CREATE_INFO_MSFT };
-                secondaryViewConfigCreateInfo.viewConfigurationType = app_config_view;
-                swapchain_info.next = &secondaryViewConfigCreateInfo;
-
-                xrCreateSwapchain(xr_session, &swapchain_info, &handle);
-
-                // Find out how many textures were generated for the swapchain
-                uint32_t surface_count = 0;
-                xrEnumerateSwapchainImages(handle, 0, &surface_count, nullptr);
-
-                // We'll want to track our own information about the swapchain, so we can draw stuff onto it! We'll also create
-                // a depth buffer for each generated texture here as well with make_surfacedata.
-                DX::swapchain_t swapchain = {};
-                swapchain.width = swapchain_info.width;
-                swapchain.height = swapchain_info.height;
-                swapchain.handle = handle;
-                swapchain.surface_images.resize(surface_count, { XR_TYPE_SWAPCHAIN_IMAGE_D3D11_KHR });
-                //swapchain.surface_data.resize(surface_count);
-                xrEnumerateSwapchainImages(swapchain.handle, surface_count, &surface_count, (XrSwapchainImageBaseHeader*)swapchain.surface_images.data());
-
-                xr_swapchains.push_back(swapchain);
-            }
-
-            //for (uint32_t i = 0; i < surface_count; i++) {
-            //  swapchain.surface_data[i] = d3d_make_surface_data((XrBaseInStructure&)swapchain.surface_images[i]);
-            //}
-            {
-                XrSwapchainCreateInfo    swapchain_info = { XR_TYPE_SWAPCHAIN_CREATE_INFO };
-                XrSwapchain              handle;
-                swapchain_info.arraySize = 1;
-                swapchain_info.mipCount = 1;
-                swapchain_info.faceCount = 1;
-                swapchain_info.format = DXGI_FORMAT_D16_UNORM;
-                swapchain_info.width = view.recommendedImageRectWidth;
-                swapchain_info.height = view.recommendedImageRectHeight;
-                swapchain_info.sampleCount = view.recommendedSwapchainSampleCount;
-                swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-
-                XrSecondaryViewConfigurationSwapchainCreateInfoMSFT secondaryViewConfigCreateInfo{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SWAPCHAIN_CREATE_INFO_MSFT };
-                secondaryViewConfigCreateInfo.viewConfigurationType = app_config_view;
-                swapchain_info.next = &secondaryViewConfigCreateInfo;
-
-                xrCreateSwapchain(xr_session, &swapchain_info, &handle);
-
-                // Find out how many textures were generated for the swapchain
-                uint32_t surface_count = 0;
-                xrEnumerateSwapchainImages(handle, 0, &surface_count, nullptr);
-
-                // We'll want to track our own information about the swapchain, so we can draw stuff onto it! We'll also create
-                // a depth buffer for each generated texture here as well with make_surfacedata.
-                DX::swapchain_t swapchain = {};
-                swapchain.width = swapchain_info.width;
-                swapchain.height = swapchain_info.height;
-                swapchain.handle = handle;
-                swapchain.surface_images.resize(surface_count, { XR_TYPE_SWAPCHAIN_IMAGE_D3D11_KHR });
-                //swapchain.surface_data.resize(surface_count);
-                xrEnumerateSwapchainImages(swapchain.handle, surface_count, &surface_count, (XrSwapchainImageBaseHeader*)swapchain.surface_images.data());
-
-                xr_depth_swapchains.push_back(swapchain);
-            }
-
-
-
-            {
-                CD3D11_DEPTH_STENCIL_DESC depthStencilDesc(CD3D11_DEFAULT{});
-                depthStencilDesc.StencilEnable = false;
-                depthStencilDesc.DepthEnable = true;
-                depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-                depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER;
-                winrt::com_ptr<ID3D11DepthStencilState> m_reversedZDepthNoStencilTest;
-                m_reversedZDepthNoStencilTest = nullptr;
-                device->CreateDepthStencilState(&depthStencilDesc, m_reversedZDepthNoStencilTest.put());
-            }
-        }
-    }
-
-    {
-        // Secondary 
-        uint32_t view_count = 0;
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, session.EnabledSecondaryViewConfigurationTypes[0], 0, &view_count, nullptr);
-        xr_secondary_config_views.resize(view_count, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
-        xr_secondary_views.resize(view_count, { XR_TYPE_VIEW });
-        xrEnumerateViewConfigurationViews(xr_instance, system.Id, session.EnabledSecondaryViewConfigurationTypes[0], view_count, &view_count, xr_secondary_config_views.data());
-        for (uint32_t i = 0; i < view_count; i++) {
-            // Create a swapchain for this viewpoint! A swapchain is a set of texture buffers used for displaying to screen,
-            // typically this is a backbuffer and a front buffer, one for rendering data to, and one for displaying on-screen.
-            // A note about swapchain image format here! OpenXR doesn't create a concrete image format for the texture, like 
-            // DXGI_FORMAT_R8G8B8A8_UNORM. Instead, it switches to the TYPELESS variant of the provided texture format, like 
-            // DXGI_FORMAT_R8G8B8A8_TYPELESS. When creating an ID3D11RenderTargetView for the swapchain texture, we must specify
-            // a concrete type like DXGI_FORMAT_R8G8B8A8_UNORM, as attempting to create a TYPELESS view will throw errors, so 
-            // we do need to store the format separately and remember it later.
-            XrViewConfigurationView& view = xr_secondary_config_views[i];
-            {
-                XrSwapchainCreateInfo    swapchain_info = { XR_TYPE_SWAPCHAIN_CREATE_INFO };
-                XrSwapchain              handle;
-                swapchain_info.arraySize = 1;
-                swapchain_info.mipCount = 1;
-                swapchain_info.faceCount = 1;
-                swapchain_info.format = d3d_swapchain_fmt;
-                swapchain_info.width = view.recommendedImageRectWidth;
-                swapchain_info.height = view.recommendedImageRectHeight;
-                swapchain_info.sampleCount = view.recommendedSwapchainSampleCount;
-                swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
-                XrSecondaryViewConfigurationSwapchainCreateInfoMSFT secondaryViewConfigCreateInfo{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SWAPCHAIN_CREATE_INFO_MSFT };
-                secondaryViewConfigCreateInfo.viewConfigurationType = session.EnabledSecondaryViewConfigurationTypes[0];
-                swapchain_info.next = &secondaryViewConfigCreateInfo;
-
-
-                xrCreateSwapchain(xr_session, &swapchain_info, &handle);
-
-                // Find out how many textures were generated for the swapchain
-                uint32_t surface_count = 0;
-                xrEnumerateSwapchainImages(handle, 0, &surface_count, nullptr);
-
-                // We'll want to track our own information about the swapchain, so we can draw stuff onto it! We'll also create
-                // a depth buffer for each generated texture here as well with make_surfacedata.
-                DX::swapchain_t swapchain = {};
-                swapchain.width = swapchain_info.width;
-                swapchain.height = swapchain_info.height;
-                swapchain.handle = handle;
-                swapchain.surface_images.resize(surface_count, { XR_TYPE_SWAPCHAIN_IMAGE_D3D11_KHR });
-                //swapchain.surface_data.resize(surface_count);
-                xrEnumerateSwapchainImages(swapchain.handle, surface_count, &surface_count, (XrSwapchainImageBaseHeader*)swapchain.surface_images.data());
-
-                xr_secondary_swapchains.push_back(swapchain);
-            }
-
-            {
-                XrSwapchainCreateInfo    swapchain_info = { XR_TYPE_SWAPCHAIN_CREATE_INFO };
-                XrSwapchain              handle;
-                swapchain_info.arraySize = 1;
-                swapchain_info.mipCount = 1;
-                swapchain_info.faceCount = 1;
-                swapchain_info.format = DXGI_FORMAT_D16_UNORM;
-                swapchain_info.width = view.recommendedImageRectWidth;
-                swapchain_info.height = view.recommendedImageRectHeight;
-                swapchain_info.sampleCount = view.recommendedSwapchainSampleCount;
-                swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-                XrSecondaryViewConfigurationSwapchainCreateInfoMSFT secondaryViewConfigCreateInfo{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SWAPCHAIN_CREATE_INFO_MSFT };
-                secondaryViewConfigCreateInfo.viewConfigurationType = session.EnabledSecondaryViewConfigurationTypes[0];
-                swapchain_info.next = &secondaryViewConfigCreateInfo;
-
-                xrCreateSwapchain(xr_session, &swapchain_info, &handle);
-
-                // Find out how many textures were generated for the swapchain
-                uint32_t surface_count = 0;
-                xrEnumerateSwapchainImages(handle, 0, &surface_count, nullptr);
-
-                // We'll want to track our own information about the swapchain, so we can draw stuff onto it! We'll also create
-                // a depth buffer for each generated texture here as well with make_surfacedata.
-                DX::swapchain_t swapchain = {};
-                swapchain.width = swapchain_info.width;
-                swapchain.height = swapchain_info.height;
-                swapchain.handle = handle;
-                swapchain.surface_images.resize(surface_count, { XR_TYPE_SWAPCHAIN_IMAGE_D3D11_KHR });
-                //swapchain.surface_data.resize(surface_count);
-                xrEnumerateSwapchainImages(swapchain.handle, surface_count, &surface_count, (XrSwapchainImageBaseHeader*)swapchain.surface_images.data());
-
-                xr_secondary_depth_swapchains.push_back(swapchain);
-            }
-            //for (uint32_t i = 0; i < surface_count; i++) {
-            //	swapchain.surface_data[i] = d3d_make_surface_data((XrBaseInStructure&)swapchain.surface_images[i]);
-            //}
-
-
-            {
-                CD3D11_DEPTH_STENCIL_DESC depthStencilDesc(CD3D11_DEFAULT{});
-                depthStencilDesc.StencilEnable = false;
-                depthStencilDesc.DepthEnable = true;
-                depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-                depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER;
-                winrt::com_ptr<ID3D11DepthStencilState> m_reversedZDepthNoStencilTest;
-                m_reversedZDepthNoStencilTest = nullptr;
-                device->CreateDepthStencilState(&depthStencilDesc, m_reversedZDepthNoStencilTest.put());
-            }
-        }
-    }*/
     m_context = std::make_unique<xr::XrContext>(
         std::move(instance),
         std::move(extensions),
@@ -475,7 +282,10 @@ void OXRManager::InitOxrActions() {
     attach_info.actionSets = &xr_input.actionSet;
     xrAttachSessionActionSets(xr_session, &attach_info);
     lastFrameState = { XR_TYPE_FRAME_STATE };
-
+}
+void OXRManager::InitHLSensors(const std::vector<ResearchModeSensorType>& kEnabledSensorTypes) {
+    m_sensor_manager = std::make_unique<HLSensorManager>(kEnabledSensorTypes);
+    m_sensor_manager->InitializeXRSpaces(m_context->Instance.Handle, m_context->Session.Handle);
 }
 bool OXRManager::Update() {
     openxr_poll_events();
@@ -485,7 +295,7 @@ bool OXRManager::Update() {
             xr_session_state != XR_SESSION_STATE_FOCUSED) {
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
-        
+
         XrFrameState frame_state = { XR_TYPE_FRAME_STATE };
         auto xr_session = XrContext().Session.Handle;
 
@@ -513,7 +323,7 @@ bool OXRManager::Update() {
         m_current_framestate = frame_state;
 
         m_currentFrameTime.Update(frame_state, xr_session_state);
-        
+
         for (auto& scene : m_scenes) {
             if (scene->IsActive()) {
                 scene->Update(m_currentFrameTime);
@@ -547,7 +357,7 @@ void OXRManager::Render() {
     XrFrameEndInfo end_info{ XR_TYPE_FRAME_END_INFO };
     end_info.environmentBlendMode = XrContext().System.ViewProperties.at(app_config_view).BlendMode;
     end_info.displayTime = renderFrameTime.PredictedDisplayTime;//actually current frame, just updated
-    
+
     // Secondary view config frame info need to have same lifetime as XrFrameEndInfo;
     XrSecondaryViewConfigurationFrameEndInfoMSFT frameEndSecondaryViewConfigInfo{
         XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_END_INFO_MSFT };
@@ -663,36 +473,6 @@ void OXRManager::Render() {
 
     lastFrameState = m_current_framestate;
 }
-//void OXRManager::ShutDown() {
-//    auto xr_session = XrContext().Session.Handle;
-//    // We used a graphics API to initialize the swapchain data, so we'll
-//    // give it a chance to release anythig here!
-//    for (int32_t i = 0; i < xr_swapchains.size(); i++) {
-//        xrDestroySwapchain(xr_swapchains[i].handle);
-//        for (uint32_t j = 0; j < xr_swapchains[i].surface_data.size(); j++) {
-//            xr_swapchains[i].surface_data[j].depth_view->Release();
-//            xr_swapchains[i].surface_data[j].target_view->Release();
-//        }
-//    }
-//    xr_swapchains.clear();
-//
-//    // Release all the other OpenXR resources that we've created!
-//    // What gets allocated, must get deallocated!
-//    if (xr_input.actionSet != XR_NULL_HANDLE) {
-//        if (xr_input.handSpace[0] != XR_NULL_HANDLE) xrDestroySpace(xr_input.handSpace[0]);
-//        if (xr_input.handSpace[1] != XR_NULL_HANDLE) xrDestroySpace(xr_input.handSpace[1]);
-//        xrDestroyActionSet(xr_input.actionSet);
-//    }
-//    //if (m_appSpace.Get() != XR_NULL_HANDLE) xrDestroySpace(xr_app_space);
-//    if (xr_session != XR_NULL_HANDLE) xrDestroySession(xr_session);
-//    if (xr_debug != XR_NULL_HANDLE) ext_xrDestroyDebugUtilsMessengerEXT(xr_debug);
-//    auto xr_instance = XrContext().Instance.Handle;
-//
-//    if (xr_instance != XR_NULL_HANDLE) xrDestroyInstance(xr_instance);
-//
-//    if (m_d3dContext.get()) { m_d3dContext.get()->Release(); m_d3dContext = nullptr; }
-//    if (m_d3dDevice.get()) { m_d3dDevice.get()->Release();  m_d3dDevice = nullptr; }
-//}
 
 void OXRManager::AddScene(std::unique_ptr<xr::Scene> scene) {
     if (!scene) {
@@ -703,21 +483,21 @@ void OXRManager::AddScene(std::unique_ptr<xr::Scene> scene) {
 
     std::scoped_lock lock(m_sceneMutex);
     m_scenes.push_back(std::move(scene));
-    
+
 
 }
 void OXRManager::AddSceneFinished() {
     onSingle3DTouchDown = [&](float x, float y, float z, int side) {
-        for (const std::unique_ptr<xr::Scene>& scene : m_scenes) 
+        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
             scene->onSingle3DTouchDown(x, y, z, side);
     };
     on3DTouchMove = [&](float x, float y, float z, glm::mat4 rot, int side) {
         for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
-        scene->on3DTouchMove(x, y, z, rot, side);
+            scene->on3DTouchMove(x, y, z, rot, side);
     };
     on3DTouchReleased = [&](int side) {
         for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
-        scene->on3DTouchReleased(side);
+            scene->on3DTouchReleased(side);
     };
 }
 
@@ -748,8 +528,10 @@ XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
     return space;
 }
 
-XrSpace* DX::OXRManager::getAppSpace() { return (XrSpace*)m_appSpace.Get(); }
-
+DirectX::XMMATRIX OXRManager::getSensorMatrixAtTime(uint64_t time) {
+    if (m_sensor_manager) return m_sensor_manager->getSensorMatrixAtTime(m_appSpace, time);
+    return DirectX::XMMatrixIdentity();
+}
 void OXRManager::openxr_poll_events() {
     auto xr_session = XrContext().Session.Handle;
     XrEventDataBuffer event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
@@ -757,13 +539,13 @@ void OXRManager::openxr_poll_events() {
     while (xrPollEvent(XrContext().Instance.Handle, &event_buffer) == XR_SUCCESS) {
         switch (event_buffer.type) {
 
-        case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED: 
+        case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED:
         {
             XrEventDataSessionStateChanged* changed = (XrEventDataSessionStateChanged*)&event_buffer;
             xr_session_state = changed->state;
 
             // Session state change is where we can begin and end sessions, as well as find quit messages!
-            switch (xr_session_state) 
+            switch (xr_session_state)
             {
             case XR_SESSION_STATE_READY: {
                 XrSessionBeginInfo begin_info = { XR_TYPE_SESSION_BEGIN_INFO };
@@ -783,22 +565,22 @@ void OXRManager::openxr_poll_events() {
                 xrBeginSession(xr_session, &begin_info);
                 xr_running = true;
             }
-                break;
-            case XR_SESSION_STATE_STOPPING: 
+                                       break;
+            case XR_SESSION_STATE_STOPPING:
             {
                 xr_running = false;
                 xrEndSession(xr_session);
-            } 
-                break;
-            case XR_SESSION_STATE_EXITING:      
+            }
+            break;
+            case XR_SESSION_STATE_EXITING:
                 xr_quit = true; break;
             case XR_SESSION_STATE_LOSS_PENDING:
                 xr_quit = true; break;
             }
-        } 
-            break;
-        case XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING: 
-            xr_quit = true; 
+        }
+        break;
+        case XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING:
+            xr_quit = true;
             return;
         }
         event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
@@ -880,339 +662,7 @@ void OXRManager::openxr_poll_actions() {
 
     }
 }
-//
-//swapchain_surfdata_t OXRManager::d3d_make_surface_data(XrBaseInStructure& swapchain_img) {
-//    DX::swapchain_surfdata_t result = {};
-//
-//    // Get information about the swapchain image that OpenXR made for us!
-//    XrSwapchainImageD3D11KHR& d3d_swapchain_img = (XrSwapchainImageD3D11KHR&)swapchain_img;
-//    D3D11_TEXTURE2D_DESC      color_desc;
-//    d3d_swapchain_img.texture->GetDesc(&color_desc);
-//
-//    // Create a view resource for the swapchain image target that we can use to set up rendering.
-//    D3D11_RENDER_TARGET_VIEW_DESC target_desc = {};
-//    target_desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-//    // NOTE: Why not use color_desc.Format? Check the notes over near the xrCreateSwapchain call!
-//    // Basically, the color_desc.Format of the OpenXR created swapchain is TYPELESS, but in order to
-//    // create a View for the texture, we need a concrete variant of the texture format like UNORM.
-//    target_desc.Format = (DXGI_FORMAT)d3d_swapchain_fmt;
-//    m_d3dDevice.get()->CreateRenderTargetView(d3d_swapchain_img.texture, &target_desc, &result.target_view);
-//    // Create a depth buffer that matches 
-//    ID3D11Texture2D* depth_texture;
-//    D3D11_TEXTURE2D_DESC depth_desc = {};
-//    depth_desc.SampleDesc.Count = 1;
-//    depth_desc.MipLevels = 1;
-//    depth_desc.Width = color_desc.Width;
-//    depth_desc.Height = color_desc.Height;
-//    depth_desc.ArraySize = color_desc.ArraySize;
-//    depth_desc.Format = DXGI_FORMAT_R32_TYPELESS;
-//    depth_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-//    m_d3dDevice.get()->CreateTexture2D(&depth_desc, nullptr, &depth_texture);
-//
-//    // And create a view resource for the depth buffer, so we can set that up for rendering to as well!
-//    D3D11_DEPTH_STENCIL_VIEW_DESC stencil_desc = {};
-//    stencil_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-//    stencil_desc.Format = DXGI_FORMAT_D16_UNORM;
-//    m_d3dDevice.get()->CreateDepthStencilView(depth_texture, &stencil_desc, &result.depth_view);
-//
-//    // We don't need direct access to the ID3D11Texture2D object anymore, we only need the view
-//    depth_texture->Release();
-//
-//    return result;
-//}
 
-//bool OXRManager::openxr_render_layer(XrTime predictedTime,
-//    std::vector<XrCompositionLayerProjectionView>& views,
-//    std::vector<XrCompositionLayerDepthInfoKHR>& depthInfo,
-//    XrCompositionLayerProjection& layer, bool is_secondary) {
-//    auto xr_session = XrContext().Session.Handle;
-//    // Find the state and location of each viewpoint at the predicted time
-//
-//    uint32_t         view_count = 0;
-//    if (is_secondary)
-//    {
-//        view_count = 0;
-//        XrViewState      view_state = { XR_TYPE_VIEW_STATE };
-//        XrViewLocateInfo locate_info = { XR_TYPE_VIEW_LOCATE_INFO };
-//        locate_info.viewConfigurationType = XrContext().System.SupportedSecondaryViewConfigurationTypes[0];
-//        locate_info.displayTime = predictedTime;
-//        locate_info.space = m_appSpace.Get();
-//
-//        xrLocateViews(xr_session, &locate_info, &view_state, (uint32_t)xr_secondary_views.size(), &view_count, xr_secondary_views.data());
-//        views.resize(view_count);
-//        depthInfo.resize(view_count);
-//    }
-//    else
-//    {
-//        view_count = 0;
-//        XrViewState      view_state = { XR_TYPE_VIEW_STATE };
-//        XrViewLocateInfo locate_info = { XR_TYPE_VIEW_LOCATE_INFO };
-//        locate_info.viewConfigurationType = app_config_view;
-//        locate_info.displayTime = predictedTime;
-//        locate_info.space = m_appSpace.Get();
-//        //auto xr_views = m_viewConfigStates.at(PrimaryViewConfigurationType).Views;
-//
-//        xrLocateViews(xr_session, &locate_info, &view_state, (uint32_t)xr_views.size(), &view_count, xr_views.data());
-//        views.resize(view_count);
-//        depthInfo.resize(view_count);
-//    }
-//
-//
-//
-//    // And now we'll iterate through each viewpoint, and render it!
-//    for (uint32_t i = 0; i < view_count; i++) {
-//
-//        // We need to ask which swapchain image to use for rendering! Which one will we get?
-//        // Who knows! It's up to the runtime to decide.
-//        uint32_t                    img_id;
-//        uint32_t depth_img_id;
-//        XrSwapchainImageAcquireInfo acquire_info = { XR_TYPE_SWAPCHAIN_IMAGE_ACQUIRE_INFO };
-//        if (is_secondary) {
-//            xrAcquireSwapchainImage(xr_secondary_swapchains[i].handle, &acquire_info, &img_id);
-//            xrAcquireSwapchainImage(xr_secondary_depth_swapchains[i].handle, &acquire_info, &depth_img_id);
-//        }
-//        else {
-//            xrAcquireSwapchainImage(xr_swapchains[i].handle, &acquire_info, &img_id);
-//            xrAcquireSwapchainImage(xr_depth_swapchains[i].handle, &acquire_info, &depth_img_id);
-//        }
-//
-//        // Wait until the image is available to render to. The compositor could still be
-//        // reading from it.
-//        XrSwapchainImageWaitInfo wait_info = { XR_TYPE_SWAPCHAIN_IMAGE_WAIT_INFO };
-//        wait_info.timeout = XR_INFINITE_DURATION;
-//        XrResult colorSwapchainWait;
-//        XrResult depthSwapchainWait;
-//        if (is_secondary) {
-//            colorSwapchainWait = xrWaitSwapchainImage(xr_secondary_swapchains[i].handle, &wait_info);
-//            depthSwapchainWait = xrWaitSwapchainImage(xr_secondary_depth_swapchains[i].handle, &wait_info);
-//        }
-//        else {
-//            colorSwapchainWait = xrWaitSwapchainImage(xr_swapchains[i].handle, &wait_info);
-//            depthSwapchainWait = xrWaitSwapchainImage(xr_depth_swapchains[i].handle, &wait_info);
-//        }
-//
-//        if ((colorSwapchainWait != XR_SUCCESS) || (depthSwapchainWait != XR_SUCCESS)) {
-//            return false;
-//        }
-//
-//        // Set up our rendering information for the viewpoint we're using right now!
-//        views[i] = { XR_TYPE_COMPOSITION_LAYER_PROJECTION_VIEW };
-//
-//        if (is_secondary) {
-//            views[i].pose = xr_secondary_views[i].pose;
-//            views[i].fov = xr_secondary_views[i].fov;
-//            views[i].subImage.swapchain = xr_secondary_swapchains[i].handle;
-//            views[i].subImage.imageRect.offset = { 0, 0 };
-//            views[i].subImage.imageRect.extent = { xr_secondary_swapchains[i].width, xr_secondary_swapchains[i].height };
-//        }
-//        else {
-//            /*if (i == 1 && xr_secondary_views[0].fov.angleLeft != 0) {
-//              views[i].pose = xr_secondary_views[0].pose;
-//              views[i].fov = xr_secondary_views[0].fov;
-//            }
-//            else {*/
-//            //auto xr_views = m_viewConfigStates.at(PrimaryViewConfigurationType).Views;
-//
-//            views[i].pose = xr_views[i].pose;
-//            views[i].fov = xr_views[i].fov;
-//            //}
-//            views[i].subImage.swapchain = xr_swapchains[i].handle;
-//            views[i].subImage.imageRect.offset = { 0, 0 };
-//            views[i].subImage.imageRect.extent = { xr_swapchains[i].width, xr_swapchains[i].height };
-//        }
-//        views[i].next = nullptr; //&depthInfo[i];
-//
-//        xr::math::NearFar nearFar = { 0.01f, 100.0f };
-//        depthInfo[i] = { XR_TYPE_COMPOSITION_LAYER_DEPTH_INFO_KHR };
-//        depthInfo[i].minDepth = 0;
-//        depthInfo[i].maxDepth = 1;
-//        depthInfo[i].nearZ = nearFar.Near;
-//        depthInfo[i].farZ = nearFar.Far;
-//        depthInfo[i].subImage.imageArrayIndex = i;
-//        if (is_secondary) {
-//            depthInfo[i].subImage.swapchain = xr_secondary_depth_swapchains[i].handle;
-//            depthInfo[i].subImage.imageRect.offset = { 0, 0 };
-//            depthInfo[i].subImage.imageRect.extent = { xr_secondary_depth_swapchains[i].width, xr_secondary_depth_swapchains[i].height };
-//        }
-//        else {
-//            depthInfo[i].subImage.swapchain = xr_depth_swapchains[i].handle;
-//            depthInfo[i].subImage.imageRect.offset = { 0, 0 };
-//            depthInfo[i].subImage.imageRect.extent = { xr_depth_swapchains[i].width, xr_depth_swapchains[i].height };
-//        }
-//        //xr_secondary_depth_swapchains[i].
-//        // Call the rendering callback with our view and swapchain info
-//        XrRect2Di& rect = views[i].subImage.imageRect;
-//        D3D11_VIEWPORT viewport = CD3D11_VIEWPORT((float)rect.offset.x, (float)rect.offset.y, (float)rect.extent.width, (float)rect.extent.height);
-//        if (render_for_MRC && !is_secondary) {
-//            viewport = CD3D11_VIEWPORT((float)rect.offset.x, (float)rect.offset.y, (float)xr_secondary_swapchains[0].width, (float)xr_secondary_swapchains[0].height);
-//        }
-//        if (is_secondary) {
-//            //d3d_render_layer(views[i], xr_secondary_swapchains[i].surface_data[img_id]);
-//
-//
-//            {// Set the Viewport.
-//                m_d3dContext.get()->RSSetViewports(1, &viewport);
-//
-//                const uint32_t firstArraySliceForColor = views[i].subImage.imageArrayIndex;
-//
-//                // Create a render target view into the appropriate slice of the color texture from this swapchain image.
-//                // This is a lightweight operation which can be done for each viewport projection.
-//                winrt::com_ptr<ID3D11RenderTargetView> renderTargetView;
-//                const CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(
-//                    D3D11_RTV_DIMENSION_TEXTURE2D,
-//                    DXGI_FORMAT_R8G8B8A8_UNORM,
-//                    0 /* mipSlice */,
-//                    firstArraySliceForColor,
-//                    1 /* arraySize */);
-//
-//                m_d3dDevice.get()->CreateRenderTargetView(
-//                    xr_secondary_swapchains[i].surface_images[img_id].texture, &renderTargetViewDesc, renderTargetView.put());
-//
-//                const uint32_t firstArraySliceForDepth = depthInfo[i].subImage.imageArrayIndex;
-//
-//                // Create a depth stencil view into the slice of the depth stencil texture array for this swapchain image.
-//                // This is a lightweight operation which can be done for each viewport projection.
-//                winrt::com_ptr<ID3D11DepthStencilView> depthStencilView;
-//                CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(
-//                    D3D11_DSV_DIMENSION_TEXTURE2D,
-//                    DXGI_FORMAT_D16_UNORM,
-//                    0 /* mipSlice */,
-//                    firstArraySliceForDepth,
-//                    1 /* arraySize */);
-//                m_d3dDevice.get()->CreateDepthStencilView(
-//                    xr_secondary_depth_swapchains[i].surface_images[depth_img_id].texture, &depthStencilViewDesc, depthStencilView.put());
-//
-//                // Clear and render to the render target.
-//                ID3D11RenderTargetView* const renderTargets[] = { renderTargetView.get() };
-//                m_d3dContext.get()->OMSetRenderTargets(1, renderTargets, depthStencilView.get());
-//
-//                // In double wide mode, the first projection clears the whole RTV and DSV.
-//                float clear[] = { 0, 0, 0, 0 };
-//
-//                m_d3dContext.get()->ClearRenderTargetView(renderTargets[0],
-//                    reinterpret_cast<const float*>(clear));
-//
-//                const float clearDepthValue = 1.f;
-//                m_d3dContext.get()->ClearDepthStencilView(
-//                    depthStencilView.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, clearDepthValue, 0);
-//                m_d3dContext.get()->OMSetDepthStencilState(nullptr, 0);
-//
-//                saveCurrentTargetViews(renderTargets[0], depthStencilView.get());
-//
-//            }
-//
-//            if (m_outputSize.Width != xr_secondary_swapchains[i].width) {
-//                m_outputSize.Width = xr_secondary_swapchains[i].width;
-//                m_outputSize.Height = xr_secondary_swapchains[i].height;
-//                //scene->onViewChanged();
-//                Manager::instance()->onViewChange(m_outputSize.Width, m_outputSize.Height);
-//            }
-//
-//            Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
-//
-//            m_scenes[0]->Render(m_currentFrameTime, i);
-//
-//            // And tell OpenXR we're done with rendering to this one!
-//            XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };
-//            xrReleaseSwapchainImage(xr_secondary_swapchains[i].handle, &release_info);
-//            xrReleaseSwapchainImage(xr_secondary_depth_swapchains[i].handle, &release_info);
-//        }
-//        else {
-//            //d3d_render_layer(views[i], xr_swapchains[i].surface_data[img_id]);
-//
-//            {// Set the Viewport.
-//                m_d3dContext.get()->RSSetViewports(1, &viewport);
-//
-//                const uint32_t firstArraySliceForColor = views[i].subImage.imageArrayIndex;
-//
-//                // Create a render target view into the appropriate slice of the color texture from this swapchain image.
-//                // This is a lightweight operation which can be done for each viewport projection.
-//                winrt::com_ptr<ID3D11RenderTargetView> renderTargetView;
-//                const CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(
-//                    D3D11_RTV_DIMENSION_TEXTURE2D,
-//                    DXGI_FORMAT_R8G8B8A8_UNORM,
-//                    0 /* mipSlice */,
-//                    firstArraySliceForColor,
-//                    1 /* arraySize */);
-//
-//                m_d3dDevice.get()->CreateRenderTargetView(
-//                    xr_swapchains[i].surface_images[img_id].texture, &renderTargetViewDesc, renderTargetView.put());
-//
-//                const uint32_t firstArraySliceForDepth = depthInfo[i].subImage.imageArrayIndex;
-//
-//                // Create a depth stencil view into the slice of the depth stencil texture array for this swapchain image.
-//                // This is a lightweight operation which can be done for each viewport projection.
-//                ID3D11DepthStencilView* depthStencilView;
-//                CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(
-//                    D3D11_DSV_DIMENSION_TEXTURE2D,
-//                    DXGI_FORMAT_D16_UNORM,
-//                    0 /* mipSlice */,
-//                    firstArraySliceForDepth,
-//                    1 /* arraySize */);
-//                m_d3dDevice.get()->CreateDepthStencilView(
-//                    xr_depth_swapchains[i].surface_images[depth_img_id].texture, &depthStencilViewDesc, &depthStencilView);
-//
-//                // Clear and render to the render target.
-//                ID3D11RenderTargetView* const renderTargets[] = { renderTargetView.get() };
-//                m_d3dContext.get()->OMSetRenderTargets(1, renderTargets, depthStencilView);
-//
-//                // In double wide mode, the first projection clears the whole RTV and DSV.
-//                float clear[] = { 0, 0, 0, 0 };
-//
-//                m_d3dContext.get()->ClearRenderTargetView(renderTargets[0],
-//                    reinterpret_cast<const float*>(clear));
-//
-//                const float clearDepthValue = 1.f;
-//                m_d3dContext.get()->ClearDepthStencilView(
-//                    depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, clearDepthValue, 0);
-//                m_d3dContext.get()->OMSetDepthStencilState(nullptr, 0);
-//
-//                saveCurrentTargetViews(renderTargets[0], depthStencilView);
-//
-//            }
-//
-//            if (m_outputSize.Width != xr_swapchains[i].width) {
-//                m_outputSize.Width = xr_swapchains[i].width;
-//                m_outputSize.Height = xr_swapchains[i].height;
-//                //scene->onViewChanged();
-//                Manager::instance()->onViewChange(m_outputSize.Width, m_outputSize.Height);
-//            }
-//            Manager::instance()->updateCamera(xr::math::LoadInvertedXrPose(views[i].pose), xr::math::ComposeProjectionMatrix(views[i].fov, nearFar));
-//
-//            m_scenes[0]->Render(m_currentFrameTime, i);
-//
-//            // And tell OpenXR we're done with rendering to this one!
-//            XrSwapchainImageReleaseInfo release_info = { XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO };
-//            xrReleaseSwapchainImage(xr_swapchains[i].handle, &release_info);
-//            xrReleaseSwapchainImage(xr_depth_swapchains[i].handle, &release_info);
-//        }
-//
-//        //remove saved views
-//        removeCurrentTargetViews();
-//    }
-//
-//    layer.space = m_appSpace.Get();
-//    layer.viewCount = (uint32_t)views.size();
-//    layer.views = views.data();
-//    return true;
-//}
-//
-//
-//void OXRManager::d3d_render_layer(XrCompositionLayerProjectionView& view, swapchain_surfdata_t& surface) {
-//    // Set up where on the render target we want to draw, the view has a 
-//    XrRect2Di& rect = view.subImage.imageRect;
-//    D3D11_VIEWPORT viewport = CD3D11_VIEWPORT((float)rect.offset.x, (float)rect.offset.y, (float)rect.extent.width, (float)rect.extent.height);
-//    m_d3dContext.get()->RSSetViewports(1, &viewport);
-//
-//    m_d3dContext.get()->OMSetRenderTargets(1, &surface.target_view, surface.depth_view);
-//
-//    // Wipe our swapchain color and depth target clean, and then set them up for rendering!
-//    float clear[] = { 0, 0, 0, 0 };
-//    m_d3dContext.get()->ClearRenderTargetView(surface.target_view, clear);
-//    m_d3dContext.get()->ClearDepthStencilView(surface.depth_view, D3D11_CLEAR_DEPTH, 1.0f, 0);// | D3D11_CLEAR_STENCIL
-//
-//    saveCurrentTargetViews(surface.target_view, surface.depth_view);
-//}
 void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& proofOfSceneLock,
     XrViewConfigurationType viewConfigurationType,
     xr::CompositionLayers& layers) {
@@ -1253,14 +703,13 @@ void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& pro
             : DirectX::Colors::Transparent);
         const bool shouldSubmitProjectionLayer =
             projectionLayer.Render(XrContext(), m_currentFrameTime, XrContext().AppSpace, views, m_scenes, viewConfigurationType);
-        
+
         // Create the multi projection layer
         if (shouldSubmitProjectionLayer) {
             AppendProjectionLayer(layers, &projectionLayer, viewConfigurationType);
         }
     });
 }
-
 
 void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
     if (xr_session_state != XR_SESSION_STATE_FOCUSED)
@@ -1299,7 +748,7 @@ void OXRManager::SetSecondaryViewConfigurationActive(xr::ViewConfigurationState&
             if (IsRecommendedSwapchainSizeChanged(secondaryViewConfigState.ViewConfigViews, newViewConfigViews)) {
                 secondaryViewConfigState.ViewConfigViews = std::move(newViewConfigViews);
                 m_projectionLayers.ForEachLayerWithLock([secondaryViewConfigType = secondaryViewConfigState.Type](auto&& layer) {
-                  layer.Config(secondaryViewConfigType).ForceReset = true;
+                    layer.Config(secondaryViewConfigType).ForceReset = true;
                 });
             }
         }

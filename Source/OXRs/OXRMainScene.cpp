@@ -11,7 +11,7 @@ void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
 	m_sceneRenderer->InitOXRScene();
 	m_deviceResources = deviceResources;
-	//m_scenario = std::unique_ptr<SensorVizScenario>(new SensorVizScenario(m_context));
+	m_scenario = new MarkerBasedScenario(m_context);
 
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
 	m_ui_board->AddBoard("fps", glm::vec3(0.3, -0.3, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
@@ -105,6 +105,7 @@ void OXRMainScene::Update(const xr::FrameTime& frameTime)
 	}
 	m_timer.Tick([&]() {
 		m_dicom_loader->onUpdate();
+		m_scenario->Update();
 		m_sceneRenderer->Update(m_timer);
 		uint32 fps = m_timer.GetFramesPerSecond();
 		m_ui_board->Update("fps", (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS");

@@ -314,7 +314,7 @@ void vrController::render_scene(int view_id){
 	//front or back
 	DirectX::XMFLOAT4X4 m_rot_mat;
 	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-	auto model_mat_tex = m_use_space_mat?SpaceMat_ *glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)) : ModelMat_;
+	auto model_mat_tex = m_use_space_mat?SpaceMat_* ModelMat_ : ModelMat_;
 	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
 
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
@@ -475,10 +475,10 @@ void vrController::onTouchMove(float x, float y)
 }
 
 void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side){
-	if (USE_GESTURE_CUTTING &&side == 0){
+	if (USE_GESTURE_CUTTING && side == 0){
 		// Update cutting plane
 		glm::vec3 normal = glm::vec3(-1, 0, 0);
-		auto inv_model_mat = glm::inverse(SpaceMat_ * ModelMat_ * vol_dim_scale_mat_);
+		auto inv_model_mat = glm::inverse(ModelMat_ * vol_dim_scale_mat_);
 		normal = glm::mat3(inv_model_mat) * glm::mat3(rot) * normal;
 
 		glm::vec3 pos = glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1)); //glm::vec3(x, y, z);//glm::vec3(inv_model_mat * glm::vec4(x, y, z, 1));

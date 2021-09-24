@@ -4,6 +4,7 @@
 #include <opencv2/imgproc.hpp>  // cv::Canny()
 #include <opencv2/aruco.hpp>
 #include <opencv2/core/mat.hpp>
+#include "strsafe.h"
 
 void ProcessRmFrameWithAruco(IResearchModeSensorFrame* pSensorFrame, cv::Mat& cvResultMat, std::vector<int> &ids, std::vector<std::vector<cv::Point2f>> &corners)
 {

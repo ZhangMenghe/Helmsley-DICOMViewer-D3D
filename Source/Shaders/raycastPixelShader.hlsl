@@ -93,7 +93,9 @@ float4 Volume(float3 ro, float3 rd, float head, float tail) {
 	return float4(sum.rgb, saturate(sum.a));
 	//return float4(ro + rd * head, 1.0);
 }
-
+float4 main_naive(v2f input) : SV_TARGET{
+	return float4(0.8,0.8,.0,1.0);
+}
 // A pass-through function for the (interpolated) color data.
 float4 main(v2f input) : SV_TARGET{
 	//return float4(input.tex, 1.0);

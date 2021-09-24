@@ -354,7 +354,6 @@
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
     <ClInclude Include="..\..\Source\grpc\rpcHandler.h" />
-    <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\DxCommon\DxUtility.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRMainScene.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRManager.h" />
@@ -362,12 +361,14 @@
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.h" />
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.h" />
-    <ClInclude Include="..\..\Source\OXRs\Scenario.h" />
-    <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h" />
     <ClInclude Include="..\..\Source\OXRs\TimeConverter.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrScenarios\MarkerBasedScenario.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrScenarios\Scenario.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\CompositionLayers.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\FrameTime.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\HLSensorManager.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\RMCameraReader.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\Scene.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\XrContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrEnumerate.h" />
@@ -422,7 +423,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp" />
     <ClCompile Include="..\..\Source\OXRs\DxCommon\DxUtility.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRMainScene.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRManager.cpp" />
@@ -430,8 +430,10 @@
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\RGBFrameProcessor.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.cpp" />
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp" />
-    <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\XrScenarios\MarkerBasedScenario.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\HLSensorManager.cpp" />
     <ClCompile Include="..\..\Source\OXRs\XrSceneLib\ProjectionLayer.cpp" />
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\RMCameraReader.cpp" />
     <ClCompile Include="..\..\Source\OXRs\XrSceneLib\Scene.cpp" />
     <ClCompile Include="..\..\Source\proto\common.grpc.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

@@ -79,7 +79,14 @@ public:
 	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); m_present = true; }
 	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; m_present = true; }
 	void setCameraExtrinsicsMat(int id, glm::mat4 ExtrinsicsMat) { m_extrinsics_mats[id] = ExtrinsicsMat; }
-	void setUseSpaceMat(bool use) { m_use_space_mat = use; }
+	void setUseSpaceMat(bool use, bool reset = true) { 
+		m_use_space_mat = use; 
+		//TODO:Change to different status
+		if (reset) {
+			ScaleVec3_ = dvr::DEFAULT_SCALE; RotateMat_ = glm::mat4(1.0f); PosVec3_ = glm::vec3(.0f);
+			volume_model_dirty = true; volume_rotate_dirty = true;
+		}
+	}
 	void setMask(UINT num, UINT bits) {
 		meshRenderer_->SetMask(num, bits);
 	}

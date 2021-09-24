@@ -119,6 +119,9 @@
     <Filter Include="Source\OXRs\XrSceneLib">
       <UniqueIdentifier>{8dbd3936-7eab-4759-ad63-22e1d9a50c88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\OXRs\XrScenarios">
+      <UniqueIdentifier>{26614fb7-246a-4dbf-bead-5c684d20190c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -219,17 +222,11 @@
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\OXRs\SensorVizScenario.cpp">
-      <Filter>Source\OXRs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateCameraRenderer.cpp">
       <Filter>Source\OXRs\OXRRenderer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.cpp">
       <Filter>Source\OXRs\OXRRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.cpp">
-      <Filter>Source\OXRs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.cpp">
       <Filter>Source\OXRs\OXRRenderer</Filter>
@@ -252,6 +249,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\OXRs\OXRMainScene.cpp">
       <Filter>Source\OXRs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\HLSensorManager.cpp">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrSceneLib\RMCameraReader.cpp">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OXRs\XrScenarios\MarkerBasedScenario.cpp">
+      <Filter>Source\OXRs\XrScenarios</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,12 +377,6 @@
     <ClInclude Include="..\..\Source\Utils\dataManager.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\OXRs\Scenario.h">
-      <Filter>Source\OXRs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OXRs\SensorVizScenario.h">
-      <Filter>Source\OXRs</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h">
       <Filter>Source\ResearchModeApi</Filter>
     </ClInclude>
@@ -385,9 +385,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\OpenCVFrameProcessing.h">
       <Filter>Source\OXRs\OXRRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OXRs\ArucoMarkerTrackingScenario.h">
-      <Filter>Source\OXRs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\OXRRenderer\SlateArucoTracker.h">
       <Filter>Source\OXRs\OXRRenderer</Filter>
@@ -466,6 +463,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\OXRMainScene.h">
       <Filter>Source\OXRs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\HLSensorManager.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrSceneLib\RMCameraReader.h">
+      <Filter>Source\OXRs\XrSceneLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrScenarios\MarkerBasedScenario.h">
+      <Filter>Source\OXRs\XrScenarios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrScenarios\Scenario.h">
+      <Filter>Source\OXRs\XrScenarios</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -188,9 +188,8 @@ namespace dvr{
     const glm::vec3 DEFAULT_SCALE = glm::vec3(1.0f);
     const glm::vec3 DEFAULT_POS = glm::vec3(.0f, .0f, DEFAULT_VIEW_Z);
 
-    const float SCREEN_CLEAR_COLOR[4] = {
-        0.f, 0.f, 0.f, 0.f};
     //color scheme
+    const float SCREEN_CLEAR_COLOR[4] = { 0.f, 0.f, 0.f, 0.f };
     constexpr const char *COLOR_SCHEMES[3] = {"COLOR_GRAYSCALE", "COLOR_HSV", "COLOR_BRIGHT"};
 
     struct Rect

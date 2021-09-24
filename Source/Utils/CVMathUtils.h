@@ -2,6 +2,7 @@
 #define CVMATH_UTILS_H
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/calib3d.hpp>
 

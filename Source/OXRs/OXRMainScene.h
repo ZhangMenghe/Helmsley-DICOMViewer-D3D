@@ -1,5 +1,6 @@
 ﻿#ifndef OXR_MAIN_SCENE_H
 #define OXR_MAIN_SCENE_H
+
 #include <Common/Manager.h>
 #include <vrController.h>
 #include <SceneObjs/overUIBoard.h>
@@ -7,9 +8,9 @@
 #include <Utils/uiController.h>
 #include <Utils/dataManager.h>
 #include <grpc/rpcHandler.h>
-#include <OXRs/ArucoMarkerTrackingScenario.h>
-#include <OXRs/SensorVizScenario.h>
 #include <OXRs/XrSceneLib/Scene.h>
+#include <OXRs/XrScenarios/MarkerBasedScenario.h>
+
 class OXRMainScene : public xr::Scene{
 public:
 	OXRMainScene(const std::shared_ptr<xr::XrContext>& context);
@@ -36,7 +37,7 @@ public:
 private:
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
-	//std::unique_ptr<SensorVizScenario> m_scenario;
+	MarkerBasedScenario* m_scenario;
 	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
 	std::unique_ptr<overUIBoard> m_ui_board;
