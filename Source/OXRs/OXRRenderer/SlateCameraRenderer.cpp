@@ -388,7 +388,7 @@ void SlateCameraRenderer::UpdateExtrinsicsMatrix() {
 	
 	glm::vec3 ttc = glm::vec3(tvec.y, tvec.x, tvec.z);
 
-	vrController::instance()->setCameraExtrinsicsMat(m_pRMCameraSensor->GetSensorType() == LEFT_FRONT ? 0 : 1, xmmatrix2mat4(cameraNodeToRigPoseInverted));//glm::translate(glm::mat4(1.0), ttc));
+	//vrController::instance()->setCameraExtrinsicsMat(m_pRMCameraSensor->GetSensorType() == LEFT_FRONT ? 0 : 1, xmmatrix2mat4(cameraNodeToRigPoseInverted));//glm::translate(glm::mat4(1.0), ttc));
 }
 // Renders one frame using the vertex and pixel shaders.
 bool SlateCameraRenderer::Draw(ID3D11DeviceContext* context, glm::mat4 modelMat){

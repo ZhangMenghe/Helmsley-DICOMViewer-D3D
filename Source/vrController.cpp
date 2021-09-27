@@ -20,8 +20,8 @@ vrController *vrController::instance()
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceResources, const std::shared_ptr<Manager> &manager)
-						    : m_tracking(false)
-							, m_deviceResources(deviceResources)
+						    //: m_tracking(false)
+							: m_deviceResources(deviceResources)
 							, m_manager(manager){
 	myPtr_ = this;
 	auto device = deviceResources->GetD3DDevice();
@@ -37,9 +37,18 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	meshRenderer_ = new organMeshRenderer(device);
 	Manager::camera = new Camera;
 
-	CreateDeviceDependentResources();
+	setup_compute_shader();
 	onReset();
 }
+
+vrController::~vrController()
+{
+	for (auto render : vRenderer_)delete render;
+	delete tex_volume;
+	delete tex_baked;
+	rStates_.clear();
+}
+
 void vrController::onReset()
 {
 	SpaceMat_ = glm::mat4(1.0f);
@@ -75,7 +84,7 @@ void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam
 }
 
 void vrController::InitOXRScene(){
-	uniScale = 0.5f;
+	ScaleVec3_ *= 0.5f;
 	volume_model_dirty = true; volume_rotate_dirty = true;
 }
 
@@ -123,7 +132,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 	}
 
 	tex_volume = new Texture;
-	D3D11_TEXTURE3D_DESC texDesc{
+	D3D11_TEXTURE3D_DESC texBakedDesc{
 		ph,pw,pd,
 		1,
 		DXGI_FORMAT_R32_UINT,
@@ -133,7 +142,7 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		D3D11_RESOURCE_MISC_GENERATE_MIPS
 	};
 
-	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texDesc, data)) { delete tex_volume; tex_volume = nullptr; }
+	if (!tex_volume->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), texBakedDesc, data)) { delete tex_volume; tex_volume = nullptr; }
 	tex_volume->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
 
 	if (tex_baked != nullptr)
@@ -142,27 +151,19 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 		tex_baked = nullptr;
 	}
 	tex_baked = new Texture;
-	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texDesc);
+	texBakedDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	tex_baked->Initialize(m_deviceResources->GetD3DDevice(), texBakedDesc);
 	// Generate mipmaps for this texture.
 	tex_baked->GenerateMipMap(m_deviceResources->GetD3DDeviceContext());
-	init_texture();
-
-	Manager::baked_dirty_ = true;
-
-	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
-}
-
-void vrController::init_texture() {
-	if (m_comp_tex_d3d != nullptr) { 
+	if (m_comp_tex_d3d != nullptr) {
 		m_comp_tex_d3d->Release();
 		//delete m_comp_tex_d3d; 
-		m_comp_tex_d3d = nullptr; 
+		m_comp_tex_d3d = nullptr;
 	}
-	if (m_textureUAV != nullptr) { 
+	if (m_textureUAV != nullptr) {
 		//delete m_textureUAV;
 		m_textureUAV->Release();
-		m_textureUAV = nullptr; 
+		m_textureUAV = nullptr;
 	}
 
 	D3D11_TEXTURE3D_DESC texDesc{
@@ -172,10 +173,10 @@ void vrController::init_texture() {
 			D3D11_USAGE_DEFAULT,
 			D3D11_BIND_UNORDERED_ACCESS,
 			0,
-			0};
+			0 };
 
 	DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateTexture3D(&texDesc, nullptr, &m_comp_tex_d3d));
+		m_deviceResources->GetD3DDevice()->CreateTexture3D(&texDesc, nullptr, &m_comp_tex_d3d));
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
@@ -184,9 +185,11 @@ void vrController::init_texture() {
 	uavDesc.Texture3D.FirstWSlice = 0;
 	uavDesc.Texture3D.WSize = vol_dimension_.z;
 	DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV));
+		m_deviceResources->GetD3DDevice()->CreateUnorderedAccessView(m_comp_tex_d3d, &uavDesc, &m_textureUAV));
 
-	volume_model_dirty = true;
+	Manager::baked_dirty_ = true;
+
+	meshRenderer_->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
 }
 
 // Initializes view parameters when the window size changes.
@@ -196,79 +199,11 @@ void vrController::onViewChanged(float width, float height){
 	DX::ThrowIfFailed(screen_quad->InitializeQuadTex(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), width, height));
 }
 
-// Called once per frame, rotates the cube and calculates the model and view matrices.
-void vrController::Update(DX::StepTimer const &timer)
-{
-	if (!m_tracking)
-	{
-		// Convert degrees to radians, then convert seconds to rotation angle
-		float radiansPerSecond = XMConvertToRadians(m_degreesPerSecond);
-		double totalRotation = timer.GetTotalSeconds() * radiansPerSecond;
-		float radians = static_cast<float>(fmod(totalRotation, XM_2PI));
-
-		Rotate(radians);
-	}
-}
-
-//void vrController::Update(XrTime time) {
-//XrSpaceLocation origin{ XR_TYPE_SPACE_LOCATION };
-//xrLocateSpace(*space, *app_space, time, &origin);
-//SpaceMat_ = xr::math::LoadXrPose(origin.pose);
-//}
-
-// Rotate the 3D cube model a set amount of radians.
-void vrController::Rotate(float radians)
-{
-	// Prepare to pass the updated model matrix to the shader
-	XMStoreFloat4x4(&m_all_buff_Data.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
-}
-
-void vrController::StartTracking()
-{
-	m_tracking = true;
-}
-
-// When tracking, the 3D cube can be rotated around its Y axis by tracking pointer position relative to the output screen width.
-void vrController::TrackingUpdate(float positionX)
-{
-	if (m_tracking)
-	{
-		float radians = XM_2PI * 2.0f * positionX / m_deviceResources->GetOutputSize().Width;
-		Rotate(radians);
-	}
-}
-
-void vrController::StopTracking()
-{
-	m_tracking = false;
-}
-
-// Renders one frame using the vertex and pixel shaders.
-void vrController::Render(int view_id)
-{
-	if (tex_volume == nullptr || tex_baked == nullptr) return;
-	if (!pre_draw_) { render_scene(view_id); return; }
-
-	//auto context = m_deviceResources->GetD3DDeviceContext();
-	//if (true) //(true) // TODO: debug
-	//{
-		/*screen_quad->SetToDrawTarget(context, m_deviceResources.get());
-		render_scene(view_id);
-		m_deviceResources->removeCurrentTargetViews();*/
-	//}
-	//m_deviceResources->SetBackBufferRenderTarget();
-	//screen_quad->Draw(context);
-	render_scene(view_id);
-	//m_deviceResources->ClearCurrentDepthBuffer();
-	//render_scene(view_id);
-}
-
 void vrController::precompute()
 {
 	if (!Manager::baked_dirty_)
 		return;
-	if (!bakeShader_)
-		CreateDeviceDependentResources();
+	if (!bakeShader_)setup_compute_shader();
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	//run compute shader
@@ -302,11 +237,12 @@ void vrController::precompute()
 	data_board_->Update(m_deviceResources->GetD3DDevice(), context);
 	Manager::baked_dirty_ = false;
 }
-
-void vrController::render_scene(int view_id){
+void vrController::Render(int view_id)
+{
+	if (tex_volume == nullptr || tex_baked == nullptr) return;
 	if (volume_model_dirty)
 	{
-		updateVolumeModelMat();
+		update_volume_model_mat();
 		volume_model_dirty = false;
 	}
 
@@ -385,11 +321,11 @@ void vrController::render_scene(int view_id){
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 	Manager::baked_dirty_ = false;
-	m_scene_dirty = !render_complete;
+	//m_scene_dirty = !render_complete;
 	context->RSSetState(m_render_state_front);
 }
 
-void vrController::CreateDeviceDependentResources()
+void vrController::setup_compute_shader()
 {
 	if (bakeShader_)
 		return;
@@ -429,6 +365,7 @@ void vrController::CreateDeviceDependentResources()
 	winrt::check_hresult(
 			m_deviceResources->GetD3DDevice()->CreateRasterizerState(&rasterDesc, &m_render_state_back));
 }
+
 void vrController::onSingleTouchDown(float x, float y)
 {
 	Mouse_old = {x, y};
@@ -467,7 +404,7 @@ void vrController::onTouchMove(float x, float y)
 	if (Manager::param_bool[CHECK_FREEZE_VOLUME])
 	{
 		cutter_->onRotate(xoffset, yoffset);
-		m_scene_dirty = true;
+		//m_scene_dirty = true;
 		return;
 	}
 	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
@@ -495,7 +432,7 @@ void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 		float ratio = distance / distance_old;
 		// Midpoint
 		glm::vec3 midpoint = (npos + m_Mouse3D_old[1 - side]) * 0.5f;
-		if (ratio > 0.8f && ratio < 1.2f) uniScale *= ratio;
+		if (ratio > 0.8f && ratio < 1.2f) ScaleVec3_ *= ratio;
 
 		m_Mouse3D_old[side] = npos;
 		distance_old = distance;
@@ -579,13 +516,13 @@ void vrController::onPan(float x, float y)
 	PosVec3_.y += offy * ScaleVec3_.y;
 	volume_model_dirty = true;
 }
-void vrController::updateVolumeModelMat()
+
+void vrController::update_volume_model_mat()
 {
-	ModelMat_ = 
-		glm::translate(glm::mat4(1.0), PosVec3_) 
-		* RotateMat_ 
-		* glm::scale(glm::mat4(1.0), ScaleVec3_) 
-		* glm::scale(glm::mat4(1.0), glm::vec3(uniScale));
+	ModelMat_ =
+		glm::translate(glm::mat4(1.0), PosVec3_)
+		* RotateMat_
+		* glm::scale(glm::mat4(1.0), ScaleVec3_);
 }
 
 bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)
@@ -599,6 +536,7 @@ bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::
 		rStates_[name].vcam->setProjMat(Manager::screen_w, Manager::screen_h);
 	return true;
 }
+
 bool vrController::addStatus(std::string name, bool use_current_status)
 {
 	auto it = rStates_.find(name);
@@ -609,7 +547,7 @@ bool vrController::addStatus(std::string name, bool use_current_status)
 	{
 		if (volume_model_dirty)
 		{
-			updateVolumeModelMat();
+			update_volume_model_mat();
 			volume_model_dirty = false;
 		}
 		rStates_[name] = reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
@@ -626,6 +564,7 @@ bool vrController::addStatus(std::string name, bool use_current_status)
 	}
 	return true;
 }
+
 void vrController::setMVPStatus(std::string name)
 {
 	if (name == cst_name)
@@ -639,6 +578,7 @@ void vrController::setMVPStatus(std::string name)
 	volume_model_dirty = false;
 	cst_name = name;
 }
+
 void vrController::setupCenterLine(int id, float *data)
 {
 	int oid = 0;
@@ -650,6 +590,7 @@ void vrController::setupCenterLine(int id, float *data)
 		line_renderers_[oid] = new lineRenderer(m_deviceResources->GetD3DDevice(), oid, 4000, data);
 	cutter_->setupCenterLine((ORGAN_IDS)oid, data);
 }
+
 void vrController::setCuttingPlane(float value)
 {
 	/*if (Manager::param_bool[CHECK_CUTTING] && !isRayCasting()){
@@ -663,15 +604,16 @@ void vrController::setCuttingPlane(float value)
 			return;
 		cutter_->setCenterLinePos((int)(value * 4000.0f));
 		if (Manager::param_bool[CHECK_TRAVERSAL_VIEW])
-			AlignModelMatToTraversalPlane();
-		m_scene_dirty = true;
+			align_volume_to_traversal_plane();
+		//m_scene_dirty = true;
 	}
 }
+
 void vrController::setCuttingPlane(int id, int delta)
 {
 	if (Manager::param_bool[CHECK_CUTTING]){
 		cutter_->setCuttingPlaneDelta(delta);
-		m_scene_dirty = true;
+		//m_scene_dirty = true;
 	}
 	else if (Manager::param_bool[CHECK_CENTER_LINE_TRAVEL])
 	{
@@ -679,35 +621,26 @@ void vrController::setCuttingPlane(int id, int delta)
 			return;
 		cutter_->setCenterLinePos(id, delta);
 		if (Manager::param_bool[CHECK_TRAVERSAL_VIEW])
-			AlignModelMatToTraversalPlane();
-		m_scene_dirty = true;
+			align_volume_to_traversal_plane();
+		//m_scene_dirty = true;
 	}
 }
+
 void vrController::setCuttingPlane(glm::vec3 pp, glm::vec3 pn)
 {
 	cutter_->setCutPlane(pp, pn);
-	m_scene_dirty = true;
+	//m_scene_dirty = true;
 }
+
 void vrController::switchCuttingPlane(PARAM_CUT_ID cut_plane_id)
 {
 	cutter_->SwitchCuttingPlane(cut_plane_id);
 	if (Manager::param_bool[CHECK_TRAVERSAL_VIEW])
-		AlignModelMatToTraversalPlane();
-	m_scene_dirty = true;
-}
-void vrController::ReleaseDeviceDependentResources()
-{
-	for (auto render : vRenderer_)delete render;
-	delete tex_volume;
-	delete tex_baked;
-	rStates_.clear();
+		align_volume_to_traversal_plane();
+	//m_scene_dirty = true;
 }
 
-bool vrController::isDirty(){
-	if (!tex_volume) return false;
-	return (Manager::baked_dirty_ || volume_model_dirty || m_scene_dirty);
-}
-void vrController::AlignModelMatToTraversalPlane()
+void vrController::align_volume_to_traversal_plane()
 {
 	glm::vec3 pp, pn;
 	cutter_->getCurrentTraversalInfo(pp, pn);

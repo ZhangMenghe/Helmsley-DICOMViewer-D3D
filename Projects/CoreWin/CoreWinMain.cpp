@@ -123,8 +123,6 @@ void CoreWinMain::Update(){
 	m_timer.Tick([&]()
 	{
 		m_dicom_loader->onUpdate();
-		// TODO: Replace this with your app's content update functions.
-		m_sceneRenderer->Update(m_timer);
 		//m_fpsTextRenderer->Update(m_timer);
 		uint32 fps = m_timer.GetFramesPerSecond();
 		m_ui_board->Update("fps", (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS");
@@ -155,7 +153,6 @@ bool CoreWinMain::Render(){
 	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// Render the scene objects.
-	// TODO: Replace this with your app's content rendering functions.
 	m_sceneRenderer->Render(0);
 	//m_fpsTextRenderer->Render();
 	m_ui_board->Render();
@@ -166,8 +163,6 @@ bool CoreWinMain::Render(){
 // Notifies renderers that device resources need to be released.
 void CoreWinMain::OnDeviceLost()
 {
-	m_sceneRenderer->ReleaseDeviceDependentResources();
-	//m_fpsTextRenderer->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.

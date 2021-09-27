@@ -106,7 +106,6 @@ void OXRMainScene::Update(const xr::FrameTime& frameTime)
 	m_timer.Tick([&]() {
 		m_dicom_loader->onUpdate();
 		m_scenario->Update();
-		m_sceneRenderer->Update(m_timer);
 		uint32 fps = m_timer.GetFramesPerSecond();
 		m_ui_board->Update("fps", (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS");
 	});

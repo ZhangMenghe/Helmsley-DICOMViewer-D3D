@@ -89,21 +89,6 @@ void Manager::addOpacityWidget(float* values, int value_num) {
     m_volset_data.u_visible_bits |= 1 << wid;
     baked_dirty_ = true;
     m_dirty_wid = wid;
-
-    // todo : real implementation
-    /*float* points;
-    getGraphPoints(values, points);
-
-    for (int i = 0; i < 3; i++)
-        m_volset_data.u_opacity[i] = {
-        points[4 * i],
-        points[4 * i + 1] ,
-        points[4 * i + 2] ,
-        points[4 * i + 3]
-    };
-    m_volset_data.u_widget_num = 1;
-    m_volset_data.u_visible_bits = 1;
-    baked_dirty_ = true;*/
 }
 void Manager::removeOpacityWidget(int wid) {
     if (wid >= m_volset_data.u_widget_num) return;
