@@ -38,7 +38,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	Manager::camera = new Camera;
 
 	setup_compute_shader();
-	onReset();
+	//onReset();
 }
 
 vrController::~vrController()
@@ -46,40 +46,33 @@ vrController::~vrController()
 	for (auto render : vRenderer_)delete render;
 	delete tex_volume;
 	delete tex_baked;
-	rStates_.clear();
 }
 
 void vrController::onReset()
 {
 	SpaceMat_ = glm::mat4(1.0f);
-
 	Mouse_old = {.0f, .0f};
-	rStates_.clear();
-	cst_name = "";
-	addStatus("default_status");
-	setMVPStatus("default_status");
+
+	//if (m_manager->addMVPStatus("default_status", true)) {
+	//	m_manager->getCurrentMVPStatus(RotateMat_, ScaleVec3_, PosVec3_);
+	//	volume_model_dirty = true;
+	//}
 
 	volume_model_dirty = true; volume_rotate_dirty = true;
-	if (cutter_)
-		cutter_->onReset(m_deviceResources->GetD3DDevice());
+	if (cutter_) cutter_->onReset(m_deviceResources->GetD3DDevice());
 }
 
-void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam)
+//reset with template
+void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam, std::string state_name)
 {
 	Mouse_old = {.0f, .0f};
-	rStates_.clear();
-	cst_name = "";
 
-	glm::mat4 mm = glm::translate(glm::mat4(1.0), pv) * rm * glm::scale(glm::mat4(1.0), sv);
+	if (m_manager->addMVPStatus(state_name, rm, sv, pv, cam, true)) {
+		m_manager->getCurrentMVPStatus(RotateMat_, ScaleVec3_, PosVec3_);
+		volume_model_dirty = true;
+	}
 
-	if (cam == nullptr)
-		addStatus("template", mm, rm, sv, pv, Manager::camera);
-	else
-		addStatus("template", mm, rm, sv, pv, cam);
-
-	setMVPStatus("template");
-	if (cutter_)
-		cutter_->onReset(m_deviceResources->GetD3DDevice());
+	if (cutter_) cutter_->onReset(m_deviceResources->GetD3DDevice());
 	volume_model_dirty = false; volume_rotate_dirty = true;
 }
 
@@ -240,6 +233,7 @@ void vrController::precompute()
 void vrController::Render(int view_id)
 {
 	if (tex_volume == nullptr || tex_baked == nullptr) return;
+	if (Manager::mvp_dirty_) { m_manager->getCurrentMVPStatus(RotateMat_, ScaleVec3_, PosVec3_); volume_model_dirty = true; }
 	if (volume_model_dirty)
 	{
 		update_volume_model_mat();
@@ -250,7 +244,7 @@ void vrController::Render(int view_id)
 	//front or back
 	DirectX::XMFLOAT4X4 m_rot_mat;
 	XMStoreFloat4x4(&m_rot_mat, mat42xmmatrix(RotateMat_));
-	auto model_mat_tex = m_use_space_mat?SpaceMat_* ModelMat_ : ModelMat_;
+	auto model_mat_tex = SpaceMat_ * ModelMat_;
 	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
 
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
@@ -523,60 +517,6 @@ void vrController::update_volume_model_mat()
 		glm::translate(glm::mat4(1.0), PosVec3_)
 		* RotateMat_
 		* glm::scale(glm::mat4(1.0), ScaleVec3_);
-}
-
-bool vrController::addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera *cam)
-{
-	auto it = rStates_.find(name);
-	if (it != rStates_.end())
-		return false;
-
-	rStates_[name] = reservedStatus(mm, rm, sv, pv, cam);
-	if (Manager::screen_w != 0)
-		rStates_[name].vcam->setProjMat(Manager::screen_w, Manager::screen_h);
-	return true;
-}
-
-bool vrController::addStatus(std::string name, bool use_current_status)
-{
-	auto it = rStates_.find(name);
-	if (it != rStates_.end())
-		return false;
-
-	if (use_current_status)
-	{
-		if (volume_model_dirty)
-		{
-			update_volume_model_mat();
-			volume_model_dirty = false;
-		}
-		rStates_[name] = reservedStatus(ModelMat_, RotateMat_, ScaleVec3_, PosVec3_, new Camera(name.c_str()));
-	}
-	else
-	{
-		rStates_[name] = reservedStatus();
-	}
-
-	if (Manager::screen_w != 0)
-	{
-		rStates_[name].vcam->setViewMat(Manager::camera->getViewMat());
-		//rStates_[name].vcam->setProjMat(Manager::screen_w, Manager::screen_h);
-	}
-	return true;
-}
-
-void vrController::setMVPStatus(std::string name)
-{
-	if (name == cst_name)
-		return;
-	auto rstate_ = rStates_[name];
-	ModelMat_ = rstate_.model_mat;
-	RotateMat_ = rstate_.rot_mat;
-	ScaleVec3_ = rstate_.scale_vec;
-	PosVec3_ = rstate_.pos_vec;
-	Manager::camera = rstate_.vcam;
-	volume_model_dirty = false;
-	cst_name = name;
 }
 
 void vrController::setupCenterLine(int id, float *data)

@@ -138,7 +138,7 @@ SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device)
 	quad_vertices_pos_w_tex, quad_indices, 24, 6),
 	m_input_layout_id(dvr::INPUT_POS_TEX_2D){
 	initialize();
-	vrController::instance()->setUseSpaceMat(true);
+	//vrController::instance()->setUseSpaceMat(true);
 }
 SlateCameraRenderer::SlateCameraRenderer(ID3D11Device* device,
 	IResearchModeSensor* pLLSensor, HANDLE hasData, ResearchModeSensorConsent* pCamAccessConsent)

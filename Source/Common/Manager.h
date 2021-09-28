@@ -2,8 +2,20 @@
 #define MANAGER_H
 
 #include <vector>
+#include <unordered_map>
 #include <Common/ConstantAndStruct.h>
 #include <D3DPipeline/Camera.h>
+
+struct reservedStatus {
+    glm::mat4 rot_mat;
+    glm::vec3 scale_vec, pos_vec;
+    Camera vcam;
+    reservedStatus(glm::mat4 rm, glm::vec3 sv, glm::vec3 pv) {
+        rot_mat = rm; scale_vec = sv; pos_vec = pv;
+    }
+    reservedStatus() :rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS) {}
+};
+
 struct volumeSetupConstBuffer
 {
     DirectX::XMUINT4 u_tex_size;
@@ -38,7 +50,7 @@ public:
     static std::vector<bool> param_bool;
     static std::vector<std::string> shader_contents;
 
-    static bool baked_dirty_;
+    static bool baked_dirty_, mvp_dirty_;
     static dvr::ORGAN_IDS traversal_target_id;
     static int screen_w, screen_h;
     static bool show_ar_ray, volume_ar_hold;
@@ -86,6 +98,12 @@ public:
     void setOpacityWidgetVisibility(int wid, bool visible);
     void resetDirtyOpacityId() { m_dirty_wid = -1; }
 
+    //mvp status
+    bool addMVPStatus(std::string name, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam, bool use_as_current_status);
+    bool addMVPStatus(std::string name, bool use_as_current_status);
+    bool removeMVPStatus(std::string name);
+    bool setMVPStatus(std::string status_name);
+    void getCurrentMVPStatus(glm::mat4& rm, glm::vec3& sv, glm::vec3& pv);
 private:
     static Manager* myPtr_;
 
@@ -93,6 +111,7 @@ private:
 
     //contrast, brightness, etc
     float m_render_params[dvr::PARAM_RENDER_TUNE_END] = {.0f};
+    
     //opacity widgets
     std::vector<std::vector<float>> widget_params_;
     std::vector<bool> widget_visibilities_;
@@ -102,6 +121,10 @@ private:
 
     //check names
     std::vector<std::string> param_checks;
+
+    //mvp status
+    std::string m_last_mvp_name, m_current_mvp_name;
+    std::unordered_map<std::string, reservedStatus*> m_mvp_status;
 
     void clear_opacity_widgets();
     //todo: move to graph renderer

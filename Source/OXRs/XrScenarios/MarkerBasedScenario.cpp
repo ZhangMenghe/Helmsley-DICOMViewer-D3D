@@ -26,7 +26,7 @@ MarkerBasedScenario::MarkerBasedScenario(const std::shared_ptr<xr::XrContext>& c
 	if (manager) {
 		auto rm_reader = manager->createRMCameraReader(LEFT_FRONT);
 		rm_reader->SetFrameCallBack(FrameReadyCallback, this);
-		vrController::instance()->setUseSpaceMat(true);
+		//vrController::instance()->setUseSpaceMat(true);
 	}
 }
 
@@ -47,7 +47,27 @@ void MarkerBasedScenario::FrameReadyCallback(IResearchModeSensorFrame* pSensorFr
 	std::vector<cv::Vec3d> rvecs, tvecs;
 	TrackAruco(pSensorFrame, 0.15, scenario->m_cameraMatrix, scenario->m_distCoeffs, rvecs, tvecs);
 
-	if (tvecs.empty()) return;
+	if (tvecs.empty()) {
+		if (!scenario->m_is_tracking) return;
+
+		if (scenario->m_no_tracking_frames > 5) {
+			scenario->m_is_tracking = false;
+			Manager::instance()->removeMVPStatus("MarkerCam");
+			vrController::instance()->setPosition(glm::mat4(1.0f));
+			OutputDebugString(L"===================remove marker cam ==========\n");
+
+		}
+		else scenario->m_no_tracking_frames++;
+		return;
+	}
+
+	if (!scenario->m_is_tracking) {
+		scenario->m_no_tracking_frames = 0;
+		scenario->m_is_tracking = true;
+		Manager::instance()->addMVPStatus("MarkerCam", dvr::DEFAULT_ROTATE, glm::vec3(1.0f), dvr::DEFAULT_POS, new Camera(), true);
+		OutputDebugString(L"====================marker cam setup ==========\n");
+	}
+
 	glm::vec3 tvec = glm::vec3(tvecs[0][0], tvecs[0][1], tvecs[0][2]);
 	glm::mat4 rot_mat = glm::toMat4(getQuaternion(rvecs[0]));
 	
@@ -60,5 +80,5 @@ void MarkerBasedScenario::FrameReadyCallback(IResearchModeSensorFrame* pSensorFr
 }
 void MarkerBasedScenario::Update() {
 	std::lock_guard<std::mutex> guard(m_mutex);
-	vrController::instance()->setPosition(m_marker2world);
+	if(m_is_tracking)vrController::instance()->setPosition(m_marker2world);
 }

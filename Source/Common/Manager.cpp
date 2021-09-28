@@ -4,7 +4,7 @@
 Camera* Manager::camera = nullptr;
 std::vector<bool> Manager::param_bool;
 std::vector<std::string> Manager::shader_contents;
-bool Manager::baked_dirty_;
+bool Manager::baked_dirty_, Manager::mvp_dirty_;
 bool Manager::new_data_available;
 dvr::ORGAN_IDS Manager::traversal_target_id;
 int Manager::screen_w, Manager::screen_h;
@@ -35,7 +35,7 @@ Manager::~Manager() {
 void Manager::onReset() {
     if (camera) { delete camera; camera = nullptr; }
     clear_opacity_widgets();
-    baked_dirty_ = true;
+    baked_dirty_ = true; mvp_dirty_ = false;
     m_dirty_wid = -1;
 }
 
@@ -199,6 +199,56 @@ void Manager::getGraphPoints(float values[], float*& points) {
             lb.x, lb.y, lm.x, lm.y, lt.x, lt.y,
             rb.x, rb.y, rm.x, rm.y, rt.x, rt.y
     };
+}
+
+bool Manager::addMVPStatus(std::string name, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam, bool use_as_current_status) {
+    auto it = m_mvp_status.find(name);
+    if (it != m_mvp_status.end()) return false;
+
+    m_mvp_status[name] = new reservedStatus(rm, sv, pv);
+    m_mvp_status[name]->vcam.Reset(cam);
+    if (Manager::screen_w != 0)m_mvp_status[name]->vcam.setProjMat(Manager::screen_w, Manager::screen_h);
+    if (use_as_current_status) return setMVPStatus(name);
+    return true;
+}
+
+bool Manager::addMVPStatus(std::string name, bool use_as_current_status) {
+    auto it = m_mvp_status.find(name);
+    if (it != m_mvp_status.end()) return false;
+
+    m_mvp_status[name] = new reservedStatus();
+
+    if (screen_w != 0) m_mvp_status[name]->vcam.setProjMat(Manager::screen_w, Manager::screen_h);
+    if (use_as_current_status) return setMVPStatus(name);
+    return true;
+}
+bool Manager::removeMVPStatus(std::string name) {
+    auto it = m_mvp_status.find(name);
+    if (it == m_mvp_status.end()) return false;
+    m_mvp_status.erase(name);
+    setMVPStatus(m_mvp_status.begin()->first);
+}
+
+bool Manager::setMVPStatus(std::string name) {
+    if (name == m_current_mvp_name) return false;
+    camera = &m_mvp_status[name]->vcam;
+    m_last_mvp_name = m_current_mvp_name; m_current_mvp_name = name;
+    mvp_dirty_ = true;
+    return true;
+}
+void Manager::getCurrentMVPStatus(glm::mat4& rm, glm::vec3& sv, glm::vec3& pv) {
+    if (!m_last_mvp_name.empty() && m_mvp_status.find(m_last_mvp_name) != m_mvp_status.end()) {
+        m_mvp_status[m_last_mvp_name]->rot_mat = rm; m_mvp_status[m_last_mvp_name]->scale_vec = sv; m_mvp_status[m_last_mvp_name]->pos_vec = pv;
+    }
+
+    auto rstate_ = m_mvp_status[m_current_mvp_name];
+    rm = rstate_->rot_mat; sv = rstate_->scale_vec; pv = rstate_->pos_vec;
+    mvp_dirty_ = false;
+
+    //TCHAR buf[1024];
+    //size_t cbDest = 1024 * sizeof(TCHAR);
+    //StringCbPrintf(buf, cbDest, TEXT("====get:%s: (%f,%f,%f)\n"), m_current_mvp_name.c_str(), sv.x, sv.y, sv.z);
+    //OutputDebugString(buf);
 }
 
 /// <summary>

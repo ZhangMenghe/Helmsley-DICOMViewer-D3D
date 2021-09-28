@@ -18,6 +18,9 @@ private:
 
     //Marker size in meter. 0.15 by default
     float m_marker_size = 0.15;
+    //bool m_first_time_detected = false;
+    bool m_is_tracking = false;
+    int m_no_tracking_frames = 0;
 
     static void FrameReadyCallback(IResearchModeSensorFrame* pSensorFrame, PVOID frameCtx);
 };

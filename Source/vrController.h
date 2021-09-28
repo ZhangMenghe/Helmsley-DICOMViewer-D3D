@@ -4,35 +4,14 @@
 #include <Common/DeviceResources.h>
 #include <Common/Manager.h>
 #include <Common/StepTimer.h>
-#include <unordered_map>
 #include <D3DPipeline/Camera.h>
 #include <Renderers/baseDicomRenderer.h>
-
 #include <Renderers/screenQuadRenderer.h>
 #include <SceneObjs/cuttingPlane.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Renderers/organMeshRenderer.h>
 #include <Renderers/LineRenderer.h>
 #include <SceneObjs/dataVisualizer.h>
-
-struct reservedStatus
-{
-	glm::mat4 model_mat, rot_mat;
-	glm::vec3 scale_vec, pos_vec;
-	Camera* vcam;
-	reservedStatus(glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam)
-	{
-		model_mat = mm;
-		rot_mat = rm;
-		scale_vec = sv;
-		pos_vec = pv;
-		vcam = cam;
-	}
-	reservedStatus() : rot_mat(dvr::DEFAULT_ROTATE), scale_vec(dvr::DEFAULT_SCALE), pos_vec(dvr::DEFAULT_POS), vcam(new Camera)
-	{
-		model_mat = glm::translate(glm::mat4(1.0), pos_vec) * rot_mat * glm::scale(glm::mat4(1.0), scale_vec);
-	}
-};
 
 class vrController
 {
@@ -43,7 +22,7 @@ public:
 
 	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
 	void onReset();
-	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam);
+	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam, std::string state_name = "tempalte");
 	void InitOXRScene();
 	void onViewChanged(float width, float height);
 	void Render(int view_id);
@@ -60,9 +39,6 @@ public:
 	void onPan(float x, float y);
 
 	//setter
-	bool addStatus(std::string name, glm::mat4 mm, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam);
-	bool addStatus(std::string name, bool use_current_status = false);
-	void setMVPStatus(std::string status_name);
 	void setupCenterLine(int id, float* data);
 	void setCuttingPlane(float value);
 	void setCuttingPlane(int id, int delta);
@@ -70,14 +46,14 @@ public:
 	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
 	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); }
 	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; }
-	void setUseSpaceMat(bool use, bool reset = true) {
-		m_use_space_mat = use;
-		//TODO:Change to different status
-		if (reset) {
-			ScaleVec3_ = dvr::DEFAULT_SCALE; RotateMat_ = glm::mat4(1.0f); PosVec3_ = glm::vec3(.0f);
-			volume_model_dirty = true; volume_rotate_dirty = true;
-		}
-	}
+	//void setUseSpaceMat(bool use, bool reset = true) {
+	//	m_use_space_mat = use;
+	//	//TODO:Change to different status
+	//	if (reset) {
+	//		ScaleVec3_ = dvr::DEFAULT_SCALE; RotateMat_ = glm::mat4(1.0f); PosVec3_ = glm::vec3(.0f);
+	//		volume_model_dirty = true; volume_rotate_dirty = true;
+	//	}
+	//}
 	void setMask(UINT num, UINT bits) {
 		meshRenderer_->SetMask(num, bits);
 	}
@@ -125,11 +101,10 @@ private:
 	ID3D11UnorderedAccessView* m_textureUAV;
 	ID3D11Buffer* m_compute_constbuff = nullptr;
 
-	glm::mat4 SpaceMat_;
+	glm::mat4 SpaceMat_ = glm::mat4(1.0f);
 	glm::mat4 ModelMat_, RotateMat_;
 	glm::vec3 ScaleVec3_, PosVec3_;
 	dvr::allConstantBuffer m_all_buff_Data;
-	std::map<std::string, reservedStatus> rStates_;
 
 	//UI
 	bool m_IsPressed = false;
@@ -140,9 +115,6 @@ private:
 	glm::vec3 vector_old;
 	float distance_old = 0;
 
-	//MVP status
-	std::string cst_name;
-
 	//volume
 	glm::vec3 vol_dimension_, vol_dim_scale_;
 	glm::mat4 vol_dim_scale_mat_;
@@ -150,7 +122,7 @@ private:
 	//flags
 	bool volume_model_dirty, volume_rotate_dirty;
 	bool m_compute_created = false;
-	bool m_use_space_mat = false;
+	//bool m_use_space_mat = false;
 
 	void precompute();
 	void setup_compute_shader();

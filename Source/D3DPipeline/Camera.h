@@ -5,6 +5,7 @@
 
 #include "Utils/TypeConvertUtils.h"
 class Camera {
+private:
     const char* name_;
 
     DirectX::XMMATRIX _viewMat, _projMat, pose_mat;
@@ -18,7 +19,27 @@ class Camera {
     DirectX::XMFLOAT3 ORI_UP = { 0.0f, 1.0f, 0.0f };
     DirectX::XMFLOAT3 ORI_FRONT = { 0.0f, 0.0f, -1.0f };
 
-    void updateCameraVector() {
+public:
+    Camera() {
+        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
+        Reset(ORI_CAM_POS, ORI_UP, mcenter);
+    }
+    Camera(const char* cam_name) :name_(cam_name) {
+        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
+        Reset(ORI_CAM_POS, ORI_UP, mcenter);
+    }
+    Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
+        Reset(pos, up, center);
+    }
+    void Reset(Camera* cam) {
+        Reset(cam->_eyePos, cam->_up, cam->_center);
+    }
+    void Reset(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
+        _up = up;
+        _eyePos = pos;
+        _center = center;
+        _front = { _center.x - _eyePos.x, _center.y - _eyePos.y, _center.z - _eyePos.z };
+
         DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&_eyePos);
         DirectX::XMVECTOR vc = DirectX::XMLoadFloat3(&_center);
         DirectX::XMVECTOR vu = DirectX::XMLoadFloat3(&_up);
@@ -26,32 +47,6 @@ class Camera {
         _viewMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(veye, vc, vu));
 
         pose_mat = DirectX::XMMatrixTranslation(_eyePos.x, _eyePos.y, _eyePos.z);
-    }
-    void updateCameraVector(DirectX::XMMATRIX model) {
-        DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&_eyePos);
-        DirectX::XMVECTOR vc = DirectX::XMLoadFloat3(&_center);
-        DirectX::XMVECTOR vu = DirectX::XMLoadFloat3(&_up);
-
-        _viewMat = DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtRH(veye, vc, vu));
-        pose_mat = model;
-    }
-    void reset(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
-        _up = up; _eyePos = pos;
-        _center = center;
-        _front = { _center.x - _eyePos.x, _center.y - _eyePos.y, _center.z - _eyePos.z }; //DirectX::XMVectorSubtract(_center, _eyePos);
-        updateCameraVector();
-    }
-public:
-    Camera() {
-        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
-        reset(ORI_CAM_POS, ORI_UP, mcenter);
-    }
-    Camera(const char* cam_name) :name_(cam_name) {
-        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
-        reset(ORI_CAM_POS, ORI_UP, mcenter);
-    }
-    Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
-        reset(pos, up, center);
     }
 
     //setters
@@ -99,18 +94,6 @@ public:
     }
 
     void setViewMat(DirectX::XMMATRIX viewmat) { _viewMat = viewmat; }
-    //void setProjMat(DirectX::XMMATRIX projmat) {
-    //    fov = 2.0 * atan(1.0f / projmat[1][1]);
-    //    _projMat = projmat;
-    //}
-
-    //void updateCameraPose(DirectX::XMMATRIX pose) {
-    //    //pose is in column major
-    //    
-    //    _eyePos = glm::vec3(pose[3][0], pose[3][1], pose[3][2]);
-    //    _front = -glm::vec3(pose[2][0], pose[2][1], pose[2][2]);
-    //    pose_mat = pose;
-    //}
 
     //getters
     float getFOV() { return fov; }
@@ -122,32 +105,6 @@ public:
     DirectX::XMFLOAT3 getViewDirection() { return _front; }
     DirectX::XMFLOAT3 getViewUpDirection() { return _up; }
     DirectX::XMMATRIX getCameraPose() { return pose_mat; }
-    //DirectX::XMVECTOR getRotationMatrixOfCameraDirection() {
-    //    //a is the vector you want to translate to and b is where you are
-    //    const glm::vec3 a = -_front;//src_dir;
-    //    const glm::vec3 b = glm::vec3(0, 0, 1);//dest_dir;
-    //    glm::vec3 v = glm::cross(b, a);
-    //    float angle = acos(glm::dot(b, a) / (glm::length(b) * glm::length(a)));
-    //    return glm::rotate(angle, v);
-    //}
-    //void rotateCamera(int axis, glm::vec4 center, float offset) {
-    //    glm::vec3 rotateAxis = (axis == 3) ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
-    //    glm::mat4 modelMat = glm::mat4(1.0);
-
-    //    modelMat = glm::translate(modelMat, glm::vec3(-center.x, -center.y, -center.z));
-    //    modelMat = glm::rotate(modelMat, offset, rotateAxis);
-    //    modelMat = glm::translate(modelMat, glm::vec3(center.x, center.y, center.z));
-    //    _eyePos = glm::vec3(modelMat * glm::vec4(_eyePos, 1.0));
-    //    _center = glm::vec3(center);
-    //    _front = _center - _eyePos;
-    //    //        _front = glm::vec3(modelMat * glm::vec4(_front,1.0));
-    //    //        // Also re-calculate the Right and Up vector
-    //    //        _right = glm::vec3(glm::cross(_front, ORI_UP));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    //    //        _up = glm::normalize(glm::cross(_right, _front));
-    //    //        _center = _eyePos + _front;
-
-    //    updateCameraVector();
-    //}
 };
 
 #endif

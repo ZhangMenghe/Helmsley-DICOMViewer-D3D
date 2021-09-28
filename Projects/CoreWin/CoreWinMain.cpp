@@ -14,6 +14,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_manager = std::make_shared<Manager>();
 
 	m_sceneRenderer = std::make_unique<vrController>(m_deviceResources, m_manager);
+	m_manager->addMVPStatus("CoreCam", true);
+
 	//m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
 	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
