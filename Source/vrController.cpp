@@ -53,32 +53,23 @@ void vrController::onReset()
 	SpaceMat_ = glm::mat4(1.0f);
 	Mouse_old = {.0f, .0f};
 
-	//if (m_manager->addMVPStatus("default_status", true)) {
-	//	m_manager->getCurrentMVPStatus(RotateMat_, ScaleVec3_, PosVec3_);
-	//	volume_model_dirty = true;
-	//}
-
 	volume_model_dirty = true; volume_rotate_dirty = true;
 	if (cutter_) cutter_->onReset(m_deviceResources->GetD3DDevice());
 }
 
 //reset with template
-void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam, std::string state_name)
+void vrController::onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera *cam, const std::string& state_name)
 {
-	Mouse_old = {.0f, .0f};
+	onReset();
+	Manager::camera->Reset(cam);
 
-	if (m_manager->addMVPStatus(state_name, rm, sv, pv, cam, true)) {
+	if (state_name.empty()) {
+		PosVec3_ = pv; RotateMat_ = rm; ScaleVec3_ = sv;
+		if (Manager::screen_w != 0)Manager::camera->setProjMat(Manager::screen_w, Manager::screen_h);
+	}else {
+		m_manager->addMVPStatus(state_name, rm, sv, pv, true);
 		m_manager->getCurrentMVPStatus(RotateMat_, ScaleVec3_, PosVec3_);
-		volume_model_dirty = true;
 	}
-
-	if (cutter_) cutter_->onReset(m_deviceResources->GetD3DDevice());
-	volume_model_dirty = false; volume_rotate_dirty = true;
-}
-
-void vrController::InitOXRScene(){
-	ScaleVec3_ *= 0.5f;
-	volume_model_dirty = true; volume_rotate_dirty = true;
 }
 
 void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR *data, int channel_num)

@@ -38,6 +38,7 @@ private:
     commonResponse m_resp;
     int m_gid = 0;
     helmsley::GestureOp m_gesture_req;
+    helmsley::VPMsg m_volume_pose_req;
 
     helmsley::FrameUpdateMsg update_msg;
     helmsley::DataMsg m_req_data;
@@ -87,6 +88,8 @@ public:
     //SYNC
     const RPCVector<helmsley::GestureOp> getOperations();
     void setGestureOp(helmsley::GestureOp::OPType type, float x, float y);
+    void setVolumePose(helmsley::VPMsg::VPType type, float* values);
+
     void onBroadCastChanged();
 
     //SETTERS

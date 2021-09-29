@@ -22,8 +22,7 @@ public:
 
 	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
 	void onReset();
-	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam, std::string state_name = "tempalte");
-	void InitOXRScene();
+	void onReset(glm::vec3 pv, glm::vec3 sv, glm::mat4 rm, Camera* cam, const std::string& state_name = "");
 	void onViewChanged(float width, float height);
 	void Render(int view_id);
 
@@ -46,17 +45,7 @@ public:
 	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
 	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); }
 	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; }
-	//void setUseSpaceMat(bool use, bool reset = true) {
-	//	m_use_space_mat = use;
-	//	//TODO:Change to different status
-	//	if (reset) {
-	//		ScaleVec3_ = dvr::DEFAULT_SCALE; RotateMat_ = glm::mat4(1.0f); PosVec3_ = glm::vec3(.0f);
-	//		volume_model_dirty = true; volume_rotate_dirty = true;
-	//	}
-	//}
-	void setMask(UINT num, UINT bits) {
-		meshRenderer_->SetMask(num, bits);
-	}
+	void setMask(UINT num, UINT bits) { meshRenderer_->SetMask(num, bits); }
 	void setRenderingMethod(dvr::RENDER_METHOD method) {
 		if (m_rmethod_id == method) return;
 		m_rmethod_id = method;

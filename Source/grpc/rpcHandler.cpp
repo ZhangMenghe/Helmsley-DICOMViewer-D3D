@@ -22,6 +22,7 @@ rpcHandler::rpcHandler(const std::string& host) {
 
     req.set_client_id(CLIENT_ID);
     m_gesture_req.set_client_id(CLIENT_ID);
+    m_volume_pose_req.set_client_id(CLIENT_ID);
 }
 
 FrameUpdateMsg rpcHandler::getUpdates() {
@@ -58,7 +59,16 @@ void rpcHandler::setGestureOp(GestureOp::OPType type, float x, float y) {
     m_gesture_req.set_x(x); m_gesture_req.set_y(y);
     syncer_->setGestureOp(&context, m_gesture_req, &m_resp);
 }
+void rpcHandler::setVolumePose(helmsley::VPMsg::VPType type, float* values) {
+    ClientContext context;
+    m_volume_pose_req.set_gid((m_gid++) % 10000);
+    m_volume_pose_req.set_volume_pose_type(type);
+    int v_num = (type == helmsley::VPMsg::VPType::VPMsg_VPType_ROT) ? 16 : 3;
+    for(int i=0; i<v_num; i++)
+        m_volume_pose_req.add_values(values[i]);
 
+    syncer_->setVolumePose(&context, m_volume_pose_req, &m_resp);
+}
 void rpcHandler::Run() {
     while (true) {
         if (G_STATUS_SENDER) {
@@ -379,13 +389,14 @@ void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     auto vps = msg.volume_pose();
     auto cps = msg.camera_pose();
 
-    glm::vec3 old_pos, old_scale;
-    vrController::instance()->getRPS(old_pos, old_scale);
+    //glm::vec3 old_pos, old_scale;
+    //vrController::instance()->getRPS(old_pos, old_scale);
+    //TODO:RESOLVE THIS
     vrController::instance()->onReset(
-        old_pos,//glm::vec3(vps[0], vps[1], vps[2]),
-        old_scale,//glm::vec3(vps[3], vps[4], vps[5]),
-        glm::make_mat4(vps.Mutable(6)),
-        nullptr
+       glm::vec3(vps[0], vps[1], vps[2]),
+       glm::vec3(vps[3], vps[4], vps[5]),
+       glm::make_mat4(vps.Mutable(6)),
+       nullptr
         //new Camera(
         //    DirectX::XMFLOAT3(cps[0], cps[1], cps[2]),
         //    DirectX::XMFLOAT3(cps[3], cps[4], cps[5]),

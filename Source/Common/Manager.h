@@ -9,7 +9,6 @@
 struct reservedStatus {
     glm::mat4 rot_mat;
     glm::vec3 scale_vec, pos_vec;
-    Camera vcam;
     reservedStatus(glm::mat4 rm, glm::vec3 sv, glm::vec3 pv) {
         rot_mat = rm; scale_vec = sv; pos_vec = pv;
     }
@@ -99,10 +98,10 @@ public:
     void resetDirtyOpacityId() { m_dirty_wid = -1; }
 
     //mvp status
-    bool addMVPStatus(std::string name, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, Camera* cam, bool use_as_current_status);
-    bool addMVPStatus(std::string name, bool use_as_current_status);
-    bool removeMVPStatus(std::string name);
-    bool setMVPStatus(std::string status_name);
+    void addMVPStatus(const std::string& name, glm::mat4 rm, glm::vec3 sv, glm::vec3 pv, bool use_as_current_status);
+    void addMVPStatus(const std::string& name, bool use_as_current_status);
+    bool removeMVPStatus(const std::string& name);
+    bool setMVPStatus(const std::string& name);
     void getCurrentMVPStatus(glm::mat4& rm, glm::vec3& sv, glm::vec3& pv);
 private:
     static Manager* myPtr_;

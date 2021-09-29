@@ -9,7 +9,7 @@ OXRMainScene::OXRMainScene(const std::shared_ptr<xr::XrContext>& context)
 
 void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
-	m_manager->addMVPStatus("OXRCam", dvr::DEFAULT_ROTATE, glm::vec3(0.5f), dvr::DEFAULT_POS, new Camera(), true);
+	m_manager->addMVPStatus("OXRCam", dvr::DEFAULT_ROTATE, glm::vec3(0.5f), dvr::DEFAULT_POS, true);
 
 	m_deviceResources = deviceResources;
 	m_scenario = new MarkerBasedScenario(m_context);

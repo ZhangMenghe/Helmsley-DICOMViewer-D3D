@@ -26,7 +26,6 @@ MarkerBasedScenario::MarkerBasedScenario(const std::shared_ptr<xr::XrContext>& c
 	if (manager) {
 		auto rm_reader = manager->createRMCameraReader(LEFT_FRONT);
 		rm_reader->SetFrameCallBack(FrameReadyCallback, this);
-		//vrController::instance()->setUseSpaceMat(true);
 	}
 }
 
@@ -64,7 +63,8 @@ void MarkerBasedScenario::FrameReadyCallback(IResearchModeSensorFrame* pSensorFr
 	if (!scenario->m_is_tracking) {
 		scenario->m_no_tracking_frames = 0;
 		scenario->m_is_tracking = true;
-		Manager::instance()->addMVPStatus("MarkerCam", dvr::DEFAULT_ROTATE, glm::vec3(1.0f), dvr::DEFAULT_POS, new Camera(), true);
+		Manager::instance()->addMVPStatus("MarkerCam", glm::mat4(1.0f), glm::vec3(1.0f), glm::vec3(.0f), true);
+
 		OutputDebugString(L"====================marker cam setup ==========\n");
 	}
 

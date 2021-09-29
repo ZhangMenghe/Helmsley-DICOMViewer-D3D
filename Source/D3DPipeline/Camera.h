@@ -21,15 +21,17 @@ private:
 
 public:
     Camera() {
-        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
-        Reset(ORI_CAM_POS, ORI_UP, mcenter);
+        Reset();
     }
     Camera(const char* cam_name) :name_(cam_name) {
-        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
-        Reset(ORI_CAM_POS, ORI_UP, mcenter);
+        Reset();
     }
     Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 up, DirectX::XMFLOAT3 center) {
         Reset(pos, up, center);
+    }
+    void Reset() {
+        DirectX::XMFLOAT3 mcenter = { ORI_CAM_POS.x + ORI_FRONT.x, ORI_CAM_POS.y + ORI_FRONT.y, ORI_CAM_POS.z + ORI_FRONT.z }; //DirectX::XMVectorAdd(ORI_CAM_POS, ORI_FRONT);
+        Reset(ORI_CAM_POS, ORI_UP, mcenter);
     }
     void Reset(Camera* cam) {
         Reset(cam->_eyePos, cam->_up, cam->_center);
