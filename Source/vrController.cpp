@@ -36,7 +36,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	m_data_board = std::make_unique<dataBoard>(device);
 	m_meshRenderer = std::make_unique<organMeshRenderer>(device);
 	Manager::camera = new Camera;
-
+	setup_compute_shader();
 	//onReset();
 }
 
@@ -188,14 +188,14 @@ void vrController::precompute()
 		volumeSetupConstBuffer vol_setup;
 		m_manager->getVolumeSetupConstData(vol_setup);
 		// Prepare the constant buffer to send it to the graphics device.
+		ID3D11Buffer* tmp_buff = m_compute_constbuff.release();
 		context->UpdateSubresource(
-				m_compute_constbuff.get(),
+				tmp_buff,
 				0,
 				nullptr,
 				&vol_setup,
 				0,
 				0);
-		ID3D11Buffer* tmp_buff = m_compute_constbuff.release();
 		context->CSSetConstantBuffers(0, 1, &tmp_buff);
 		m_compute_constbuff.reset(tmp_buff);
 	}
