@@ -156,6 +156,11 @@ namespace dvr{
         OXR_INPUT_MID,
         OXR_INPUT_END
     };
+    enum OXR_POSE_TYPE {
+        POSE_TRANSLATE = 0,
+        POSE_SCALE,
+        POSE_ROTATE
+    };
     //UIs
     const float MOUSE_ROTATE_SENSITIVITY = 0.005f;
     const float MOUSE_SCALE_SENSITIVITY = 0.5f;

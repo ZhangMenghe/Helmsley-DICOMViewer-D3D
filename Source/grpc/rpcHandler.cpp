@@ -63,7 +63,7 @@ void rpcHandler::setVolumePose(helmsley::VPMsg::VPType type, float* values) {
     ClientContext context;
     m_volume_pose_req.set_gid((m_gid++) % 10000);
     m_volume_pose_req.set_volume_pose_type(type);
-    int v_num = (type == helmsley::VPMsg::VPType::VPMsg_VPType_ROT) ? 16 : 3;
+    int v_num = (type == helmsley::VPMsg::VPType::VPMsg_VPType_ROT) ? 4 : 3;
     for(int i=0; i<v_num; i++)
         m_volume_pose_req.add_values(values[i]);
 
@@ -392,15 +392,15 @@ void rpcHandler::tackle_reset_msg(helmsley::ResetMsg msg) {
     //glm::vec3 old_pos, old_scale;
     //vrController::instance()->getRPS(old_pos, old_scale);
     //TODO:RESOLVE THIS
-    vrController::instance()->onReset(
-       glm::vec3(vps[0], vps[1], vps[2]),
-       glm::vec3(vps[3], vps[4], vps[5]),
-       glm::make_mat4(vps.Mutable(6)),
-       nullptr
-        //new Camera(
-        //    DirectX::XMFLOAT3(cps[0], cps[1], cps[2]),
-        //    DirectX::XMFLOAT3(cps[3], cps[4], cps[5]),
-        //    DirectX::XMFLOAT3(cps[6], cps[7], cps[8])
-        //)
-    );
+    //vrController::instance()->onReset(
+    //   glm::vec3(vps[0], vps[1], vps[2]),
+    //   glm::vec3(vps[3], vps[4], vps[5]),
+    //   glm::make_mat4(vps.Mutable(6)),
+    //   nullptr
+    //    //new Camera(
+    //    //    DirectX::XMFLOAT3(cps[0], cps[1], cps[2]),
+    //    //    DirectX::XMFLOAT3(cps[3], cps[4], cps[5]),
+    //    //    DirectX::XMFLOAT3(cps[6], cps[7], cps[8])
+    //    //)
+    //);
 }

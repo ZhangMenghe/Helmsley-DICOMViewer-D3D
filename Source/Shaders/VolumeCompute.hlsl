@@ -1,5 +1,6 @@
 #include "StructAndConsts.hlsli"
 Texture3D<uint> srcVolume : register(t0);
+Texture3D<uint> srcInfo : register(t1);
 RWTexture3D<float4> destVolume : register(u0);
 
 float UpdateOpacityAlpha(int woffset, float alpha) {
@@ -40,10 +41,11 @@ float3 TransferColor(float intensity, int ORGAN_BIT) {
 	return AdjustContrastBrightness(color);
 }
 
+
 [numthreads(8, 8, 8)]
 void main(uint3 threadID : SV_DispatchThreadID) {
 	uint value = srcVolume[threadID].r;
-	//mask
+	//organ mask
 	uint u_mask = value >> uint(16);
 	int ORGAN_BIT = -1;
 	if (u_show_organ) {

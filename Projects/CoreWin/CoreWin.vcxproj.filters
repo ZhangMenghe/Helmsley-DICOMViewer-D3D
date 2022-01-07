@@ -393,7 +393,6 @@
     <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl" />
     <FxCompile Include="..\..\Source\Shaders\SimpleColorPixelShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>

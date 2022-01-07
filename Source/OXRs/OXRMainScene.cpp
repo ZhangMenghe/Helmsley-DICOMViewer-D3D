@@ -133,13 +133,31 @@ void OXRMainScene::onSingle3DTouchDown(float x, float y, float z, int side) {
 	}
 	else {
 		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
-		//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+		//
+		//	m_rpcHandler->setVolumePose()
 	}
 	//m_scenario->onSingle3DTouchDown(x, y, z, side);
 }
 void OXRMainScene::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) {
-	m_sceneRenderer->on3DTouchMove(x, y, z, rot, side);
-	//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_MOVE, x, y);
+	std::vector<dvr::OXR_POSE_TYPE> types;
+	m_sceneRenderer->on3DTouchMove(x, y, z, rot, side, types);
+	if (rpcHandler::G_STATUS_SENDER && m_scenario->IsTracking() && !types.empty()) {
+		glm::vec3 t, s; glm::quat rot;
+		m_sceneRenderer->getRST(t, s, rot);
+		float* data = new float[4];
+		for (auto type : types) {
+			if (type == dvr::POSE_ROTATE) {
+				data[0] = rot.w; data[1] = rot.x; data[2] = rot.y; data[3] = rot.z;
+			}
+			else if (type == dvr::POSE_SCALE) {
+				data[0] = s.x; data[1] = s.y; data[2] = s.z;
+			}
+			else {
+				data[0] = t.x; data[1] = t.y; data[2] = t.z;
+			}
+			m_rpcHandler->setVolumePose((helmsley::VPMsg::VPType)type, data);
+		}
+	}
 };
 void OXRMainScene::on3DTouchReleased(int side) { 
 	m_sceneRenderer->on3DTouchReleased(side); 

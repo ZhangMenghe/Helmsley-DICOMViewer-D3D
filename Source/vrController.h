@@ -13,11 +13,9 @@
 #include <Renderers/LineRenderer.h>
 #include <SceneObjs/dataVisualizer.h>
 
-class vrController
-{
+class vrController{
 public:
 	vrController(const std::shared_ptr<DX::DeviceResources>& deviceResources, const std::shared_ptr<Manager>& manager);
-	~vrController();
 	static vrController* instance();
 
 	void assembleTexture(int update_target, UINT ph, UINT pw, UINT pd, float sh, float sw, float sd, UCHAR* data, int channel_num = 4);
@@ -30,7 +28,7 @@ public:
 	void onSingleTouchDown(float x, float y);
 	void onSingle3DTouchDown(float x, float y, float z, int side);
 	void onTouchMove(float x, float y);
-	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side);
+	void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side, std::vector<dvr::OXR_POSE_TYPE>& types);
 	void onTouchReleased();
 	void on3DTouchReleased(int side);
 	void onScale(float sx, float sy);
@@ -45,50 +43,53 @@ public:
 	void switchCuttingPlane(dvr::PARAM_CUT_ID cut_plane_id);
 	void setPosition(glm::vec3 pos) { SpaceMat_ = glm::translate(glm::mat4(1.0), pos); }
 	void setPosition(glm::mat4 pos) { SpaceMat_ = pos; }
-	void setMask(UINT num, UINT bits) { meshRenderer_->SetMask(num, bits); }
+	void setMask(UINT num, UINT bits) { m_meshRenderer->SetMask(num, bits); }
 	void setRenderingMethod(dvr::RENDER_METHOD method) {
 		if (m_rmethod_id == method) return;
 		m_rmethod_id = method;
 	}
 	void setRenderingParameters(dvr::RENDER_METHOD method, float* values) {
-		if (method < vRenderer_.size())
-			vRenderer_[method]->setRenderingParameters(values);
+		if (method < m_vRenderers.size())
+			m_vRenderers[method]->setRenderingParameters(values);
 	}
 
 	//getter
-	void getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn) { cutter_->getCuttingPlane(pp, pn); }
-	Texture* getVolumeTex() { return tex_volume; }
-	Texture* getBakedTex() { return tex_baked; }
+	void getCuttingPlane(DirectX::XMFLOAT4& pp, DirectX::XMFLOAT4& pn) { m_cutter->getCuttingPlane(pp, pn); }
+	Texture* getVolumeTex() { return tex_volume.get(); }
+	Texture* getBakedTex() { return tex_baked.get(); }
 	ID3D11RasterizerState* m_render_state_front, * m_render_state_back;
 
-	void getRPS(glm::vec3& pos, glm::vec3& scale) {
-		pos = PosVec3_; scale = ScaleVec3_;
+	void getRST(glm::vec3& pos, glm::vec3& scale, glm::quat& rm) {
+		pos = PosVec3_; scale = ScaleVec3_; rm = glm::quat_cast(RotateMat_);
 	}
 
 private:
 	static vrController* myPtr_;
 
-	std::vector<baseDicomRenderer*> vRenderer_;
+	std::vector<std::unique_ptr<baseDicomRenderer>> m_vRenderers;
 	int m_rmethod_id = -1;
 
-	screenQuadRenderer* screen_quad;
-	cuttingController* cutter_;
-	dataBoard* data_board_;
-	organMeshRenderer* meshRenderer_;
-	std::unordered_map<int, lineRenderer*> line_renderers_;
+	std::unique_ptr<screenQuadRenderer> m_screen_quad;
+	std::unique_ptr<cuttingController> m_cutter;
+	std::unique_ptr<dataBoard> m_data_board;
+
+	std::unique_ptr<organMeshRenderer> m_meshRenderer;
+	std::unordered_map<int, std::unique_ptr<lineRenderer>> m_line_renderers;
 
 	// Cached pointer to device resources.
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
 	std::shared_ptr<Manager> m_manager;
 
 	//TEXTURES
-	Texture *tex_volume = nullptr, *tex_baked = nullptr;
+	std::unique_ptr<Texture> tex_volume, tex_info, tex_baked;
+	bool m_volume_valid = false;
 
 	//compute shader
-	ID3D11ComputeShader* bakeShader_;
-	ID3D11Texture3D* m_comp_tex_d3d = nullptr;
-	ID3D11UnorderedAccessView* m_textureUAV;
-	ID3D11Buffer* m_compute_constbuff = nullptr;
+	std::unique_ptr<ID3D11ComputeShader> m_bakeShader;
+	std::unique_ptr<ID3D11Texture3D> m_comp_tex_d3d;
+	std::unique_ptr<ID3D11UnorderedAccessView> m_textureUAV;
+	std::unique_ptr<ID3D11Buffer> m_compute_constbuff;
+	bool m_comp_shader_setup = false;
 
 	glm::mat4 SpaceMat_ = glm::mat4(1.0f);
 	glm::mat4 ModelMat_, RotateMat_;
@@ -110,7 +111,6 @@ private:
 
 	//flags
 	bool volume_model_dirty, volume_rotate_dirty;
-	bool m_compute_created = false;
 	//bool m_use_space_mat = false;
 
 	void precompute();

@@ -9,6 +9,7 @@ public:
     MarkerBasedScenario(const std::shared_ptr<xr::XrContext>& context);
     void setMarkerSize(float sz) { m_marker_size = sz; }
     void Update();
+    bool IsTracking() { return m_is_tracking; }
 private:
     std::vector<ResearchModeSensorType> kEnabledRMStreamTypes = { ResearchModeSensorType::LEFT_FRONT };
     cv::Mat m_cameraMatrix, m_distCoeffs;
