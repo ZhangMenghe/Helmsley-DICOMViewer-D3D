@@ -37,7 +37,9 @@ struct volumeSetupConstBuffer
 
     //others
     int u_show_organ;
+    int u_show_annotation;
     UINT u_color_scheme; //COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT
+    float u_annotate_rate;
 };
 
 class Manager
@@ -91,6 +93,7 @@ public:
     void setCheck(std::string key, bool value);
     void setMask(UINT num, UINT bits);
     void setColorScheme(int id);
+    void setAnnotationMixedRate(float ratio);
     void setDimension(glm::vec3 dim);
     void setOpacityWidgetId(int id);
     void setOpacityValue(int pid, float value);

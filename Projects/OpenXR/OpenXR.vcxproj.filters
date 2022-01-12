@@ -259,6 +259,9 @@
     <ClCompile Include="..\..\Source\OXRs\XrScenarios\MarkerBasedScenario.cpp">
       <Filter>Source\OXRs\XrScenarios</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\infoAnnotater.cpp">
+      <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -475,6 +478,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\OXRs\XrScenarios\Scenario.h">
       <Filter>Source\OXRs\XrScenarios</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h">
+      <Filter>Source\SceneObjs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

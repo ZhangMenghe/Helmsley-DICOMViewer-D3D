@@ -35,6 +35,7 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	m_cutter = std::make_unique<cuttingController>(device);
 	m_data_board = std::make_unique<dataBoard>(device);
 	m_meshRenderer = std::make_unique<organMeshRenderer>(device);
+	m_info_annotater = std::make_unique<infoAnnotater>();
 	Manager::camera = new Camera;
 	setup_compute_shader();
 	//onReset();
@@ -158,10 +159,15 @@ void vrController::assembleTexture(int update_target, UINT ph, UINT pw, UINT pd,
 
 	Manager::baked_dirty_ = true;
 	m_volume_valid = true;
-	if (!m_comp_shader_setup) setup_compute_shader();
 	
+	m_info_annotater->onCreateCanvas(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+	
+	m_info_annotater->onDrawCube(m_deviceResources->GetD3DDeviceContext(), glm::vec3(-0.25f, 0.25f, 0.25f), vol_dim_scale_, 150, { 0, 1, 2, 3 }, { 0xfc, 0xcc, 0xc0, 0x11 });
+	//m_info_annotater->onDrawCube(m_deviceResources->GetD3DDeviceContext(), glm::vec3(-0.25f, 0.25f, 0.f), vol_dim_scale_, 10, {0}, { 0xff });
 
 	m_meshRenderer->Setup(m_deviceResources->GetD3DDevice(), ph, pw, pd);
+
+	if (!m_comp_shader_setup) setup_compute_shader();
 }
 
 // Initializes view parameters when the window size changes.
@@ -179,7 +185,13 @@ void vrController::precompute()
 	//run compute shader
 	context->CSSetShader(m_bakeShader.get(), nullptr, 0);
 	ID3D11ShaderResourceView *texview = tex_volume->GetTextureView();
-	context->CSSetShaderResources(0, 1, &texview);
+
+	ID3D11ShaderResourceView* srvs[2] = {
+		tex_volume->GetTextureView(),
+		m_info_annotater->getCanvasTexture()->GetTextureView()
+	};
+
+	context->CSSetShaderResources(0, 2, srvs);
 	ID3D11UnorderedAccessView* tmp_uav = m_textureUAV.release();
 	context->CSSetUnorderedAccessViews(0, 1, &tmp_uav, nullptr);
 	m_textureUAV.reset(tmp_uav);
@@ -211,9 +223,8 @@ void vrController::precompute()
 	m_data_board->Update(m_deviceResources->GetD3DDevice(), context);
 	Manager::baked_dirty_ = false;
 }
-void vrController::Render(int view_id)
-{
-	if (tex_volume == nullptr || tex_baked == nullptr) return;
+void vrController::Render(int view_id){
+	if (!m_volume_valid) return;
 	if (Manager::mvp_dirty_) { m_manager->getCurrentMVPStatus(RotateMat_, ScaleVec3_, PosVec3_); volume_model_dirty = true; }
 	if (volume_model_dirty)
 	{
@@ -364,10 +375,8 @@ void vrController::onSingle3DTouchDown(float x, float y, float z, int side){
 	}
 }
 
-void vrController::onTouchMove(float x, float y)
-{
-	if (!m_IsPressed || !tex_volume)
-		return;
+void vrController::onTouchMove(float x, float y){
+	if (!m_volume_valid || !m_IsPressed) return;
 
 	if (!Manager::param_bool[CHECK_CUTTING] && Manager::param_bool[CHECK_FREEZE_VOLUME])
 		return;
@@ -461,8 +470,7 @@ void vrController::on3DTouchReleased(int side)
 
 void vrController::onScale(float sx, float sy)
 {
-	if (!tex_volume)
-		return;
+	if (!m_volume_valid) return;
 	//unified scaling
 	if (sx > 1.0f)
 		sx = 1.0f + (sx - 1.0f) * MOUSE_SCALE_SENSITIVITY;
@@ -486,7 +494,7 @@ void vrController::onScale(float scale)
 
 void vrController::onPan(float x, float y)
 {
-	if (!tex_volume || Manager::param_bool[CHECK_FREEZE_VOLUME])
+	if (!m_volume_valid || Manager::param_bool[CHECK_FREEZE_VOLUME])
 		return;
 
 	float offx = x / Manager::screen_w * MOUSE_PAN_SENSITIVITY, offy = -y / Manager::screen_h * MOUSE_PAN_SENSITIVITY;

@@ -311,6 +311,7 @@
     <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
+    <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h" />
     <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h" />
     <ClInclude Include="..\..\Source\Utils\dataManager.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
@@ -364,6 +365,7 @@
     <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp" />
+    <ClCompile Include="..\..\Source\SceneObjs\infoAnnotater.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp" />
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp" />
     <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp" />

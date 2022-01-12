@@ -2,7 +2,6 @@
 Texture3D<uint> srcVolume : register(t0);
 Texture3D<uint> srcInfo : register(t1);
 RWTexture3D<float4> destVolume : register(u0);
-
 float UpdateOpacityAlpha(int woffset, float alpha) {
 	float2 lb = u_opacity[woffset].xy, rb = u_opacity[woffset + 1].zw;
 	if (alpha < lb.x || alpha > rb.x) return .0;
@@ -41,7 +40,13 @@ float3 TransferColor(float intensity, int ORGAN_BIT) {
 	return AdjustContrastBrightness(color);
 }
 
-
+float4 getInfoValues(uint value) {
+	uint v3 = (value >> uint(24)) & uint(0xff);
+	uint v2 = (value >> uint(16)) & uint(0xff);
+	uint v1 = (value >> uint(8)) & uint(0xff);
+	uint v0 = value & uint(0xff);
+	return float4(float(v3), float(v2), float(v1), float(v0))/255.0;
+}
 [numthreads(8, 8, 8)]
 void main(uint3 threadID : SV_DispatchThreadID) {
 	uint value = srcVolume[threadID].r;
@@ -58,5 +63,20 @@ void main(uint3 threadID : SV_DispatchThreadID) {
 	float alpha = .0f;
 	for (int i = 0; i < u_widget_num; i++)
 		if (((u_visible_bits >> i) & 1) == 1) alpha = max(alpha, UpdateOpacityAlpha(3 * i, intensity_01));
-	destVolume[threadID] = float4(TransferColor(intensity_01, ORGAN_BIT), alpha);
+	
+	float4 volume_color = float4(TransferColor(intensity_01, ORGAN_BIT), alpha);
+	destVolume[threadID] = volume_color;
+
+	if (u_show_annotation) {
+		float4 info_v = getInfoValues(srcInfo[threadID].r);
+
+		//upper v3, v2 for h and s color of annotation
+		float4 annotate = .0f;
+		if (info_v.x + info_v.y > .0) {
+			annotate = float4(hsv2rgb(float3(info_v.x, info_v.y, 0.8)), alpha);
+			destVolume[threadID] = lerp(volume_color, annotate, u_annotate_rate);
+		}
+		//TODO: lower v1, v0 for other infos.
+		//destVolume[threadID] = float4(annotate, 1.0);
+	}
 }

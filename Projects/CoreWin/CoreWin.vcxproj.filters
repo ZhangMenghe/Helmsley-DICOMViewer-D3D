@@ -205,6 +205,9 @@
     <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\infoAnnotater.cpp">
+      <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CoreWinMain.h" />
@@ -330,6 +333,9 @@
       <Filter>Source\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h">
+      <Filter>Source\SceneObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h">
       <Filter>Source\SceneObjs</Filter>
     </ClInclude>
   </ItemGroup>

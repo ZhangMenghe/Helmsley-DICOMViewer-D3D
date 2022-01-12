@@ -63,6 +63,8 @@ void Manager::InitCheckParams(std::vector<std::string> keys, std::vector<bool> v
 
     m_volset_data.u_show_organ = param_bool[dvr::CHECK_MASKON];
     m_volset_data.u_mask_recolor = param_bool[dvr::CHECK_MASK_RECOLOR];
+    //TODO: MAKE IT A VARABLE
+    m_volset_data.u_show_annotation = true;
 
     baked_dirty_ = true;
 }
@@ -142,6 +144,10 @@ void Manager::setMask(UINT num, UINT bits) {
 }
 void Manager::setColorScheme(int id) {
     m_volset_data.u_color_scheme = id;
+    baked_dirty_ = true;
+}
+void Manager::setAnnotationMixedRate(float ratio) {
+    m_volset_data.u_annotate_rate = ratio;
     baked_dirty_ = true;
 }
 void Manager::setDimension(glm::vec3 dim) {

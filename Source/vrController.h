@@ -12,6 +12,7 @@
 #include <Renderers/organMeshRenderer.h>
 #include <Renderers/LineRenderer.h>
 #include <SceneObjs/dataVisualizer.h>
+#include <SceneObjs/infoAnnotater.h>
 
 class vrController{
 public:
@@ -72,6 +73,7 @@ private:
 	std::unique_ptr<screenQuadRenderer> m_screen_quad;
 	std::unique_ptr<cuttingController> m_cutter;
 	std::unique_ptr<dataBoard> m_data_board;
+	std::unique_ptr<infoAnnotater> m_info_annotater;
 
 	std::unique_ptr<organMeshRenderer> m_meshRenderer;
 	std::unordered_map<int, std::unique_ptr<lineRenderer>> m_line_renderers;
@@ -81,7 +83,7 @@ private:
 	std::shared_ptr<Manager> m_manager;
 
 	//TEXTURES
-	std::unique_ptr<Texture> tex_volume, tex_info, tex_baked;
+	std::unique_ptr<Texture> tex_volume, tex_baked;
 	bool m_volume_valid = false;
 
 	//compute shader

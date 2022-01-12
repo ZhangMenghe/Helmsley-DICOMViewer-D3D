@@ -13,6 +13,8 @@ public:
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE3D_DESC texDesc, const void* data);
 
 	void setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch);
+	void setTexData(ID3D11DeviceContext* context, D3D11_BOX* box, std::vector<int> pos, std::vector<unsigned char> value, int unit_size);
+	void createTexRaw(UINT ph, UINT pw, UINT pd, int unit_size);
 	void GenerateMipMap(ID3D11DeviceContext* context);
 
 	void ShutDown();
@@ -41,6 +43,8 @@ protected:
 	ID3D11RenderTargetView* m_renderTargetView = nullptr;
 	winrt::com_ptr<ID3D11Texture2D> mTex2D;
 	ID3D11Texture3D* mTex3D = nullptr;
+
+	unsigned char* m_rawdata = nullptr;
 };
 
 #endif // !D3DPIPELINE_TEXTURE_H

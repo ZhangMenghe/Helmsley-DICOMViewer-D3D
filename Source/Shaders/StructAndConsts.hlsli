@@ -33,7 +33,9 @@ cbuffer volumeSetupConstBuffer : register(b0) {
 
 	//others
 	bool u_show_organ;
+	bool u_show_annotation;
 	uint u_color_scheme;//COLOR_GRAYSCALE COLOR_HSV COLOR_BRIGHT COLOR_FIRE COLOR_CET_L08
+	float u_annotate_rate;
 };
 // All components are in the range [0…1], including hue.
 float3 hsv2rgb(float3 c) {

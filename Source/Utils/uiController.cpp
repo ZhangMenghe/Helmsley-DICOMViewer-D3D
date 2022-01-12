@@ -9,6 +9,7 @@ void uiController::InitAll(){
     setRenderingMethod(0);
     setMaskBits(7,8);
     setColorScheme(0);
+    setAnnotationMixedRate(0.8f);
     // setMaskBits(7,2+4+8+16+32+64);
     //vrController::instance()->onReset(
     //    glm::vec3(.0f),
@@ -147,6 +148,9 @@ void uiController::setCuttingPlane(int id, float value){
 }
 void uiController::setColorScheme(int id){
     Manager::instance()->setColorScheme(id);
+}
+void uiController::setAnnotationMixedRate(float ratio) {
+    Manager::instance()->setAnnotationMixedRate(ratio);
 }
 void uiController::setRenderingMethod(int id) {
     vrController::instance()->setRenderingMethod(dvr::RENDER_METHOD(id));
