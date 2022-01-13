@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.props" Condition="Exists('..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.props')" />
   <Import Project="..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props')" />
-  <Import Project="..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.props" Condition="Exists('..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.props')" />
   <Import Project="..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.props" Condition="Exists('..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -197,7 +197,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Link>
-      <AdditionalDependencies>kernel32.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(ProjectDir)/../../Library/arm64/debug/lib/*.lib;opencv_world412d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(ProjectDir)/../../Library/arm64/debug/lib/*.lib;opencv_world412d.lib;OneCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)OpenCvInstallArm64-412d\x64\vc15\staticlib;$(ProjectDir)/../../Library/arm64/debug/lib;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\arm64;$(VCInstallDir)\lib\arm64</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
@@ -375,6 +375,7 @@
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrError.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensionContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensions.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHand.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHandle.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrInstanceContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrMath.h" />
@@ -799,44 +800,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Source\pbr\Shaders\HighlightShared.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\..\Source\pbr\Shaders\PbrShared.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
-      <FileType>Document</FileType>
-    </None>
     <None Include="..\..\Source\pbr\Shaders\Shared.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
@@ -1162,9 +1125,9 @@
     <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\MeshContentTask.targets" />
     <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ShaderGraphContentTask.targets" />
     <Import Project="..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.targets" Condition="Exists('..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.targets')" />
-    <Import Project="..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.targets" Condition="Exists('..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.targets')" />
     <Import Project="..\..\packages\glm.0.9.9.800\build\native\glm.targets" Condition="Exists('..\..\packages\glm.0.9.9.800\build\native\glm.targets')" />
     <Import Project="..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.targets" Condition="Exists('..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1172,10 +1135,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.props'))" />
     <Error Condition="!Exists('..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OpenXR.Headers.1.0.10.2\build\native\OpenXR.Headers.targets'))" />
-    <Error Condition="!Exists('..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.props'))" />
-    <Error Condition="!Exists('..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OpenXR.Loader.1.0.10.2\build\native\OpenXR.Loader.targets'))" />
     <Error Condition="!Exists('..\..\packages\glm.0.9.9.800\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\glm.0.9.9.800\build\native\glm.targets'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.CppWinRT.2.0.210122.3\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.props'))" />
+    <Error Condition="!Exists('..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\OpenXR.Loader.1.0.14\build\native\OpenXR.Loader.targets'))" />
   </Target>
 </Project>

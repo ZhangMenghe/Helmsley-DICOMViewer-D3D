@@ -482,6 +482,9 @@
     <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h">
       <Filter>Source\SceneObjs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHand.h">
+      <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -508,8 +511,6 @@
     <None Include="Assets\helmsley_cached\pacs_local.txt">
       <Filter>Assets\helmsley_cached</Filter>
     </None>
-    <None Include="..\..\Source\pbr\Shaders\HighlightShared.hlsl" />
-    <None Include="..\..\Source\pbr\Shaders\PbrShared.hlsl" />
     <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
     <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
       <Filter>Source\Shaders</Filter>

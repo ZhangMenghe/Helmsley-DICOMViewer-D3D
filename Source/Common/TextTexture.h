@@ -29,10 +29,14 @@ public:
     TextTexture(const std::shared_ptr<DX::DeviceResources>& deviceResources, TextTextureInfo textInfo);
     void Draw(const wchar_t* text);
 
+    //setter
+    void setBackgroundColor(D2D1::ColorF color) {
+        m_textInfo.Background = color;
+    }
 private:
     std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
-    const TextTextureInfo m_textInfo;
+    TextTextureInfo m_textInfo;
     winrt::com_ptr<ID2D1Bitmap1> m_d2dTargetBitmap;
     //ID2D1Bitmap1* m_d2dTargetBitmap;
     winrt::com_ptr<ID2D1SolidColorBrush> m_brush;

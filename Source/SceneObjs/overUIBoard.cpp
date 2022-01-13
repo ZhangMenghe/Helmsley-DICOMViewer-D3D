@@ -73,6 +73,11 @@ void overUIBoard::Update(std::string name, std::wstring new_content) {
 		m_tquads[name].content = new_content;
 	}
 }
+void overUIBoard::Update(std::string name, D2D1::ColorF color) {
+	if (m_tquads.find(name) != m_tquads.end()) {
+		m_tquads[name].ttex->setBackgroundColor(color);
+	}
+}
 
 void overUIBoard::Render(){
 	for (auto tq : m_tquads) {

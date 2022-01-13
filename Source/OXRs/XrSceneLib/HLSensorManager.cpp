@@ -156,6 +156,7 @@ void HLSensorManager::InitializeXRSpaces(const XrInstance& instance, const XrSes
 	xrGetInstanceProcAddr(instance, "xrCreateSpatialGraphNodeSpaceMSFT",
 		reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrCreateSpatialGraphNodeSpaceMSFT));
 	CHECK_XRCMD(ext_xrCreateSpatialGraphNodeSpaceMSFT(session, &createInfo, m_sensorSpace.Put()));
+	
 }
 RMCameraReader* HLSensorManager::createRMCameraReader(ResearchModeSensorType sensor_type) {
 	if (std::find(m_kEnabledSensorTypes.begin(), m_kEnabledSensorTypes.end(), sensor_type) == m_kEnabledSensorTypes.end())

@@ -27,6 +27,8 @@ public:
 	bool CheckHit(std::string name, float x, float y, float z);
 
 	void Update(std::string name, std::wstring new_content);
+	void Update(std::string name, D2D1::ColorF color);
+
 	void Render();
 
 private:

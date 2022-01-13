@@ -6,6 +6,7 @@
 #include "XrSceneLib/Scene.h"
 #include "XrSceneLib/CompositionLayers.h"
 #include "XrSceneLib/HLSensorManager.h"
+#include "XrUtility/XrHand.h"
 
 namespace DX {
 	struct swapchain_surfdata_t {
@@ -98,6 +99,12 @@ namespace DX {
 		XrDebugUtilsMessengerEXT xr_debug = {};
 		XrFrameState m_current_framestate, lastFrameState;
 
+		//Hand Extensions:
+		xr::XrHandData m_leftHandData;
+		xr::XrHandData m_rightHandData;
+
+		glm::vec3 m_middle_finger_pos;
+
 		// Function pointers for some OpenXR extension methods we'll use.
 		PFN_xrGetD3D11GraphicsRequirementsKHR ext_xrGetD3D11GraphicsRequirementsKHR = nullptr;
 		PFN_xrCreateDebugUtilsMessengerEXT    ext_xrCreateDebugUtilsMessengerEXT = nullptr;
@@ -114,8 +121,11 @@ namespace DX {
 
 		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem m_referenceFrame = { nullptr };
 
+		PFN_xrLocateHandJointsEXT   ext_xrLocateHandJointsEXT;
+
 		void openxr_poll_events();
 		void openxr_poll_actions();
+		void openxr_poll_hands_ext();
 		void openxr_poll_predicted(XrTime predicted_time);
 
 		void SetSecondaryViewConfigurationActive(xr::ViewConfigurationState& secondaryViewConfigState, bool active);

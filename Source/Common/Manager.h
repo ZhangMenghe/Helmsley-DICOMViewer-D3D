@@ -94,6 +94,10 @@ public:
     void setMask(UINT num, UINT bits);
     void setColorScheme(int id);
     void setAnnotationMixedRate(float ratio);
+    void setAnnotationShow(bool show){
+        m_volset_data.u_show_annotation = show;
+        baked_dirty_ = true;
+    }
     void setDimension(glm::vec3 dim);
     void setOpacityWidgetId(int id);
     void setOpacityValue(int pid, float value);

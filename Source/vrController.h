@@ -26,6 +26,8 @@ public:
 	void Render(int view_id);
 
 	//Interaction
+	bool onChangeAnnotationgStatus() { m_annotating = !m_annotating; m_manager->setAnnotationShow(m_annotating); return m_annotating; }
+
 	void onSingleTouchDown(float x, float y);
 	void onSingle3DTouchDown(float x, float y, float z, int side);
 	void onTouchMove(float x, float y);
@@ -113,6 +115,7 @@ private:
 
 	//flags
 	bool volume_model_dirty, volume_rotate_dirty;
+	bool m_annotating;
 	//bool m_use_space_mat = false;
 
 	void precompute();

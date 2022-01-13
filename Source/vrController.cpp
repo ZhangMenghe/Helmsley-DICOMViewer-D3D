@@ -38,12 +38,13 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 	m_info_annotater = std::make_unique<infoAnnotater>();
 	Manager::camera = new Camera;
 	setup_compute_shader();
-	//onReset();
+	onReset();
 }
 
 void vrController::onReset(){
 	SpaceMat_ = glm::mat4(1.0f);
 	Mouse_old = {.0f, .0f};
+	m_annotating = false;
 
 	volume_model_dirty = true; volume_rotate_dirty = true;
 	if (m_cutter.get()) m_cutter->onReset(m_deviceResources->GetD3DDevice());

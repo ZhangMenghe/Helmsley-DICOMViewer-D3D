@@ -282,6 +282,65 @@ void OXRManager::InitOxrActions() {
     attach_info.actionSets = &xr_input.actionSet;
     xrAttachSessionActionSets(xr_session, &attach_info);
     lastFrameState = { XR_TYPE_FRAME_STATE };
+
+    const std::tuple<XrHandEXT, xr::XrHandData&> hands[] = { {XrHandEXT::XR_HAND_LEFT_EXT, m_leftHandData},
+                                                  {XrHandEXT::XR_HAND_RIGHT_EXT, m_rightHandData} };
+
+    /*PFN_xrCreateHandTrackerEXT ext_xrCreateHandTrackerEXT;
+    xrGetInstanceProcAddr(m_context->Instance.Handle, "xrCreateHandTrackerEXT",
+        reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrCreateHandTrackerEXT));
+
+    PFN_xrDestroyHandTrackerEXT ext_xrDestroyHandTrackerEXT;
+    xrGetInstanceProcAddr(m_context->Instance.Handle, "xrDestroyHandTrackerEXT",
+        reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrDestroyHandTrackerEXT));*/
+
+    // For each hand, initialize the joint objects and corresponding space.
+    for (const auto& [hand, handData] : hands) {
+        XrHandTrackerCreateInfoEXT createInfo{ XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT };
+        createInfo.hand = hand;
+        createInfo.handJointSet = XR_HAND_JOINT_SET_DEFAULT_EXT;
+        CHECK_XRCMD(m_context->Extensions.xrCreateHandTrackerEXT(
+            xr_session, &createInfo, handData.TrackerHandle.Put(m_context->Extensions.xrDestroyHandTrackerEXT)));
+
+        //CHECK_XRCMD(ext_xrCreateHandTrackerEXT(
+        //    xr_session, 
+        //    &createInfo, 
+        //    handData.TrackerHandle.Put(ext_xrDestroyHandTrackerEXT)));
+        //xrCreateHandTrackerEXT(xr_session, &createInfo, handData.TrackerHandle.Put(xrDestroyHandTrackerEXT));
+        //createJointObjects(handData);
+
+
+        // Initialize buffers to receive hand mesh indices and vertices
+        //const XrSystemHandTrackingMeshPropertiesMSFT& handMeshSystemProperties = context.System.HandMeshProperties;
+        //handData.IndexBuffer = std::make_unique<uint32_t[]>(handMeshSystemProperties.maxHandMeshIndexCount);
+        //handData.VertexBuffer = std::make_unique<XrHandMeshVertexMSFT[]>(handMeshSystemProperties.maxHandMeshVertexCount);
+
+        //handData.meshState.indexBuffer.indexCapacityInput = handMeshSystemProperties.maxHandMeshIndexCount;
+        //handData.meshState.indexBuffer.indices = handData.IndexBuffer.get();
+        //handData.meshState.vertexBuffer.vertexCapacityInput = handMeshSystemProperties.maxHandMeshVertexCount;
+        //handData.meshState.vertexBuffer.vertices = handData.VertexBuffer.get();
+
+        XrHandMeshSpaceCreateInfoMSFT meshSpaceCreateInfo{ XR_TYPE_HAND_MESH_SPACE_CREATE_INFO_MSFT };
+        meshSpaceCreateInfo.poseInHandMeshSpace = xr::math::Pose::Identity();
+        meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_TRACKED_MSFT;
+        CHECK_XRCMD(m_context->Extensions.xrCreateHandMeshSpaceMSFT(
+            handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.MeshSpace.Put()));
+
+        meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_REFERENCE_OPEN_PALM_MSFT;
+        CHECK_XRCMD(m_context->Extensions.xrCreateHandMeshSpaceMSFT(
+            handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.ReferenceMeshSpace.Put()));
+        //PFN_xrCreateHandMeshSpaceMSFT   ext_xrCreateHandMeshSpaceMSFT;
+        //xrGetInstanceProcAddr(m_context->Instance.Handle, "xrCreateHandMeshSpaceMSFT",
+        //    reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrCreateHandMeshSpaceMSFT));
+        //CHECK_XRCMD(ext_xrCreateHandMeshSpaceMSFT(handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.MeshSpace.Put()));
+
+        //xrGetInstanceProcAddr(m_context->Instance.Handle, "xrLocateHandJointsEXT",
+        //    reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrLocateHandJointsEXT));
+
+        //meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_REFERENCE_OPEN_PALM_MSFT;
+        //CHECK_XRCMD(ext_xrCreateHandMeshSpaceMSFT(handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.ReferenceMeshSpace.Put()));
+    
+    }
 }
 void OXRManager::InitHLSensors(const std::vector<ResearchModeSensorType>& kEnabledSensorTypes) {
     m_sensor_manager = std::make_unique<HLSensorManager>(kEnabledSensorTypes);
@@ -290,7 +349,10 @@ void OXRManager::InitHLSensors(const std::vector<ResearchModeSensorType>& kEnabl
 bool OXRManager::Update() {
     openxr_poll_events();
     if (xr_running) {
+        //
+        openxr_poll_hands_ext();
         openxr_poll_actions();
+
         if (xr_session_state != XR_SESSION_STATE_VISIBLE &&
             xr_session_state != XR_SESSION_STATE_FOCUSED) {
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -586,6 +648,25 @@ void OXRManager::openxr_poll_events() {
         event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
     }
 }
+void OXRManager::openxr_poll_hands_ext() {
+    if (xr_session_state != XR_SESSION_STATE_FOCUSED)
+        return;
+    xr::XrHandData& handData = std::ref(m_rightHandData);
+    //for (xr::XrHandData& handData : { std::ref(m_leftHandData), std::ref(m_rightHandData) }) {
+    XrHandJointsLocateInfoEXT locateInfo{ XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
+    locateInfo.baseSpace = m_appSpace.Get();
+    locateInfo.time = m_current_framestate.predictedDisplayTime;
+
+    XrHandJointLocationsEXT locations{ XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
+    locations.jointCount = (uint32_t)handData.JointLocations.size();
+    locations.jointLocations = handData.JointLocations.data();
+    CHECK_XRCMD(m_context->Extensions.xrLocateHandJointsEXT(handData.TrackerHandle.Get(), &locateInfo, &locations));
+    if (locations.isActive) {
+        const XrVector3f& index_tip = handData.JointLocations[XR_HAND_JOINT_INDEX_TIP_EXT].pose.position;
+        const XrVector3f& thumb_tip = handData.JointLocations[XR_HAND_JOINT_THUMB_TIP_EXT].pose.position;
+        m_middle_finger_pos = glm::vec3(index_tip.x + thumb_tip.x, index_tip.y + thumb_tip.y, index_tip.z + thumb_tip.z) * 0.5f;
+    }
+}
 void OXRManager::openxr_poll_actions() {
     if (xr_session_state != XR_SESSION_STATE_FOCUSED)
         return;
@@ -640,7 +721,8 @@ void OXRManager::openxr_poll_actions() {
 
                 if (xr_input.handSelect[hand]) {
                     // If we have a select event, send onSingle3DTouchDown
-                    onSingle3DTouchDown(x, y, z, hand);
+                    //onSingle3DTouchDown(x, y, z, hand);
+                    onSingle3DTouchDown(m_middle_finger_pos.x, m_middle_finger_pos.y, m_middle_finger_pos.z, hand);
                 }
                 else if (xr_input.handDeselect[hand]) {
                     // If we have a deselect event, send on3DTouchReleased
@@ -648,7 +730,9 @@ void OXRManager::openxr_poll_actions() {
                 }
                 else {
                     // Send on3DTouchMove
-                    on3DTouchMove(x, y, z, rotMat, hand);
+                    //on3DTouchMove(x, y, z, rotMat, hand);
+                    on3DTouchMove(m_middle_finger_pos.x, m_middle_finger_pos.y, m_middle_finger_pos.z, rotMat, hand);
+
                 }
 
             }

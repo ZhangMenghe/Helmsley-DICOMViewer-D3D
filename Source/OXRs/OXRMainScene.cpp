@@ -16,6 +16,8 @@ void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources
 
 	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
 	m_ui_board->AddBoard("fps", glm::vec3(0.3, -0.3, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
+	m_ui_board->AddBoard("Annotation", glm::vec3(0.3, 0.1, -0.3f), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
+	m_ui_board->Update("Annotation", D2D1::ColorF::DarkBlue);
 	m_ui_board->AddBoard("broadcast", glm::vec3(-0.3, 0.1, -0.1f), glm::vec3(0.15f, 0.1f, 0.1f), glm::mat4(1.0));
 	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
@@ -132,6 +134,9 @@ void OXRMainScene::onSingle3DTouchDown(float x, float y, float z, int side) {
 		m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 	}
 	else {
+		if (m_ui_board->CheckHit("Annotation", x, y, z)) 
+			m_ui_board->Update("Annotation", m_sceneRenderer->onChangeAnnotationgStatus()? D2D1::ColorF::Chocolate: D2D1::ColorF::DarkBlue);
+		
 		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
 		//
 		//	m_rpcHandler->setVolumePose()
