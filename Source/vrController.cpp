@@ -364,7 +364,6 @@ void vrController::onSingle3DTouchDown(float x, float y, float z, int side){
 	//char debug[256];
 	//sprintf(debug, "====Touch %d: %f,%f,%f\n", side, x, y, z);
 	//OutputDebugStringA(debug);
-
 	m_IsPressed3D[side] = true;
 	m_Mouse3D_old[side] = { x, y, z };
 

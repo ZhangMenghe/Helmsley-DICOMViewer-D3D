@@ -65,7 +65,7 @@ namespace xr {
                     const xr::FrameTime& frameTime,
                     XrSpace layerSpace,
                     const std::vector<XrView>& Views,
-                    const std::vector<std::unique_ptr<xr::Scene>>& activeScenes,
+                    const std::vector<xr::Scene*>& activeScenes,
                     XrViewConfigurationType viewConfig);
 
     private:

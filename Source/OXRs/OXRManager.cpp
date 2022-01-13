@@ -211,147 +211,28 @@ bool OXRManager::InitOxrSession(const char* app_name) {
         std::move(device),
         std::move(deviceContext)
         );
-    m_projectionLayers.Resize(1, XrContext(), true /*forceReset*/);
+    m_actionContext = std::make_unique<xr::ActionContext>(m_context->Instance.Handle);
 
-    InitOxrActions();
-    return true;
-}
-void OXRManager::InitOxrActions() {
-    auto xr_instance = XrContext().Instance.Handle;
-    auto xr_session = XrContext().Session.Handle;
+    m_projectionLayers.Resize(1, *(m_context), true /*forceReset*/);
 
-    XrActionSetCreateInfo actionset_info = { XR_TYPE_ACTION_SET_CREATE_INFO };
-    strcpy_s(actionset_info.actionSetName, "gameplay");
-    strcpy_s(actionset_info.localizedActionSetName, "Gameplay");
-    xrCreateActionSet(xr_instance, &actionset_info, &xr_input.actionSet);
-    xrStringToPath(xr_instance, "/user/hand/left", &xr_input.handSubactionPath[0]);
-    xrStringToPath(xr_instance, "/user/hand/right", &xr_input.handSubactionPath[1]);
-
-    // Create an action to track the position and orientation of the hands! This is
-    // the controller location, or the center of the palms for actual hands.
-    XrActionCreateInfo action_info = { XR_TYPE_ACTION_CREATE_INFO };
-    action_info.countSubactionPaths = _countof(xr_input.handSubactionPath);
-    action_info.subactionPaths = xr_input.handSubactionPath;
-    action_info.actionType = XR_ACTION_TYPE_POSE_INPUT;
-    strcpy_s(action_info.actionName, "hand_pose");
-    strcpy_s(action_info.localizedActionName, "Hand Pose");
-    xrCreateAction(xr_input.actionSet, &action_info, &xr_input.poseAction);
-
-    // Create an action for listening to the select action! This is primary trigger
-    // on controllers, and an airtap on HoloLens
-    action_info.actionType = XR_ACTION_TYPE_BOOLEAN_INPUT;
-    strcpy_s(action_info.actionName, "select");
-    strcpy_s(action_info.localizedActionName, "Select");
-    xrCreateAction(xr_input.actionSet, &action_info, &xr_input.selectAction);
-
-    // Bind the actions we just created to specific locations on the Khronos simple_controller
-    // definition! These are labeled as 'suggested' because they may be overridden by the runtime
-    // preferences. For example, if the runtime allows you to remap buttons, or provides input
-    // accessibility settings.
-    XrPath profile_path;
-    XrPath pose_path[2];
-    XrPath select_path[2];
-    xrStringToPath(xr_instance, "/user/hand/left/input/grip/pose", &pose_path[0]);
-    xrStringToPath(xr_instance, "/user/hand/right/input/grip/pose", &pose_path[1]);
-    xrStringToPath(xr_instance, "/user/hand/left/input/select/click", &select_path[0]);
-    xrStringToPath(xr_instance, "/user/hand/right/input/select/click", &select_path[1]);
-    xrStringToPath(xr_instance, "/interaction_profiles/khr/simple_controller", &profile_path);
-    XrActionSuggestedBinding bindings[] = {
-      { xr_input.poseAction,   pose_path[0]   },
-      { xr_input.poseAction,   pose_path[1]   },
-      { xr_input.selectAction, select_path[0] },
-      { xr_input.selectAction, select_path[1] }, };
-    XrInteractionProfileSuggestedBinding suggested_binds = { XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING };
-    suggested_binds.interactionProfile = profile_path;
-    suggested_binds.suggestedBindings = &bindings[0];
-    suggested_binds.countSuggestedBindings = _countof(bindings);
-    xrSuggestInteractionProfileBindings(xr_instance, &suggested_binds);
-
-    // Create frames of reference for the pose actions
-    for (int32_t i = 0; i < 2; i++) {
-        XrActionSpaceCreateInfo action_space_info = { XR_TYPE_ACTION_SPACE_CREATE_INFO };
-        action_space_info.action = xr_input.poseAction;
-        action_space_info.poseInActionSpace = xr::math::Pose::Identity();
-        action_space_info.subactionPath = xr_input.handSubactionPath[i];
-        xrCreateActionSpace(xr_session, &action_space_info, &xr_input.handSpace[i]);
-    }
-
-    // Attach the action set we just made to the session
-    XrSessionActionSetsAttachInfo attach_info = { XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO };
-    attach_info.countActionSets = 1;
-    attach_info.actionSets = &xr_input.actionSet;
-    xrAttachSessionActionSets(xr_session, &attach_info);
     lastFrameState = { XR_TYPE_FRAME_STATE };
 
-    const std::tuple<XrHandEXT, xr::XrHandData&> hands[] = { {XrHandEXT::XR_HAND_LEFT_EXT, m_leftHandData},
-                                                  {XrHandEXT::XR_HAND_RIGHT_EXT, m_rightHandData} };
-
-    /*PFN_xrCreateHandTrackerEXT ext_xrCreateHandTrackerEXT;
-    xrGetInstanceProcAddr(m_context->Instance.Handle, "xrCreateHandTrackerEXT",
-        reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrCreateHandTrackerEXT));
-
-    PFN_xrDestroyHandTrackerEXT ext_xrDestroyHandTrackerEXT;
-    xrGetInstanceProcAddr(m_context->Instance.Handle, "xrDestroyHandTrackerEXT",
-        reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrDestroyHandTrackerEXT));*/
-
-    // For each hand, initialize the joint objects and corresponding space.
-    for (const auto& [hand, handData] : hands) {
-        XrHandTrackerCreateInfoEXT createInfo{ XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT };
-        createInfo.hand = hand;
-        createInfo.handJointSet = XR_HAND_JOINT_SET_DEFAULT_EXT;
-        CHECK_XRCMD(m_context->Extensions.xrCreateHandTrackerEXT(
-            xr_session, &createInfo, handData.TrackerHandle.Put(m_context->Extensions.xrDestroyHandTrackerEXT)));
-
-        //CHECK_XRCMD(ext_xrCreateHandTrackerEXT(
-        //    xr_session, 
-        //    &createInfo, 
-        //    handData.TrackerHandle.Put(ext_xrDestroyHandTrackerEXT)));
-        //xrCreateHandTrackerEXT(xr_session, &createInfo, handData.TrackerHandle.Put(xrDestroyHandTrackerEXT));
-        //createJointObjects(handData);
-
-
-        // Initialize buffers to receive hand mesh indices and vertices
-        //const XrSystemHandTrackingMeshPropertiesMSFT& handMeshSystemProperties = context.System.HandMeshProperties;
-        //handData.IndexBuffer = std::make_unique<uint32_t[]>(handMeshSystemProperties.maxHandMeshIndexCount);
-        //handData.VertexBuffer = std::make_unique<XrHandMeshVertexMSFT[]>(handMeshSystemProperties.maxHandMeshVertexCount);
-
-        //handData.meshState.indexBuffer.indexCapacityInput = handMeshSystemProperties.maxHandMeshIndexCount;
-        //handData.meshState.indexBuffer.indices = handData.IndexBuffer.get();
-        //handData.meshState.vertexBuffer.vertexCapacityInput = handMeshSystemProperties.maxHandMeshVertexCount;
-        //handData.meshState.vertexBuffer.vertices = handData.VertexBuffer.get();
-
-        XrHandMeshSpaceCreateInfoMSFT meshSpaceCreateInfo{ XR_TYPE_HAND_MESH_SPACE_CREATE_INFO_MSFT };
-        meshSpaceCreateInfo.poseInHandMeshSpace = xr::math::Pose::Identity();
-        meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_TRACKED_MSFT;
-        CHECK_XRCMD(m_context->Extensions.xrCreateHandMeshSpaceMSFT(
-            handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.MeshSpace.Put()));
-
-        meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_REFERENCE_OPEN_PALM_MSFT;
-        CHECK_XRCMD(m_context->Extensions.xrCreateHandMeshSpaceMSFT(
-            handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.ReferenceMeshSpace.Put()));
-        //PFN_xrCreateHandMeshSpaceMSFT   ext_xrCreateHandMeshSpaceMSFT;
-        //xrGetInstanceProcAddr(m_context->Instance.Handle, "xrCreateHandMeshSpaceMSFT",
-        //    reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrCreateHandMeshSpaceMSFT));
-        //CHECK_XRCMD(ext_xrCreateHandMeshSpaceMSFT(handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.MeshSpace.Put()));
-
-        //xrGetInstanceProcAddr(m_context->Instance.Handle, "xrLocateHandJointsEXT",
-        //    reinterpret_cast<PFN_xrVoidFunction*>(&ext_xrLocateHandJointsEXT));
-
-        //meshSpaceCreateInfo.handPoseType = XR_HAND_POSE_TYPE_REFERENCE_OPEN_PALM_MSFT;
-        //CHECK_XRCMD(ext_xrCreateHandMeshSpaceMSFT(handData.TrackerHandle.Get(), &meshSpaceCreateInfo, handData.ReferenceMeshSpace.Put()));
-    
-    }
+    return true;
 }
+
 void OXRManager::InitHLSensors(const std::vector<ResearchModeSensorType>& kEnabledSensorTypes) {
     m_sensor_manager = std::make_unique<HLSensorManager>(kEnabledSensorTypes);
     m_sensor_manager->InitializeXRSpaces(m_context->Instance.Handle, m_context->Session.Handle);
 }
-bool OXRManager::Update() {
+bool OXRManager::BeforeUpdate() {
     openxr_poll_events();
+    return xr_running && xr_session_state == XR_SESSION_STATE_FOCUSED;
+}
+
+bool OXRManager::Update() {
     if (xr_running) {
-        //
-        openxr_poll_hands_ext();
-        openxr_poll_actions();
+        //openxr_poll_hands_ext();
+        //openxr_poll_actions();
 
         if (xr_session_state != XR_SESSION_STATE_VISIBLE &&
             xr_session_state != XR_SESSION_STATE_FOCUSED) {
@@ -359,16 +240,16 @@ bool OXRManager::Update() {
         }
 
         XrFrameState frame_state = { XR_TYPE_FRAME_STATE };
-        auto xr_session = XrContext().Session.Handle;
+        auto xr_session = m_context->Session.Handle;
 
         // secondaryViewConfigFrameState needs to have the same lifetime as frameState
         XrSecondaryViewConfigurationFrameStateMSFT secondaryViewConfigFrameState{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_STATE_MSFT };
 
-        const size_t enabledSecondaryViewConfigCount = XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
+        const size_t enabledSecondaryViewConfigCount = m_context->Session.EnabledSecondaryViewConfigurationTypes.size();
         std::vector<XrSecondaryViewConfigurationStateMSFT> secondaryViewConfigStates(enabledSecondaryViewConfigCount,
             { XR_TYPE_SECONDARY_VIEW_CONFIGURATION_STATE_MSFT });
 
-        if (XrContext().Extensions.SupportsSecondaryViewConfiguration && enabledSecondaryViewConfigCount > 0) {
+        if (m_context->Extensions.SupportsSecondaryViewConfiguration && enabledSecondaryViewConfigCount > 0) {
             secondaryViewConfigFrameState.viewConfigurationCount = (uint32_t)secondaryViewConfigStates.size();
             secondaryViewConfigFrameState.viewConfigurationStates = secondaryViewConfigStates.data();
             secondaryViewConfigFrameState.next = frame_state.next;
@@ -378,7 +259,7 @@ bool OXRManager::Update() {
         XrFrameWaitInfo waitFrameInfo{ XR_TYPE_FRAME_WAIT_INFO };
         xrWaitFrame(xr_session, &waitFrameInfo, &frame_state);
 
-        if (XrContext().Extensions.SupportsSecondaryViewConfiguration) {
+        if (m_context->Extensions.SupportsSecondaryViewConfiguration) {
             std::scoped_lock lock(m_secondaryViewConfigActiveMutex);
             m_secondaryViewConfigurationsState = std::move(secondaryViewConfigStates);
         }
@@ -397,12 +278,12 @@ bool OXRManager::Update() {
 void OXRManager::Render() {
     const xr::FrameTime renderFrameTime = m_currentFrameTime;
 
-    auto xr_session = XrContext().Session.Handle;
+    auto xr_session = m_context->Session.Handle;
 
     XrFrameBeginInfo beginFrameDescription{ XR_TYPE_FRAME_BEGIN_INFO };
     CHECK_XRCMD(xrBeginFrame(xr_session, &beginFrameDescription));
 
-    if (XrContext().Extensions.SupportsSecondaryViewConfiguration) {
+    if (m_context->Extensions.SupportsSecondaryViewConfiguration) {
         std::scoped_lock lock(m_secondaryViewConfigActiveMutex);
         for (auto& state : m_secondaryViewConfigurationsState) {
             SetSecondaryViewConfigurationActive(m_viewConfigStates.at(state.viewConfigurationType), state.active);
@@ -411,13 +292,13 @@ void OXRManager::Render() {
     m_projectionLayers.ForEachLayerWithLock([this](auto&& layer) {
         for (auto& [viewConfigType, state] : m_viewConfigStates) {
             if (xr::IsPrimaryViewConfigurationType(viewConfigType) || state.Active) {
-                layer.PrepareRendering(XrContext(), viewConfigType, state.ViewConfigViews);
+                layer.PrepareRendering(*m_context, viewConfigType, state.ViewConfigViews);
             }
         }
     });
 
     XrFrameEndInfo end_info{ XR_TYPE_FRAME_END_INFO };
-    end_info.environmentBlendMode = XrContext().System.ViewProperties.at(app_config_view).BlendMode;
+    end_info.environmentBlendMode = m_context->System.ViewProperties.at(app_config_view).BlendMode;
     end_info.displayTime = renderFrameTime.PredictedDisplayTime;//actually current frame, just updated
 
     // Secondary view config frame info need to have same lifetime as XrFrameEndInfo;
@@ -426,16 +307,16 @@ void OXRManager::Render() {
     std::vector<XrSecondaryViewConfigurationLayerInfoMSFT> activeSecondaryViewConfigLayerInfos;
 
     // Chain secondary view configuration layers data to endFrameInfo
-    if (XrContext().Extensions.SupportsSecondaryViewConfiguration &&
-        XrContext().Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
-        for (auto& secondaryViewConfigType : XrContext().Session.EnabledSecondaryViewConfigurationTypes) {
+    if (m_context->Extensions.SupportsSecondaryViewConfiguration &&
+        m_context->Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
+        for (auto& secondaryViewConfigType : m_context->Session.EnabledSecondaryViewConfigurationTypes) {
             auto& secondaryViewConfig = m_viewConfigStates.at(secondaryViewConfigType);
             if (secondaryViewConfig.Active) {
                 activeSecondaryViewConfigLayerInfos.emplace_back(
                     XrSecondaryViewConfigurationLayerInfoMSFT{ XR_TYPE_SECONDARY_VIEW_CONFIGURATION_LAYER_INFO_MSFT,
                                                               nullptr,
                                                               secondaryViewConfigType,
-                                                              XrContext().System.ViewProperties.at(secondaryViewConfigType).BlendMode });
+                                                              m_context->System.ViewProperties.at(secondaryViewConfigType).BlendMode });
             }
         }
 
@@ -457,7 +338,7 @@ void OXRManager::Render() {
     if (renderFrameTime.ShouldRender) {
         std::scoped_lock sceneLock(m_sceneMutex);
 
-        for (const std::unique_ptr<xr::Scene>& scene : m_scenes) {
+        for (auto scene : m_scenes) {
             if (scene->IsActive()) {
                 scene->BeforeRender(m_currentFrameTime);
             }
@@ -470,7 +351,7 @@ void OXRManager::Render() {
         end_info.layers = primaryViewConfigLayers.LayerData();
 
         // Render layers for any active secondary view configurations too.
-        if (XrContext().Extensions.SupportsSecondaryViewConfiguration && activeSecondaryViewConfigLayerInfos.size() > 0) {
+        if (m_context->Extensions.SupportsSecondaryViewConfiguration && activeSecondaryViewConfigLayerInfos.size() > 0) {
             for (size_t i = 0; i < activeSecondaryViewConfigLayerInfos.size(); i++) {
                 XrSecondaryViewConfigurationLayerInfoMSFT& secondaryViewConfigLayerInfo = activeSecondaryViewConfigLayerInfos.at(i);
                 xr::CompositionLayers& secondaryViewConfigLayers = layersForAllViewConfigs.at(i + 1);
@@ -481,62 +362,12 @@ void OXRManager::Render() {
         }
     }
 
-
-
-    /*
-    // If the session is active, lets render our layer in the compositor!
-    // Primary render
-    XrCompositionLayerBaseHeader* layer = nullptr;
-    XrCompositionLayerProjection             layer_proj = { XR_TYPE_COMPOSITION_LAYER_PROJECTION };
-    std::vector<XrCompositionLayerProjectionView> views;
-    std::vector<XrCompositionLayerDepthInfoKHR> depthInfo;
-    bool session_active = xr_session_state == XR_SESSION_STATE_VISIBLE || xr_session_state == XR_SESSION_STATE_FOCUSED;
-
-    if (session_active && openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj)) {
-        layer = (XrCompositionLayerBaseHeader*)&layer_proj;
-    }
-
-    std::vector<std::vector<XrCompositionLayerProjectionView>> views_array;
-    std::vector<std::vector<XrCompositionLayerDepthInfoKHR>> depthInfo_array;
-    std::vector<XrCompositionLayerProjection> layer_proj_array;
-    std::vector<XrCompositionLayerBaseHeader*> layer_array;
-    // Secondary render
-    if (XrContext().Extensions.SupportsSecondaryViewConfiguration && activeSecondaryViewConfigLayerInfos.size() > 0) {
-        views_array.resize(activeSecondaryViewConfigLayerInfos.size());
-        depthInfo_array.resize(activeSecondaryViewConfigLayerInfos.size());
-        layer_proj_array.resize(activeSecondaryViewConfigLayerInfos.size());
-        layer_array.resize(activeSecondaryViewConfigLayerInfos.size());
-        for (size_t i = 0; i < activeSecondaryViewConfigLayerInfos.size(); i++) {
-            layer_array[i] = nullptr;
-            XrCompositionLayerProjection& layer_proj = layer_proj_array[i];
-            layer_proj = { XR_TYPE_COMPOSITION_LAYER_PROJECTION };
-
-            auto& views = views_array[i];
-            auto& depthInfo = depthInfo_array[i];
-
-            XrSecondaryViewConfigurationLayerInfoMSFT& secondaryViewConfigLayerInfo = activeSecondaryViewConfigLayerInfos.at(i);
-            //engine::CompositionLayers& secondaryViewConfigLayers = layersForAllViewConfigs.at(i + 1);
-            if (openxr_render_layer(m_current_framestate.predictedDisplayTime, views, depthInfo, layer_proj, true)) {
-                layer_array[i] = (XrCompositionLayerBaseHeader*)&layer_proj;
-            }
-            //RenderViewConfiguration(sceneLock, secondaryViewConfigLayerInfo.viewConfigurationType, secondaryViewConfigLayers);
-            secondaryViewConfigLayerInfo.layerCount = layer_array[i] == nullptr ? 0 : 1;
-            secondaryViewConfigLayerInfo.layers = &(layer_array[i]);
-        }
-    }
-
-    // We're finished with rendering our layer, so send it off for display!
-    end_info.displayTime = m_current_framestate.predictedDisplayTime;
-    end_info.environmentBlendMode = xr_blend;
-    end_info.layerCount = layer == nullptr ? 0 : 1;
-    end_info.layers = &layer;*/
-
     CHECK_XRCMD(xrEndFrame(xr_session, &end_info));
 
     lastFrameState = m_current_framestate;
 }
 
-void OXRManager::AddScene(std::unique_ptr<xr::Scene> scene) {
+void OXRManager::AddScene(xr::Scene* scene) {
     if (!scene) {
         return; // Some scenes might skip creation due to extension unavailability.
     }
@@ -548,24 +379,24 @@ void OXRManager::AddScene(std::unique_ptr<xr::Scene> scene) {
 
 
 }
-void OXRManager::AddSceneFinished() {
-    onSingle3DTouchDown = [&](float x, float y, float z, int side) {
-        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
-            scene->onSingle3DTouchDown(x, y, z, side);
-    };
-    on3DTouchMove = [&](float x, float y, float z, glm::mat4 rot, int side) {
-        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
-            scene->on3DTouchMove(x, y, z, rot, side);
-    };
-    on3DTouchReleased = [&](int side) {
-        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
-            scene->on3DTouchReleased(side);
-    };
-}
+//void OXRManager::AddSceneFinished() {
+//    onSingle3DTouchDown = [&](float x, float y, float z, int side) {
+//        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
+//            scene->onSingle3DTouchDown(x, y, z, side);
+//    };
+//    on3DTouchMove = [&](float x, float y, float z, glm::mat4 rot, int side) {
+//        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
+//            scene->on3DTouchMove(x, y, z, rot, side);
+//    };
+//    on3DTouchReleased = [&](int side) {
+//        for (const std::unique_ptr<xr::Scene>& scene : m_scenes)
+//            scene->on3DTouchReleased(side);
+//    };
+//}
 
 XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
 {
-    auto xr_session = XrContext().Session.Handle;
+    auto xr_session = m_context->Session.Handle;
 
     XrSpatialAnchorMSFT anchor;
     // Anchors provide the best stability when moving beyond 5 meters, so if the extension is enabled,
@@ -580,7 +411,7 @@ XrSpatialAnchorMSFT DX::OXRManager::createAnchor(const XrPosef& poseInScene)
 
 XrSpace DX::OXRManager::createAnchorSpace(const XrPosef& poseInScene)
 {
-    auto xr_session = XrContext().Session.Handle;
+    auto xr_session = m_context->Session.Handle;
     XrSpatialAnchorMSFT anchor = createAnchor(poseInScene);
     XrSpace space;
     XrSpatialAnchorSpaceCreateInfoMSFT createSpaceInfo{ XR_TYPE_SPATIAL_ANCHOR_SPACE_CREATE_INFO_MSFT };
@@ -595,10 +426,10 @@ DirectX::XMMATRIX OXRManager::getSensorMatrixAtTime(uint64_t time) {
     return DirectX::XMMatrixIdentity();
 }
 void OXRManager::openxr_poll_events() {
-    auto xr_session = XrContext().Session.Handle;
+    auto xr_session = m_context->Session.Handle;
     XrEventDataBuffer event_buffer = { XR_TYPE_EVENT_DATA_BUFFER };
 
-    while (xrPollEvent(XrContext().Instance.Handle, &event_buffer) == XR_SUCCESS) {
+    while (xrPollEvent(m_context->Instance.Handle, &event_buffer) == XR_SUCCESS) {
         switch (event_buffer.type) {
 
         case XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED:
@@ -615,10 +446,10 @@ void OXRManager::openxr_poll_events() {
 
                 XrSecondaryViewConfigurationSessionBeginInfoMSFT secondaryViewConfigInfo{
                     XR_TYPE_SECONDARY_VIEW_CONFIGURATION_SESSION_BEGIN_INFO_MSFT };
-                if (XrContext().Extensions.SupportsSecondaryViewConfiguration &&
-                    XrContext().Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
-                    secondaryViewConfigInfo.viewConfigurationCount = (uint32_t)XrContext().Session.EnabledSecondaryViewConfigurationTypes.size();
-                    secondaryViewConfigInfo.enabledViewConfigurationTypes = XrContext().Session.EnabledSecondaryViewConfigurationTypes.data();
+                if (m_context->Extensions.SupportsSecondaryViewConfiguration &&
+                    m_context->Session.EnabledSecondaryViewConfigurationTypes.size() > 0) {
+                    secondaryViewConfigInfo.viewConfigurationCount = (uint32_t)m_context->Session.EnabledSecondaryViewConfigurationTypes.size();
+                    secondaryViewConfigInfo.enabledViewConfigurationTypes = m_context->Session.EnabledSecondaryViewConfigurationTypes.data();
 
                     secondaryViewConfigInfo.next = begin_info.next;
                     begin_info.next = &secondaryViewConfigInfo;
@@ -649,103 +480,9 @@ void OXRManager::openxr_poll_events() {
     }
 }
 void OXRManager::openxr_poll_hands_ext() {
-    if (xr_session_state != XR_SESSION_STATE_FOCUSED)
-        return;
-    xr::XrHandData& handData = std::ref(m_rightHandData);
-    //for (xr::XrHandData& handData : { std::ref(m_leftHandData), std::ref(m_rightHandData) }) {
-    XrHandJointsLocateInfoEXT locateInfo{ XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT };
-    locateInfo.baseSpace = m_appSpace.Get();
-    locateInfo.time = m_current_framestate.predictedDisplayTime;
-
-    XrHandJointLocationsEXT locations{ XR_TYPE_HAND_JOINT_LOCATIONS_EXT };
-    locations.jointCount = (uint32_t)handData.JointLocations.size();
-    locations.jointLocations = handData.JointLocations.data();
-    CHECK_XRCMD(m_context->Extensions.xrLocateHandJointsEXT(handData.TrackerHandle.Get(), &locateInfo, &locations));
-    if (locations.isActive) {
-        const XrVector3f& index_tip = handData.JointLocations[XR_HAND_JOINT_INDEX_TIP_EXT].pose.position;
-        const XrVector3f& thumb_tip = handData.JointLocations[XR_HAND_JOINT_THUMB_TIP_EXT].pose.position;
-        m_middle_finger_pos = glm::vec3(index_tip.x + thumb_tip.x, index_tip.y + thumb_tip.y, index_tip.z + thumb_tip.z) * 0.5f;
-    }
+    
 }
-void OXRManager::openxr_poll_actions() {
-    if (xr_session_state != XR_SESSION_STATE_FOCUSED)
-        return;
 
-    // Update our action set with up-to-date input data!
-    XrActiveActionSet action_set = { };
-    action_set.actionSet = xr_input.actionSet;
-    action_set.subactionPath = XR_NULL_PATH;
-
-    XrActionsSyncInfo sync_info = { XR_TYPE_ACTIONS_SYNC_INFO };
-    sync_info.countActiveActionSets = 1;
-    sync_info.activeActionSets = &action_set;
-    auto xr_session = XrContext().Session.Handle;
-
-    xrSyncActions(xr_session, &sync_info);
-
-    // Now we'll get the current states of our actions, and store them for later use
-    for (uint32_t hand = 0; hand < 2; hand++) {
-        XrActionStateGetInfo get_info = { XR_TYPE_ACTION_STATE_GET_INFO };
-        get_info.subactionPath = xr_input.handSubactionPath[hand];
-
-        XrActionStatePose pose_state = { XR_TYPE_ACTION_STATE_POSE };
-        get_info.action = xr_input.poseAction;
-        xrGetActionStatePose(xr_session, &get_info, &pose_state);
-        xr_input.renderHand[hand] = pose_state.isActive;
-
-        // Events come with a timestamp
-        XrActionStateBoolean select_state = { XR_TYPE_ACTION_STATE_BOOLEAN };
-        get_info.action = xr_input.selectAction;
-        xrGetActionStateBoolean(xr_session, &get_info, &select_state);
-        xr_input.handSelect[hand] = select_state.isActive && select_state.currentState && select_state.changedSinceLastSync;
-        xr_input.handDeselect[hand] = select_state.isActive && !select_state.currentState && select_state.changedSinceLastSync;
-
-        // Constantly update pose if isActive
-        if (xr_input.renderHand[hand]) {
-            XrSpaceLocation space_location = { XR_TYPE_SPACE_LOCATION };
-            XrResult        res = xrLocateSpace(xr_input.handSpace[hand], m_appSpace.Get(), lastFrameState.predictedDisplayTime, &space_location);
-            if (XR_UNQUALIFIED_SUCCESS(res) &&
-                (space_location.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
-                (space_location.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0) {
-                xr_input.handPose[hand] = space_location.pose;
-                float x = space_location.pose.position.x;
-                float y = space_location.pose.position.y;
-                float z = space_location.pose.position.z;
-
-                glm::quat rot;
-                rot.x = space_location.pose.orientation.x;
-                rot.y = space_location.pose.orientation.y;
-                rot.z = space_location.pose.orientation.z;
-                rot.w = space_location.pose.orientation.w;
-                glm::mat4 rotMat = glm::mat4_cast(rot);
-
-                if (xr_input.handSelect[hand]) {
-                    // If we have a select event, send onSingle3DTouchDown
-                    //onSingle3DTouchDown(x, y, z, hand);
-                    onSingle3DTouchDown(m_middle_finger_pos.x, m_middle_finger_pos.y, m_middle_finger_pos.z, hand);
-                }
-                else if (xr_input.handDeselect[hand]) {
-                    // If we have a deselect event, send on3DTouchReleased
-                    on3DTouchReleased(hand);
-                }
-                else {
-                    // Send on3DTouchMove
-                    //on3DTouchMove(x, y, z, rotMat, hand);
-                    on3DTouchMove(m_middle_finger_pos.x, m_middle_finger_pos.y, m_middle_finger_pos.z, rotMat, hand);
-
-                }
-
-            }
-        }
-        else {
-
-            // lose tracking = release
-            on3DTouchReleased(hand);
-        }
-
-
-    }
-}
 
 void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& proofOfSceneLock,
     XrViewConfigurationType viewConfigurationType,
@@ -761,7 +498,7 @@ void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& pro
 
         uint32_t viewCount = 0;
         CHECK_XRCMD(
-            xrLocateViews(XrContext().Session.Handle, &viewLocateInfo, &viewState, (uint32_t)views.size(), &viewCount, views.data()));
+            xrLocateViews(m_context->Session.Handle, &viewLocateInfo, &viewState, (uint32_t)views.size(), &viewCount, views.data()));
         assert(viewCount == views.size());
         if (!xr::math::Pose::IsPoseValid(viewState)) {
             return;
@@ -781,37 +518,18 @@ void OXRManager::RenderViewConfiguration(const std::scoped_lock<std::mutex>& pro
 
     m_projectionLayers.ForEachLayerWithLock([this, &layers, &views, viewConfigurationType](xr::ProjectionLayer& projectionLayer) {
         bool opaqueClearColor = (layers.LayerCount() == 0); // Only the first projection layer need opaque background
-        opaqueClearColor &= (XrContext().Session.PrimaryViewConfigurationBlendMode == XR_ENVIRONMENT_BLEND_MODE_OPAQUE);
+        opaqueClearColor &= (m_context->Session.PrimaryViewConfigurationBlendMode == XR_ENVIRONMENT_BLEND_MODE_OPAQUE);
         DirectX::XMStoreFloat4(&projectionLayer.Config().ClearColor,
             opaqueClearColor ? DirectX::XMColorSRGBToRGB(DirectX::Colors::CornflowerBlue)
             : DirectX::Colors::Transparent);
         const bool shouldSubmitProjectionLayer =
-            projectionLayer.Render(XrContext(), m_currentFrameTime, XrContext().AppSpace, views, m_scenes, viewConfigurationType);
+            projectionLayer.Render(*m_context, m_currentFrameTime, m_context->AppSpace, views, m_scenes, viewConfigurationType);
 
         // Create the multi projection layer
         if (shouldSubmitProjectionLayer) {
             AppendProjectionLayer(layers, &projectionLayer, viewConfigurationType);
         }
     });
-}
-
-void OXRManager::openxr_poll_predicted(XrTime predicted_time) {
-    if (xr_session_state != XR_SESSION_STATE_FOCUSED)
-        return;
-
-    // Update hand position based on the predicted time of when the frame will be rendered! This 
-    // should result in a more accurate location, and reduce perceived lag.
-    for (size_t i = 0; i < 2; i++) {
-        if (!xr_input.renderHand[i])
-            continue;
-        XrSpaceLocation spaceRelation = { XR_TYPE_SPACE_LOCATION };
-        XrResult        res = xrLocateSpace(xr_input.handSpace[i], m_appSpace.Get(), predicted_time, &spaceRelation);
-        if (XR_UNQUALIFIED_SUCCESS(res) &&
-            (spaceRelation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
-            (spaceRelation.locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0) {
-            xr_input.handPose[i] = spaceRelation.pose;
-        }
-    }
 }
 
 void OXRManager::SetSecondaryViewConfigurationActive(xr::ViewConfigurationState& secondaryViewConfigState, bool active) {
@@ -822,12 +540,12 @@ void OXRManager::SetSecondaryViewConfigurationActive(xr::ViewConfigurationState&
         // reset resources in layers related to this secondary view configuration.
         if (active) {
             uint32_t viewCount;
-            auto xr_instance = XrContext().Instance.Handle;
+            auto xr_instance = m_context->Instance.Handle;
 
-            xrEnumerateViewConfigurationViews(xr_instance, XrContext().System.Id, secondaryViewConfigState.Type, 0, &viewCount, nullptr);
+            xrEnumerateViewConfigurationViews(xr_instance, m_context->System.Id, secondaryViewConfigState.Type, 0, &viewCount, nullptr);
 
             std::vector<XrViewConfigurationView> newViewConfigViews(viewCount, { XR_TYPE_VIEW_CONFIGURATION_VIEW });
-            xrEnumerateViewConfigurationViews(xr_instance, XrContext().System.Id, secondaryViewConfigState.Type, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
+            xrEnumerateViewConfigurationViews(xr_instance, m_context->System.Id, secondaryViewConfigState.Type, (uint32_t)newViewConfigViews.size(), &viewCount, newViewConfigViews.data());
 
             if (IsRecommendedSwapchainSizeChanged(secondaryViewConfigState.ViewConfigViews, newViewConfigViews)) {
                 secondaryViewConfigState.ViewConfigViews = std::move(newViewConfigViews);

@@ -6,8 +6,7 @@
 #include "XrSceneLib/Scene.h"
 #include "XrSceneLib/CompositionLayers.h"
 #include "XrSceneLib/HLSensorManager.h"
-#include "XrUtility/XrHand.h"
-
+#include "XrUtility/XrActionContext.h"
 namespace DX {
 	struct swapchain_surfdata_t {
 		ID3D11DepthStencilView* depth_view;
@@ -22,19 +21,6 @@ namespace DX {
 		std::vector<swapchain_surfdata_t>     surface_data;
 	};
 
-	struct input_state_t {
-		XrActionSet actionSet;
-		XrAction    poseAction;
-		XrAction    selectAction;
-		XrPath   handSubactionPath[2];
-		XrSpace  handSpace[2];
-		XrPosef  handPose[2];
-		XrBool32 renderHand[2];
-		XrBool32 handSelect[2];
-		XrBool32 handDeselect[2];
-	};
-
-
 	class OXRManager : public DeviceResources {
 	public:
 		OXRManager();
@@ -42,15 +28,15 @@ namespace DX {
 
 		int64_t GetSwapchainFmt()const { return d3d_swapchain_fmt; }
 		bool InitOxrSession(const char* app_name);
-		void InitOxrActions();
 		void InitHLSensors(const std::vector<ResearchModeSensorType>& kEnabledSensorTypes);
 
+		bool BeforeUpdate();
 		bool Update();
 		void Render();
 		//void ShutDown();
 
-		void AddScene(std::unique_ptr<xr::Scene> scene);
-		void AddSceneFinished();
+		void AddScene(xr::Scene* scene);
+		//void AddSceneFinished();
 
 		XrSpatialAnchorMSFT createAnchor(const XrPosef& poseInScene);
 
@@ -64,18 +50,26 @@ namespace DX {
 		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem getReferenceFrame() {
 			return m_referenceFrame;
 		}
-		xr::XrContext& XrContext(){
-			return *m_context;
+		xr::XrContext* XrContext(){
+			return m_context.get();
 		}
-
-		std::function<void(float, float, float, int)> onSingle3DTouchDown;
-		std::function<void(float, float, float, glm::mat4, int)> on3DTouchMove;
-		std::function<void(int)> on3DTouchReleased;
+		xr::ActionContext* XrActionContext() {
+			return m_actionContext.get();
+		}
+		xr::SpaceHandle& XrAppSpace() {
+			return m_appSpace;
+		}
+		XrFrameState getCurrentFrameState() {
+			return m_current_framestate;
+		}
+		//std::function<void(float, float, float, int)> onSingle3DTouchDown;
+		//std::function<void(float, float, float, glm::mat4, int)> on3DTouchMove;
+		//std::function<void(int)> on3DTouchReleased;
 
 	private:
 		static OXRManager* myPtr_;
 
-		std::vector<std::unique_ptr<xr::Scene>> m_scenes;
+		std::vector<xr::Scene* > m_scenes;
 		std::unique_ptr<HLSensorManager> m_sensor_manager = nullptr;
 
 		const int64_t d3d_swapchain_fmt = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
@@ -84,6 +78,8 @@ namespace DX {
 
 
 		std::unique_ptr<xr::XrContext> m_context;
+		std::unique_ptr<xr::ActionContext> m_actionContext;
+
 		xr::ProjectionLayers m_projectionLayers;
 		xr::FrameTime m_currentFrameTime{};
 
@@ -94,17 +90,10 @@ namespace DX {
 		xr::SpaceHandle m_appSpace;
 		xr::SpaceHandle m_viewSpace;
 
-		input_state_t  xr_input = {};
 		XrEnvironmentBlendMode   xr_blend = {};
 		XrDebugUtilsMessengerEXT xr_debug = {};
 		XrFrameState m_current_framestate, lastFrameState;
-
-		//Hand Extensions:
-		xr::XrHandData m_leftHandData;
-		xr::XrHandData m_rightHandData;
-
-		glm::vec3 m_middle_finger_pos;
-
+		
 		// Function pointers for some OpenXR extension methods we'll use.
 		PFN_xrGetD3D11GraphicsRequirementsKHR ext_xrGetD3D11GraphicsRequirementsKHR = nullptr;
 		PFN_xrCreateDebugUtilsMessengerEXT    ext_xrCreateDebugUtilsMessengerEXT = nullptr;
@@ -124,9 +113,7 @@ namespace DX {
 		PFN_xrLocateHandJointsEXT   ext_xrLocateHandJointsEXT;
 
 		void openxr_poll_events();
-		void openxr_poll_actions();
 		void openxr_poll_hands_ext();
-		void openxr_poll_predicted(XrTime predicted_time);
 
 		void SetSecondaryViewConfigurationActive(xr::ViewConfigurationState& secondaryViewConfigState, bool active);
 

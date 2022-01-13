@@ -262,6 +262,9 @@
     <ClCompile Include="..\..\Source\SceneObjs\infoAnnotater.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\handSystem.cpp">
+      <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -482,8 +485,11 @@
     <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h">
       <Filter>Source\SceneObjs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHand.h">
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrActionContext.h">
       <Filter>Source\OXRs\XrUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\handSystem.h">
+      <Filter>Source\SceneObjs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

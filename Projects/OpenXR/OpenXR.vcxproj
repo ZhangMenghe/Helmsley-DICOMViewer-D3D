@@ -371,11 +371,11 @@
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\RMCameraReader.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\Scene.h" />
     <ClInclude Include="..\..\Source\OXRs\XrSceneLib\XrContext.h" />
+    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrActionContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrEnumerate.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrError.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensionContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrExtensions.h" />
-    <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHand.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrHandle.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrInstanceContext.h" />
     <ClInclude Include="..\..\Source\OXRs\XrUtility\XrMath.h" />
@@ -403,6 +403,7 @@
     <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
+    <ClInclude Include="..\..\Source\SceneObjs\handSystem.h" />
     <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h" />
     <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h" />
     <ClInclude Include="..\..\Source\Utils\CVMathUtils.h" />
@@ -477,6 +478,7 @@
     <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp" />
+    <ClCompile Include="..\..\Source\SceneObjs\handSystem.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\infoAnnotater.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp" />
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp" />
