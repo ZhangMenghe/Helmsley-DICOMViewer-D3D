@@ -10,6 +10,7 @@
 #include <grpc/rpcHandler.h>
 #include <OXRs/XrSceneLib/Scene.h>
 #include <OXRs/XrScenarios/MarkerBasedScenario.h>
+#include <SceneObjs/handSystem.h>
 
 class OXRMainScene : public xr::Scene{
 public:

@@ -4,6 +4,7 @@
 #include <Common/DeviceResources.h>
 #include <OXRs/XrUtility/XrHandle.h>
 #include <OXRs/OXRManager.h>
+#include <Renderers/sphereRenderer.h>
 
 namespace xr {
     struct XrHandData {
@@ -49,7 +50,11 @@ public:
 	handSystem(const std::shared_ptr<DX::OXRManager>& deviceResources);
 
     void Update(std::vector<xr::HAND_TOUCH_EVENT>& hand_events, std::vector<glm::vec3>& hand_poes);
+    void Draw(ID3D11DeviceContext* context);
 
+    void setHandsVisibility(bool left_visible, bool right_visible) {
+        m_draw_left = left_visible; m_draw_right = right_visible;
+    }
 private:
 	std::shared_ptr<DX::OXRManager> m_deviceResources;
 
@@ -61,5 +66,9 @@ private:
     xr::XrHandData m_rightHandData;
 
     glm::vec3 m_middle_finger_pos;
+    bool m_draw_left = true, m_draw_right = true;
+
+    std::unique_ptr<sphereRenderer> m_left_mesh, m_right_mesh;
+
 };
 #endif

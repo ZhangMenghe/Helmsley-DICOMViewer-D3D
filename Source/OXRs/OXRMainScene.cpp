@@ -125,6 +125,7 @@ void OXRMainScene::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 	}
 	m_sceneRenderer->Render(view_id);
 	m_ui_board->Render();
+	m_hand_sys->Draw(m_deviceResources->GetD3DDeviceContext());
 }
 
 void OXRMainScene::onSingle3DTouchDown(float x, float y, float z, int side) {

@@ -12,14 +12,14 @@
 #include <SceneObjs/handSystem.h>
 
 std::unique_ptr<DX::OXRManager> oxr_manager;
-std::unique_ptr<handSystem> m_hand_sys;
+std::shared_ptr<handSystem> m_hand_sys;
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	oxr_manager = std::make_unique<DX::OXRManager>();
 	winrt::init_apartment();
 	if (oxr_manager->InitOxrSession("Single file OpenXR")) {
 		//Init Actions
-		m_hand_sys = std::make_unique<handSystem>(std::unique_ptr<DX::OXRManager>(oxr_manager.get()));
+		m_hand_sys = std::make_shared<handSystem>(std::unique_ptr<DX::OXRManager>(oxr_manager.get()));
 	}else {
 		//oxr_manager->ShutDown();
 		throw std::exception("OpenXR initialization failed");
@@ -36,6 +36,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
 	auto main_scene = std::unique_ptr<xr::Scene>(new OXRMainScene(std::unique_ptr<xr::XrContext>(oxr_manager->XrContext())));
 
 	oxr_manager->AddScene(main_scene.get());
+	main_scene->setHandInteractionSystem(m_hand_sys);
 
 	//oxr_manager->AddSceneFinished();
 	std::function<void(float, float, float, int)> onSingle3DTouchDown = [&](float x, float y, float z, int side) {

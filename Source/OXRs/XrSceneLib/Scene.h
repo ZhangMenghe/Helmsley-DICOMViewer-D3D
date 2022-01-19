@@ -5,6 +5,8 @@
 #include <Common/DeviceResources.h>
 #include "FrameTime.h"
 #include "XrContext.h"
+
+class handSystem;
 namespace xr {
 
     struct Scene {
@@ -22,6 +24,7 @@ namespace xr {
         virtual void on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) = 0;
         virtual void on3DTouchReleased(int side) = 0;
 
+        virtual void setHandInteractionSystem(const std::shared_ptr<handSystem>& hand_sys) { m_hand_sys = hand_sys; }
         virtual void SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources){}
         virtual void SetupReferenceFrame(winrt::Windows::Perception::Spatial::SpatialCoordinateSystem referenceFrame){}
         virtual void saveCurrentTargetViews(winrt::com_ptr <ID3D11RenderTargetView> render_target, 
@@ -47,6 +50,8 @@ namespace xr {
 
     protected:
         std::shared_ptr<xr::XrContext> m_context;
+        std::shared_ptr<handSystem> m_hand_sys = nullptr;
+
         //winrt::com_ptr<ID3D11DepthStencilView> m_depthStencilView = nullptr;
         //virtual void OnUpdate(const xr::FrameTime& frameTime [[maybe_unused]]) {
         //}

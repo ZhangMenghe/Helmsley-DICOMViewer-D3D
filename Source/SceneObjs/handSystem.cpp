@@ -49,6 +49,10 @@ handSystem::handSystem(const std::shared_ptr<DX::OXRManager>& deviceResources)
 	std::vector<const xr::ActionContext*> actionContexts;
 	actionContexts.push_back(m_actionContext);
 	xr::AttachActionsToSession(m_context->Instance.Handle, m_context->Session.Handle, actionContexts);
+
+    //Initialize mesh
+    m_left_mesh = std::make_unique<sphereRenderer>(m_deviceResources->GetD3DDevice(), 9, 7, DirectX::XMFLOAT4({ 1.0f, 1.0f, .0f, 1.0f }));
+    m_right_mesh = std::make_unique<sphereRenderer>(m_deviceResources->GetD3DDevice(), 9, 7, DirectX::XMFLOAT4({ .0f, 1.0f, 1.0f, 1.0f }));
 }
 
 void handSystem::Update(std::vector<xr::HAND_TOUCH_EVENT>& hand_events, std::vector<glm::vec3>& hand_poes){
@@ -102,5 +106,15 @@ void handSystem::Update(std::vector<xr::HAND_TOUCH_EVENT>& hand_events, std::vec
         else {
             hand_events[hand - 1] = xr::HAND_TOUCH_RELEASE;
         }
+    }
+}
+void handSystem::Draw(ID3D11DeviceContext* context) {
+    if (m_draw_right) {
+        //update mesh position
+        auto radius = m_rightHandData.JointLocations[XR_HAND_JOINT_INDEX_TIP_EXT].radius;
+        //, DirectX::XMMATRIX modelMat
+        m_right_mesh->Draw(context,
+            DirectX::XMMatrixScaling(radius, radius, radius)
+            * xr::math::LoadXrPose(m_rightHandData.JointLocations[XR_HAND_JOINT_INDEX_TIP_EXT].pose));
     }
 }

@@ -592,6 +592,9 @@
     <FxCompile Include="..\..\Source\Shaders\viewSlicingVertexShader.hlsl">
       <Filter>Source\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\NaiveNormVertexShader.hlsl">
+      <Filter>Source\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\Library\x64\bin\libprotobuf.dll">

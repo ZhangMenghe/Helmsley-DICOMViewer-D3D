@@ -44,6 +44,6 @@ void infoAnnotater::onDrawCube(
 	tex_info->setTexData(context, &destRegion, pos, value, sizeof(UINT));
 }
 bool infoAnnotater::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat) {
-	m_sphere->Draw(context, modelMat);
+	//m_sphere->Draw(context, modelMat);
 	return true;
 }
