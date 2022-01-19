@@ -398,6 +398,7 @@
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h" />
+    <ClInclude Include="..\..\Source\Renderers\sphereRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h" />
     <ClInclude Include="..\..\Source\ResearchModeApi\ResearchModeApi.h" />
@@ -474,6 +475,7 @@
     <ClCompile Include="..\..\Source\Renderers\quadRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp" />
+    <ClCompile Include="..\..\Source\Renderers\sphereRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />

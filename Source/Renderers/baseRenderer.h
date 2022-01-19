@@ -20,6 +20,7 @@ public:
 		m_indexBuffer = nullptr;
 	};
 	ID3D11RenderTargetView* GetRenderTargetView() { return texture->GetRenderTargetView(); }
+	void createPixelConstantColorBuffer(ID3D11Device* device, DirectX::XMFLOAT4 color);
 	void createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data);
 	void updatePixelConstBuffer(ID3D11DeviceContext* context, const void* data);
 	void createDynamicVertexBuffer(ID3D11Device* device, int vertex_num);
@@ -56,7 +57,7 @@ protected:
 	virtual void create_vertex_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
 	virtual void create_fragment_shader(ID3D11Device* device, const std::vector<byte>& fileData) = 0;
 
-	void initialize();
+	virtual void initialize();
 	void initialize_vertices(ID3D11Device* device, const float* vdata);
 	void initialize_indices(ID3D11Device* device, const unsigned short* idata);
 	void initialize_mesh_others(ID3D11Device* device){}

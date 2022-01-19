@@ -152,16 +152,10 @@ void organMeshRenderer::create_vertex_shader(ID3D11Device* device, const std::ve
 		)
 	);
 
-	static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
 	winrt::check_hresult(
 		device->CreateInputLayout(
-			vertexDesc,
-			ARRAYSIZE(vertexDesc),
+			dvr::g_vinput_pos_norm_3d_desc,
+			ARRAYSIZE(dvr::g_vinput_pos_norm_3d_desc),
 			&fileData[0],
 			fileData.size(),
 			m_inputLayout.put()

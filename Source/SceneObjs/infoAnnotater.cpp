@@ -18,6 +18,8 @@ void infoAnnotater::onCreateCanvas(ID3D11Device* device, UINT ph, UINT pw, UINT 
 	tex_info->Initialize(device, texInfoDesc);
 	m_ph = ph; m_pw = pw; m_pd = pd;
 	tex_info->createTexRaw(ph, pw, pd, 4);
+
+	m_sphere = new sphereRenderer(device, 9, 7, { 1.0f, 1.0f, .0f, 1.0f });
 }
 void infoAnnotater::onDrawCube(
 	ID3D11DeviceContext* context, glm::vec3 center, 
@@ -40,4 +42,8 @@ void infoAnnotater::onDrawCube(
 	destRegion.back = std::min(m_pd, UINT(cp.z + hsz.z));
 
 	tex_info->setTexData(context, &destRegion, pos, value, sizeof(UINT));
+}
+bool infoAnnotater::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat) {
+	m_sphere->Draw(context, modelMat);
+	return true;
 }

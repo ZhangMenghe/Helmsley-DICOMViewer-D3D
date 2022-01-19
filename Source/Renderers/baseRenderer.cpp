@@ -97,6 +97,15 @@ void baseRenderer::initialize_indices(ID3D11Device* device, const unsigned short
 		)
 	);
 }
+void baseRenderer::createPixelConstantColorBuffer(ID3D11Device* device, DirectX::XMFLOAT4 color) {
+	CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	dvr::ColorConstantBuffer tdata;
+	tdata.u_color = color;
+	D3D11_SUBRESOURCE_DATA color_resource;
+	color_resource.pSysMem = &tdata;
+	createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
+}
+
 void baseRenderer::createPixelConstantBuffer(ID3D11Device* device, CD3D11_BUFFER_DESC pixconstBufferDesc, D3D11_SUBRESOURCE_DATA* data) {
 	winrt::check_hresult(
 		device->CreateBuffer(

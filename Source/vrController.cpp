@@ -307,6 +307,11 @@ void vrController::Render(int view_id){
 											is_front);
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
+	render_complete &= m_info_annotater->Draw(m_deviceResources->GetD3DDeviceContext(), 
+		DirectX::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+		* mat42xmmatrix(model_mat_tex));
+	m_deviceResources->ClearCurrentDepthBuffer();
+
 	Manager::baked_dirty_ = false;
 	//m_scene_dirty = !render_complete;
 	context->RSSetState(m_render_state_front);
@@ -516,10 +521,15 @@ void vrController::setupCenterLine(int id, float *data)
 	int oid = 0;
 	while (id /= 2)
 		oid++;
+	
+	DirectX::XMFLOAT4 color;
+	if (oid == 4) color = { 1.0f, .0f, .0f, 1.0f };
+	else color = { 1.0f, 1.0f, .0f, 1.0f };
+
 	if (m_line_renderers.count(oid))
 		m_line_renderers[oid]->updateVertices(m_deviceResources->GetD3DDevice(), 4000, data);
 	else
-		m_line_renderers[oid] = std::make_unique<lineRenderer>(m_deviceResources->GetD3DDevice(), oid, 4000, data);
+		m_line_renderers[oid] = std::make_unique<lineRenderer>(m_deviceResources->GetD3DDevice(), color, 4000, data);
 	m_cutter->setupCenterLine((ORGAN_IDS)oid, data);
 }
 

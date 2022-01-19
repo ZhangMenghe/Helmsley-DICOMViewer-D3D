@@ -3,6 +3,7 @@
 #include <winrt/base.h>
 #include <Common/DeviceResources.h>
 #include <D3DPipeline/Texture.h>
+#include <Renderers/sphereRenderer.h>
 class infoAnnotater {
 public:
 	infoAnnotater();
@@ -11,9 +12,11 @@ public:
 	void onDrawCube(ID3D11DeviceContext* context, glm::vec3 center,
 		glm::vec3 vol_dim_scale,
 		int sz, std::vector<int> pos, std::vector<unsigned char> value);
+	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat);
 private:
 	//texture
 	std::unique_ptr<Texture> tex_info;
 	UINT m_ph, m_pw, m_pd;
+	sphereRenderer* m_sphere;
 };
 #endif

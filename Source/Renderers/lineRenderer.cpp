@@ -3,10 +3,23 @@
 #include <Common/DirectXHelper.h>
 #include <Common/Manager.h>
 using namespace DirectX;
-lineRenderer::lineRenderer(ID3D11Device* device, int uid)
-:baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso"),
-m_uid(uid){
+lineRenderer::lineRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color)
+:baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso"){
 	initialize();
+	createPixelConstantColorBuffer(device, color);
+}
+lineRenderer::lineRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color, int point_num, const float* data)
+	: lineRenderer(device, color) {
+	updateVertices(device, point_num, data);
+}
+lineRenderer::lineRenderer(ID3D11Device* device, DirectX::XMFLOAT4 color,
+	const float* vdata, const unsigned short* idata, UINT vertice_num, UINT idx_num) 
+	: baseRenderer(device, L"Naive3DVertexShader.cso", L"SimpleColorPixelShader.cso", vdata, idata, vertice_num, idx_num) {
+	initialize();
+	createPixelConstantColorBuffer(device, color);
+}
+void lineRenderer::initialize() {
+	baseRenderer::initialize();
 
 	D3D11_BLEND_DESC omDesc;
 	ZeroMemory(&omDesc, sizeof(D3D11_BLEND_DESC));
@@ -21,11 +34,6 @@ m_uid(uid){
 	omDesc.AlphaToCoverageEnable = false;
 	device->CreateBlendState(&omDesc, &d3dBlendState);
 }
-lineRenderer::lineRenderer(ID3D11Device* device, int uid, int point_num, const float* data)
-	: lineRenderer(device, uid) {
-	updateVertices(device, point_num, data);
-}
-
 void lineRenderer::updateVertices(ID3D11Device* device, int point_num, const float* data) {
 	m_vertice_count = point_num;
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
@@ -112,12 +120,4 @@ void lineRenderer::create_fragment_shader(ID3D11Device* device, const std::vecto
 			m_constantBuffer.put()
 		)
 	);
-
-	CD3D11_BUFFER_DESC pixconstBufferDesc(sizeof(dvr::ColorConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	dvr::ColorConstantBuffer tdata;
-	if(m_uid == 4) tdata.u_color = { 1.0f, .0f, .0f, 1.0f };
-	else tdata.u_color = { 1.0f, 1.0f, .0f, 1.0f };
-	D3D11_SUBRESOURCE_DATA color_resource;
-	color_resource.pSysMem = &tdata;
-	createPixelConstantBuffer(device, pixconstBufferDesc, &color_resource);
 }

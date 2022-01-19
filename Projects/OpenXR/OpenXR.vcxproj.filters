@@ -265,6 +265,9 @@
     <ClCompile Include="..\..\Source\SceneObjs\handSystem.cpp">
       <Filter>Source\SceneObjs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Renderers\sphereRenderer.cpp">
+      <Filter>Source\Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -490,6 +493,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\SceneObjs\handSystem.h">
       <Filter>Source\SceneObjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Renderers\sphereRenderer.h">
+      <Filter>Source\Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

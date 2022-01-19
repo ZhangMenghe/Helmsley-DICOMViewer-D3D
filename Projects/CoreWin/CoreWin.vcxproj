@@ -307,6 +307,7 @@
     <ClInclude Include="..\..\Source\Renderers\quadRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\raycastVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\screenQuadRenderer.h" />
+    <ClInclude Include="..\..\Source\Renderers\sphereRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\textureBasedVolumeRenderer.h" />
     <ClInclude Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.h" />
     <ClInclude Include="..\..\Source\SceneObjs\cuttingPlane.h" />
@@ -361,6 +362,7 @@
     <ClCompile Include="..\..\Source\Renderers\quadRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\raycastVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\screenQuadRenderer.cpp" />
+    <ClCompile Include="..\..\Source\Renderers\sphereRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\textureBasedVolumeRenderer.cpp" />
     <ClCompile Include="..\..\Source\Renderers\ViewAlignedSlicingRenderer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\cuttingPlane.cpp" />
@@ -525,6 +527,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shaders\NaiveNormVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
