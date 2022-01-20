@@ -53,6 +53,27 @@ handSystem::handSystem(const std::shared_ptr<DX::OXRManager>& deviceResources)
     //Initialize mesh
     m_left_mesh = std::make_unique<sphereRenderer>(m_deviceResources->GetD3DDevice(), 9, 7, DirectX::XMFLOAT4({ 1.0f, 1.0f, .0f, 1.0f }));
     m_right_mesh = std::make_unique<sphereRenderer>(m_deviceResources->GetD3DDevice(), 9, 7, DirectX::XMFLOAT4({ .0f, 1.0f, 1.0f, 1.0f }));
+
+    //Init detector
+    // Set a clap detector
+    m_clapDetector = std::make_unique<xr::StateChangeDetector>(
+        [this](XrTime time) {
+        const XrHandJointLocationEXT& leftPalmLocation = m_leftHandData.JointLocations[XR_HAND_JOINT_PALM_EXT];
+        const XrHandJointLocationEXT& rightPalmLocation = m_rightHandData.JointLocations[XR_HAND_JOINT_PALM_EXT];
+
+        if (xr::math::Pose::IsPoseValid(leftPalmLocation) && xr::math::Pose::IsPoseValid(rightPalmLocation)) {
+            const DirectX::XMVECTOR leftPalmPosition = xr::math::LoadXrVector3(leftPalmLocation.pose.position);
+            const DirectX::XMVECTOR rightPalmPosition = xr::math::LoadXrVector3(rightPalmLocation.pose.position);
+            const float distance = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(leftPalmPosition, rightPalmPosition)));
+            return distance - leftPalmLocation.radius - rightPalmLocation.radius < 0.02f /*meter*/;
+        }
+
+        return false;
+    },
+        [this]() {
+        m_clap_num += 1;
+    });
+
 }
 
 void handSystem::Update(std::vector<xr::HAND_TOUCH_EVENT>& hand_events, std::vector<glm::vec3>& hand_poes){
@@ -107,6 +128,7 @@ void handSystem::Update(std::vector<xr::HAND_TOUCH_EVENT>& hand_events, std::vec
             hand_events[hand - 1] = xr::HAND_TOUCH_RELEASE;
         }
     }
+    m_clapDetector->Update(m_deviceResources->getCurrentFrameState().predictedDisplayTime);
 }
 void handSystem::Draw(ID3D11DeviceContext* context) {
     if (m_draw_right) {

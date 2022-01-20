@@ -16,11 +16,16 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_sceneRenderer = std::make_unique<vrController>(m_deviceResources, m_manager);
 	m_manager->addMVPStatus("CoreCam", true);
 
-	//m_fpsTextRenderer = std::make_unique<FpsTextRenderer>(m_deviceResources);
-	m_ui_board = std::make_unique<overUIBoard>(m_deviceResources);
-	m_ui_board->AddBoard("fps", glm::vec3(0.8, -0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)));
-	m_ui_board->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::mat4(1.0));
-	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
+	m_static_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
+	m_static_uiboard->AddBoard("fps", glm::vec3(0.8, -0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)), D2D1::ColorF::Chocolate);
+	
+	m_popup_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
+	m_popup_uiboard->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_VIEW_Z * 0.5f), glm::vec3(0.3, 0.4, 0.2));
+	m_popup_uiboard->AddBoard(rpcHandler::G_STATUS_SENDER ? "Broadcast" : "Listen");
+	m_popup_uiboard->AddBoard("Annotation");
+
+	//m_popup_uiboard->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::mat4(1.0), D2D1::ColorF::Chocolate);
+	//m_popup_uiboard->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
@@ -89,7 +94,7 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 
 	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
-	m_ui_board->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
+	m_static_uiboard->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
 }
 
 // Updates the application state once per frame.
@@ -117,17 +122,17 @@ void CoreWinMain::Update(){
 		m_data_manager->loadData(dmsg.ds_name(), dmsg.volume_name());
 		rpcHandler::new_data_request = false;
 	}
-	if (rpcHandler::G_FORCED_STOP_BROADCAST) {
-		m_ui_board->Update("broadcast", L"Listen");
-		rpcHandler::G_FORCED_STOP_BROADCAST = false;
-	}
+	//if (rpcHandler::G_FORCED_STOP_BROADCAST) {
+	//	m_ui_board->Update("broadcast", L"Listen");
+	//	rpcHandler::G_FORCED_STOP_BROADCAST = false;
+	//}
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{
 		m_dicom_loader->onUpdate();
 		//m_fpsTextRenderer->Update(m_timer);
 		uint32 fps = m_timer.GetFramesPerSecond();
-		m_ui_board->Update("fps", (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS");
+		m_static_uiboard->Update("fps", (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS");
 	});
 }
 
@@ -157,8 +162,8 @@ bool CoreWinMain::Render(){
 	// Render the scene objects.
 	m_sceneRenderer->Render(0);
 	//m_fpsTextRenderer->Render();
-	m_ui_board->Render();
-
+	m_static_uiboard->Render();
+	m_popup_uiboard->Render();
 	return true;
 }
 
@@ -174,15 +179,15 @@ void CoreWinMain::OnDeviceRestored()
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
-	m_waitfor_operation = !m_ui_board->CheckHit("broadcast", x, y);
-	if (m_waitfor_operation) {
+	//m_waitfor_operation = !m_ui_board->CheckHit("broadcast", x, y);
+	//if (m_waitfor_operation) {
 		m_sceneRenderer->onSingleTouchDown(x, y);
-		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
-	}else{
-		m_rpcHandler->onBroadCastChanged();
-		m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER? L"Broadcast" : L"Listen");
-		m_waitfor_operation = false;
-	}
+	//	if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+	//}else{
+	//	m_rpcHandler->onBroadCastChanged();
+	//	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER? L"Broadcast" : L"Listen");
+	//	m_waitfor_operation = false;
+	//}
 
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {

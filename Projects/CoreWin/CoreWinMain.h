@@ -29,9 +29,8 @@ namespace CoreWin {
 		std::shared_ptr<Manager> m_manager;
 		std::unique_ptr<vrController> m_sceneRenderer;
 
-		//std::unique_ptr<FpsTextRenderer> m_fpsTextRenderer;
-		std::unique_ptr<overUIBoard> m_ui_board;
-		
+		std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard;
+
 		uiController m_uiController;
 
 		dataManager* m_data_manager;

@@ -10,7 +10,6 @@
 #include <grpc/rpcHandler.h>
 #include <OXRs/XrSceneLib/Scene.h>
 #include <OXRs/XrScenarios/MarkerBasedScenario.h>
-#include <SceneObjs/handSystem.h>
 
 class OXRMainScene : public xr::Scene{
 public:
@@ -41,7 +40,7 @@ private:
 	MarkerBasedScenario* m_scenario;
 	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
-	std::unique_ptr<overUIBoard> m_ui_board;
+	std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard;
 	
 	uiController m_uiController;
 
@@ -60,6 +59,7 @@ private:
 
 	bool m_overwrite_index_file = false;
 	bool m_local_initialized = false;
+	bool m_pop_up_ui_visible;
 
 	void setup_volume_server();
 	void setup_volume_local();

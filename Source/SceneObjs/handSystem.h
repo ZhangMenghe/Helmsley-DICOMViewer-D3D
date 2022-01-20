@@ -43,6 +43,29 @@ namespace xr {
         HAND_TOUCH_MOVE,
         HAND_TOUCH_RELEASE
     };
+    // Detects two spaces collide to each other
+    class StateChangeDetector {
+    public:
+        StateChangeDetector(std::function<bool(XrTime)> getState, std::function<void()> callback)
+            : m_getState(std::move(getState))
+            , m_callback(std::move(callback)) {
+        }
+
+        void Update(XrTime time) {
+            bool state = m_getState(time);
+            if (m_lastState != state) {
+                m_lastState = state;
+                if (state) { // trigger on rising edge
+                    m_callback();
+                }
+            }
+        }
+
+    private:
+        const std::function<bool(XrTime)> m_getState;
+        const std::function<void()> m_callback;
+        std::optional<bool> m_lastState{};
+    };
 }
 // Renders the current FPS value in the bottom right corner of the screen using Direct2D and DirectWrite.
 class handSystem{
@@ -54,6 +77,11 @@ public:
 
     void setHandsVisibility(bool left_visible, bool right_visible) {
         m_draw_left = left_visible; m_draw_right = right_visible;
+    }
+    int getClapNum() { return m_clap_num; }
+    void getCurrentTouchPosition(XrVector3f& pos, float& radius) { 
+        pos = m_rightHandData.JointLocations[XR_HAND_JOINT_INDEX_TIP_EXT].pose.position; 
+        radius = m_rightHandData.JointLocations[XR_HAND_JOINT_INDEX_TIP_EXT].radius;
     }
 private:
 	std::shared_ptr<DX::OXRManager> m_deviceResources;
@@ -67,8 +95,10 @@ private:
 
     glm::vec3 m_middle_finger_pos;
     bool m_draw_left = true, m_draw_right = true;
+    int m_clap_num = 0;
 
     std::unique_ptr<sphereRenderer> m_left_mesh, m_right_mesh;
+    std::unique_ptr<xr::StateChangeDetector> m_clapDetector, m_tapwristDetector;
 
 };
 #endif
