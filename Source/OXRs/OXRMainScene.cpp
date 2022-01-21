@@ -24,13 +24,7 @@ void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources
 	m_popup_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
 	m_popup_uiboard->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_NEAR_Z), glm::vec3(0.3, 0.4, 0.2));
 	m_popup_uiboard->AddBoard("Annotation");
-	m_popup_uiboard->AddBoard("Broadcast");
-
-		//,glm::vec3(0.3, 0.1, -0.3f), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)),
-		//);
-	//m_popup_uiboard->Update("Annotation", D2D1::ColorF::DarkBlue);
-	//m_popup_uiboard->AddBoard("broadcast", glm::vec3(-0.3, 0.1, -0.1f), glm::vec3(0.15f, 0.1f, 0.1f), glm::mat4(1.0));
-	//m_popup_uiboard->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
+	m_popup_uiboard->AddBoard("Broadcast", L"Broadcast", L"Listen", rpcHandler::G_STATUS_SENDER);
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
@@ -91,7 +85,6 @@ void OXRMainScene::setup_resource()
 void OXRMainScene::onViewChanged(){
 	winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
 	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
-	m_static_uiboard->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
 }
 void OXRMainScene::Update(const xr::FrameTime& frameTime){
 	if (m_local_initialized) {
@@ -117,19 +110,17 @@ void OXRMainScene::Update(const xr::FrameTime& frameTime){
 		rpcHandler::new_data_request = false;
 	}
 	m_pop_up_ui_visible = (m_hand_sys->getClapNum() % 2 == 1);
-	//auto curr_time = frameTime.FrameIndex;
-	if (m_pop_up_ui_visible){// && (m_last_action_time == -1 || curr_time - m_last_action_time > m_action_threshold)) {
-		//m_last_action_time = curr_time;
-		//check hit test
+	if (m_pop_up_ui_visible){
+		//hit test
 		std::string hit_name;
 		XrVector3f pos; float radius;
 		m_hand_sys->getCurrentTouchPosition(pos, radius);
-		m_popup_uiboard->CheckHit(frameTime.FrameIndex, hit_name, pos, radius);
+		m_popup_uiboard->CheckHit(frameTime.FrameIndex, hit_name, glm::vec3(pos.x,pos.y,pos.z), radius);
 		if (hit_name == "Annotation") {
 
 		}
 		else if (hit_name == "Broadcast" ) {
-
+			//m_rpcHandler->onBroadCastChanged();
 		}
 	}
 	m_timer.Tick([&]() {
@@ -156,20 +147,7 @@ void OXRMainScene::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 }
 
 void OXRMainScene::onSingle3DTouchDown(float x, float y, float z, int side) {
-	//check sphere-plane intersection
-	//if (m_ui_board->CheckHit("broadcast", x, y, z)) {
-	//	m_rpcHandler->onBroadCastChanged();
-	//	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
-	//}
-	//else {
-	//	if (m_ui_board->CheckHit("Annotation", x, y, z)) 
-	//		m_ui_board->Update("Annotation", m_sceneRenderer->onChangeAnnotationgStatus()? D2D1::ColorF::Chocolate: D2D1::ColorF::DarkBlue);
-	//	
-		m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
-		//
-		//	m_rpcHandler->setVolumePose()
-	//}
-	//m_scenario->onSingle3DTouchDown(x, y, z, side);
+	m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
 }
 void OXRMainScene::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) {
 	std::vector<dvr::OXR_POSE_TYPE> types;

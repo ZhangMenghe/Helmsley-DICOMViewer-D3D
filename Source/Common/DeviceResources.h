@@ -22,6 +22,7 @@ namespace DX
 		void SetLogicalSize(winrt::Windows::Foundation::Size logicalSize);
 		void SetCurrentOrientation(winrt::Windows::Graphics::Display::DisplayOrientations currentOrientation);
 		void SetDpi(float dpi);
+		void setOutputSize(float width, float height);
 		void ValidateDevice();
 		void HandleDeviceLost();
 		void RegisterDeviceNotify(IDeviceNotify* deviceNotify);

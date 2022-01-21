@@ -530,7 +530,10 @@ void DX::DeviceResources::SetLogicalSize(winrt::Windows::Foundation::Size logica
 		CreateWindowSizeDependentResources();
 	}
 }
-
+void DX::DeviceResources::setOutputSize(float width, float height) {
+	m_outputSize.Width = width;
+	m_outputSize.Height = height;
+}
 // This method is called in the event handler for the DpiChanged event.
 void DX::DeviceResources::SetDpi(float dpi)
 {

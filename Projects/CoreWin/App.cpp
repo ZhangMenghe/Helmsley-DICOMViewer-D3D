@@ -185,6 +185,7 @@ namespace CoreWin
 	// Window event handlers.
 
 	void App::OnWindowSizeChanged(windows::CoreWindow const& sender, windows::WindowSizeChangedEventArgs const& args) {
+		m_deviceResources->setOutputSize(args.Size().Width, args.Size().Height);
 		m_main->CreateWindowSizeDependentResources();
 	}
 

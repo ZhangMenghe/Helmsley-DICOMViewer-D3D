@@ -49,6 +49,7 @@ namespace CoreWin {
 		const bool m_overwrite_index_file = false;
 		bool m_local_initialized = false;
 		bool m_waitfor_operation = true;
+		bool m_pop_up_ui_visible = true;
 
 		void setup_volume_server();
 		void setup_volume_local();

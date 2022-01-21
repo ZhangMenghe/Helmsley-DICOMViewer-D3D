@@ -21,11 +21,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	
 	m_popup_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
 	m_popup_uiboard->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_VIEW_Z * 0.5f), glm::vec3(0.3, 0.4, 0.2));
-	m_popup_uiboard->AddBoard(rpcHandler::G_STATUS_SENDER ? "Broadcast" : "Listen");
 	m_popup_uiboard->AddBoard("Annotation");
-
-	//m_popup_uiboard->AddBoard("broadcast", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::mat4(1.0), D2D1::ColorF::Chocolate);
-	//m_popup_uiboard->Update("broadcast", rpcHandler::G_STATUS_SENDER ? L"Broadcast" : L"Listen");
+	m_popup_uiboard->AddBoard("Broadcast", L"Broadcast", L"Listen", rpcHandler::G_STATUS_SENDER);
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
@@ -94,7 +91,7 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 
 	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
-	m_static_uiboard->CreateWindowSizeDependentResources(outputSize.Width, outputSize.Height);
+	m_popup_uiboard->onWindowSizeChanged();
 }
 
 // Updates the application state once per frame.
@@ -163,7 +160,7 @@ bool CoreWinMain::Render(){
 	m_sceneRenderer->Render(0);
 	//m_fpsTextRenderer->Render();
 	m_static_uiboard->Render();
-	m_popup_uiboard->Render();
+	if(m_pop_up_ui_visible)m_popup_uiboard->Render();
 	return true;
 }
 
@@ -179,16 +176,33 @@ void CoreWinMain::OnDeviceRestored()
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
-	//m_waitfor_operation = !m_ui_board->CheckHit("broadcast", x, y);
-	//if (m_waitfor_operation) {
-		m_sceneRenderer->onSingleTouchDown(x, y);
-	//	if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
-	//}else{
-	//	m_rpcHandler->onBroadCastChanged();
-	//	m_ui_board->Update("broadcast", rpcHandler::G_STATUS_SENDER? L"Broadcast" : L"Listen");
-	//	m_waitfor_operation = false;
-	//}
+	if (m_pop_up_ui_visible) {
+		std::string hit_name;
+		m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
+		if (hit_name == "Annotation") {
 
+		}
+		else if (hit_name == "Broadcast") {
+			//m_rpcHandler->onBroadCastChanged();
+		}
+
+		//if (m_popup_uiboard->CheckHit("Broadcast", x, y)) {
+		//	std::cout << "hit" << std::endl;
+		//}
+		//hit test
+		//std::string hit_name;
+		//m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, glm::vec3(x, y, .0f), 0.1f);
+		//if (hit_name == "Annotation") {
+
+		//}
+		//else if (hit_name == "Broadcast") {
+			//m_rpcHandler->onBroadCastChanged();
+		//}
+	}
+	else {
+		m_sceneRenderer->onSingleTouchDown(x, y);
+		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+	}
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {
 	if (m_waitfor_operation) {

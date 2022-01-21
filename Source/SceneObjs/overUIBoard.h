@@ -7,7 +7,9 @@
 #include <Common/TextTexture.h>
 #include <unordered_map>
 struct TextQuad {
-	std::wstring content;
+	std::wstring unselected_text;
+	std::wstring selected_text;
+
 	quadRenderer* quad;
 	TextTexture* ttex;
 	glm::vec3 pos;
@@ -15,25 +17,27 @@ struct TextQuad {
 	glm::vec3 dir;
 	bool selected;
 	DirectX::XMMATRIX mat;
-	XrTime last_action_time;
+	int64_t last_action_time;
 };
 // Renders the current FPS value in the bottom right corner of the screen using Direct2D and DirectWrite.
 class overUIBoard{
 public:
 	overUIBoard(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 
-	void CreateWindowSizeDependentResources(float width, float height);
 	void CreateBackgroundBoard(glm::vec3 pos, glm::vec3 scale);
 
-	void AddBoard(std::string name);
-	void AddBoard(std::string name, glm::vec3 pos, glm::vec3 scale, glm::mat4 rot, D2D1::ColorF color);
+	void AddBoard(std::string name, std::wstring unsel_tex = L"", std::wstring sel_tex = L"", bool default_state = false);
+	void AddBoard(std::string name, glm::vec3 pos, glm::vec3 scale, glm::mat4 rot, D2D1::ColorF color, std::wstring unsel_tex = L"", std::wstring sel_tex = L"", bool default_state = false);
 	bool CheckHit(std::string name, float x, float y);
 	bool CheckHit(std::string name, float x, float y, float z);
-	bool CheckHit(const uint64_t frameIndex, std::string& name, XrVector3f pos, float radius);
+	bool CheckHit(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius);
+	bool CheckHit(const uint64_t frameIndex, std::string& name, float x, float y);
 
 	void Update(std::string name, std::wstring new_content);
 	void Update(std::string name, D2D1::ColorF color);
 	void Render();
+
+	void onWindowSizeChanged();
 
 private:
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;
@@ -41,6 +45,8 @@ private:
 	std::unique_ptr<TextQuad> m_background_board = nullptr;
 
 	float m_screen_x, m_screen_y;
-	const XrTime m_action_threshold = 20;
+	const int64_t m_action_threshold = 20;
+
+	bool on_board_hit(TextQuad& texquad, const uint64_t frameIndex);
 };
 #endif
