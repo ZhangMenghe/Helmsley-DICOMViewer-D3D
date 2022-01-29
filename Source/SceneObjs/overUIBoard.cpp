@@ -4,6 +4,7 @@
 #include <Utils/TypeConvertUtils.h>
 #include <D3DPipeline/Primitive.h>
 #include "strsafe.h"
+#include <Common/Manager.h>
 namespace {
 	// Test if a 2D point (x,y) is in polygon with npol edges and xp,yp vertices
 	// The following code is by Randolph Franklin, it returns 1 for interior points and 0 for exterior points.
@@ -31,6 +32,12 @@ namespace {
 			return (pnpoly(4, xps, yps, point.x, point.y) == 1);
 		}
 		return false;
+	}
+	bool point2d_inside_rectangle(float offsetx, float offsety, float sizex, float sizey, float px, float py) {
+		return (px >= offsetx
+			&& px < offsetx + sizex
+			&& py >= offsety
+			&& py < offsety + sizey);
 	}
 }
 overUIBoard::overUIBoard(const std::shared_ptr<DX::DeviceResources>& deviceResources)
@@ -85,16 +92,12 @@ void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4
 	TextQuad tq;
 	tq.unselected_text = unsel_tex.empty()?std::wstring(name.begin(), name.end()): unsel_tex;
 	tq.selected_text = sel_tex.empty()? std::wstring(name.begin(), name.end()) : unsel_tex;
-
-	auto outputSize = m_deviceResources->GetOutputSize();
-	if (outputSize.Width == 0) {
-		tq.pos = p; tq.size = s;
-	}else {
-		tq.size = glm::vec3(s.x * outputSize.Width, s.y * outputSize.Height, .0f);
-		tq.pos.x = (p.x + 0.5) * outputSize.Width - tq.size.x * 0.5f;
-		tq.pos.y = (0.5 - p.y) * outputSize.Height - tq.size.y * 0.5f;
-	}
 	tq.selected = default_state;
+	
+	tq.pos = p; tq.size = s;
+	tq.mat = DirectX::XMMatrixScaling(s.x, s.y, s.z)
+		* mat42xmmatrix(r)
+		* DirectX::XMMatrixTranslation(p.x, p.y, p.z);
 
 	TextTextureInfo textInfo{ 256, 128 }; // pixels
 	textInfo.Margin = 5; // pixels
@@ -104,9 +107,6 @@ void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4
 	tq.ttex->setBackgroundColor(color);
 	tq.dir = glm::vec3(glm::vec4(.0, .0, 1.0, .0) * r);
 	tq.quad = new quadRenderer(m_deviceResources->GetD3DDevice());
-	tq.mat = DirectX::XMMatrixScaling(s.x, s.y, s.z)
-		* mat42xmmatrix(r)
-		* DirectX::XMMatrixTranslation(p.x, p.y, p.z);
 	tq.quad->setTexture(tq.ttex);
 	tq.last_action_time = -1;
 	m_tquads[name] = tq;
@@ -114,20 +114,18 @@ void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4
 bool overUIBoard::CheckHit(std::string name, float px, float py) {
 	glm::vec3 m_offset = m_tquads[name].pos;
 	glm::vec3 m_size = m_tquads[name].size;
-
-	return (px >= m_offset.x
-		&& px < m_offset.x + m_size.x
-		&& py >= m_offset.y
-		&& py < m_offset.y + m_size.y); 
+	return point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py);
 }
 bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, float px, float py) {
+	if (m_background_board) {
+		glm::vec3 m_offset = m_background_board->pos;
+		glm::vec3 m_size = m_background_board->size;
+		if (!point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) return false;
+	}
 	for (auto& tq : m_tquads) {
 		glm::vec3 m_offset = tq.second.pos;
 		glm::vec3 m_size = tq.second.size;
-		if (px >= m_offset.x
-			&& px < m_offset.x + m_size.x
-			&& py >= m_offset.y
-			&& py < m_offset.y + m_size.y) {
+		if (point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) {
 			if (on_board_hit(tq.second, frameIndex)) {
 				name = tq.first; return true;
 			}
@@ -185,9 +183,34 @@ void overUIBoard::Update(std::string name, std::wstring new_content) {
 
 	}
 }
+void overUIBoard::update_board_projection_pos(DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos) {
+	DirectX::XMFLOAT4X4 mmat_f;
+	DirectX::XMStoreFloat4x4(&mmat_f, proj_mat);
+
+	size = glm::vec3(mmat_f.m[0][0] * m_screen_x, mmat_f.m[1][1] * m_screen_y, .0f);
+
+	auto ndc_y = std::clamp(mmat_f.m[1][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
+	pos.y = (1.0f - 0.5f * (ndc_y + 1.0f)) * m_screen_y - size.y * 0.5f;
+
+	auto ndc_x = std::clamp(mmat_f.m[0][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
+	pos.x = (ndc_x + 1.0f) * 0.5f * m_screen_x - size.x * 0.5f;
+}
 void overUIBoard::Render(){
 	if (m_background_board) {
 		m_background_board->quad->Draw(m_deviceResources->GetD3DDeviceContext(), m_background_board->mat);
+	}
+	auto outputSize = m_deviceResources->GetOutputSize();
+	if(outputSize.Width!=0) {
+		for (auto& tq : m_tquads) {
+			auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
+				DirectX::XMMatrixTranspose(tq.second.mat));
+			update_board_projection_pos(projMat, tq.second.size, tq.second.pos);
+		}
+		if (m_background_board) {
+			auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
+				DirectX::XMMatrixTranspose(m_background_board->mat));
+			update_board_projection_pos(projMat, m_background_board->size, m_background_board->pos);
+		}
 	}
 	for (auto tq : m_tquads) {
 		tq.second.ttex->Draw(tq.second.selected?tq.second.selected_text.c_str():tq.second.unselected_text.c_str());

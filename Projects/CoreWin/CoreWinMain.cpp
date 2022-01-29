@@ -18,7 +18,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 
 	m_static_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
 	m_static_uiboard->AddBoard("fps", glm::vec3(0.8, -0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)), D2D1::ColorF::Chocolate);
-	
+	m_static_uiboard->AddBoard("popupStart", glm::vec3(-0.8, 0.8, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::mat4(1.0), D2D1::ColorF::SlateBlue);
+
 	m_popup_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
 	m_popup_uiboard->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_VIEW_Z * 0.5f), glm::vec3(0.3, 0.4, 0.2));
 	m_popup_uiboard->AddBoard("Annotation");
@@ -176,6 +177,10 @@ void CoreWinMain::OnDeviceRestored()
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
+	if (m_static_uiboard->CheckHit("popupStart", x, y)) {
+		m_pop_up_ui_visible = !m_pop_up_ui_visible;
+		m_static_uiboard->Update("popupStart", m_pop_up_ui_visible?D2D1::ColorF::Chocolate: D2D1::ColorF::SlateBlue);
+	}
 	if (m_pop_up_ui_visible) {
 		std::string hit_name;
 		m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
@@ -185,19 +190,6 @@ void CoreWinMain::OnPointerPressed(float x, float y) {
 		else if (hit_name == "Broadcast") {
 			//m_rpcHandler->onBroadCastChanged();
 		}
-
-		//if (m_popup_uiboard->CheckHit("Broadcast", x, y)) {
-		//	std::cout << "hit" << std::endl;
-		//}
-		//hit test
-		//std::string hit_name;
-		//m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, glm::vec3(x, y, .0f), 0.1f);
-		//if (hit_name == "Annotation") {
-
-		//}
-		//else if (hit_name == "Broadcast") {
-			//m_rpcHandler->onBroadCastChanged();
-		//}
 	}
 	else {
 		m_sceneRenderer->onSingleTouchDown(x, y);
