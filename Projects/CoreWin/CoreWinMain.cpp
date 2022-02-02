@@ -2,7 +2,8 @@
 #include "CoreWinMain.h"
 #include <ppltasks.h>
 #include <Common/DirectXHelper.h>
-
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
 using namespace CoreWin;
 
 // Loads and initializes application assets when the application is loaded.
@@ -29,7 +30,9 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	auto outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
-	//m_widget_manager = new widgetManager;
+	m_gizmo_button = new templateButton(deviceResources, 
+		"textures\\gizmo.jpg", "textures\\gizmo-bounding.jpg",
+		glm::vec3(-0.7, -0.25f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.3, 0.3, 0.2), glm::mat4(1.0f));
 
 	setup_resource();
 }
@@ -162,6 +165,7 @@ bool CoreWinMain::Render(){
 	//m_fpsTextRenderer->Render();
 	m_static_uiboard->Render();
 	if(m_pop_up_ui_visible)m_popup_uiboard->Render();
+	m_gizmo_button->Render();
 	return true;
 }
 

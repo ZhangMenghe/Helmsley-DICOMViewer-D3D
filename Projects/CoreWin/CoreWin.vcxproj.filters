@@ -101,6 +101,9 @@
     <Filter Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira">
       <UniqueIdentifier>{c85207f6-8f30-45e4-b472-6bdc78779548}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\textures">
+      <UniqueIdentifier>{8ebde2c5-78d2-4738-b6d5-3e0df0df2a74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -210,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\sphereRenderer.cpp">
       <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Common\templateButton.cpp">
+      <Filter>Source\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,10 +350,22 @@
     <ClInclude Include="..\..\Source\Renderers\sphereRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Common\templateButton.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Common\uiTestHelper.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\textures\gizmo.jpg">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\gizmo-bounding.jpg">
+      <Filter>Assets\textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -520,6 +538,7 @@
     <CopyFileToFolders Include="..\..\Library\x64\debug\bin\zlibd1.dll">
       <Filter>Library\x64\debug</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\OpenCV-Win\opencv\build\x64\vc15\bin\opencv_world455d.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

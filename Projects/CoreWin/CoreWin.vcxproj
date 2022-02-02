@@ -244,13 +244,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>d2d1.lib; d3d11.lib; dxgi.lib; windowscodecs.lib; dwrite.lib; $(ProjectDir)/../../Library/x64/debug/lib/*.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)/../../Library/x64/debug/lib;%(AdditionalLibraryDirectories); $(VCInstallDir)\lib\store\amd64; $(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;opencv_world455d.lib;$(ProjectDir)/../../Library/x64/debug/lib/*.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)/../../Library/x64/debug/lib;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(SolutionDir)OpenCV-Win\opencv\build\x64\vc15\lib;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)/../../Library/x64/include;$(ProjectDir)/../../Source;$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/../../Library/x64/include;$(ProjectDir)/../../Source;$(SolutionDir)OpenCV-Win\opencv\build\include;$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_DEBUG;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -281,6 +281,8 @@
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\textures\gizmo-bounding.jpg" />
+    <Image Include="Assets\textures\gizmo.jpg" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
@@ -289,7 +291,9 @@
     <ClInclude Include="..\..\Source\Common\DirectXHelper.h" />
     <ClInclude Include="..\..\Source\Common\Manager.h" />
     <ClInclude Include="..\..\Source\Common\StepTimer.h" />
+    <ClInclude Include="..\..\Source\Common\templateButton.h" />
     <ClInclude Include="..\..\Source\Common\TextTexture.h" />
+    <ClInclude Include="..\..\Source\Common\uiTestHelper.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Camera.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Texture.h" />
@@ -326,6 +330,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp" />
     <ClCompile Include="..\..\Source\Common\Manager.cpp" />
+    <ClCompile Include="..\..\Source\Common\templateButton.cpp" />
     <ClCompile Include="..\..\Source\Common\TextTexture.cpp" />
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="..\..\Source\grpc\rpcHandler.cpp">
@@ -874,6 +879,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\OpenCV-Win\opencv\build\x64\vc15\bin\opencv_world455d.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
     </CopyFileToFolders>

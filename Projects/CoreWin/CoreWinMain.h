@@ -3,7 +3,8 @@
 //#include <Renderers/FpsTextRenderer.h>
 #include <Utils/dataManager.h>
 #include <SceneObjs/overUIBoard.h>
-#include <Utils/widgetManager.h>
+#include <Common/templateButton.h>
+
 namespace CoreWin {
 	class CoreWinMain : public DX::IDeviceNotify
 	{
@@ -36,7 +37,7 @@ namespace CoreWin {
 
 		dataManager* m_data_manager;
 
-		widgetManager* m_widget_manager;
+		templateButton* m_gizmo_button;
 
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
