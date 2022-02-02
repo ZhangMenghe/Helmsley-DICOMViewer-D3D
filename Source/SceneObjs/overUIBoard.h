@@ -49,6 +49,6 @@ private:
 	const int64_t m_action_threshold = 20;
 
 	bool on_board_hit(TextQuad& texquad, const uint64_t frameIndex);
-	void update_board_projection_pos(DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos);
+	//void update_board_projection_pos(DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos);
 };
 #endif

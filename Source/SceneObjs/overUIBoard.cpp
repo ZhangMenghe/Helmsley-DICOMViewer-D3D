@@ -5,41 +5,8 @@
 #include <D3DPipeline/Primitive.h>
 #include "strsafe.h"
 #include <Common/Manager.h>
-namespace {
-	// Test if a 2D point (x,y) is in polygon with npol edges and xp,yp vertices
-	// The following code is by Randolph Franklin, it returns 1 for interior points and 0 for exterior points.
-	int pnpoly(int npol, float* xp, float* yp, float x, float y) {
-		int i, j, c = 0;
-		for (i = 0, j = npol - 1; i < npol; j = i++) {
-			if ((((yp[i] <= y) && (y < yp[j])) ||
-				((yp[j] <= y) && (y < yp[i]))) &&
-				(x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
-				c = !c;
-		}
-		return c;
-	}
-	// Test if a sphere intersect with plane
-	bool sphere_intersects_plane_point(glm::vec3 sc, float sr, glm::vec3 pp, glm::vec3 pn, float hprx, float hpry) {
-		float d = glm::dot((sc - pp), pn);
-		if (fabs(d) <= sr) {
-			glm::vec3 proj = pn * d;
-			auto point = sc - proj;
-			float xps[4];
-			float yps[4];
-			xps[0] = pp.x - hprx; xps[1] = pp.x + hprx; xps[2] = pp.x + hprx; xps[3] = pp.x - hprx;
-			yps[0] = pp.y + hpry; yps[1] = pp.y + hpry; yps[2] = pp.y - hpry; yps[3] = pp.y - hpry;
+#include <Common/uiTestHelper.h>
 
-			return (pnpoly(4, xps, yps, point.x, point.y) == 1);
-		}
-		return false;
-	}
-	bool point2d_inside_rectangle(float offsetx, float offsety, float sizex, float sizey, float px, float py) {
-		return (px >= offsetx
-			&& px < offsetx + sizex
-			&& py >= offsety
-			&& py < offsety + sizey);
-	}
-}
 overUIBoard::overUIBoard(const std::shared_ptr<DX::DeviceResources>& deviceResources)
 :m_deviceResources(deviceResources){
 	auto outputSize = m_deviceResources->GetOutputSize();
@@ -112,20 +79,23 @@ void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4
 	m_tquads[name] = tq;
 }
 bool overUIBoard::CheckHit(std::string name, float px, float py) {
-	glm::vec3 m_offset = m_tquads[name].pos;
-	glm::vec3 m_size = m_tquads[name].size;
-	return point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py);
+	return CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_tquads[name].mat, m_screen_x, m_screen_y, px, py);
+	//glm::vec3 m_offset = m_tquads[name].pos;
+	//glm::vec3 m_size = m_tquads[name].size;
+	//return point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py);
 }
 bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, float px, float py) {
 	if (m_background_board) {
-		glm::vec3 m_offset = m_background_board->pos;
-		glm::vec3 m_size = m_background_board->size;
-		if (!point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) return false;
+		if(!CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_background_board->mat, m_screen_x, m_screen_y, px, py))return false;
+		//glm::vec3 m_offset = m_background_board->pos;
+		//glm::vec3 m_size = m_background_board->size;
+		//if (!point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) return false;
 	}
 	for (auto& tq : m_tquads) {
-		glm::vec3 m_offset = tq.second.pos;
-		glm::vec3 m_size = tq.second.size;
-		if (point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) {
+		//glm::vec3 m_offset = tq.second.pos;
+		//glm::vec3 m_size = tq.second.size;
+		if(CheckHit(tq.first, px, py)){
+		//if (point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) {
 			if (on_board_hit(tq.second, frameIndex)) {
 				name = tq.first; return true;
 			}
@@ -148,11 +118,10 @@ bool overUIBoard::CheckHit(std::string name, float x, float y, float z) {
 }
 
 bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius) {
-	glm::vec3 sc(pos.x, pos.y, pos.z);
-	if (!sphere_intersects_plane_point(sc, radius, m_background_board->pos, glm::vec3(.0, .0, 1.0), m_background_board->size.x * 0.5f, m_background_board->size.y * 0.5f))
+	if (!CheckHitWithinSphere(pos, radius, m_background_board->pos, m_background_board->size.x * 0.5f, m_background_board->size.y * 0.5f))
 		return false;
 	for (auto &tq : m_tquads) {
-		if (sphere_intersects_plane_point(sc, radius, tq.second.pos, glm::vec3(.0, .0, 1.0), tq.second.size.x * 0.5f, tq.second.size.y * 0.5f)) {
+		if (CheckHitWithinSphere(pos, radius, tq.second.pos, tq.second.size.x * 0.5f, tq.second.size.y * 0.5f)) {
 			if (on_board_hit(tq.second, frameIndex)) {
 				name = tq.first; return true;
 			} else { return false; }
@@ -183,35 +152,35 @@ void overUIBoard::Update(std::string name, std::wstring new_content) {
 
 	}
 }
-void overUIBoard::update_board_projection_pos(DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos) {
-	DirectX::XMFLOAT4X4 mmat_f;
-	DirectX::XMStoreFloat4x4(&mmat_f, proj_mat);
-
-	size = glm::vec3(mmat_f.m[0][0] * m_screen_x, mmat_f.m[1][1] * m_screen_y, .0f);
-
-	auto ndc_y = std::clamp(mmat_f.m[1][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
-	pos.y = (1.0f - 0.5f * (ndc_y + 1.0f)) * m_screen_y - size.y * 0.5f;
-
-	auto ndc_x = std::clamp(mmat_f.m[0][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
-	pos.x = (ndc_x + 1.0f) * 0.5f * m_screen_x - size.x * 0.5f;
-}
+//void overUIBoard::update_board_projection_pos(DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos) {
+//	DirectX::XMFLOAT4X4 mmat_f;
+//	DirectX::XMStoreFloat4x4(&mmat_f, proj_mat);
+//
+//	size = glm::vec3(mmat_f.m[0][0] * m_screen_x, mmat_f.m[1][1] * m_screen_y, .0f);
+//
+//	auto ndc_y = std::clamp(mmat_f.m[1][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
+//	pos.y = (1.0f - 0.5f * (ndc_y + 1.0f)) * m_screen_y - size.y * 0.5f;
+//
+//	auto ndc_x = std::clamp(mmat_f.m[0][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
+//	pos.x = (ndc_x + 1.0f) * 0.5f * m_screen_x - size.x * 0.5f;
+//}
 void overUIBoard::Render(){
 	if (m_background_board) {
 		m_background_board->quad->Draw(m_deviceResources->GetD3DDeviceContext(), m_background_board->mat);
 	}
-	auto outputSize = m_deviceResources->GetOutputSize();
-	if(outputSize.Width!=0) {
-		for (auto& tq : m_tquads) {
-			auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
-				DirectX::XMMatrixTranspose(tq.second.mat));
-			update_board_projection_pos(projMat, tq.second.size, tq.second.pos);
-		}
-		if (m_background_board) {
-			auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
-				DirectX::XMMatrixTranspose(m_background_board->mat));
-			update_board_projection_pos(projMat, m_background_board->size, m_background_board->pos);
-		}
-	}
+	//auto outputSize = m_deviceResources->GetOutputSize();
+	//if(outputSize.Width!=0) {
+	//	for (auto& tq : m_tquads) {
+	//		auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
+	//			DirectX::XMMatrixTranspose(tq.second.mat));
+	//		update_board_projection_pos(projMat, tq.second.size, tq.second.pos);
+	//	}
+	//	if (m_background_board) {
+	//		auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
+	//			DirectX::XMMatrixTranspose(m_background_board->mat));
+	//		update_board_projection_pos(projMat, m_background_board->size, m_background_board->pos);
+	//	}
+	//}
 	for (auto tq : m_tquads) {
 		tq.second.ttex->Draw(tq.second.selected?tq.second.selected_text.c_str():tq.second.unselected_text.c_str());
 		tq.second.quad->Draw(m_deviceResources->GetD3DDeviceContext(), tq.second.mat);

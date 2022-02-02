@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
-namespace {
+namespace HDUI{
 	// Test if a 2D point (x,y) is in polygon with npol edges and xp,yp vertices
 // The following code is by Randolph Franklin, it returns 1 for interior points and 0 for exterior points.
 	inline int pnpoly(int npol, float* xp, float* yp, float x, float y) {
@@ -49,12 +49,15 @@ namespace {
 	}
 }
 
-inline bool CheckHit(DirectX::XMMATRIX& view_proj_mat, DirectX::XMMATRIX& model_mat, 
+inline bool CheckHitRespToModelMtx(DirectX::XMMATRIX& view_proj_mat, DirectX::XMMATRIX& model_mat, 
 	float screen_width, float screen_height,
 	float px, float py) {
 	auto projMat = DirectX::XMMatrixMultiply(view_proj_mat,
 		DirectX::XMMatrixTranspose(model_mat));
 	glm::vec3 pos, size;
-	update_board_projection_pos(screen_width, screen_height, projMat, size, pos);
-	return point2d_inside_rectangle(pos.x, pos.y, size.x, size.y, px, py);
+	HDUI::update_board_projection_pos(screen_width, screen_height, projMat, size, pos);
+	return HDUI::point2d_inside_rectangle(pos.x, pos.y, size.x, size.y, px, py);
+}
+inline bool CheckHitWithinSphere(glm::vec3 sc, float radius, glm::vec3 check_pos, float half_plane_x, float half_plane_y) {
+	return HDUI::sphere_intersects_plane_point(sc, radius, check_pos, glm::vec3(.0, .0, 1.0), half_plane_x, half_plane_y);
 }
