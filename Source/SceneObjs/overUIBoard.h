@@ -33,6 +33,7 @@ public:
 	bool CheckHit(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius);
 	bool CheckHit(const uint64_t frameIndex, std::string& name, float x, float y);
 
+	bool IsSelected(std::string name) { return m_tquads[name].selected; }
 	void Update(std::string name, std::wstring new_content);
 	void Update(std::string name, D2D1::ColorF color);
 	void Render();

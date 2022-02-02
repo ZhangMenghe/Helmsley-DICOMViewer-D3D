@@ -339,3 +339,7 @@ third_party/*
 */dicom-data/*
 diagnostic/
 Library.zip
+
+###opencv
+
+OpenCV-Win*

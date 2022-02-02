@@ -12,7 +12,6 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_deviceResources->RegisterDeviceNotify(this);
 
 	m_manager = std::make_shared<Manager>();
-
 	m_sceneRenderer = std::make_unique<vrController>(m_deviceResources, m_manager);
 	m_manager->addMVPStatus("CoreCam", true);
 
@@ -30,6 +29,7 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	auto outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_uiController.InitAll();
+	//m_widget_manager = new widgetManager;
 
 	setup_resource();
 }
@@ -185,7 +185,7 @@ void CoreWinMain::OnPointerPressed(float x, float y) {
 		std::string hit_name;
 		m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
 		if (hit_name == "Annotation") {
-
+			m_sceneRenderer->onTouchDownModeChange(m_popup_uiboard->IsSelected(hit_name)?dvr::TOUCH_ANNOTAION:dvr::TOUCH_VOLUME);
 		}
 		else if (hit_name == "Broadcast") {
 			//m_rpcHandler->onBroadCastChanged();
@@ -193,18 +193,18 @@ void CoreWinMain::OnPointerPressed(float x, float y) {
 	}
 	else {
 		m_sceneRenderer->onSingleTouchDown(x, y);
-		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
 	}
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {
 	if (m_waitfor_operation) {
 		m_sceneRenderer->onTouchMove(x, y);
-		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_MOVE, x, y);
+		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_MOVE, x, y);
 	}
 }
 void CoreWinMain::OnPointerReleased() {
 	if (m_waitfor_operation) {
 		m_sceneRenderer->onTouchReleased();
-		if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
+		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
 	}
 }

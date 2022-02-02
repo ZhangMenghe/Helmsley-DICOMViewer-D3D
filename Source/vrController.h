@@ -27,7 +27,7 @@ public:
 
 	//Interaction
 	bool onChangeAnnotationgStatus() { m_annotating = !m_annotating; m_manager->setAnnotationShow(m_annotating); return m_annotating; }
-
+	void onTouchDownModeChange(dvr::TOUCH_TARGET target) { m_touch_target = target; }
 	void onSingleTouchDown(float x, float y);
 	void onSingle3DTouchDown(float x, float y, float z, int side);
 	void onTouchMove(float x, float y);
@@ -116,7 +116,10 @@ private:
 	//flags
 	bool volume_model_dirty, volume_rotate_dirty;
 	bool m_annotating;
+	
+	dvr::TOUCH_TARGET m_touch_target;
 	//bool m_use_space_mat = false;
+
 
 	void precompute();
 	void setup_compute_shader();

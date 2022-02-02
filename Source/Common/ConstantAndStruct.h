@@ -132,7 +132,8 @@ namespace dvr{
     enum TOUCH_TARGET
     {
         TOUCH_VOLUME = 0,
-        TOUCH_AR_BUTTON = 1
+        TOUCH_AR_BUTTON,
+        TOUCH_ANNOTAION
     };
     enum ORGAN_IDS
     {

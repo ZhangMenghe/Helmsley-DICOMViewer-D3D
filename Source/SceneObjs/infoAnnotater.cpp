@@ -4,7 +4,7 @@
 infoAnnotater::infoAnnotater(){
 }
 
-void infoAnnotater::onCreateCanvas(ID3D11Device* device, UINT ph, UINT pw, UINT pd) {
+void infoAnnotater::onCreateCanvas(ID3D11Device* device, glm::vec3 vol_dim_scale, UINT ph, UINT pw, UINT pd) {
 	tex_info = std::make_unique<Texture>();
 	D3D11_TEXTURE3D_DESC texInfoDesc{
 		ph,pw,pd,
@@ -17,9 +17,20 @@ void infoAnnotater::onCreateCanvas(ID3D11Device* device, UINT ph, UINT pw, UINT 
 	};
 	tex_info->Initialize(device, texInfoDesc);
 	m_ph = ph; m_pw = pw; m_pd = pd;
+	m_vol_dim_scale = vol_dim_scale;
 	tex_info->createTexRaw(ph, pw, pd, 4);
 
+	m_brush_center = glm::vec3(-0.25f, 0.25f, 0.25f);//glm::vec3(-0.5f, 0.5f, 0.5f);
+	m_brush_radius = 50;
 	m_sphere = new sphereRenderer(device, 9, 7, { 1.0f, 1.0f, .0f, 1.0f });
+}
+void infoAnnotater::brushCubeAnnotation(ID3D11DeviceContext* context, float offsetx, float offsety) {
+	float offsetz = .0f;
+	if (m_brush_center.x < 0.25f) offsetx += 0.05;
+	else if (m_brush_center.y > -0.25f) offsety -= 0.05;
+	else offsetz -= 0.05f;
+	m_brush_center += glm::vec3(offsetx, offsety, offsetz);
+	onDrawCube(context, m_brush_center, m_vol_dim_scale, m_brush_radius, { 0, 1, 2, 3 }, { 0xfc, 0xcc, 0xc0, 0x11 });
 }
 void infoAnnotater::onDrawCube(
 	ID3D11DeviceContext* context, glm::vec3 center, 
