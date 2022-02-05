@@ -31,7 +31,7 @@ namespace CoreWin {
 		std::shared_ptr<Manager> m_manager;
 		std::unique_ptr<vrController> m_sceneRenderer;
 
-		std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard;
+		std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard, m_annotation_uiboard;
 
 		uiController m_uiController;
 

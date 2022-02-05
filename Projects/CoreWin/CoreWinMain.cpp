@@ -25,6 +25,12 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_popup_uiboard->AddBoard("Annotation");
 	m_popup_uiboard->AddBoard("Broadcast", L"Broadcast", L"Listen", rpcHandler::G_STATUS_SENDER);
 
+	m_annotation_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
+	m_annotation_uiboard->CreateBackgroundBoard(glm::vec3(-0.6f, -0.1f, dvr::DEFAULT_VIEW_Z * 0.5f+0.01f), glm::vec3(0.4, 0.05, 0.2));
+	m_annotation_uiboard->AddBoard("Brush", 1, 2, 1, L"", L"", true);
+	m_annotation_uiboard->AddBoard("StepOver", 1, 2, 2);
+
+
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
 	auto outputSize = m_deviceResources->GetOutputSize();
@@ -33,7 +39,7 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_uiController.InitAll();
 	m_gizmo_button = new templateButton(deviceResources, 
 		"textures\\gizmo.jpg", "textures\\gizmo-bounding.jpg",
-		glm::vec3(-0.6, -0.3f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.5, 0.5, 0.2), glm::mat4(1.0f));
+		glm::vec3(-0.6, -0.35f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.5, 0.5, 0.2), glm::mat4(1.0f));
 
 	setup_resource();
 }
@@ -167,7 +173,7 @@ bool CoreWinMain::Render(){
 	//m_fpsTextRenderer->Render();
 	m_static_uiboard->Render();
 	if(m_pop_up_ui_visible)m_popup_uiboard->Render();
-	if(m_gizmo_visible)m_gizmo_button->Render();
+	if (m_gizmo_visible) { m_gizmo_button->Render(); m_annotation_uiboard->Render(); }
 	return true;
 }
 
@@ -188,8 +194,19 @@ void CoreWinMain::OnPointerPressed(float x, float y) {
 		m_pop_up_ui_visible = !m_pop_up_ui_visible;
 		m_static_uiboard->Update("popupStart", m_pop_up_ui_visible?D2D1::ColorF::Chocolate: D2D1::ColorF::SlateBlue);
 	}
-	else if (m_gizmo_visible && m_gizmo_button->CheckHit(m_screen_width, m_screen_height, x, y, hit_id)) {
-		m_sceneRenderer->onTouchMoveAnnotation((dvr::ANNOTATE_DIR)hit_id);
+	else if (m_gizmo_visible) {
+		std::string hit_name;
+		if (m_annotation_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y)) {
+			if (m_annotation_uiboard->IsSelected(hit_name)) m_annotation_uiboard->FilpBoardSelection(hit_name == "Brush" ? "StepOver" : "Brush");
+		}
+		else {
+			auto is_brush = m_annotation_uiboard->IsSelected("Brush");
+			auto is_step = m_annotation_uiboard->IsSelected("StepOver");
+			if (is_brush || is_step) {
+				if (m_gizmo_button->CheckHit(m_screen_width, m_screen_height, x, y, hit_id))
+					m_sceneRenderer->onTouchMoveAnnotation((dvr::ANNOTATE_DIR)hit_id, is_brush);
+			}
+		}
 	}
 	else {
 		if (m_pop_up_ui_visible) {

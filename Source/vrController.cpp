@@ -507,8 +507,8 @@ void vrController::onPan(float x, float y)
 	PosVec3_.y += offy * ScaleVec3_.y;
 	volume_model_dirty = true;
 }
-void vrController::onTouchMoveAnnotation(dvr::ANNOTATE_DIR dir) {
-	Manager::baked_dirty_ = m_info_annotater->stepCubeAnnotation(m_deviceResources->GetD3DDeviceContext(), dir);
+void vrController::onTouchMoveAnnotation(dvr::ANNOTATE_DIR dir, bool isBrush) {
+	Manager::baked_dirty_ = m_info_annotater->stepCubeAnnotation(m_deviceResources->GetD3DDeviceContext(), dir, isBrush);
 }
 
 void vrController::update_volume_model_mat()

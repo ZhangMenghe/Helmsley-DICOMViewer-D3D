@@ -47,14 +47,27 @@ void overUIBoard::AddBoard(std::string name, std::wstring unsel_tex, std::wstrin
 	auto sz = glm::vec3(osz.x * 0.4f, osz.y * 0.2f, osz.z);
 	AddBoard(name,
 		glm::vec3(id%2?op.x+ 0.5f * sz.x+0.02*osz.x :op.x-0.5f*sz.x- 0.02 * osz.x,
-			op.y + m_background_board->size.y*0.5f - sz.y * (int(id/2)+1), 
+			op.y + osz.y*0.5f - sz.y * (int(id/2)+1),
 			op.z+0.01f),
 		sz,
 		glm::mat4(1.0f),
 		default_state ? D2D1::ColorF::Chocolate : D2D1::ColorF::SlateBlue,
 		unsel_tex, sel_tex, default_state);
 }
-
+void overUIBoard::AddBoard(std::string name, int rows, int cols, int id, std::wstring unsel_tex, std::wstring sel_tex, bool default_state) {
+	auto op = m_background_board->pos;
+	auto osz = m_background_board->size;
+	auto sz = glm::vec3(osz.x /cols * 0.8f, osz.y, osz.z);
+	AddBoard(name,
+		glm::vec3(
+			op.x-osz.x*0.5f+(id-0.5f)*sz.x*1.3f,
+			op.y,
+			op.z + 0.01f),
+		sz,
+		glm::mat4(1.0f),
+		default_state ? D2D1::ColorF::Chocolate : D2D1::ColorF::SlateBlue,
+		unsel_tex, sel_tex, default_state);
+}
 void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4 r, D2D1::ColorF color, std::wstring unsel_tex, std::wstring sel_tex, bool default_state){
 	TextQuad tq;
 	tq.unselected_text = unsel_tex.empty()?std::wstring(name.begin(), name.end()): unsel_tex;
@@ -67,9 +80,11 @@ void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4
 		* DirectX::XMMatrixTranslation(p.x, p.y, p.z);
 
 	TextTextureInfo textInfo{ 256, 128 }; // pixels
+
 	textInfo.Margin = 5; // pixels
 	textInfo.TextAlignment = DWRITE_TEXT_ALIGNMENT_LEADING;
 	textInfo.ParagraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
+	textInfo.FontSize = 48;
 	tq.ttex = new TextTexture(m_deviceResources, textInfo);
 	tq.ttex->setBackgroundColor(color);
 	tq.dir = glm::vec3(glm::vec4(.0, .0, 1.0, .0) * r);
@@ -129,7 +144,12 @@ bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, glm::ve
 	}
 	return false;
 }
-
+void overUIBoard::FilpBoardSelection(std::string name) {
+	if (m_tquads.count(name) != 0) {
+		m_tquads[name].selected = !m_tquads[name].selected;
+		m_tquads[name].ttex->setBackgroundColor(m_tquads[name].selected ? D2D1::ColorF::Chocolate : D2D1::ColorF::SlateBlue);
+	}
+}
 bool overUIBoard::on_board_hit(TextQuad& texquad, const uint64_t frameIndex) {
 	if (texquad.last_action_time == -1 || frameIndex - texquad.last_action_time > m_action_threshold) {
 		texquad.last_action_time = frameIndex;

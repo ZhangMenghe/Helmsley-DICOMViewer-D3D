@@ -27,13 +27,17 @@ public:
 	void CreateBackgroundBoard(glm::vec3 pos, glm::vec3 scale);
 
 	void AddBoard(std::string name, std::wstring unsel_tex = L"", std::wstring sel_tex = L"", bool default_state = false);
+	void AddBoard(std::string name, int rows, int cols, int id, std::wstring unsel_tex = L"", std::wstring sel_tex = L"", bool default_state = false);
 	void AddBoard(std::string name, glm::vec3 pos, glm::vec3 scale, glm::mat4 rot, D2D1::ColorF color, std::wstring unsel_tex = L"", std::wstring sel_tex = L"", bool default_state = false);
+	
 	bool CheckHit(std::string name, float x, float y);
 	bool CheckHit(std::string name, float x, float y, float z);
 	bool CheckHit(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius);
 	bool CheckHit(const uint64_t frameIndex, std::string& name, float x, float y);
 
 	bool IsSelected(std::string name) { return m_tquads[name].selected; }
+
+	void FilpBoardSelection(std::string name);
 	void Update(std::string name, std::wstring new_content);
 	void Update(std::string name, D2D1::ColorF color);
 	void Render();

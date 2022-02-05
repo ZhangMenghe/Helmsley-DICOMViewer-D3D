@@ -15,7 +15,7 @@ public:
 	infoAnnotater();
 	void onCreateCanvas(ID3D11Device* device, glm::vec3 vol_dim_scale, UINT ph, UINT pw, UINT pd);
 	Texture* getCanvasTexture() { return tex_info.get(); }
-	bool stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir);
+	bool stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir, bool isBrush);
 
 	void setBrushCenter(glm::vec3 center) { m_brush_center = center; }
 	bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat);

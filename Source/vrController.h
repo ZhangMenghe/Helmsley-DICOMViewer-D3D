@@ -35,7 +35,7 @@ public:
 	void onScale(float sx, float sy);
 	void onScale(float scale);
 	void onPan(float x, float y);
-	void onTouchMoveAnnotation(dvr::ANNOTATE_DIR dir);
+	void onTouchMoveAnnotation(dvr::ANNOTATE_DIR dir, bool isBrush);
 
 	//setter
 	void setupCenterLine(int id, float* data);

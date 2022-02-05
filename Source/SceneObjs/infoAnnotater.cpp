@@ -25,7 +25,7 @@ void infoAnnotater::onCreateCanvas(ID3D11Device* device, glm::vec3 vol_dim_scale
 	m_sphere = new sphereRenderer(device, 9, 7, { 1.0f, 1.0f, .0f, 1.0f });
 }
 
-bool infoAnnotater::stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir) {
+bool infoAnnotater::stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir, bool isBrush) {
 	switch (dir)
 	{
 	case dvr::ANNOTATE_MOVE_Z_FORWARD:
@@ -55,6 +55,7 @@ bool infoAnnotater::stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTA
 	default:
 		break;
 	}
+	if (!isBrush) return false;
 	return onDrawCube(context, m_brush_center, m_vol_dim_scale, m_brush_radius, { 0, 1, 2, 3 }, { 0xfc, 0xcc, 0xc0, 0x11 });
 }
 bool infoAnnotater::onDrawCube(
