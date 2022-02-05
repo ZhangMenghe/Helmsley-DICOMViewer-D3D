@@ -39,7 +39,22 @@ namespace HDUI{
 		DirectX::XMFLOAT4X4 mmat_f;
 		DirectX::XMStoreFloat4x4(&mmat_f, proj_mat);
 
-		size = glm::vec3(mmat_f.m[0][0] * screen_width, mmat_f.m[1][1] * screen_height, .0f);
+
+		//DirectX::XMVECTOR point_model_space = DirectX::XMVectorSet(-0.5, 0, .0, 1.0);
+		//auto proj_point_1 = DirectX::XMVector4Transform(point_model_space, proj_mat);
+
+		//DirectX::XMVECTOR point_model_space2 = DirectX::XMVectorSet(0.5, 0, .0, 1.0);
+		//auto proj_point_2 = DirectX::XMVector4Transform(point_model_space2, proj_mat);
+
+		//DirectX::XMFLOAT4 v2F, v2F2;    //the float where we copy the v2 vector members
+		//DirectX::XMStoreFloat4(&v2F, proj_point_1);   //the function used to copy
+		//auto ndc_x1 = std::clamp(v2F.x, -v2F.w, v2F.w) / v2F.w;
+
+		//DirectX::XMStoreFloat4(&v2F2, proj_point_2);   //the function used to copy
+
+		//auto ndc_x2 = std::clamp(v2F2.x, -v2F2.w, v2F2.w) / v2F2.w;
+
+		size = glm::vec3(mmat_f.m[0][0]/ mmat_f.m[3][3]*0.5f * screen_width, mmat_f.m[1][1] / mmat_f.m[3][3] * 0.5f * screen_height, .0f);
 
 		auto ndc_y = std::clamp(mmat_f.m[1][3], -mmat_f.m[3][3], mmat_f.m[3][3]) / mmat_f.m[3][3];
 		pos.y = (1.0f - 0.5f * (ndc_y + 1.0f)) * screen_height - size.y * 0.5f;

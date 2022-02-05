@@ -50,10 +50,12 @@ namespace CoreWin {
 		// RPC thread
 		std::thread* m_rpcThread;
 
+		float m_screen_width = 0, m_screen_height;
+
 		const bool m_overwrite_index_file = false;
 		bool m_local_initialized = false;
 		bool m_waitfor_operation = true;
-		bool m_pop_up_ui_visible = false;
+		bool m_pop_up_ui_visible = false, m_gizmo_visible=false;
 
 		void setup_volume_server();
 		void setup_volume_local();

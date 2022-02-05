@@ -269,8 +269,8 @@ namespace DX
 		}
 	}
 
-	inline bool ReadAllLines(const std::string filename, std::vector<std::string>& lines) {
-		std::ifstream inFile(getFilePath(filename), std::ios::in);
+	inline bool ReadAllLines(const std::string filename, std::vector<std::string>& lines, bool from_asset = false) {
+		std::ifstream inFile(getFilePath(filename, from_asset), std::ios::in);
 		if (!inFile.is_open())
 			return false;
 		std::string line = "";

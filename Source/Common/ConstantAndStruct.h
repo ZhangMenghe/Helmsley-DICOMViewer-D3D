@@ -135,6 +135,14 @@ namespace dvr{
         TOUCH_AR_BUTTON,
         TOUCH_ANNOTAION
     };
+    enum ANNOTATE_DIR {
+        ANNOTATE_MOVE_Z_FORWARD = 1,
+        ANNOTATE_MOVE_Z_BACKWARD,
+        ANNOTATE_MOVE_X_LEFT,
+        ANNOTATE_MOVE_X_RIGHT,
+        ANNOTATE_MOVE_Y_DOWN,
+        ANNOTATE_MOVE_Y_UP
+    };
     enum ORGAN_IDS
     {
         ORGAN_BALDDER = 0,

@@ -24,21 +24,43 @@ void infoAnnotater::onCreateCanvas(ID3D11Device* device, glm::vec3 vol_dim_scale
 	m_brush_radius = 50;
 	m_sphere = new sphereRenderer(device, 9, 7, { 1.0f, 1.0f, .0f, 1.0f });
 }
-void infoAnnotater::brushCubeAnnotation(ID3D11DeviceContext* context, float offsetx, float offsety) {
-	float offsetz = .0f;
-	if (m_brush_center.x < 0.25f) offsetx += 0.05;
-	else if (m_brush_center.y > -0.25f) offsety -= 0.05;
-	else offsetz -= 0.05f;
-	m_brush_center += glm::vec3(offsetx, offsety, offsetz);
-	onDrawCube(context, m_brush_center, m_vol_dim_scale, m_brush_radius, { 0, 1, 2, 3 }, { 0xfc, 0xcc, 0xc0, 0x11 });
+
+bool infoAnnotater::stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir) {
+	switch (dir)
+	{
+	case dvr::ANNOTATE_MOVE_Z_FORWARD:
+		if (m_brush_center.z - m_step_size < -0.5f) return false;
+		m_brush_center.z -= m_step_size;
+		break;
+	case dvr::ANNOTATE_MOVE_Z_BACKWARD:
+		if (m_brush_center.z + m_step_size >0.5f) return false;
+		m_brush_center.z += m_step_size;
+		break;
+	case dvr::ANNOTATE_MOVE_X_LEFT:
+		if (m_brush_center.x - m_step_size < -0.5f) return false;
+		m_brush_center.x -= m_step_size;
+		break;
+	case dvr::ANNOTATE_MOVE_X_RIGHT:
+		if (m_brush_center.x + m_step_size > 0.5f) return false;
+		m_brush_center.x += m_step_size;
+		break;
+	case dvr::ANNOTATE_MOVE_Y_DOWN:
+		if (m_brush_center.y - m_step_size < -0.5f) return false;
+		m_brush_center.y -= m_step_size;
+		break;
+	case dvr::ANNOTATE_MOVE_Y_UP:
+		if (m_brush_center.y + m_step_size > 0.5f) return false;
+		m_brush_center.y += m_step_size;
+		break;
+	default:
+		break;
+	}
+	return onDrawCube(context, m_brush_center, m_vol_dim_scale, m_brush_radius, { 0, 1, 2, 3 }, { 0xfc, 0xcc, 0xc0, 0x11 });
 }
-void infoAnnotater::onDrawCube(
+bool infoAnnotater::onDrawCube(
 	ID3D11DeviceContext* context, glm::vec3 center, 
 	glm::vec3 vol_dim_scale, 
 	int sz, std::vector<int> pos, std::vector<unsigned char> value) {
-	//UINT* pData = new UINT[m_pix_num];
-	//for (auto i = 0; i < m_pix_num; i++)pData[i] = 0xffffffff;
-	//context->UpdateSubresource(tex_info->GetTexture3D(), 0, nullptr, pData, 512 * sizeof(UINT), 512 * 512 * sizeof(UINT));
 
 	//d3d11_box: origin at left, top, front corner.
 	glm::vec3 hsz = vol_dim_scale * (sz * 0.5f);
@@ -52,7 +74,10 @@ void infoAnnotater::onDrawCube(
 	destRegion.front = std::max(0, int(cp.z - hsz.z));
 	destRegion.back = std::min(m_pd, UINT(cp.z + hsz.z));
 
+	//TODO: TEST IF UPDATE NECESSARY?
+
 	tex_info->setTexData(context, &destRegion, pos, value, sizeof(UINT));
+	return true;
 }
 bool infoAnnotater::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat) {
 	//m_sphere->Draw(context, modelMat);

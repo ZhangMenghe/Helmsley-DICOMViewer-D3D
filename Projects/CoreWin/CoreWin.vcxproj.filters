@@ -651,5 +651,8 @@
     <Text Include="Assets\helmsley_cached\pacs_local.txt">
       <Filter>Assets\helmsley_cached</Filter>
     </Text>
+    <Text Include="Assets\textures\gizmo-bounding.txt">
+      <Filter>Assets\textures</Filter>
+    </Text>
   </ItemGroup>
 </Project>

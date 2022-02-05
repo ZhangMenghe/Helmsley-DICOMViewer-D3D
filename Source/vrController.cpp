@@ -44,9 +44,6 @@ vrController::vrController(const std::shared_ptr<DX::DeviceResources> &deviceRes
 void vrController::onReset(){
 	SpaceMat_ = glm::mat4(1.0f);
 	Mouse_old = {.0f, .0f};
-	m_annotating = false;
-	m_touch_target = dvr::TOUCH_VOLUME;
-
 	volume_model_dirty = true; volume_rotate_dirty = true;
 	if (m_cutter.get()) m_cutter->onReset(m_deviceResources->GetD3DDevice());
 }
@@ -361,11 +358,6 @@ void vrController::onSingleTouchDown(float x, float y)
 {
 	Mouse_old = { x, y };
 	m_IsPressed = true;
-	
-	if (m_touch_target == dvr::TOUCH_ANNOTAION) {
-		m_info_annotater->brushCubeAnnotation(m_deviceResources->GetD3DDeviceContext(), 0, 0);
-		Manager::baked_dirty_ = true;
-	}
 }
 
 void vrController::onSingle3DTouchDown(float x, float y, float z, int side){
@@ -394,29 +386,19 @@ void vrController::onTouchMove(float x, float y){
 	//StringCbPrintf(buf, cbDest, TEXT("offset:(%f,%f)\n"), xoffset, yoffset);
 	//OutputDebugString(buf);
 
-	if (m_touch_target == dvr::TOUCH_VOLUME) {
-		if (!Manager::param_bool[CHECK_CUTTING] && Manager::param_bool[CHECK_FREEZE_VOLUME])
-			return;
-		xoffset *= MOUSE_ROTATE_SENSITIVITY;
-		yoffset *= -MOUSE_ROTATE_SENSITIVITY;
+	if (!Manager::param_bool[CHECK_CUTTING] && Manager::param_bool[CHECK_FREEZE_VOLUME])
+		return;
+	xoffset *= MOUSE_ROTATE_SENSITIVITY;
+	yoffset *= -MOUSE_ROTATE_SENSITIVITY;
 
-		if (Manager::param_bool[CHECK_FREEZE_VOLUME])
-		{
-			m_cutter->onRotate(xoffset, yoffset);
-			//m_scene_dirty = true;
-			return;
-		}
-		RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
-		volume_model_dirty = true; volume_rotate_dirty = true;
-	}else if (m_touch_target == dvr::TOUCH_ANNOTAION) {
-		//xoffset *= 0.5f;
-		//yoffset *= -0.5f;
-
-		//m_info_annotater->brushCubeAnnotation(m_deviceResources->GetD3DDeviceContext(), 0., yoffset);
-		//Manager::baked_dirty_ = true;
-		//m_info_annotater->onDrawCube(m_deviceResources->GetD3DDeviceContext(), glm::vec3(-0.25f, 0.25f, 0.25f), vol_dim_scale_, 150, { 0, 1, 2, 3 }, { 0xfc, 0xcc, 0xc0, 0x11 });
-		//m_info_annotater->onDrawCube(m_deviceResources->GetD3DDeviceContext(), glm::vec3(-0.25f, 0.25f, 0.f), vol_dim_scale_, 10, {0}, { 0xff });
+	if (Manager::param_bool[CHECK_FREEZE_VOLUME])
+	{
+		m_cutter->onRotate(xoffset, yoffset);
+		//m_scene_dirty = true;
+		return;
 	}
+	RotateMat_ = mouseRotateMat(RotateMat_, xoffset, yoffset);
+	volume_model_dirty = true; volume_rotate_dirty = true;
 }
 void vrController::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side, std::vector<dvr::OXR_POSE_TYPE>& types){
 	if (USE_GESTURE_CUTTING && side == 0){
@@ -524,6 +506,9 @@ void vrController::onPan(float x, float y)
 	PosVec3_.x += offx * ScaleVec3_.x;
 	PosVec3_.y += offy * ScaleVec3_.y;
 	volume_model_dirty = true;
+}
+void vrController::onTouchMoveAnnotation(dvr::ANNOTATE_DIR dir) {
+	Manager::baked_dirty_ = m_info_annotater->stepCubeAnnotation(m_deviceResources->GetD3DDeviceContext(), dir);
 }
 
 void vrController::update_volume_model_mat()

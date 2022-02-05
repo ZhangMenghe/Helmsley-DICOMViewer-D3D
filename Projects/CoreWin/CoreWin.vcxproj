@@ -900,6 +900,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\helmsley_cached\pacs_local.txt" />
+    <Text Include="Assets\textures\gizmo-bounding.txt">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,7 +3,9 @@
 #include <Common/DirectXHelper.h>
 #include <opencv2/imgcodecs.hpp>
 #include <Utils/TypeConvertUtils.h>
-
+#include <Common/Manager.h>
+#include <Common/uiTestHelper.h>
+#include <opencv2/core/mat.hpp>
 //namespace {
 //    constexpr DXGI_FORMAT TextFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
 //}
@@ -35,7 +37,7 @@ templateButton::templateButton(const std::shared_ptr<DX::DeviceResources>& devic
     glm::vec3 p, glm::vec3 s, glm::mat4 r)
     : m_deviceResources(deviceResources){
     
-    cv::Mat button_image = cv::imread(DX::getFilePath(bg_file_name, cv::IMREAD_COLOR));
+    cv::Mat button_image = cv::imread(DX::getFilePath(bg_file_name, true), cv::IMREAD_COLOR);
     auto test = type2str(button_image.type());
     if (!button_image.empty()) {
         //std::cout << gizmo_image.cols << " " << gizmo_image.rows << std::endl;
@@ -74,6 +76,52 @@ templateButton::templateButton(const std::shared_ptr<DX::DeviceResources>& devic
             * mat42xmmatrix(r)
             * DirectX::XMMatrixTranslation(p.x, p.y, p.z);
     }
+
+    std::vector<std::string> data_lines;
+    DX::ReadAllLines("textures\\gizmo-bounding.txt", data_lines, true);
+    if (!data_lines.empty()) {
+        m_template = cv::Mat::zeros(button_image.rows, button_image.cols, CV_8UC1);
+        std::string tmp_str;
+        //uint8 tmp_value;
+        for (int i = 1; i < data_lines.size(); i++) {
+            std::stringstream ssv(data_lines[i]);
+            for (int iv = 0; ssv.good() && iv<button_image.cols; iv++) {
+                std::getline(ssv, tmp_str, ',');
+                auto tmp_value = std::stoi(tmp_str);
+                if (tmp_value > 0) {
+                    if (m_sub_regions.count(tmp_value) == 0)m_sub_regions[tmp_value] = 0;
+                    m_template.at<uint8>(i - 1, iv) = tmp_value;
+                }
+            }
+        }
+    }
+}
+bool templateButton::CheckHit(float screen_width, float screen_height, float px, float py, int& sub_id) {
+    auto projMat = DirectX::XMMatrixMultiply(Manager::camera->getVPMat(),
+        DirectX::XMMatrixTranspose(m_button_mat));
+    glm::vec3 pos, size;
+    HDUI::update_board_projection_pos(screen_width, screen_height, projMat, size, pos);
+    if (!HDUI::point2d_inside_rectangle(pos.x, pos.y, size.x, size.y, px, py)) return false;
+    sub_id = find_sub_hit_spot(int((px-pos.x) / size.x * m_template.cols), int((py-pos.y) / size.y * m_template.rows));
+    return (sub_id > 0);
+}
+int templateButton::find_sub_hit_spot(int px, int py) {
+    auto start_x = fmax(px - m_sample_radius, 0);
+    auto end_x = fmin(px + m_sample_radius, m_template.cols);
+    auto start_y = fmax(py - m_sample_radius, 0);
+    auto end_y = fmin(py + m_sample_radius, m_template.rows);
+
+    for (auto y = start_y; y < end_y; y++) 
+        for (auto x = start_x; x < end_x; x++) 
+            m_sub_regions[m_template.at<uint8>(y, x)]++;
+    int max_id = 0, max_value = -1;
+    for (auto& itr : m_sub_regions) { 
+        if (itr.second > max_value) {
+            max_value = itr.second; max_id = itr.first;
+        }
+        itr.second = 0;
+    }
+    return max_id;
 }
 void templateButton::Render() {
     m_button_quad->Draw(m_deviceResources->GetD3DDeviceContext(), m_button_mat);

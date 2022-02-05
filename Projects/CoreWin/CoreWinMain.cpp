@@ -29,10 +29,11 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 
 	auto outputSize = m_deviceResources->GetOutputSize();
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
+	m_screen_width = outputSize.Width; m_screen_height = outputSize.Height;
 	m_uiController.InitAll();
 	m_gizmo_button = new templateButton(deviceResources, 
 		"textures\\gizmo.jpg", "textures\\gizmo-bounding.jpg",
-		glm::vec3(-0.7, -0.25f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.3, 0.3, 0.2), glm::mat4(1.0f));
+		glm::vec3(-0.6, -0.3f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.5, 0.5, 0.2), glm::mat4(1.0f));
 
 	setup_resource();
 }
@@ -96,6 +97,7 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_popup_uiboard->onWindowSizeChanged();
+	m_screen_width = outputSize.Width; m_screen_height = outputSize.Height;
 }
 
 // Updates the application state once per frame.
@@ -165,7 +167,7 @@ bool CoreWinMain::Render(){
 	//m_fpsTextRenderer->Render();
 	m_static_uiboard->Render();
 	if(m_pop_up_ui_visible)m_popup_uiboard->Render();
-	m_gizmo_button->Render();
+	if(m_gizmo_visible)m_gizmo_button->Render();
 	return true;
 }
 
@@ -181,23 +183,29 @@ void CoreWinMain::OnDeviceRestored()
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
+	int hit_id;
 	if (m_static_uiboard->CheckHit("popupStart", x, y)) {
 		m_pop_up_ui_visible = !m_pop_up_ui_visible;
 		m_static_uiboard->Update("popupStart", m_pop_up_ui_visible?D2D1::ColorF::Chocolate: D2D1::ColorF::SlateBlue);
 	}
-	if (m_pop_up_ui_visible) {
-		std::string hit_name;
-		m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
-		if (hit_name == "Annotation") {
-			m_sceneRenderer->onTouchDownModeChange(m_popup_uiboard->IsSelected(hit_name)?dvr::TOUCH_ANNOTAION:dvr::TOUCH_VOLUME);
-		}
-		else if (hit_name == "Broadcast") {
-			//m_rpcHandler->onBroadCastChanged();
-		}
+	else if (m_gizmo_visible && m_gizmo_button->CheckHit(m_screen_width, m_screen_height, x, y, hit_id)) {
+		m_sceneRenderer->onTouchMoveAnnotation((dvr::ANNOTATE_DIR)hit_id);
 	}
 	else {
-		m_sceneRenderer->onSingleTouchDown(x, y);
-		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+		if (m_pop_up_ui_visible) {
+			std::string hit_name;
+			m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
+			if (hit_name == "Annotation") {
+				m_gizmo_visible = !m_gizmo_visible;
+			}
+			else if (hit_name == "Broadcast") {
+				//m_rpcHandler->onBroadCastChanged();
+			}
+		}
+		else {
+			m_sceneRenderer->onSingleTouchDown(x, y);
+			if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+		}
 	}
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {
