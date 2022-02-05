@@ -36,13 +36,14 @@ public:
 	bool CheckHit(const uint64_t frameIndex, std::string& name, float x, float y);
 
 	bool IsSelected(std::string name) { return m_tquads[name].selected; }
+	//void FilpBoardSelection(std::string name);
 
-	void FilpBoardSelection(std::string name);
+	void FilterBoardSelection(std::string name);
 	void Update(std::string name, std::wstring new_content);
 	void Update(std::string name, D2D1::ColorF color);
 	void Render();
 
-	void onWindowSizeChanged();
+	void onWindowSizeChanged(float width, float height);
 
 private:
 	std::shared_ptr<DX::DeviceResources> m_deviceResources;

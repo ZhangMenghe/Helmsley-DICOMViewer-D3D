@@ -26,7 +26,7 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_popup_uiboard->AddBoard("Broadcast", L"Broadcast", L"Listen", rpcHandler::G_STATUS_SENDER);
 
 	m_annotation_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
-	m_annotation_uiboard->CreateBackgroundBoard(glm::vec3(-0.6f, -0.1f, dvr::DEFAULT_VIEW_Z * 0.5f+0.01f), glm::vec3(0.4, 0.05, 0.2));
+	m_annotation_uiboard->CreateBackgroundBoard(glm::vec3(-0.65f, -0.2f, dvr::DEFAULT_VIEW_Z * 0.5f+0.01f), glm::vec3(0.4, 0.05, 0.2));
 	m_annotation_uiboard->AddBoard("Brush", 1, 2, 1, L"", L"", true);
 	m_annotation_uiboard->AddBoard("StepOver", 1, 2, 2);
 
@@ -38,8 +38,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_screen_width = outputSize.Width; m_screen_height = outputSize.Height;
 	m_uiController.InitAll();
 	m_gizmo_button = new templateButton(deviceResources, 
-		"textures\\gizmo.jpg", "textures\\gizmo-bounding.jpg",
-		glm::vec3(-0.6, -0.35f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.5, 0.5, 0.2), glm::mat4(1.0f));
+		"textures\\gizmo.png", "textures\\gizmo-bounding.txt",
+		glm::vec3(-0.65, -0.4f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.35, 0.35, 0.2), glm::mat4(1.0f));
 
 	setup_resource();
 }
@@ -102,7 +102,9 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 
 	m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
-	m_popup_uiboard->onWindowSizeChanged();
+	m_static_uiboard->onWindowSizeChanged(outputSize.Width, outputSize.Height);
+	m_popup_uiboard->onWindowSizeChanged(outputSize.Width, outputSize.Height);
+	m_annotation_uiboard->onWindowSizeChanged(outputSize.Width, outputSize.Height);
 	m_screen_width = outputSize.Width; m_screen_height = outputSize.Height;
 }
 
@@ -189,41 +191,43 @@ void CoreWinMain::OnDeviceRestored()
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
-	int hit_id;
 	if (m_static_uiboard->CheckHit("popupStart", x, y)) {
 		m_pop_up_ui_visible = !m_pop_up_ui_visible;
 		m_static_uiboard->Update("popupStart", m_pop_up_ui_visible?D2D1::ColorF::Chocolate: D2D1::ColorF::SlateBlue);
+		return;
 	}
-	else if (m_gizmo_visible) {
+	//check pop menu
+	if (m_pop_up_ui_visible) {
+		std::string hit_name;
+		bool hitted = m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
+		if (hit_name == "Annotation") {
+			m_gizmo_visible = !m_gizmo_visible;
+		}
+		else if (hit_name == "Broadcast") {
+			//m_rpcHandler->onBroadCastChanged();
+		}
+		if (hitted) return;
+	}
+	//check gizmo menu
+	if (m_gizmo_visible) {
 		std::string hit_name;
 		if (m_annotation_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y)) {
-			if (m_annotation_uiboard->IsSelected(hit_name)) m_annotation_uiboard->FilpBoardSelection(hit_name == "Brush" ? "StepOver" : "Brush");
+			//if (m_annotation_uiboard->IsSelected(hit_name)) m_annotation_uiboard->FilpBoardSelection(hit_name == "Brush" ? "StepOver" : "Brush");
+			if (m_annotation_uiboard->IsSelected(hit_name)) m_annotation_uiboard->FilterBoardSelection(hit_name);
+			return;
 		}
-		else {
-			auto is_brush = m_annotation_uiboard->IsSelected("Brush");
-			auto is_step = m_annotation_uiboard->IsSelected("StepOver");
-			if (is_brush || is_step) {
-				if (m_gizmo_button->CheckHit(m_screen_width, m_screen_height, x, y, hit_id))
-					m_sceneRenderer->onTouchMoveAnnotation((dvr::ANNOTATE_DIR)hit_id, is_brush);
-			}
-		}
-	}
-	else {
-		if (m_pop_up_ui_visible) {
-			std::string hit_name;
-			m_popup_uiboard->CheckHit(m_timer.GetFrameCount(), hit_name, x, y);
-			if (hit_name == "Annotation") {
-				m_gizmo_visible = !m_gizmo_visible;
-			}
-			else if (hit_name == "Broadcast") {
-				//m_rpcHandler->onBroadCastChanged();
-			}
-		}
-		else {
-			m_sceneRenderer->onSingleTouchDown(x, y);
-			if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+		//check arrow
+		auto is_brush = m_annotation_uiboard->IsSelected("Brush");
+		auto is_step = m_annotation_uiboard->IsSelected("StepOver");
+		if (is_brush || is_step) {
+			int hit_id;
+			if (m_gizmo_button->CheckHit(m_screen_width, m_screen_height, x, y, hit_id))
+				m_sceneRenderer->onTouchMoveAnnotation((dvr::ANNOTATE_DIR)hit_id, is_brush);
 		}
 	}
+	//No UI HIT move to scene.
+	m_sceneRenderer->onSingleTouchDown(x, y);
+	if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {
 	if (m_waitfor_operation) {

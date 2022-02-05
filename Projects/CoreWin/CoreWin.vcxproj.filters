@@ -361,10 +361,7 @@
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\textures\gizmo.jpg">
-      <Filter>Assets\textures</Filter>
-    </Image>
-    <Image Include="Assets\textures\gizmo-bounding.jpg">
+    <Image Include="Assets\textures\gizmo.png">
       <Filter>Assets\textures</Filter>
     </Image>
   </ItemGroup>

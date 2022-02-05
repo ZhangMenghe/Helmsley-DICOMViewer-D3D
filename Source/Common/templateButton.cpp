@@ -37,7 +37,7 @@ templateButton::templateButton(const std::shared_ptr<DX::DeviceResources>& devic
     glm::vec3 p, glm::vec3 s, glm::mat4 r)
     : m_deviceResources(deviceResources){
     
-    cv::Mat button_image = cv::imread(DX::getFilePath(bg_file_name, true), cv::IMREAD_COLOR);
+    cv::Mat button_image = cv::imread(DX::getFilePath(bg_file_name, true), cv::IMREAD_UNCHANGED);
     auto test = type2str(button_image.type());
     if (!button_image.empty()) {
         //std::cout << gizmo_image.cols << " " << gizmo_image.rows << std::endl;
@@ -60,11 +60,12 @@ templateButton::templateButton(const std::shared_ptr<DX::DeviceResources>& devic
         uint8_t* pixelBufferData = new uint8_t[4* texDesc.Width * texDesc.Height];
 
         for (int r = 0; r < texDesc.Height; ++r) {
-            cv::Vec3b* color_r = button_image.ptr<cv::Vec3b>(r);
+            cv::Vec4b* color_r = button_image.ptr<cv::Vec4b>(r);
             auto rid = 4 * r * texDesc.Width;
             for (int c = 0; c < texDesc.Width; ++c) {
-                cv::Vec3b& bgr = color_r[c];
-                pixelBufferData[rid + c * 4] = bgr[0]; pixelBufferData[rid + c * 4 + 1] = bgr[1]; pixelBufferData[rid + c * 4 + 2] = bgr[2];
+                cv::Vec4b& bgra = color_r[c];
+                pixelBufferData[rid + c * 4] = bgra[0]; pixelBufferData[rid + c * 4 + 1] = bgra[1]; 
+                pixelBufferData[rid + c * 4 + 2] = bgra[2]; pixelBufferData[rid + c * 4 + 3] = bgra[3];
             }
         }
 
@@ -78,7 +79,7 @@ templateButton::templateButton(const std::shared_ptr<DX::DeviceResources>& devic
     }
 
     std::vector<std::string> data_lines;
-    DX::ReadAllLines("textures\\gizmo-bounding.txt", data_lines, true);
+    DX::ReadAllLines(template_file_name, data_lines, true);
     if (!data_lines.empty()) {
         m_template = cv::Mat::zeros(button_image.rows, button_image.cols, CV_8UC1);
         std::string tmp_str;

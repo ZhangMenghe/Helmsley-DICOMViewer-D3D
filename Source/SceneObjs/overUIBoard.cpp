@@ -12,24 +12,24 @@ overUIBoard::overUIBoard(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	auto outputSize = m_deviceResources->GetOutputSize();
 	m_screen_x = outputSize.Width; m_screen_y = outputSize.Height;
 }
-void overUIBoard::onWindowSizeChanged() {
-	auto outputSize = m_deviceResources->GetOutputSize();
-	if (outputSize.Width == 0 || !m_background_board || (m_screen_x == outputSize.Width && m_screen_y == outputSize.Height)) return;
-	auto op = m_background_board->pos;
-	auto osz = m_background_board->size;
-	auto sz = glm::vec3(osz.x * 0.4f, osz.y * 0.2f, osz.z);
+void overUIBoard::onWindowSizeChanged(float Width, float Height) {
+	//if (!m_background_board || (m_screen_x == Width && m_screen_y == Height)) return;
+	
+	//auto op = m_background_board->pos;
+	//auto osz = m_background_board->size;
+	////auto sz = glm::vec3(osz.x * 0.4f, osz.y * 0.2f, osz.z);
 
-	int id = 0;
-	for (auto& tq : m_tquads) {
-		auto tx = id % 2 ? op.x + 0.5f * sz.x + 0.02 * osz.x : op.x - 0.5f * sz.x - 0.02 * osz.x;
-		auto ty = op.y + m_background_board->size.y * 0.5f - sz.y * (int(id / 2) + 1);
+	////int id = 0;
+	//for (auto& tq : m_tquads) {
+	////	auto tx = id % 2 ? op.x + 0.5f * sz.x + 0.02 * osz.x : op.x - 0.5f * sz.x - 0.02 * osz.x;
+	////	auto ty = op.y + m_background_board->size.y * 0.5f - sz.y * (int(id / 2) + 1);
 
-		tq.second.size = glm::vec3(sz.x * outputSize.Width, sz.y * outputSize.Height, .0f);
-		tq.second.pos.x = (tx + 0.5f) * outputSize.Width - tq.second.size.x * 0.5f;
-		tq.second.pos.y = (0.5f - ty) * outputSize.Height - tq.second.size.y * 0.5f;
-		id++;
-	}
-	m_screen_x = outputSize.Width; m_screen_y = outputSize.Height;
+	////	tq.second.size = glm::vec3(sz.x * outputSize.Width, sz.y * outputSize.Height, .0f);
+	////	tq.second.pos.x = (tx + 0.5f) * outputSize.Width - tq.second.size.x * 0.5f;
+	////	tq.second.pos.y = (0.5f - ty) * outputSize.Height - tq.second.size.y * 0.5f;
+	////	id++;
+	//}
+	m_screen_x = Width; m_screen_y = Height;
 }
 void overUIBoard::CreateBackgroundBoard(glm::vec3 pos, glm::vec3 scale) {
 	m_background_board = std::make_unique<TextQuad>();
@@ -144,10 +144,18 @@ bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, glm::ve
 	}
 	return false;
 }
-void overUIBoard::FilpBoardSelection(std::string name) {
-	if (m_tquads.count(name) != 0) {
-		m_tquads[name].selected = !m_tquads[name].selected;
-		m_tquads[name].ttex->setBackgroundColor(m_tquads[name].selected ? D2D1::ColorF::Chocolate : D2D1::ColorF::SlateBlue);
+//void overUIBoard::FilpBoardSelection(std::string name) {
+//	if (m_tquads.count(name) != 0) {
+//		m_tquads[name].selected = !m_tquads[name].selected;
+//		m_tquads[name].ttex->setBackgroundColor(m_tquads[name].selected ? D2D1::ColorF::Chocolate : D2D1::ColorF::SlateBlue);
+//	}
+//}
+void overUIBoard::FilterBoardSelection(std::string name) {
+	for (auto& tq : m_tquads) {
+		if (tq.first != name) {
+			tq.second.selected = false;
+			tq.second.ttex->setBackgroundColor(D2D1::ColorF::SlateBlue);
+		}
 	}
 }
 bool overUIBoard::on_board_hit(TextQuad& texquad, const uint64_t frameIndex) {
