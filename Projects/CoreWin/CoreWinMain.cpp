@@ -37,8 +37,9 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_manager->onViewChange(outputSize.Width, outputSize.Height);
 	m_screen_width = outputSize.Width; m_screen_height = outputSize.Height;
 	m_uiController.InitAll();
-	m_gizmo_button = new templateButton(deviceResources, 
-		"textures\\gizmo.png", "textures\\gizmo-bounding.txt",
+	m_gizmo_button = new templateButton(deviceResources,
+		"textures\\gizmo", "textures\\gizmo-bounding.txt", true,
+		400,400,
 		glm::vec3(-0.65, -0.4f, dvr::DEFAULT_VIEW_Z*0.5f), glm::vec3(0.35, 0.35, 0.2), glm::mat4(1.0f));
 
 	setup_resource();
@@ -174,7 +175,7 @@ bool CoreWinMain::Render(){
 	m_sceneRenderer->Render(0);
 	//m_fpsTextRenderer->Render();
 	m_static_uiboard->Render();
-	if(m_pop_up_ui_visible)m_popup_uiboard->Render();
+	if(m_pop_up_ui_visible) m_popup_uiboard->Render();
 	if (m_gizmo_visible) { m_gizmo_button->Render(); m_annotation_uiboard->Render(); }
 	return true;
 }

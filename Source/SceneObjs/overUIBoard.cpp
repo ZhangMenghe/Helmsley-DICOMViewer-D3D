@@ -144,12 +144,6 @@ bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, glm::ve
 	}
 	return false;
 }
-//void overUIBoard::FilpBoardSelection(std::string name) {
-//	if (m_tquads.count(name) != 0) {
-//		m_tquads[name].selected = !m_tquads[name].selected;
-//		m_tquads[name].ttex->setBackgroundColor(m_tquads[name].selected ? D2D1::ColorF::Chocolate : D2D1::ColorF::SlateBlue);
-//	}
-//}
 void overUIBoard::FilterBoardSelection(std::string name) {
 	for (auto& tq : m_tquads) {
 		if (tq.first != name) {

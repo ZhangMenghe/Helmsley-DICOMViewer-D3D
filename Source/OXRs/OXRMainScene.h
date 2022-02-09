@@ -10,6 +10,7 @@
 #include <grpc/rpcHandler.h>
 #include <OXRs/XrSceneLib/Scene.h>
 #include <OXRs/XrScenarios/MarkerBasedScenario.h>
+#include <Common/templateButton.h>
 
 class OXRMainScene : public xr::Scene{
 public:
@@ -37,16 +38,18 @@ public:
 private:
 	std::shared_ptr<Manager> m_manager;
 	std::unique_ptr<vrController> m_sceneRenderer;
-	MarkerBasedScenario* m_scenario;
+	//MarkerBasedScenario* m_scenario;
 	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
-	std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard;
+	std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard, m_annotation_uiboard;
 	
 	uiController m_uiController;
 
 	dataManager* m_data_manager;
 
 	std::shared_ptr<dicomLoader> m_dicom_loader;
+
+	templateButton* m_gizmo_button;
 
 	// RPC instance
 	std::shared_ptr<rpcHandler> m_rpcHandler = nullptr;
@@ -59,10 +62,11 @@ private:
 
 	bool m_overwrite_index_file = false;
 	bool m_local_initialized = false;
-	bool m_pop_up_ui_visible;
+	bool m_pop_up_ui_visible, m_gizmo_visible = false;
 
 	void setup_volume_server();
 	void setup_volume_local();
 	void setup_resource();
+	bool check_ui_hit(const xr::FrameTime& frameTime);
 };
 #endif

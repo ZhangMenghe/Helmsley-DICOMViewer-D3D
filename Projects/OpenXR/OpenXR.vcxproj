@@ -197,7 +197,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Link>
-      <AdditionalDependencies>kernel32.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(ProjectDir)/../../Library/arm64/debug/lib/*.lib;opencv_world412d.lib;OneCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(ProjectDir)/../../Library/arm64/debug/lib/*.lib;opencv_world412d.lib;libtiffd.lib;OneCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)OpenCvInstallArm64-412d\x64\vc15\staticlib;$(ProjectDir)/../../Library/arm64/debug/lib;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\arm64;$(VCInstallDir)\lib\arm64</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
@@ -349,6 +349,7 @@
     <ClInclude Include="..\..\Source\Common\DirectXHelper.h" />
     <ClInclude Include="..\..\Source\Common\Manager.h" />
     <ClInclude Include="..\..\Source\Common\StepTimer.h" />
+    <ClInclude Include="..\..\Source\Common\templateButton.h" />
     <ClInclude Include="..\..\Source\Common\TextTexture.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Camera.h" />
     <ClInclude Include="..\..\Source\D3DPipeline\Primitive.h" />
@@ -420,6 +421,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\Common\DeviceResources.cpp" />
     <ClCompile Include="..\..\Source\Common\Manager.cpp" />
+    <ClCompile Include="..\..\Source\Common\templateButton.cpp" />
     <ClCompile Include="..\..\Source\Common\TextTexture.cpp" />
     <ClCompile Include="..\..\Source\D3DPipeline\Texture.cpp" />
     <ClCompile Include="..\..\Source\grpc\rpcHandler.cpp">
@@ -800,6 +802,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</DeploymentContent>
       <FileType>Document</FileType>
     </None>
+    <None Include="Assets\textures\gizmo">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</DeploymentContent>
+    </None>
     <None Include="OpenXR_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -1126,6 +1131,9 @@
       <HintPath>..\..\packages\Microsoft.MixedReality.QR.0.5.2112\lib\uap10.0.18362\Microsoft.MixedReality.QR.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\textures\gizmo-bounding.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

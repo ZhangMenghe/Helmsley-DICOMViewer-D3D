@@ -39,9 +39,9 @@ void uiController::AddTuneParams(){
 void uiController::InitAllTuneParam(){
     float contrast_values[4] = {
         .0f,
-        .8f,
+        1.0f,
         0.5f,
-        0.5f
+        0.65f
     };
     Manager::instance()->setRenderParam(contrast_values);
 }

@@ -361,9 +361,6 @@
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\textures\gizmo.png">
-      <Filter>Assets\textures</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -448,6 +445,9 @@
     </None>
     <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
       <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="Assets\textures\gizmo">
+      <Filter>Assets\textures</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

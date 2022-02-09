@@ -122,6 +122,9 @@
     <Filter Include="Source\OXRs\XrScenarios">
       <UniqueIdentifier>{26614fb7-246a-4dbf-bead-5c684d20190c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\textures">
+      <UniqueIdentifier>{260634ba-cd5c-4dcc-b0d2-32e4a4d35050}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -267,6 +270,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Renderers\sphereRenderer.cpp">
       <Filter>Source\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Common\templateButton.cpp">
+      <Filter>Source\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -497,6 +503,9 @@
     <ClInclude Include="..\..\Source\Renderers\sphereRenderer.h">
       <Filter>Source\Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Common\templateButton.h">
+      <Filter>Source\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -526,6 +535,9 @@
     <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
     <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
       <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="Assets\textures\gizmo">
+      <Filter>Assets\textures</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -902,5 +914,10 @@
     <CopyFileToFolders Include="..\..\Library\arm64\debug\bin\libprotobufd.dll">
       <Filter>Library\arm64\debug</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\textures\gizmo-bounding.txt">
+      <Filter>Assets\textures</Filter>
+    </Text>
   </ItemGroup>
 </Project>

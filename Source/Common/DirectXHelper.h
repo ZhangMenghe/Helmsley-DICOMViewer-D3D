@@ -37,7 +37,8 @@ namespace DX
 	//Platform::String^ temporaryFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;	//for temp saving. Cleared often by system
 	
 	inline std::string getFilePath(std::string fileName, bool from_asset = false) {
-		if (from_asset) return "Assets/" + fileName;
+		if (from_asset) 
+			return "Assets/" + fileName;
 
 		winrt::hstring localfolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder().Path();
 		std::wstring folderNameW(localfolder.c_str());
