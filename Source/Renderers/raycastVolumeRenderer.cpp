@@ -100,11 +100,10 @@ bool raycastVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, Dir
 		DirectX::XMStoreFloat4x4(&m_const_buff_data.uMVP.mm,
 			DirectX::XMMatrixMultiply(Manager::camera->getVPMat(), DirectX::XMMatrixTranspose(modelMat)));
 
-		auto inv_mat = DirectX::XMMatrixInverse(nullptr, modelMat);
-		DirectX::XMVECTOR veye = DirectX::XMLoadFloat3(&Manager::camera->getCameraPosition());
-		DirectX::XMStoreFloat4(&m_const_buff_data.uCamPosInObjSpace, //Manager::camera->getCameraPosition()
-			DirectX::XMVector4Transform(veye,
-				inv_mat));
+		glm::vec3 veye = float32vec3(Manager::camera->getCameraPosition());
+		auto model_mat = glm::inverse(xmmatrix2mat4(modelMat));
+		glm::vec4 em = model_mat * glm::vec4(veye, 1.0f);
+		m_const_buff_data.uCamPosInObjSpace = DirectX::XMFLOAT4(em.x, em.y, em.z, 1.0f);
 
 		// Prepare the constant buffer to send it to the graphics device.
 		context->UpdateSubresource(

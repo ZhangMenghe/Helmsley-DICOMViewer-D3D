@@ -6,10 +6,11 @@ void uiController::InitAll(){
     AddTuneParams();
     InitAllTuneParam();
     InitCheckParam();
-    setRenderingMethod(0);
+    setRenderingMethod(2);
     setMaskBits(7,8);
     setColorScheme(0);
     setAnnotationMixedRate(0.8f);
+    setTuneParamById(dvr::TID_RAYCAST, 0, 10.0f);
     // setMaskBits(7,2+4+8+16+32+64);
     //vrController::instance()->onReset(
     //    glm::vec3(.0f),

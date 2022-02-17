@@ -11,23 +11,23 @@ OXRMainScene::OXRMainScene(const std::shared_ptr<xr::XrContext>& context)
 
 void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources>& deviceResources) {
 	m_sceneRenderer = std::unique_ptr<vrController>(new vrController(deviceResources, m_manager));
-	m_manager->addMVPStatus("OXRCam", dvr::DEFAULT_ROTATE, glm::vec3(0.5f), dvr::DEFAULT_POS, true);
+	m_manager->addMVPStatus("OXRCam", dvr::DEFAULT_ROTATE, glm::vec3(0.2f), dvr::DEFAULT_POS, true);
 
 	m_deviceResources = deviceResources;
 	//m_scenario = new MarkerBasedScenario(m_context);
 
 	m_static_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
 	m_static_uiboard->AddBoard("fps", 
-		glm::vec3(0.3, -0.3, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.2, 0.2), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)),
+		glm::vec3(0.3, -0.3, dvr::DEFAULT_VIEW_Z), glm::vec3(0.2, 0.1, 0.1), glm::rotate(glm::mat4(1.0), 0.2f, glm::vec3(.0, 1.0, .0)),
 		D2D1::ColorF::Chocolate);
 	
 	m_popup_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
-	m_popup_uiboard->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_NEAR_Z), glm::vec3(0.3, 0.4, 0.2));
+	m_popup_uiboard->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_VIEW_Z), glm::vec3(0.3, 0.4, 0.2));
 	m_popup_uiboard->AddBoard("Annotation");
 	m_popup_uiboard->AddBoard("Broadcast", L"Broadcast", L"Listen", rpcHandler::G_STATUS_SENDER);
 
 	m_annotation_uiboard = std::make_unique<overUIBoard>(m_deviceResources);
-	m_annotation_uiboard->CreateBackgroundBoard(glm::vec3(-0.1f, 0.2f, dvr::DEFAULT_NEAR_Z), glm::vec3(0.4, 0.05, 0.2));
+	m_annotation_uiboard->CreateBackgroundBoard(glm::vec3(-0.2f, 0.2f, dvr::DEFAULT_VIEW_Z), glm::vec3(0.4, 0.05, 0.2));
 	m_annotation_uiboard->AddBoard("Brush", 1, 2, 1, L"", L"", true);
 	m_annotation_uiboard->AddBoard("StepOver", 1, 2, 2);
 
@@ -158,7 +158,7 @@ void OXRMainScene::Update(const xr::FrameTime& frameTime){
 		m_gizmo_button = new templateButton(m_deviceResources,
 			"textures\\gizmo", "textures\\gizmo-bounding.txt", false,
 			400, 400,
-			glm::vec3(-0.1f, -0.2f, dvr::DEFAULT_NEAR_Z), glm::vec3(0.35, 0.35, 0.2), glm::mat4(1.0f));
+			glm::vec3(-0.2f, -0.2f, dvr::DEFAULT_VIEW_Z), glm::vec3(0.35, 0.35, 0.2), glm::mat4(1.0f));
 
 		m_local_initialized = false;
 	}

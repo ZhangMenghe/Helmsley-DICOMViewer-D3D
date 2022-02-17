@@ -2,7 +2,6 @@
 #define D3DPIPELINE_CAMERA_H
 #include "strsafe.h"
 #include <d3d11_3.h>
-
 #include "Utils/TypeConvertUtils.h"
 class Camera {
 private:
@@ -15,7 +14,7 @@ private:
 
     const float NEAR_PLANE = 0.01f;//as close as possible
     const float FAR_PLANE = 100.0f;
-    DirectX::XMFLOAT3 ORI_CAM_POS = { 0.0f, .0f, .0f };
+    DirectX::XMFLOAT3 ORI_CAM_POS = { 0.0f, .0f, .5f };
     DirectX::XMFLOAT3 ORI_UP = { 0.0f, 1.0f, 0.0f };
     DirectX::XMFLOAT3 ORI_FRONT = { 0.0f, 0.0f, -1.0f };
 
@@ -87,6 +86,7 @@ public:
         StringCbPrintf(buf, cbDest, TEXT("Camera:(%f,%f,%f)\n"), (float)mat[3][0], (float)mat[3][1], (float)mat[3][2]);
         OutputDebugString(buf);
       }
+      _eyePos.x = mat[3][0]; _eyePos.y = mat[3][1]; _eyePos.z = mat[3][2];
 
       _projMat = DirectX::XMMatrixTranspose(proj);
       DirectX::XMVECTOR temp = DirectX::XMVector3Transform(XMLoadFloat3(&ORI_FRONT), DirectX::XMMatrixRotationQuaternion(DirectX::XMQuaternionRotationMatrix(pose)));

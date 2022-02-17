@@ -236,8 +236,6 @@ void vrController::Render(int view_id){
 	auto model_mat = model_mat_tex * vol_dim_scale_mat_;
 
 	bool is_front = (model_mat[2][2] * Manager::camera->getViewDirection().z) < 0;
-	context->RSSetState(is_front ? m_render_state_front : m_render_state_back);
-
 	if (Manager::IsCuttingNeedUpdate()) m_cutter->Update(model_mat);
 
 	bool render_complete = true;
@@ -269,7 +267,7 @@ void vrController::Render(int view_id){
 		}
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
-
+	
 	/// MESH  ////
 	if (m_manager->isDrawMesh()) {
 		render_complete &= m_meshRenderer->Draw(m_deviceResources->GetD3DDeviceContext(), tex_volume.get(), mat42xmmatrix(model_mat));
@@ -297,9 +295,8 @@ void vrController::Render(int view_id){
 	if (Manager::param_bool[CHECK_OVERLAY])
 	{
 		render_complete &= m_data_board->Draw(m_deviceResources->GetD3DDeviceContext(),
-											DirectX::XMMatrixScaling(1.0, 0.3, 0.1) 
-											* DirectX::XMMatrixTranslation(0.8f, 0.8f, DEFAULT_VIEW_Z),
-											is_front);
+											DirectX::XMMatrixScaling(0.6f, 0.2, 0.1) 
+											* DirectX::XMMatrixTranslation(0.7f, 0.6f, DEFAULT_VIEW_Z));
 		m_deviceResources->ClearCurrentDepthBuffer();
 	}
 	render_complete &= m_info_annotater->Draw(m_deviceResources->GetD3DDeviceContext(), 
@@ -308,8 +305,6 @@ void vrController::Render(int view_id){
 	m_deviceResources->ClearCurrentDepthBuffer();
 
 	Manager::baked_dirty_ = false;
-	//m_scene_dirty = !render_complete;
-	context->RSSetState(m_render_state_front);
 }
 
 void vrController::setup_compute_shader(){
@@ -352,6 +347,7 @@ void vrController::setup_compute_shader(){
 	rasterDesc.FrontCounterClockwise = true;
 	winrt::check_hresult(
 			m_deviceResources->GetD3DDevice()->CreateRasterizerState(&rasterDesc, &m_render_state_back));
+	m_deviceResources->GetD3DDeviceContext()->RSSetState(m_render_state_front);
 }
 
 void vrController::onSingleTouchDown(float x, float y)

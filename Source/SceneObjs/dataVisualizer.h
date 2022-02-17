@@ -13,7 +13,7 @@ public:
     ~dataBoard();
     void onReset(ID3D11Device* device);
     void Update(ID3D11Device* device, ID3D11DeviceContext* context);
-    bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX, bool is_front);
+    bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX);
     void onViewChange(int width, int height);
     //void addOpacityInstance(ID3D11Device* device);
     //void setOpacityValue();

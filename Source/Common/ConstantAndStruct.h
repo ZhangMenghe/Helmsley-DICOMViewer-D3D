@@ -197,10 +197,9 @@ namespace dvr{
     //const DirectX::XMFLOAT3 DEFAULT_SCALE = { 0.8f, 0.8f, 0.8f };
     //const DirectX::XMFLOAT3 DEFAULT_POS = { .0f, .0f, .0f };
 
-    const float DEFAULT_VIEW_Z = -1.5f;
-    const float DEFAULT_NEAR_Z = -0.4f;
+    const float DEFAULT_VIEW_Z = -.5f;
     const glm::mat4 DEFAULT_ROTATE = glm::mat4(1.0f);
-    const glm::vec3 DEFAULT_SCALE = glm::vec3(1.0f);
+    const glm::vec3 DEFAULT_SCALE = glm::vec3(0.5f);
     const glm::vec3 DEFAULT_POS = glm::vec3(.0f, .0f, DEFAULT_VIEW_Z);
 
     //color scheme

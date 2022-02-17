@@ -139,6 +139,7 @@ void textureBasedVolumeRenderer::update_instance_data(ID3D11DeviceContext* conte
 }
 bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex, DirectX::XMMATRIX modelMat, bool is_front){
 	if (!m_loadingComplete) return false;
+	if(!is_front)context->RSSetState(vrController::instance()->m_render_state_back);
 	if (m_instance_data_dirty) {
 		update_instance_data(context);
 		m_instance_data_dirty = false;
@@ -188,6 +189,7 @@ bool textureBasedVolumeRenderer::Draw(ID3D11DeviceContext* context, Texture* tex
 	baseRenderer::Draw(context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//setback states
 	context->OMSetBlendState(nullptr, 0, 0xffffffff);
+	if (!is_front) context->RSSetState(vrController::instance()->m_render_state_front);
 	return true;
 }
 void textureBasedVolumeRenderer::setDimension(ID3D11Device* device, glm::vec3 vol_dimension, glm::vec3 vol_dim_scale) {

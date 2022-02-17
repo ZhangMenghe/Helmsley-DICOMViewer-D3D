@@ -229,11 +229,7 @@ void dataBoard::setup_opacity_widget_vertcies(float* in_data, float*& out_data, 
         out_data[3 * i + 2] = moff.z;
     }
 }
-bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, bool is_front) {
-   /* context->OMSetBlendState(d3dBlendState, 0, 0xffffffff);
-    context->OMSetDepthStencilState(m_DepthStencilState, 0);
-    if (!is_front) context->RSSetState(vrController::instance()->m_render_state_front);*/
-
+bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat) {
     bool render_complete = true;
 
     render_complete &= m_board_quad->Draw(context, model_mat);
@@ -277,7 +273,5 @@ bool dataBoard::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX model_mat, 
 
     //context->OMSetDepthStencilState(nullptr, 0);
     context->OMSetBlendState(nullptr, 0, 0xffffffff);
-    //if (!is_front) context->RSSetState(vrController::instance()->m_render_state_back);
-
     return render_complete;
 }
