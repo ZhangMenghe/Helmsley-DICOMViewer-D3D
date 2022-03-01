@@ -319,16 +319,13 @@ void OXRManager::Render() {
                                                               m_context->System.ViewProperties.at(secondaryViewConfigType).BlendMode });
             }
         }
+        m_render_primary = (activeSecondaryViewConfigLayerInfos.size() == 0);
 
-        if (activeSecondaryViewConfigLayerInfos.size() > 0) {
+        if (!m_render_primary) {
             frameEndSecondaryViewConfigInfo.viewConfigurationCount = (uint32_t)activeSecondaryViewConfigLayerInfos.size();
             frameEndSecondaryViewConfigInfo.viewConfigurationLayersInfo = activeSecondaryViewConfigLayerInfos.data();
             frameEndSecondaryViewConfigInfo.next = end_info.next;
             end_info.next = &frameEndSecondaryViewConfigInfo;
-            render_for_MRC = true;
-        }
-        else {
-            render_for_MRC = false;
         }
     }
 
@@ -343,13 +340,13 @@ void OXRManager::Render() {
                 scene->BeforeRender(m_currentFrameTime);
             }
         }
-
-        // Render for the primary view configuration.
-        xr::CompositionLayers& primaryViewConfigLayers = layersForAllViewConfigs[0];
-        RenderViewConfiguration(sceneLock, PrimaryViewConfigurationType, primaryViewConfigLayers);
-        end_info.layerCount = primaryViewConfigLayers.LayerCount();
-        end_info.layers = primaryViewConfigLayers.LayerData();
-
+        if( m_keep_primary_while_mrc || m_render_primary){
+            // Render for the primary view configuration.
+            xr::CompositionLayers& primaryViewConfigLayers = layersForAllViewConfigs[0];
+            RenderViewConfiguration(sceneLock, PrimaryViewConfigurationType, primaryViewConfigLayers);
+            end_info.layerCount = primaryViewConfigLayers.LayerCount();
+            end_info.layers = primaryViewConfigLayers.LayerData();
+        }
         // Render layers for any active secondary view configurations too.
         if (m_context->Extensions.SupportsSecondaryViewConfiguration && activeSecondaryViewConfigLayerInfos.size() > 0) {
             for (size_t i = 0; i < activeSecondaryViewConfigLayerInfos.size(); i++) {

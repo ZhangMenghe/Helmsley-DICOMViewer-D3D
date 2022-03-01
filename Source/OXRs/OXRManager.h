@@ -106,7 +106,9 @@ namespace DX {
 
 		std::vector<XrSecondaryViewConfigurationStateMSFT> m_secondaryViewConfigurationsState;
 		std::unordered_map<XrViewConfigurationType, xr::ViewConfigurationState> m_viewConfigStates;
-		bool render_for_MRC = false;
+		bool m_render_primary = true;
+		//todo: 
+		const bool m_keep_primary_while_mrc = false;
 
 		winrt::Windows::Perception::Spatial::SpatialCoordinateSystem m_referenceFrame = { nullptr };
 
