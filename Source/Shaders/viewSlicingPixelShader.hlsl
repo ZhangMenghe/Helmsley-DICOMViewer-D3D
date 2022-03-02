@@ -39,7 +39,8 @@ float4 main(v2f input) : SV_TARGET{
 	float dist = u_dist / 2.0;
 	float3 sample_pos = float3(input.tex.x, 1.0 - input.tex.y, input.tex.z);
 
-	return getColor(sample_pos - dist * u_plane_normal)
-		+ getColor(sample_pos)
-		+ getColor(sample_pos + dist * u_plane_normal);
+	//return getColor(sample_pos - dist * u_plane_normal)
+	//	+ getColor(sample_pos)
+	//	+ getColor(sample_pos + dist * u_plane_normal);
+	return getColor(sample_pos);
 }
