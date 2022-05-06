@@ -288,6 +288,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -845,6 +846,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\colorTransferCompute.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
@@ -857,6 +860,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\colorVizPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
@@ -929,6 +934,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\Naive2DTexVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -943,6 +949,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\Naive3DVertexShader.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
@@ -961,6 +968,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveColorPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -973,6 +981,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveComputeShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
@@ -987,10 +997,15 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Compute</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\NaiveNormVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\QuadPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -1005,6 +1020,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\QuadVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -1023,6 +1040,8 @@
     <FxCompile Include="..\..\Source\Shaders\raycastPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastPixelShaderNaive.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -1035,6 +1054,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\raycastVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -1049,10 +1070,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\SimpleColorPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\texbasedPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -1067,6 +1091,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\texbasedVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -1081,6 +1107,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\viewSlicingPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -1101,6 +1128,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
     <FxCompile Include="..\..\Source\Shaders\VolumeCompute.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
@@ -1115,6 +1143,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Compute</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

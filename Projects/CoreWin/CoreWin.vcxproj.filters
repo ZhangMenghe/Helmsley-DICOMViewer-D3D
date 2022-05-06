@@ -449,6 +449,7 @@
     <None Include="Assets\textures\gizmo">
       <Filter>Assets\textures</Filter>
     </None>
+    <None Include="..\..\OpenCV-Win\opencv\build\x64\vc15\bin\opencv_world455d.dll" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\Library\x64\debug\bin\abseil_dll.dll">
@@ -535,7 +536,7 @@
     <CopyFileToFolders Include="..\..\Library\x64\debug\bin\zlibd1.dll">
       <Filter>Library\x64\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\..\OpenCV-Win\opencv\build\x64\vc15\bin\opencv_world455d.dll" />
+    <CopyFileToFolders Include="..\..\OpenCV-Win\opencv\build\x64\vc15\bin\opencv_world455.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
