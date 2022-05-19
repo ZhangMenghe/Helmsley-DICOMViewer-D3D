@@ -175,6 +175,7 @@ namespace dvr{
     const float MOUSE_SCALE_SENSITIVITY = 0.5f;
     const float MOUSE_PAN_SENSITIVITY = 1.2f;
     const float MOUSE_3D_SENSITIVITY = 1.0f;
+    const float DRAW_2D_BRUSH_RADIUS = 5.0f;
 
     //setting
     const bool CONNECT_TO_SERVER = true;

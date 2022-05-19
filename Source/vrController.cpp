@@ -477,20 +477,18 @@ void vrController::onScale(float sx, float sy)
 		sx = 1.0f + (sx - 1.0f) * MOUSE_SCALE_SENSITIVITY;
 	else
 		sx = 1.0f - (1.0f - sx) * MOUSE_SCALE_SENSITIVITY;
-
-	if (Manager::param_bool[CHECK_FREEZE_VOLUME])
-	{
-		m_cutter->onScale(sx);
-	}
-	else
-	{
-		ScaleVec3_ = ScaleVec3_ * sx;
-		volume_model_dirty = true;
-	}
+	onScale(sx);
 }
 
 void vrController::onScale(float scale)
 {
+	if (Manager::param_bool[CHECK_FREEZE_VOLUME]){
+		m_cutter->onScale(scale);
+	}
+	else{
+		ScaleVec3_ = ScaleVec3_ * scale;
+		volume_model_dirty = true;
+	}
 }
 
 void vrController::onPan(float x, float y)

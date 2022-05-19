@@ -19,3 +19,11 @@
 
 //glm
 #include <glm/glm.hpp>
+
+#include <strsafe.h>
+//#define LOGBUFF TCHAR buf[1024]
+#define LOGINFO(fmt, ...) { \
+TCHAR buf[1024];\
+StringCbPrintf(buf, 1024 * sizeof(TCHAR), TEXT(fmt), __VA_ARGS__);\
+OutputDebugString(buf);\
+}

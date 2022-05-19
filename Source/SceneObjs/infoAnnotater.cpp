@@ -18,7 +18,7 @@ void infoAnnotater::onCreateCanvas(ID3D11Device* device, glm::vec3 vol_dim_scale
 	tex_info->Initialize(device, texInfoDesc);
 	m_ph = ph; m_pw = pw; m_pd = pd;
 	m_vol_dim_scale = vol_dim_scale;
-	tex_info->createTexRaw(ph, pw, pd, 4);
+	tex_info->createTexRaw(4, ph, pw, pd);
 
 	m_brush_center = glm::vec3(-0.25f, 0.25f, 0.25f);//glm::vec3(-0.5f, 0.5f, 0.5f);
 	m_brush_radius = 50;

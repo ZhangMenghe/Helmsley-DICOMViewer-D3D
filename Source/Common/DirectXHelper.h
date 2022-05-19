@@ -11,7 +11,7 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.ApplicationModel.h>
-
+#include <cstdarg>
 namespace DX
 {
 	inline void ThrowIfFailed(HRESULT hr)
@@ -22,6 +22,7 @@ namespace DX
 			throw winrt::hresult_error(hr);
 		}
 	}
+
 	inline void getSubDirs(std::string path, std::vector<std::wstring>& sub_folders) {
 		std::string substr;
 		std::stringstream ss(path);

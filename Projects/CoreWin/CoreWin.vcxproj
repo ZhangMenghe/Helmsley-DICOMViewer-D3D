@@ -317,6 +317,7 @@
     <ClInclude Include="..\..\Source\SceneObjs\dataVisualizer.h" />
     <ClInclude Include="..\..\Source\SceneObjs\infoAnnotater.h" />
     <ClInclude Include="..\..\Source\SceneObjs\overUIBoard.h" />
+    <ClInclude Include="..\..\Source\SceneObjs\paintCanvas.h" />
     <ClInclude Include="..\..\Source\Utils\dataManager.h" />
     <ClInclude Include="..\..\Source\Utils\dicomLoader.h" />
     <ClInclude Include="..\..\Source\Utils\MathUtils.h" />
@@ -380,6 +381,7 @@
     <ClCompile Include="..\..\Source\SceneObjs\dataVisualizer.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\infoAnnotater.cpp" />
     <ClCompile Include="..\..\Source\SceneObjs\overUIBoard.cpp" />
+    <ClCompile Include="..\..\Source\SceneObjs\paintCanvas.cpp" />
     <ClCompile Include="..\..\Source\Utils\dataManager.cpp" />
     <ClCompile Include="..\..\Source\Utils\dicomLoader.cpp" />
     <ClCompile Include="..\..\Source\Utils\uiController.cpp">

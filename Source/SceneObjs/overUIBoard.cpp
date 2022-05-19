@@ -31,14 +31,25 @@ void overUIBoard::onWindowSizeChanged(float Width, float Height) {
 	//}
 	m_screen_x = Width; m_screen_y = Height;
 }
-void overUIBoard::CreateBackgroundBoard(glm::vec3 pos, glm::vec3 scale) {
+void overUIBoard::CreateBackgroundBoard(glm::vec3 pos, glm::vec3 scale, bool drawable) {
 	m_background_board = std::make_unique<TextQuad>();
 	m_background_board->pos = pos;
 	m_background_board->size = scale;
-	m_background_board->quad = new quadRenderer(m_deviceResources->GetD3DDevice(), DirectX::XMFLOAT4({ 0.6f, 0.7f, 0.95f, 0.8f }));
 	m_background_board->mat = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
 		//* mat42xmmatrix(r)
 		* DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
+
+	if (drawable) {
+		m_background_board->dtex = new paintCanvas(
+			m_deviceResources->GetD3DDevice(),
+			m_deviceResources->GetD3DDeviceContext(), scale.y * m_default_tex_height, scale.x * m_default_tex_width, glm::vec4(0.6f, 0.7f, 0.95f, 1.0f));
+		m_background_board->quad = new quadRenderer(m_deviceResources->GetD3DDevice());
+
+		m_background_board->quad->setTexture(m_background_board->dtex->getCanvasTexture());
+	}
+	else {
+		m_background_board->quad = new quadRenderer(m_deviceResources->GetD3DDevice(), DirectX::XMFLOAT4({ 0.6f, 0.7f, 0.95f, 0.8f }));
+	}
 }
 void overUIBoard::AddBoard(std::string name, std::wstring unsel_tex, std::wstring sel_tex, bool default_state){
 	int id = m_tquads.size();
@@ -93,15 +104,31 @@ void overUIBoard::AddBoard(std::string name, glm::vec3 p, glm::vec3 s, glm::mat4
 	tq.last_action_time = -1;
 	m_tquads[name] = tq;
 }
+
 bool overUIBoard::CheckHit(std::string name, float px, float py) {
-	return CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_tquads[name].mat, m_screen_x, m_screen_y, px, py);
+	glm::vec3 proj_pos, proj_size;
+
+	if (name == "background") {
+		bool hit = CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_background_board->mat, 
+			m_screen_x, m_screen_y, px, py, proj_pos, proj_size);
+		if (hit) {
+			m_background_board->selected = !m_background_board->selected;
+			//if(m_background_board->selected) 
+				m_background_board->dtex->setBrushPos(m_deviceResources->GetD3DDeviceContext(), proj_pos, proj_size, px, py);
+		}
+		return hit;
+	}
+
+	return CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_tquads[name].mat, m_screen_x, m_screen_y, px, py, proj_pos, proj_size);
 	//glm::vec3 m_offset = m_tquads[name].pos;
 	//glm::vec3 m_size = m_tquads[name].size;
 	//return point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py);
 }
 bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, float px, float py) {
 	if (m_background_board) {
-		if(!CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_background_board->mat, m_screen_x, m_screen_y, px, py))return false;
+		glm::vec3 proj_pos, proj_size;
+
+		if(!CheckHitRespToModelMtx(Manager::camera->getVPMat(), m_background_board->mat, m_screen_x, m_screen_y, px, py, proj_pos, proj_size))return false;
 		//glm::vec3 m_offset = m_background_board->pos;
 		//glm::vec3 m_size = m_background_board->size;
 		//if (!point2d_inside_rectangle(m_offset.x, m_offset.y, m_size.x, m_size.y, px, py)) return false;

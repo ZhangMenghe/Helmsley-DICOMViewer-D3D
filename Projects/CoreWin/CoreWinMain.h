@@ -22,6 +22,7 @@ namespace CoreWin {
 		void OnPointerPressed(float x, float y);
 		void OnPointerMoved(float x, float y);
 		void OnPointerReleased();
+		void onPointerWheelChanged(float x, float y, int delta);
 
 		void onMainButtonClicked(){}
 	private:
@@ -31,7 +32,7 @@ namespace CoreWin {
 		std::shared_ptr<Manager> m_manager;
 		std::unique_ptr<vrController> m_sceneRenderer;
 
-		std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard, m_annotation_uiboard;
+		std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard, m_annotation_uiboard, m_draw_board;
 
 		uiController m_uiController;
 
@@ -43,6 +44,7 @@ namespace CoreWin {
 		DX::StepTimer m_timer;
 
 		std::shared_ptr<dicomLoader> m_dicom_loader;
+		bool m_ispressed = false;
 
 		// RPC instance
 		std::shared_ptr<rpcHandler> m_rpcHandler = nullptr;
@@ -54,8 +56,9 @@ namespace CoreWin {
 
 		const bool m_overwrite_index_file = false;
 		bool m_local_initialized = false;
-		bool m_waitfor_operation = true;
 		bool m_pop_up_ui_visible = false, m_gizmo_visible=false;
+		bool m_draw_volume = false;
+		bool m_drawcanvas_visible = true;
 
 		void setup_volume_server();
 		void setup_volume_local();

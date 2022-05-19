@@ -30,6 +30,8 @@ CoreWinMain::CoreWinMain(const std::shared_ptr<DX::DeviceResources>& deviceResou
 	m_annotation_uiboard->AddBoard("Brush", 1, 2, 1, L"", L"", true);
 	m_annotation_uiboard->AddBoard("StepOver", 1, 2, 2);
 
+	m_draw_board = std::make_unique<overUIBoard>(m_deviceResources);
+	m_draw_board->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_VIEW_Z * 0.5f), glm::vec3(0.8, 0.6, 0.2), true);
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
@@ -106,6 +108,7 @@ void CoreWinMain::CreateWindowSizeDependentResources()
 	m_static_uiboard->onWindowSizeChanged(outputSize.Width, outputSize.Height);
 	m_popup_uiboard->onWindowSizeChanged(outputSize.Width, outputSize.Height);
 	m_annotation_uiboard->onWindowSizeChanged(outputSize.Width, outputSize.Height);
+	m_draw_board->onWindowSizeChanged(outputSize.Width, outputSize.Height);
 	m_screen_width = outputSize.Width; m_screen_height = outputSize.Height;
 }
 
@@ -172,9 +175,10 @@ bool CoreWinMain::Render(){
 	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// Render the scene objects.
-	m_sceneRenderer->Render(0);
-	//m_fpsTextRenderer->Render();
+	if(m_draw_volume) m_sceneRenderer->Render(0);
 	m_static_uiboard->Render();
+	if(m_drawcanvas_visible) m_draw_board->Render();
+
 	if(m_pop_up_ui_visible) m_popup_uiboard->Render();
 	if (m_gizmo_visible) { m_gizmo_button->Render(); m_annotation_uiboard->Render(); }
 	return true;
@@ -192,6 +196,9 @@ void CoreWinMain::OnDeviceRestored()
 	CreateWindowSizeDependentResources();
 }
 void CoreWinMain::OnPointerPressed(float x, float y) {
+	m_ispressed = true;
+	if (m_drawcanvas_visible && m_draw_board->CheckHit("background", x, y)) return;
+
 	if (m_static_uiboard->CheckHit("popupStart", x, y)) {
 		m_pop_up_ui_visible = !m_pop_up_ui_visible;
 		m_static_uiboard->Update("popupStart", m_pop_up_ui_visible?D2D1::ColorF::Chocolate: D2D1::ColorF::SlateBlue);
@@ -226,19 +233,42 @@ void CoreWinMain::OnPointerPressed(float x, float y) {
 				m_sceneRenderer->onTouchMoveAnnotation((dvr::ANNOTATE_DIR)hit_id, is_brush);
 		}
 	}
-	//No UI HIT move to scene.
-	m_sceneRenderer->onSingleTouchDown(x, y);
-	if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+	if (m_draw_volume) {
+		m_sceneRenderer->onSingleTouchDown(x, y);
+		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_DOWN, x, y);
+	}
 }
 void CoreWinMain::OnPointerMoved(float x, float y) {
-	if (m_waitfor_operation) {
+	if (!m_ispressed) return;
+	if (m_drawcanvas_visible) {
+		m_draw_board->onTouchMove(x, y);
+	}
+	//if (m_annotation_uiboard->IsSelected("background")) {
+	//	m_annotation_uiboard->onTouchMove(x, y);
+	//	return;
+	//}
+	if (m_draw_volume) {
 		m_sceneRenderer->onTouchMove(x, y);
 		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_MOVE, x, y);
 	}
 }
 void CoreWinMain::OnPointerReleased() {
-	if (m_waitfor_operation) {
+	m_ispressed = false;
+	if (m_drawcanvas_visible) {
+		m_draw_board->onTouchReleased();
+	}
+	if (m_draw_volume) {
 		m_sceneRenderer->onTouchReleased();
 		if (rpcHandler::G_STATUS_SENDER) m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
+	}
+}
+void CoreWinMain::onPointerWheelChanged(float x, float y, int delta) {
+	if (m_draw_volume) {
+		auto zoomratio = static_cast<float> (std::pow(1.1, delta / 120.0f));
+		m_sceneRenderer->onScale(zoomratio);
+	}
+	if (m_drawcanvas_visible) {
+		m_draw_board->onTouchMove(x, y, delta);
+		LOGINFO("====wheel: (%f,%f,%d)\n", x, y, delta);
 	}
 }

@@ -63,6 +63,7 @@ namespace CoreWin
 		void OnPointerPressed(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
 		void OnPointerMoved(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
 		void OnPointerReleased(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
+		void onPointerWheelChanged(windows::CoreWindow const& sender, windows::PointerEventArgs const& args);
 	//private:
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 		std::unique_ptr<CoreWinMain> m_main;
@@ -122,6 +123,7 @@ namespace CoreWin
 		window.PointerPressed({ this, &App::OnPointerPressed });
 		window.PointerReleased({ this, &App::OnPointerReleased });
 		window.PointerMoved({ this, &App::OnPointerMoved });
+		window.PointerWheelChanged({ this, &App::onPointerWheelChanged });
 
 		m_deviceResources->SetWindow(window);
 	}
@@ -232,6 +234,12 @@ namespace CoreWin
 	}
 	void App::OnPointerReleased(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
 		if (m_main != nullptr) m_main->OnPointerReleased();
+	}
+	void App::onPointerWheelChanged(windows::CoreWindow const& sender, windows::PointerEventArgs const& args) {
+		if (m_main) {
+			m_main->onPointerWheelChanged(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y,
+				args.CurrentPoint().Properties().MouseWheelDelta());
+		}
 	}
 	void App::AddVisual(windows::float2 const point) {
 		windows::Compositor compositor = m_visuals.Compositor();

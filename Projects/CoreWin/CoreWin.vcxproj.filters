@@ -217,6 +217,9 @@
     <ClCompile Include="..\..\Source\Common\templateButton.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SceneObjs\paintCanvas.cpp">
+      <Filter>Source\SceneObjs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CoreWinMain.h" />
@@ -355,6 +358,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Common\uiTestHelper.h">
       <Filter>Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SceneObjs\paintCanvas.h">
+      <Filter>Source\SceneObjs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
-namespace HDUI{
+namespace HDUI {
 	// Test if a 2D point (x,y) is in polygon with npol edges and xp,yp vertices
 // The following code is by Randolph Franklin, it returns 1 for interior points and 0 for exterior points.
 	inline int pnpoly(int npol, float* xp, float* yp, float x, float y) {
@@ -34,7 +34,12 @@ namespace HDUI{
 			&& py >= offsety
 			&& py < offsety + sizey);
 	}
+	inline bool bounding_boxes_overlap(float b1x, float b1y, float b2x, float b2y, float radius) {
 
+		return (std::min(b1x,b2x) > std::max(b1x, b2x) && // width > 0
+			std::min(b1y, b2y) > std::max(b1y, b2y));
+
+	}
 	inline void update_board_projection_pos(float screen_width, float screen_height, DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos) {
 		DirectX::XMFLOAT4X4 mmat_f;
 		DirectX::XMStoreFloat4x4(&mmat_f, proj_mat);
@@ -66,12 +71,12 @@ namespace HDUI{
 
 inline bool CheckHitRespToModelMtx(DirectX::XMMATRIX& view_proj_mat, DirectX::XMMATRIX& model_mat, 
 	float screen_width, float screen_height,
-	float px, float py) {
+	float px, float py,
+	glm::vec3& proj_pos, glm::vec3& proj_size) {
 	auto projMat = DirectX::XMMatrixMultiply(view_proj_mat,
 		DirectX::XMMatrixTranspose(model_mat));
-	glm::vec3 pos, size;
-	HDUI::update_board_projection_pos(screen_width, screen_height, projMat, size, pos);
-	return HDUI::point2d_inside_rectangle(pos.x, pos.y, size.x, size.y, px, py);
+	HDUI::update_board_projection_pos(screen_width, screen_height, projMat, proj_size, proj_pos);
+	return HDUI::point2d_inside_rectangle(proj_pos.x, proj_pos.y, proj_size.x, proj_size.y, px, py);
 }
 inline bool CheckHitWithinSphere(glm::vec3 sc, float radius, glm::vec3 check_pos, float half_plane_x, float half_plane_y) {
 	return HDUI::sphere_intersects_plane_point(sc, radius, check_pos, glm::vec3(.0, .0, 1.0), half_plane_x, half_plane_y);

@@ -17,4 +17,13 @@ inline glm::vec3 float32vec3(DirectX::XMFLOAT3 v) {
     return glm::vec3(v.x, v.y, v.z);
 }
 
+inline void fillArrayWithRGBA(unsigned char* &data, int size, glm::vec4 c){
+    for (auto i = 0; i < 4 * size; i += 4) {
+        data[i] = int(255 * c.r);
+        data[i + 1] = int(255 * c.g);
+        data[i + 2] = int(255 * c.b);
+        data[i + 3] = int(255 * c.a);
+    }
+}
+
 #endif

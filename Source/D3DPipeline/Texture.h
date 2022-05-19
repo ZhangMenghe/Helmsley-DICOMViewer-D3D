@@ -13,8 +13,9 @@ public:
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE3D_DESC texDesc, const void* data);
 
 	void setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch);
-	void setTexData(ID3D11DeviceContext* context, D3D11_BOX* box, std::vector<int> pos, std::vector<unsigned char> value, int unit_size);
-	void createTexRaw(UINT ph, UINT pw, UINT pd, int unit_size);
+	void setTexData(ID3D11DeviceContext* context, D3D11_BOX* box, std::vector<int> pos, std::vector<unsigned char> value, int unit_size, const BYTE* mask = nullptr);
+	void createTexRaw(int unit_size, UINT ph, UINT pw, UINT pd=1);
+
 	void GenerateMipMap(ID3D11DeviceContext* context);
 
 	void ShutDown();
