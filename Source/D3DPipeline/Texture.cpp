@@ -107,7 +107,6 @@ void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 	int idx = 0, mask_id = 0;
 	std::lock_guard<std::mutex> lock(m_memory_mutex);
 	unsigned char* fData = new unsigned char[depth_pitch * depth];
-	memset(fData, 0x00, depth_pitch * depth);
 	for (auto z = box->front; z < box->back; z++) {
 		auto slice_offset = depth_pitch * z;
 		for (auto y = box->top; y < box->bottom; y++) {
@@ -115,7 +114,12 @@ void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 			auto buff_offset = idx;
 			for (auto x = box->left; x < box->right; x++) {
 				if (mask[mask_id++]) { 
-					memset(m_rawdata + line_offset+x*unit_size, 0xff, unit_size);
+					//memset(m_rawdata + line_offset+x*unit_size, 0xff, unit_size);
+					auto update_data = m_rawdata + line_offset + x * unit_size;
+					int vid = 0;
+					for (auto p : pos) {
+						update_data[p] = value[vid++];
+					}
 				}
 				idx += unit_size;
 			}
@@ -139,7 +143,6 @@ void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 			fData,
 			row_pitch,
 			depth_pitch);
-	delete fData; fData = nullptr;
 } 
 
 void Texture::ShutDown() {

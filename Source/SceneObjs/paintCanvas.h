@@ -20,9 +20,6 @@ public:
 
 	void setBrushPos(ID3D11DeviceContext* context, glm::vec3 proj_pos, glm::vec3 proj_size, float px, float py);
 	void onBrushDraw(ID3D11DeviceContext* context, float px, float py);
-	
-	void onBrushDraw(ID3D11DeviceContext* context, glm::vec3 center,
-		std::vector<int> pos, std::vector<unsigned char> value);
 
 	void onBrushDrawWithDepthForce(ID3D11DeviceContext* context, float px, float py, int delta);
 	void onBrushUp() { m_isdrawing = false; }
@@ -34,19 +31,20 @@ private:
 	std::unique_ptr<Texture> m_tex;
 	
 	UINT m_ph, m_pw;
-	//float m_px, m_py, m_pz;
 	float m_tex_u, m_tex_v;
 	glm::vec3 m_canvas_offset, m_canvas_size;
 
 	bool m_isdrawing = false;
+	bool m_interpolate_sparse = true;
+
 	//Brush
 	DRAW_BRUSH_TYPE m_brush_type;
 	glm::vec3 m_brush_center;
+	glm::vec4 m_brush_color;
 	int m_brush_radius;
+
 	float m_depth_offset;
-	bool m_interpolate_sparse = true;
 
 	void EvaluateBrushSize();
-	void GenerateUpdateMask(float curr_tex_u, float curr_tex_v, D3D11_BOX& box, BYTE*& mask);
 };
 #endif
