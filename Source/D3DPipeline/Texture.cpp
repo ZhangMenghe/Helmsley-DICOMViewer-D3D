@@ -51,6 +51,10 @@ bool Texture::Initialize(
 	const void* data) {
 	if (!Initialize(device, texDesc)) return false;
 	auto row_pitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	auto sz = row_pitch * texDesc.Height;
+	m_rawdata = new unsigned char[sz];
+	memcpy(m_rawdata, data, sz);
+
 	setTexData(context, data, row_pitch, 0);
 	return true;
 }
@@ -82,11 +86,9 @@ void Texture::setTexData(ID3D11DeviceContext* context, const void* data, UINT ro
 			break;
 		case Texture::TWO_DIMS:
 			context->UpdateSubresource(mTex2D.get(), 0, nullptr, data, row_pitch, depth_pitch);
-			m_rawdata = (BYTE*)std::move(data);
 			break;
 		case Texture::THREE_DIMS:
 			context->UpdateSubresource(mTex3D, 0, nullptr, data, row_pitch, depth_pitch);
-			m_rawdata = (BYTE*)std::move(data);
 			break;
 		default:
 			break;
@@ -103,26 +105,22 @@ void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 	auto depth_pitch = row_pitch * height;
 
 	int idx = 0, mask_id = 0;
+	std::lock_guard<std::mutex> lock(m_memory_mutex);
 	unsigned char* fData = new unsigned char[depth_pitch * depth];
+	memset(fData, 0x00, depth_pitch * depth);
 	for (auto z = box->front; z < box->back; z++) {
 		auto slice_offset = depth_pitch * z;
 		for (auto y = box->top; y < box->bottom; y++) {
-			auto line_offset = slice_offset + row_pitch * (mHeight - y);
+			auto line_offset = slice_offset + mWidth * y * unit_size;
 			auto buff_offset = idx;
-			memcpy(fData + buff_offset, m_rawdata + line_offset, unit_size * (box->right - box->left));
-
 			for (auto x = box->left; x < box->right; x++) {
-				//copy the whole set
-				if(mask[mask_id]) memset(fData + idx, 0xff, unit_size);
-				
-	//			//auto start_pos = line_offset + unit_size * x;
-	//		//	memcpy(fData + idx, m_rawdata + start_pos, unit_size);
-	//			for(int i=0; i<pos.size(); i++) fData[idx + pos[i]] = value[i];
-	//		//	//copy back the values after amend
-	//		//	memcpy(m_rawdata + start_pos, fData + idx, unit_size);
-				idx += unit_size; mask_id++;
+				if (mask[mask_id++]) { 
+					memset(m_rawdata + line_offset+x*unit_size, 0xff, unit_size);
+				}
+				idx += unit_size;
 			}
-			memcpy(m_rawdata + line_offset, fData + buff_offset, unit_size * (box->right - box->left));
+			
+			memcpy(fData + buff_offset, m_rawdata + line_offset + box->left * unit_size, unit_size * (box->right - box->left));
 		}
 	}
 	if(mDim == Texture::THREE_DIMS)
@@ -141,6 +139,7 @@ void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 			fData,
 			row_pitch,
 			depth_pitch);
+	delete fData; fData = nullptr;
 } 
 
 void Texture::ShutDown() {

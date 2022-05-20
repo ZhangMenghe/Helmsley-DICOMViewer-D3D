@@ -2,6 +2,7 @@
 #define D3DPIPELINE_TEXTURE_H
 #include <d3d11.h>
 #include <winrt/base.h>
+#include <mutex>
 class Texture {
 public:
 	Texture(){}
@@ -46,6 +47,7 @@ protected:
 	ID3D11Texture3D* mTex3D = nullptr;
 
 	unsigned char* m_rawdata = nullptr;
+	std::mutex m_memory_mutex;
 };
 
 #endif // !D3DPIPELINE_TEXTURE_H
