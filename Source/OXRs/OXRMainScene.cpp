@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿
+#include "pch.h"
 #include "OXRMainScene.h"
 #include <Common/DirectXHelper.h>
 #include "OXRRenderer/OpenCVFrameProcessing.h"
@@ -30,6 +31,9 @@ void OXRMainScene::SetupDeviceResource(const std::shared_ptr<DX::DeviceResources
 	m_annotation_uiboard->CreateBackgroundBoard(glm::vec3(-0.2f, 0.2f, dvr::DEFAULT_VIEW_Z), glm::vec3(0.4, 0.05, 0.2));
 	m_annotation_uiboard->AddBoard("Brush", 1, 2, 1, L"", L"", true);
 	m_annotation_uiboard->AddBoard("StepOver", 1, 2, 2);
+
+	m_draw_board = std::make_unique<overUIBoard>(m_deviceResources);
+	m_draw_board->CreateBackgroundBoard(glm::vec3(.0, .0, dvr::DEFAULT_VIEW_Z), glm::vec3(0.8, 0.6, 0.2), true);
 
 	m_dicom_loader = std::make_shared<dicomLoader>();
 
@@ -96,16 +100,13 @@ void OXRMainScene::onViewChanged(){
 	//winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
 	//m_sceneRenderer->onViewChanged(outputSize.Width, outputSize.Height);
 }
+
 bool OXRMainScene::check_ui_hit(const xr::FrameTime& frameTime) {
-	//hit test
 	std::string hit_name;
 	XrVector3f pos; float radius;
 	m_hand_sys->getCurrentTouchPosition(pos, radius);
 
-	//TCHAR buf[1024];
-	//size_t cbDest = 1024 * sizeof(TCHAR);
-	//StringCbPrintf(buf, cbDest, TEXT("pos:(%f,%f,%f)\n"), pos.x, pos.y,pos.z);
-	//OutputDebugString(buf);
+	if (m_drawcanvas_visible && m_draw_board->DrawOnBoard(frameTime.FrameIndex, hit_name, glm::vec3(pos.x, pos.y, pos.z), radius)) return true;
 
 	m_pop_up_ui_visible = (m_hand_sys->getClapNum() % 2 == 1);
 	if (m_pop_up_ui_visible) {
@@ -190,17 +191,19 @@ void OXRMainScene::Render(const xr::FrameTime& frameTime, uint32_t view_id){
 	{
 		return;
 	}
-	m_sceneRenderer->Render(view_id);
+	if(m_draw_volume) m_sceneRenderer->Render(view_id);
 	m_static_uiboard->Render();
 	if (m_pop_up_ui_visible) m_popup_uiboard->Render();
+	if (m_drawcanvas_visible) m_draw_board->Render();
 	if (m_gizmo_visible) { m_gizmo_button->Render(); m_annotation_uiboard->Render(); }
 	m_hand_sys->Draw(m_deviceResources->GetD3DDeviceContext());
 }
 
 void OXRMainScene::onSingle3DTouchDown(float x, float y, float z, int side) {
-	m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
+	if (m_draw_volume) m_sceneRenderer->onSingle3DTouchDown(x, y, z, side);
 }
 void OXRMainScene::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int side) {
+	if (!m_draw_volume) return;
 	std::vector<dvr::OXR_POSE_TYPE> types;
 	m_sceneRenderer->on3DTouchMove(x, y, z, rot, side, types);
 	//SYNC: send out volume pose
@@ -223,6 +226,6 @@ void OXRMainScene::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 	}
 };
 void OXRMainScene::on3DTouchReleased(int side) { 
-	m_sceneRenderer->on3DTouchReleased(side); 
+	if (m_draw_volume) m_sceneRenderer->on3DTouchReleased(side);
 	//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
 };

@@ -162,6 +162,7 @@ bool overUIBoard::CheckHit(std::string name, float x, float y, float z) {
 bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius) {
 	if (!CheckHitWithinSphere(pos, radius, m_background_board->pos, m_background_board->size.x * 0.5f, m_background_board->size.y * 0.5f))
 		return false;
+	//check if there are sub hitable objects
 	for (auto &tq : m_tquads) {
 		if (CheckHitWithinSphere(pos, radius, tq.second.pos, tq.second.size.x * 0.5f, tq.second.size.y * 0.5f)) {
 			if (on_board_hit(tq.second, frameIndex)) {
@@ -170,6 +171,32 @@ bool overUIBoard::CheckHit(const uint64_t frameIndex, std::string& name, glm::ve
 		}
 	}
 	return false;
+}
+bool overUIBoard::DrawOnBoard(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius) {
+	if (!m_background_board || !m_background_board->dtex) return false;
+	if (!m_3d_pressed) {
+		if (!CheckHitWithinSphere(pos, radius, m_background_board->pos, m_background_board->size.x * 0.5f, m_background_board->size.y * 0.5f))
+			return false;
+	}
+
+	glm::mat4 plane_model = xmmatrix2mat4(m_background_board->mat);
+	glm::vec4 pn_ = plane_model * glm::vec4(0, 0, -1.0f, 1.0f);
+	glm::vec3 pn = glm::vec3(pn_.x, pn_.y, pn_.z) / pn_.w;
+	float proj_dist; glm::vec3 proj_pos_world;
+	PointProjectOnPlane(m_background_board->pos, pn, pos, proj_dist, proj_pos_world);
+	if (fabs(proj_dist) > 0.1f) {
+		m_3d_pressed = false; return false;
+	}
+	glm::vec4 proj_pos_canvas = glm::inverse(plane_model) * glm::vec4(proj_pos_world, 1.0f);
+	glm::vec3 proj_pos = glm::vec3(proj_pos_canvas.x, proj_pos_canvas.y, proj_pos_canvas.z) / proj_pos_canvas.w;
+
+	if (!m_3d_pressed) {
+		m_background_board->dtex->setBrushPos(m_deviceResources->GetD3DDeviceContext(), proj_pos.x + 0.5f, 0.5f - proj_pos.y);
+		m_3d_pressed = true;
+	}else {
+		m_background_board->dtex->onBrushDraw(m_deviceResources->GetD3DDeviceContext(), proj_pos.x + 0.5f, 0.5f - proj_pos.y);
+	}
+	return true;
 }
 void overUIBoard::FilterBoardSelection(std::string name) {
 	for (auto& tq : m_tquads) {

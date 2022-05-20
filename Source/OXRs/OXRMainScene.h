@@ -41,7 +41,7 @@ private:
 	//MarkerBasedScenario* m_scenario;
 	std::shared_ptr<DX::DeviceResources> m_deviceResources = nullptr;
 
-	std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard, m_annotation_uiboard;
+	std::unique_ptr<overUIBoard> m_static_uiboard, m_popup_uiboard, m_annotation_uiboard, m_draw_board;
 	
 	uiController m_uiController;
 
@@ -60,6 +60,9 @@ private:
 	// Rendering loop timer.
 	DX::StepTimer m_timer;
 
+	bool m_ispressed = false;
+	bool m_draw_volume = false;
+	bool m_drawcanvas_visible = true;
 	bool m_overwrite_index_file = false;
 	bool m_local_initialized = false;
 	bool m_pop_up_ui_visible, m_gizmo_visible = false;

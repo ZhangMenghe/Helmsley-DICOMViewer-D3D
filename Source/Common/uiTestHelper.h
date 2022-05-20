@@ -81,3 +81,8 @@ inline bool CheckHitRespToModelMtx(DirectX::XMMATRIX& view_proj_mat, DirectX::XM
 inline bool CheckHitWithinSphere(glm::vec3 sc, float radius, glm::vec3 check_pos, float half_plane_x, float half_plane_y) {
 	return HDUI::sphere_intersects_plane_point(sc, radius, check_pos, glm::vec3(.0, .0, 1.0), half_plane_x, half_plane_y);
 }
+inline void PointProjectOnPlane(glm::vec3 pp, glm::vec3 pn, glm::vec3 p, float& proj_dist, glm::vec3& proj_point) {
+	glm::vec3 v = p - pp;
+	proj_dist = glm::dot(pn, v);
+	proj_point = p - proj_dist * pn;
+}

@@ -23,6 +23,14 @@ m_brush_color(glm::vec4(255)){
 	fillArrayWithRGBA(canvas_tex_data, ph * pw, color);
 	m_tex->Initialize(device, context, texInfoDesc, canvas_tex_data);
 }
+void paintCanvas::setBrushPos(ID3D11DeviceContext* context, float px, float py) {
+	//calculate
+	m_canvas_offset = glm::vec3(.0f);
+	m_canvas_size = glm::vec3(1.0f);
+	m_tex_u = -1; m_tex_v = -1;
+	onBrushDraw(context, px, py);
+	m_isdrawing = true;
+}
 void paintCanvas::setBrushPos(ID3D11DeviceContext* context, glm::vec3 proj_pos, glm::vec3 proj_size, float px, float py) {
 	m_canvas_offset = proj_pos;
 	m_canvas_size = proj_size;

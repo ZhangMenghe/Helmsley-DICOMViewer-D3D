@@ -19,6 +19,8 @@ public:
 	
 
 	void setBrushPos(ID3D11DeviceContext* context, glm::vec3 proj_pos, glm::vec3 proj_size, float px, float py);
+	//for 3d draw, pxpy: 0~1, proportion of the canvas
+	void setBrushPos(ID3D11DeviceContext* context, float px, float py);
 	void onBrushDraw(ID3D11DeviceContext* context, float px, float py);
 
 	void onBrushDrawWithDepthForce(ID3D11DeviceContext* context, float px, float py, int delta);

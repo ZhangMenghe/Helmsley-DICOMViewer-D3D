@@ -39,6 +39,8 @@ public:
 	bool CheckHit(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius);
 	bool CheckHit(const uint64_t frameIndex, std::string& name, float x, float y);
 
+	bool DrawOnBoard(const uint64_t frameIndex, std::string& name, glm::vec3 pos, float radius);
+
 	bool IsSelected(std::string name) { 
 		if (name == "background") return m_background_board->selected;
 		return m_tquads[name].selected;
@@ -76,6 +78,7 @@ private:
 	float m_screen_x, m_screen_y;
 	const int64_t m_action_threshold = 20;
 	const int32_t m_default_tex_height = 800, m_default_tex_width = 800;
+	bool m_3d_pressed = false;
 
 	bool on_board_hit(TextQuad& texquad, const uint64_t frameIndex);
 	//void update_board_projection_pos(DirectX::XMMATRIX& proj_mat, glm::vec3& size, glm::vec3& pos);
