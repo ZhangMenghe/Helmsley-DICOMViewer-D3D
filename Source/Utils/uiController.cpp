@@ -6,7 +6,7 @@ void uiController::InitAll(){
     AddTuneParams();
     InitAllTuneParam();
     InitCheckParam();
-    setRenderingMethod(2);
+    setRenderingMethod(0);
     setMaskBits(7,8);
     setColorScheme(0);
     setAnnotationMixedRate(0.8f);
