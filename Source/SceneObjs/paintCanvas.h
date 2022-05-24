@@ -23,6 +23,7 @@ public:
 	void setBrushPos(ID3D11DeviceContext* context, float px, float py);
 	void onBrushDraw(ID3D11DeviceContext* context, float px, float py);
 
+	void setDepthForceBrushSize(float dist);
 	void onBrushDrawWithDepthForce(ID3D11DeviceContext* context, float px, float py, int delta);
 	void onBrushUp() { m_isdrawing = false; }
 	//bool stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir, bool isBrush);

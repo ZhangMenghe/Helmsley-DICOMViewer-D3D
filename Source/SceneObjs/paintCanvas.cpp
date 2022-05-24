@@ -100,6 +100,15 @@ void paintCanvas::onBrushDraw(ID3D11DeviceContext* context, float px, float py) 
 	m_tex->setTexData(context, &destRegion, { 0,1,2,3 }, { (BYTE)m_brush_color.r, (BYTE)m_brush_color.g, (BYTE)m_brush_color.b, (BYTE)m_brush_color.a }, 4, mask);
 	m_tex_u = curr_tex_u; m_tex_v = curr_tex_v;
 }
+/*
+* Function to convert distance to depth force to brush size
+dist: projected distance to the 2D plane(m)
+a finger offset if ussally a few cms (0.0x m)
+*/
+void paintCanvas::setDepthForceBrushSize(float dist) {
+	m_depth_offset = int(dist * 100) * 0.1f;
+	EvaluateBrushSize();
+}
 void paintCanvas::onBrushDrawWithDepthForce(ID3D11DeviceContext* context, float px, float py, int delta) {
 	m_depth_offset += float(delta / 120.0f) * 0.1f;
 	EvaluateBrushSize();

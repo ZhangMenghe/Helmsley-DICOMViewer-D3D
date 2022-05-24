@@ -184,9 +184,12 @@ bool overUIBoard::DrawOnBoard(const uint64_t frameIndex, std::string& name, glm:
 	glm::vec3 pn = glm::vec3(pn_.x, pn_.y, pn_.z) / pn_.w;
 	float proj_dist; glm::vec3 proj_pos_world;
 	PointProjectOnPlane(m_background_board->pos, pn, pos, proj_dist, proj_pos_world);
-	if (fabs(proj_dist) > 0.1f) {
+	//LOGINFO("====DIST: %f\n", proj_dist);
+	if (proj_dist < -0.1f) {
 		m_3d_pressed = false; return false;
 	}
+	if (dvr::SET_DEPTH_FORCE_ON && proj_dist > .0f) m_background_board->dtex->setDepthForceBrushSize(proj_dist);
+
 	glm::vec4 proj_pos_canvas = glm::inverse(plane_model) * glm::vec4(proj_pos_world, 1.0f);
 	glm::vec3 proj_pos = glm::vec3(proj_pos_canvas.x, proj_pos_canvas.y, proj_pos_canvas.z) / proj_pos_canvas.w;
 
