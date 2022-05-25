@@ -50,12 +50,7 @@ bool Texture::Initialize(
 	D3D11_TEXTURE2D_DESC texDesc, 
 	const void* data, int unit_size) {
 	if (!Initialize(device, texDesc)) return false;
-	m_tex_unit_size = unit_size;
 	auto row_pitch = (texDesc.Width * unit_size) * sizeof(unsigned char);
-	auto sz = row_pitch * texDesc.Height;
-	m_rawdata = new unsigned char[sz];
-	memcpy(m_rawdata, data, sz);
-
 	setTexData(context, data, row_pitch, 0);
 	return true;
 }
@@ -63,7 +58,7 @@ bool Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context,
 	D3D11_TEXTURE3D_DESC texDesc,
 	const void* data, int unit_size) {
 	if (!Initialize(device, texDesc)) return false;
-	m_tex_unit_size = unit_size;
+	//m_tex_unit_size = unit_size;
 	auto row_pitch = (texDesc.Width * unit_size) * sizeof(unsigned char);
 	auto depth_pitch = row_pitch * texDesc.Height;
 	setTexData(context, data, row_pitch, depth_pitch);
@@ -78,7 +73,7 @@ void Texture::GenerateMipMap(ID3D11DeviceContext* context) {
 	if(mTexView!=nullptr)context->GenerateMips(mTexView);
 }
 void Texture::createTexRaw(int unit_size, UINT ph, UINT pw, UINT pd) {
-	m_tex_unit_size = unit_size;
+	//m_tex_unit_size = unit_size;
 	m_rawdata = new unsigned char[ph * pw * pd * unit_size];
 	memset(m_rawdata, 0x00, ph * pw * pd * unit_size);
 }
@@ -97,6 +92,28 @@ void Texture::setTexData(ID3D11DeviceContext* context, const void* data, UINT ro
 			break;
 	}
 }
+void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX& box, 
+	int height, int width, int depth, int unit_size, 
+	const BYTE* data) {
+	auto row_pitch = width * unit_size;
+	auto depth_pitch = row_pitch * height;
+	if (mDim == Texture::THREE_DIMS)
+		context->UpdateSubresource(
+			mTex3D,
+			0,
+			&box,
+			data,
+			row_pitch,
+			depth_pitch);
+	else
+		context->UpdateSubresource(
+			mTex2D.get(),
+			0,
+			&box,
+			data,
+			row_pitch,
+			depth_pitch);
+}
 void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 	std::vector<int> pos, std::vector<unsigned char> value, 
 	int unit_size, const BYTE* mask) {
@@ -108,7 +125,7 @@ void Texture::setTexData(ID3D11DeviceContext* context, D3D11_BOX* box,
 	auto depth_pitch = row_pitch * height;
 
 	int idx = 0, mask_id = 0;
-	std::lock_guard<std::mutex> lock(m_memory_mutex);
+	//std::lock_guard<std::mutex> lock(m_memory_mutex);
 	unsigned char* fData = new unsigned char[depth_pitch * depth];
 	for (auto z = box->front; z < box->back; z++) {
 		auto slice_offset = depth_pitch * z;

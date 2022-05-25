@@ -15,6 +15,8 @@ public:
 
 	void setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch);
 	void setTexData(ID3D11DeviceContext* context, D3D11_BOX* box, std::vector<int> pos, std::vector<unsigned char> value, int unit_size, const BYTE* mask = nullptr);
+	void setTexData(ID3D11DeviceContext* context, D3D11_BOX& destRegion, int height, int width, int depth, int unit_size, const BYTE* data);
+
 	void createTexRaw(int unit_size, UINT ph, UINT pw, UINT pd=1);
 
 	void GenerateMipMap(ID3D11DeviceContext* context);
@@ -41,14 +43,12 @@ protected:
 	UINT mWidth;
 	UINT mHeight;
 	UINT mDepth;
-	int m_tex_unit_size;
 	ID3D11ShaderResourceView* mTexView = nullptr;
 	ID3D11RenderTargetView* m_renderTargetView = nullptr;
 	winrt::com_ptr<ID3D11Texture2D> mTex2D;
 	ID3D11Texture3D* mTex3D = nullptr;
 
 	unsigned char* m_rawdata = nullptr;
-	std::mutex m_memory_mutex;
 };
 
 #endif // !D3DPIPELINE_TEXTURE_H

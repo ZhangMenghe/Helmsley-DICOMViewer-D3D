@@ -7,7 +7,7 @@
 paintCanvas::paintCanvas(ID3D11Device* device, ID3D11DeviceContext* context, UINT ph, UINT pw, glm::vec4 color)
 :m_ph(ph), m_pw(pw),
 m_brush_type(DRAW_BRUSH_TYPE_ROUND), m_brush_radius(dvr::DRAW_2D_BRUSH_RADIUS),
-m_brush_color(glm::vec4(255)){
+m_brush_color(cv::Scalar(255,255,255,255)){
 	m_tex = std::make_unique<Texture>();
 	DXGI_SAMPLE_DESC sample_desc{ 1,0 };
 	D3D11_TEXTURE2D_DESC texInfoDesc{
@@ -20,8 +20,11 @@ m_brush_color(glm::vec4(255)){
 		0,
 		0
 	};
+	
 	BYTE* canvas_tex_data = new unsigned char[ph * pw * 4];
+	m_canvas = cv::Mat::zeros(ph, pw, CV_8UC4);
 	fillArrayWithRGBA(canvas_tex_data, ph * pw, color);
+	memcpy(m_canvas.ptr(), canvas_tex_data, ph * pw * 4);
 	m_tex->Initialize(device, context, texInfoDesc, canvas_tex_data);
 }
 void paintCanvas::setBrushPos(ID3D11DeviceContext* context, float px, float py) {
@@ -44,43 +47,7 @@ void paintCanvas::onBrushDraw(ID3D11DeviceContext* context, float px, float py) 
 	float curr_tex_u = (px - m_canvas_offset.x) / m_canvas_size.x * m_pw;
 	float curr_tex_v = (py - m_canvas_offset.y) / m_canvas_size.y * m_ph;
 
-
 	if (curr_tex_u < 0 || curr_tex_u >= m_pw || curr_tex_v < 0 || curr_tex_v >= m_ph) { m_isdrawing = false; return; }
-
-	/*std::vector<float> interpx, interpy;
-	if (m_interpolate_sparse
-		&& m_tex_u>0
-		&& !HDUI::bounding_boxes_overlap(m_tex_u, m_tex_v, curr_tex_u, curr_tex_v, m_brush_radius)) {
-		
-		int x0 = m_tex_u, y0 = m_tex_v;
-		int x1 = curr_tex_u, y1 = curr_tex_v;
-
-		float slope = float(y1-y0) / (x1-x0);
-		if (fabs(slope) < 1.0f) {
-			for (auto cx = std::min(x0, x1); cx < std::max(x0, x1); cx += m_brush_radius) {
-				auto cy = y0 + slope * (cx - x0);
-				interpx.push_back(cx); interpy.push_back(cy);
-			}
-		}else{
-			slope = 1.0f / slope;
-			for (auto cy = std::min(y0, y1); cy < std::max(y0, y1); cy += 1.4f * m_brush_radius) {
-				auto cx = x0 + slope * (cy - y0);
-				interpx.push_back(cx); interpy.push_back(cy);
-			}
-		}
-
-	}
-	interpx.push_back(curr_tex_u); interpy.push_back(curr_tex_v);
-
-	D3D11_BOX destRegion;
-	//BYTE* mask = nullptr;
-
-	destRegion.left = std::max(0, int(*std::min_element(interpx.begin(), interpx.end()) - m_brush_radius));
-	destRegion.right = std::min(m_pw, UINT(*std::max_element(interpx.begin(), interpx.end()) + m_brush_radius));
-	destRegion.top = std::max(0, int(*std::min_element(interpy.begin(), interpy.end()) - m_brush_radius));
-	destRegion.bottom = std::min(m_ph, UINT(*std::max_element(interpy.begin(), interpy.end()) + m_brush_radius));
-	destRegion.front = 0; destRegion.back = 1;
-	*/
 
 	D3D11_BOX destRegion;
 	if (m_tex_u < 0) {
@@ -98,43 +65,15 @@ void paintCanvas::onBrushDraw(ID3D11DeviceContext* context, float px, float py) 
 		destRegion.bottom = std::min(m_ph, UINT(std::max(curr_tex_v, m_tex_v) + m_brush_radius));
 		destRegion.front = 0; destRegion.back = 1;
 	}
+	
+	cv::line(m_canvas, cv::Point(m_tex_u, m_tex_v), cv::Point(curr_tex_u, curr_tex_v), m_brush_color, m_brush_radius, cv::LINE_8);
 
 	int box_width = destRegion.right - destRegion.left;
 	int box_height = destRegion.bottom - destRegion.top;
+	cv::Mat sub_canvas = m_canvas(cv::Rect(destRegion.left, destRegion.top, box_width, box_height)).clone();
 
-	cv::Mat mask_mat = cv::Mat::zeros(box_height, box_width, CV_8UC1);
+	m_tex->setTexData(context, destRegion, box_height, box_width, 1, 4, sub_canvas.ptr());
 
-	//m_tex->getRawTextureData(destRegion, );
-
-
-
-	cv::line(mask_mat, cv::Point(m_tex_u- destRegion.left, m_tex_v - destRegion.top), cv::Point(curr_tex_u - destRegion.left, curr_tex_v - destRegion.top), 255, m_brush_radius, cv::LINE_8);
-	BYTE* mask = mask_mat.ptr();
-	//size_t sz = box_width * box_height;
-	//mask = new BYTE[sz];
-	//memset(mask, 0x00, sz);
-	//for (int i = 0; i < interpx.size(); i++) {
-	//	int cx = interpx[i] - destRegion.left;
-	//	int cy = interpy[i] - destRegion.top;
-	//	if (m_brush_type == DRAW_BRUSH_TYPE_SQUARE) {
-	//		//fill with square
-	//		for (auto y = std::max(0, cy - m_brush_radius); y < std::min(box_height, cy + m_brush_radius); y++) {
-	//			int line_start = y * box_width;
-
-	//			memset(mask + line_start + (cx - m_brush_radius), 0xff, std::min(2 * m_brush_radius, box_width - (cx - m_brush_radius)));
-	//		}
-	//	}
-	//	else if (m_brush_type == DRAW_BRUSH_TYPE_ROUND) {
-
-	//	}
-
-	//}
-
-	//adjust mask
-	//int blur_sz = m_brush_radius % 2 == 0 ? m_brush_radius - 1 : m_brush_radius;
-	//cv::GaussianBlur(mask_mat, mask_mat, cv::Size(blur_sz, blur_sz), 0);
-
-	m_tex->setTexData(context, &destRegion, { 0,1,2,3 }, { (BYTE)m_brush_color.r, (BYTE)m_brush_color.g, (BYTE)m_brush_color.b, (BYTE)m_brush_color.a }, 4, mask);
 	m_tex_u = curr_tex_u; m_tex_v = curr_tex_v;
 }
 /*

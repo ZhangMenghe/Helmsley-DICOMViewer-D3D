@@ -3,7 +3,7 @@
 #include <winrt/base.h>
 #include <Common/DeviceResources.h>
 #include <D3DPipeline/Texture.h>
-
+#include <opencv2/core.hpp>
 enum DRAW_BRUSH_TYPE {
 	DRAW_BRUSH_TYPE_SQUARE = 0,
 	DRAW_BRUSH_TYPE_ROUND,
@@ -32,6 +32,7 @@ public:
 private:
 	//texture
 	std::unique_ptr<Texture> m_tex;
+	cv::Mat m_canvas;
 	
 	UINT m_ph, m_pw;
 	float m_tex_u, m_tex_v;
@@ -43,7 +44,7 @@ private:
 	//Brush
 	DRAW_BRUSH_TYPE m_brush_type;
 	glm::vec3 m_brush_center;
-	glm::vec4 m_brush_color;
+	cv::Scalar m_brush_color;
 	int m_brush_radius;
 
 	float m_depth_offset;
