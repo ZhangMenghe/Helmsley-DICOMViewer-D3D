@@ -48,9 +48,10 @@ bool Texture::Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc) {
 bool Texture::Initialize(
 	ID3D11Device* device, ID3D11DeviceContext* context, 
 	D3D11_TEXTURE2D_DESC texDesc, 
-	const void* data) {
+	const void* data, int unit_size) {
 	if (!Initialize(device, texDesc)) return false;
-	auto row_pitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	m_tex_unit_size = unit_size;
+	auto row_pitch = (texDesc.Width * unit_size) * sizeof(unsigned char);
 	auto sz = row_pitch * texDesc.Height;
 	m_rawdata = new unsigned char[sz];
 	memcpy(m_rawdata, data, sz);
@@ -60,9 +61,10 @@ bool Texture::Initialize(
 }
 bool Texture::Initialize(ID3D11Device* device, ID3D11DeviceContext* context,
 	D3D11_TEXTURE3D_DESC texDesc,
-	const void* data) {
+	const void* data, int unit_size) {
 	if (!Initialize(device, texDesc)) return false;
-	auto row_pitch = (texDesc.Width * 4) * sizeof(unsigned char);
+	m_tex_unit_size = unit_size;
+	auto row_pitch = (texDesc.Width * unit_size) * sizeof(unsigned char);
 	auto depth_pitch = row_pitch * texDesc.Height;
 	setTexData(context, data, row_pitch, depth_pitch);
 	return true;
@@ -76,6 +78,7 @@ void Texture::GenerateMipMap(ID3D11DeviceContext* context) {
 	if(mTexView!=nullptr)context->GenerateMips(mTexView);
 }
 void Texture::createTexRaw(int unit_size, UINT ph, UINT pw, UINT pd) {
+	m_tex_unit_size = unit_size;
 	m_rawdata = new unsigned char[ph * pw * pd * unit_size];
 	memset(m_rawdata, 0x00, ph * pw * pd * unit_size);
 }

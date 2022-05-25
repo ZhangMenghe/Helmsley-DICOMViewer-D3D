@@ -529,15 +529,6 @@
       <Filter>Source\proto_src</Filter>
     </None>
     <None Include="$(OpenXRLoaderBinaryRoot)\bin\openxr_loader.dll" />
-    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask">
-      <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
-    <None Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data">
-      <Filter>Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira</Filter>
-    </None>
-    <None Include="Assets\helmsley_cached\pacs_local.txt">
-      <Filter>Assets\helmsley_cached</Filter>
-    </None>
     <None Include="..\..\Source\pbr\Shaders\Shared.hlsl" />
     <None Include="..\..\Source\Shaders\StructAndConsts.hlsli">
       <Filter>Source\Shaders</Filter>
@@ -834,6 +825,9 @@
     <Image Include="Assets\StoreLogo.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
+    <CopyFileToFolders Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\data" />
+    <CopyFileToFolders Include="Assets\helmsley_cached\Larry_Smarr_2016\series_23_Cor_LAVA_PRE-Amira\mask" />
+    <CopyFileToFolders Include="Assets\helmsley_cached\pacs_local.txt" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\Library\x64\bin\libprotobuf.dll">

@@ -10,8 +10,8 @@ public:
 	bool Initialize(ID3D11Device* device, D3D11_TEXTURE3D_DESC texDesc);
 	bool Initialize(ID3D11Device* device, D3D11_TEXTURE2D_DESC texDesc, D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc);
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE2D_DESC texDesc, const void* data);
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE3D_DESC texDesc, const void* data);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE2D_DESC texDesc, const void* data, int unit_size = 4);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_TEXTURE3D_DESC texDesc, const void* data, int unit_size = 4);
 
 	void setTexData(ID3D11DeviceContext* context, const void* data, UINT row_pitch, UINT depth_pitch);
 	void setTexData(ID3D11DeviceContext* context, D3D11_BOX* box, std::vector<int> pos, std::vector<unsigned char> value, int unit_size, const BYTE* mask = nullptr);
@@ -41,6 +41,7 @@ protected:
 	UINT mWidth;
 	UINT mHeight;
 	UINT mDepth;
+	int m_tex_unit_size;
 	ID3D11ShaderResourceView* mTexView = nullptr;
 	ID3D11RenderTargetView* m_renderTargetView = nullptr;
 	winrt::com_ptr<ID3D11Texture2D> mTex2D;
