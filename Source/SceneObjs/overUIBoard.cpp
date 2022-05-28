@@ -185,13 +185,19 @@ bool overUIBoard::DrawOnBoard(const uint64_t frameIndex, std::string& name, glm:
 	float proj_dist; glm::vec3 proj_pos_world;
 	PointProjectOnPlane(m_background_board->pos, pn, pos, proj_dist, proj_pos_world);
 	//LOGINFO("====DIST: %f\n", proj_dist);
-	if (proj_dist < -0.1f) {
+	if (proj_dist < -0.02f) {
 		m_3d_pressed = false; return false;
 	}
 	if (dvr::SET_DEPTH_FORCE_ON && proj_dist > .0f) m_background_board->dtex->setDepthForceBrushSize(proj_dist);
 
 	glm::vec4 proj_pos_canvas = glm::inverse(plane_model) * glm::vec4(proj_pos_world, 1.0f);
 	glm::vec3 proj_pos = glm::vec3(proj_pos_canvas.x, proj_pos_canvas.y, proj_pos_canvas.z) / proj_pos_canvas.w;
+
+	glm::vec4 back_proj_pos_plane(proj_pos.x, proj_pos.y, .0f, 1.0f);
+	glm::vec4 back_proj_pos_world_ = plane_model * back_proj_pos_plane;
+	glm::vec3 back_proj_pos_world = glm::vec3(back_proj_pos_world_.x, back_proj_pos_world_.y, back_proj_pos_world_.z) / back_proj_pos_world_.w;
+	m_background_board->dtex->setBrushMeshPos(back_proj_pos_world);
+
 
 	if (!m_3d_pressed) {
 		m_background_board->dtex->setBrushPos(m_deviceResources->GetD3DDeviceContext(), proj_pos.x + 0.5f, 0.5f - proj_pos.y);
@@ -246,6 +252,7 @@ void overUIBoard::Update(std::string name, std::wstring new_content) {
 void overUIBoard::Render(){
 	if (m_background_board) {
 		m_background_board->quad->Draw(m_deviceResources->GetD3DDeviceContext(), m_background_board->mat);
+		if (m_3d_pressed &&m_background_board->dtex) m_background_board->dtex->Draw(m_deviceResources->GetD3DDeviceContext());
 	}
 	//auto outputSize = m_deviceResources->GetOutputSize();
 	//if(outputSize.Width!=0) {

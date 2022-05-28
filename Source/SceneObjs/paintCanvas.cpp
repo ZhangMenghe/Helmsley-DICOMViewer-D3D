@@ -7,7 +7,8 @@
 paintCanvas::paintCanvas(ID3D11Device* device, ID3D11DeviceContext* context, UINT ph, UINT pw, glm::vec4 color)
 :m_ph(ph), m_pw(pw),
 m_brush_type(DRAW_BRUSH_TYPE_ROUND), m_brush_radius(dvr::DRAW_2D_BRUSH_RADIUS),
-m_brush_color(cv::Scalar(255,255,255,255)){
+m_brush_color(cv::Scalar(255,255,255,255)),
+m_depth_scalar(0.3f){
 	m_tex = std::make_unique<Texture>();
 	DXGI_SAMPLE_DESC sample_desc{ 1,0 };
 	D3D11_TEXTURE2D_DESC texInfoDesc{
@@ -26,6 +27,8 @@ m_brush_color(cv::Scalar(255,255,255,255)){
 	fillArrayWithRGBA(canvas_tex_data, ph * pw, color);
 	memcpy(m_canvas.ptr(), canvas_tex_data, ph * pw * 4);
 	m_tex->Initialize(device, context, texInfoDesc, canvas_tex_data);
+
+	m_brush_mesh = std::make_unique<sphereRenderer>(device, 9, 7, DirectX::XMFLOAT4({ 1.0f, .5f, .0f, 1.0f }));
 }
 void paintCanvas::setBrushPos(ID3D11DeviceContext* context, float px, float py) {
 	//calculate
@@ -66,7 +69,7 @@ void paintCanvas::onBrushDraw(ID3D11DeviceContext* context, float px, float py) 
 		destRegion.front = 0; destRegion.back = 1;
 	}
 	
-	cv::line(m_canvas, cv::Point(m_tex_u, m_tex_v), cv::Point(curr_tex_u, curr_tex_v), m_brush_color, m_brush_radius, cv::LINE_8);
+	cv::line(m_canvas, cv::Point(m_tex_u, m_tex_v), cv::Point(curr_tex_u, curr_tex_v), m_brush_color, m_brush_radius, cv::LINE_AA);
 
 	int box_width = destRegion.right - destRegion.left;
 	int box_height = destRegion.bottom - destRegion.top;
@@ -75,6 +78,15 @@ void paintCanvas::onBrushDraw(ID3D11DeviceContext* context, float px, float py) 
 	m_tex->setTexData(context, destRegion, box_height, box_width, 1, 4, sub_canvas.ptr());
 
 	m_tex_u = curr_tex_u; m_tex_v = curr_tex_v;
+
+}
+bool paintCanvas::Draw(ID3D11DeviceContext* context) {
+	m_brush_mesh->Draw(context, m_brush_mesh_mat_pre
+		* DirectX::XMMatrixTranslation(m_brush_mesh_pos.x, m_brush_mesh_pos.y, m_brush_mesh_pos.z));
+	return true;
+}
+void paintCanvas::setBrushMeshPos(glm::vec3 brush_pos) {
+	m_brush_mesh_pos = brush_pos;
 }
 /*
 * Function to convert distance to depth force to brush size
@@ -82,7 +94,7 @@ dist: projected distance to the 2D plane(m)
 a finger offset if ussally a few cms (0.0x m)
 */
 void paintCanvas::setDepthForceBrushSize(float dist) {
-	m_depth_offset = int(dist * 100) * 0.1f;
+	m_depth_offset = int(dist * 100) * m_depth_scalar;
 	EvaluateBrushSize();
 }
 void paintCanvas::onBrushDrawWithDepthForce(ID3D11DeviceContext* context, float px, float py, int delta) {
@@ -93,6 +105,9 @@ void paintCanvas::onBrushDrawWithDepthForce(ID3D11DeviceContext* context, float 
 
 void paintCanvas::EvaluateBrushSize() {
 	m_brush_radius = dvr::DRAW_2D_BRUSH_RADIUS * (1.0f + m_depth_offset);
+	float r = m_brush_radius * 0.0005f;
+	m_brush_mesh_mat_pre = DirectX::XMMatrixScaling(r, r, r)
+		* DirectX::XMMatrixRotationX(0.1f);
 }
 
 

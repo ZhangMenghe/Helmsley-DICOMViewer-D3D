@@ -226,6 +226,7 @@ void OXRMainScene::on3DTouchMove(float x, float y, float z, glm::mat4 rot, int s
 	}
 };
 void OXRMainScene::on3DTouchReleased(int side) { 
+	//if (m_drawcanvas_visible) m_draw_board->onTouchReleased();
 	if (m_draw_volume) m_sceneRenderer->on3DTouchReleased(side);
 	//if (rpcHandler::G_STATUS_SENDER)m_rpcHandler->setGestureOp(helmsley::GestureOp_OPType_TOUCH_UP, 0, 0);
 };

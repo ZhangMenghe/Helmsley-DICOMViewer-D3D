@@ -4,6 +4,7 @@
 #include <Common/DeviceResources.h>
 #include <D3DPipeline/Texture.h>
 #include <opencv2/core.hpp>
+#include <Renderers/sphereRenderer.h>
 enum DRAW_BRUSH_TYPE {
 	DRAW_BRUSH_TYPE_SQUARE = 0,
 	DRAW_BRUSH_TYPE_ROUND,
@@ -21,6 +22,7 @@ public:
 	void setBrushPos(ID3D11DeviceContext* context, glm::vec3 proj_pos, glm::vec3 proj_size, float px, float py);
 	//for 3d draw, pxpy: 0~1, proportion of the canvas
 	void setBrushPos(ID3D11DeviceContext* context, float px, float py);
+	void setBrushMeshPos(glm::vec3 brush_pos);
 	void onBrushDraw(ID3D11DeviceContext* context, float px, float py);
 
 	void setDepthForceBrushSize(float dist);
@@ -28,7 +30,7 @@ public:
 	void onBrushUp() { m_isdrawing = false; }
 	//bool stepCubeAnnotation(ID3D11DeviceContext* context, dvr::ANNOTATE_DIR dir, bool isBrush);
 	//void setBrushCenter(glm::vec3 center) { m_brush_center = center; }
-	//bool Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX modelMat);
+	bool Draw(ID3D11DeviceContext* context);
 private:
 	//texture
 	std::unique_ptr<Texture> m_tex;
@@ -48,6 +50,11 @@ private:
 	int m_brush_radius;
 
 	float m_depth_offset;
+	float m_depth_scalar;
+
+	std::unique_ptr<sphereRenderer> m_brush_mesh;
+	glm::vec3 m_brush_mesh_pos;
+	DirectX::XMMATRIX m_brush_mesh_mat_pre;
 
 	void EvaluateBrushSize();
 };

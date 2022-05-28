@@ -13,6 +13,7 @@ struct v2f {
 	float4 pos : SV_POSITION;
 	float3 norm : NORMAL;
 	float3 col : COLOR;
+	float4 light_dir: TANGENT;
 };
 
 // Simple shader to do vertex processing on the GPU.
@@ -22,5 +23,6 @@ v2f main(VertexPos3d input) {
 	output.pos = mul(float4(input.pos, 1.0f), model);
 	output.pos = mul(output.pos, uViewProjMat);
 	output.norm = input.pos;
+	output.light_dir = mul(float4(.0f, 1.0f, .0f, 1.0f), model);
 	return output;
 }
